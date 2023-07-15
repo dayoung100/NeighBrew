@@ -35,12 +35,14 @@ public class ChatController {
         return ResponseEntity.ok(room);
     }
 
+    // 채팅방 입장
     @GetMapping("/rooms/{id}")
     public ResponseEntity<ChatRoom> enterChatRoom(@PathVariable Long id) {
         ChatRoom room = chatRoomRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
         return ResponseEntity.ok(room);
     }
 
+    // 채팅 메시지 전송
     @PostMapping("/messages")
     public ResponseEntity<ChatMessage> sendMessage(@RequestParam Long roomId, @RequestParam String sender, @RequestParam String message) {
         ChatMessage chatMessage = new ChatMessage();
@@ -51,5 +53,14 @@ public class ChatController {
         chatMessageRepository.save(chatMessage);
         return ResponseEntity.ok(chatMessage);
 
+    }
+
+    // 유저 한명이 채팅방 나가기
+    @DeleteMapping("/rooms/{roomId}/users/{userId}")
+    public ResponseEntity<ChatRoom> exitChatRoom(@PathVariable Long roomId, @PathVariable Long userId) {
+        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+        room.getUsers().removeIf(chatRoomUser -> chatRoomUser.getUser().getUserId().equals(userId));
+        chatRoomRepository.save(room);
+        return ResponseEntity.ok(room);
     }
 }
