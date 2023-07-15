@@ -20,7 +20,7 @@ public class ChatController {
 
     @MessageMapping("/chat/{roomId}/sendMessage")
     public void sendMessage(@PathVariable Long roomId, @Payload ChatMessage chatMessage) {
-        // 채팅 메시지를 받아서 해당 채팅방의 구독자들에게 전송
+        // 채팅 메시지를 받아서 해당 채팅방의 유저들에게 전송
         chatMessage.setTimestamp(LocalDateTime.now());
         messagingTemplate.convertAndSend("/pub/room/" + roomId, chatMessage);
     }

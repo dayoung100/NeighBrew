@@ -56,7 +56,7 @@ public class ChatRoomController {
         message.setSender("알림");
         message.setMessage(user.getName() + "님이 입장하셨습니다.");
         message.setTimestamp(LocalDateTime.now());
-        messagingTemplate.convertAndSend("/pub/room/" + roomId, message); // 채팅방 구독자들에게 입장 메시지 전송
+        messagingTemplate.convertAndSend("/pub/room/" + roomId, message); // 채팅방에 입장 메시지 전송
     }
 
     // 채팅방 퇴장
