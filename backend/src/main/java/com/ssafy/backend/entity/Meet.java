@@ -14,8 +14,11 @@ public class Meet {
     @GeneratedValue
     private Long meetId;
 
+    @Column(nullable = false, length = 100)
     private String name;
 
+    //최대 8명
+    @Column(nullable = false, columnDefinition = "int default 0")
     private Integer number;
 
     @Lob

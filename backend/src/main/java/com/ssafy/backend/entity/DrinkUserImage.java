@@ -13,6 +13,6 @@ public class DrinkUserImage {
     @GeneratedValue
     private Long drinkUserImageId;
 
-    @Lob
+    @Column(nullable = false, length = 20)
     private String imageUrl;
 }
