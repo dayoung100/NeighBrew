@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/chat")
 public class ChatRoomController {
 
     private final ChatRoomRepository chatRoomRepository;
