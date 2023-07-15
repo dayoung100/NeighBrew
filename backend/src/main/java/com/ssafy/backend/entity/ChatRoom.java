@@ -1,21 +1,24 @@
 package com.ssafy.backend.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
-@Table
 @Getter
 @Setter
+@NoArgsConstructor
 public class ChatRoom {
     @Id
     @GeneratedValue
-    private Long chatRoomId;
+    private String chatRoomId;
 
-    private String name;
+    private String chatRoomName;
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    private List<ChatMessage> messages;
 }
