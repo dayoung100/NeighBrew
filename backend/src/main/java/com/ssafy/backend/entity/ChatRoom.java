@@ -15,7 +15,7 @@ import java.util.UUID;
 public class ChatRoom {
     @Id
     @GeneratedValue
-    private String chatRoomId;
+    private Long chatRoomId;
 
     private String chatRoomName;
 
