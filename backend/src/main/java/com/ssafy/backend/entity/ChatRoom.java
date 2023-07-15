@@ -15,10 +15,13 @@ import java.util.UUID;
 public class ChatRoom {
     @Id
     @GeneratedValue
-    private String chatRoomId;
+    private Long chatRoomId;
 
     private String chatRoomName;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<ChatMessage> messages;
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    private List<ChatRoomUser> users;
 }
