@@ -8,7 +8,7 @@ import axios from 'axios';
 const Login = () => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoginValid, setIsLoginValid] = useState('asd');
+  const [isLoginValid, setIsLoginValid] = useState(''); // 오류시 오류 메세지 출력
   const navigate = useNavigate();
   const onChangeId = (e: React.ChangeEvent<HTMLInputElement>) => {
     setId(e.target.value);

@@ -1,4 +1,6 @@
-// 메인화면,
+// 메인화면
+import { useEffect, useRef, useState } from 'react';
+import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 const Main = () => {
   return (
     <>
