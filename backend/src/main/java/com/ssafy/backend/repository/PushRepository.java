@@ -14,7 +14,7 @@ public interface PushRepository {
 
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
-    //주어진 아이디와 Emitter를 가져온다.
+    //주어진 아이디와 Emitter를 가져온다.ㅁㅁㅎ
     public SseEmitter get(Long id);
 
     //주어진 ID 와 Emitter를 제거
