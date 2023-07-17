@@ -5,6 +5,8 @@ import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +25,7 @@ public class FollowController {
     }
 
     @PostMapping("/{followerId}/{followingId}")
-    public void followUser(@PathVariable Long followerId, @PathVariable Long followingId) {
+    public ResponseEntity<?> followUser(@PathVariable Long followerId, @PathVariable Long followingId) {
         User follower = userRepository.findById(followerId).orElseThrow(IllegalArgumentException::new);
         User following = userRepository.findById(followingId).orElseThrow(IllegalArgumentException::new);
 
@@ -37,21 +39,23 @@ public class FollowController {
 
             followRepository.save(follow);
         });
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // 팔로워 조회
     @GetMapping("/follower/{userId}")
-    public List<User> getFollower(@PathVariable Long userId) {
+    public ResponseEntity<List<User>> getFollower(@PathVariable Long userId) {
         User user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
-        return followRepository.findByFollowing(user).orElseThrow(() -> new IllegalArgumentException("팔로워가 없습니다."))
-                .stream().map(Follow::getFollower).collect(Collectors.toList());
+        return new ResponseEntity<>(followRepository.findByFollowing(user).orElseThrow(() -> new IllegalArgumentException("팔로워가 없습니다.")).stream().map(Follow::getFollower).collect(Collectors.toList()),
+                HttpStatus.OK);
     }
 
     // 팔로잉 조회
     @GetMapping("/following/{userId}")
-    public List<User> getFollowing(@PathVariable Long userId) {
+    public ResponseEntity<List<User>> getFollowing(@PathVariable Long userId) {
         User user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
-        return followRepository.findByFollower(user).orElseThrow(() -> new IllegalArgumentException("팔로잉 하지 않았습니다.")).
-                stream().map(Follow::getFollowing).collect(Collectors.toList());
+        return new ResponseEntity<>(followRepository.findByFollower(user).orElseThrow(() -> new IllegalArgumentException("팔로잉 하지 않았습니다.")).stream().map(Follow::getFollowing).collect(Collectors.toList()),
+                HttpStatus.OK);
     }
 }
