@@ -1,13 +1,11 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.entity.ChatMessage;
+import com.ssafy.backend.entity.ChatRoomUser;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-
-import java.time.LocalDateTime;
 
 @Controller
 public class ChatController {
@@ -19,9 +17,8 @@ public class ChatController {
     }
 
     @MessageMapping("/chat/{roomId}/sendMessage")
-    public void sendMessage(@PathVariable Long roomId, @Payload ChatMessage chatMessage) {
+    public void sendMessage(@PathVariable Long roomId, @Payload ChatRoomUser chatRoomUser) {
         // 채팅 메시지를 받아서 해당 채팅방의 유저들에게 전송
-        chatMessage.setTimestamp(LocalDateTime.now());
-        messagingTemplate.convertAndSend("/pub/room/" + roomId, chatMessage);
+        messagingTemplate.convertAndSend("/pub/room/" + roomId, chatRoomUser);
     }
 }
