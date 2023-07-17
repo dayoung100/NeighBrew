@@ -1,40 +1,50 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.service.PushService;
+import io.jsonwebtoken.io.IOException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/push")
 public class PushController {
     private final PushService pushService;
-    //sse로 구현하지면 현재 스펙인 HTTP/1.1에선 최대 6개의 접속만 허용한다.
-    /*
-    HTML에 eventSource 객체를 추가해주자
-          const eventSource = new EventSource("/push")
-      eventSource.onmessage = event => {
-        const p = document.createElement("p")
-        p.innerText = event.data
 
-        document.getElementById("messages").appendChild(p)
-      }
-    * */
+
     @Autowired
-    public PushController(PushService pushService){
+    public PushController(PushService pushService) {
         this.pushService = pushService;
     }
 
-    //
-    @GetMapping
-    public void sendPush() throws IOException {
+    //클라이언트에서 구독하기 위한 connect 메소드
+    @GetMapping(value = "/connect/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<?> connect(@PathVariable Long id) throws IOException {
+        return  new ResponseEntity<SseEmitter>(pushService.subscribe(id));
+    }
 
+    //서버에서 클라이언트로 알림을 주기 위한 sendData 생성
+    @PostMapping("/send-data/{id}")
+    public void sendData(@PathVariable Long id){
+        pushService.notify(id, "data");
     }
 }
+
+// SSE SPEC
 /*
+//sse로 구현하지면 현재 스펙인 HTTP/1.1에선 최대 6개의 접속만 허용한다.
+HTML에 eventSource 객체를 추가해주자
+    const eventSource = new EventSource("/push")
+    eventSource.onmessage = event => {
+        const p = document.createElement("p")
+        p.innerText = event.data
+        document.getElementById("messages").appendChild(p)
+    }
 https://tecoble.techcourse.co.kr/post/2022-10-11-server-sent-events/
 
 SSE - Server sent Event
