@@ -12,7 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Where(clause = "deleted = false")
-public class Push {
+public class Push{
 
     @Id
     @GeneratedValue
@@ -21,12 +21,22 @@ public class Push {
     @Lob
     private String content;
 
+    @Lob
+    private String relatedURL;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PushType pushType;
+
     @CreatedDate
     private Date createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private User user;
+
+    private boolean readYN = false;
+
 
     private boolean deleted = false;
 }

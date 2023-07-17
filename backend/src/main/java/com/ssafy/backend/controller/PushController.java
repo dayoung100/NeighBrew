@@ -23,15 +23,12 @@ public class PushController {
     }
 
     //클라이언트에서 구독하기 위한 connect 메소드
-    @GetMapping(value = "/connect/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<?> connect(@PathVariable Long id) throws IOException {
-        return  new ResponseEntity<SseEmitter>(pushService.connect(id));
-    }
-
-    //서버에서 클라이언트로 알림을 주기 위한 sendData 생성
-    @PostMapping("/send-data/{id}")
-    public void sendData(@PathVariable Long id){
-        pushService.notify(id, "data");
+    //@GetMapping(value = "/connect/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/connect/{id}", produces = "text/event-stream")
+    public SseEmitter connect(@PathVariable Long id,
+                              @RequestHeader(value = "Last-Event-ID", required= false, defaultValue = "") String lastEventId) throws IOException {
+        return pushService.connect(id, lastEventId);
+        //이전에 받지 못한 이벤트가 있을 때(SSE 연결 시간 만료 및 종료 등), 마지막 이벤트 ID를 넘겨 이어서 받게하기 위한 변수
     }
 }
 
