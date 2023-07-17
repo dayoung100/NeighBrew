@@ -25,7 +25,7 @@ public class PushController {
     //클라이언트에서 구독하기 위한 connect 메소드
     @GetMapping(value = "/connect/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<?> connect(@PathVariable Long id) throws IOException {
-        return  new ResponseEntity<SseEmitter>(pushService.subscribe(id));
+        return  new ResponseEntity<SseEmitter>(pushService.connect(id));
     }
 
     //서버에서 클라이언트로 알림을 주기 위한 sendData 생성
