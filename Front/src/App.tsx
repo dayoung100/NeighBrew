@@ -1,13 +1,18 @@
-import { useState, useEffect } from 'react';
-import './App.css';
-import { useNavigate, Route, Routes } from 'react-router-dom';
-import FirstLoading from './UI/etc/FirstLoading';
-import Login from './UI/user/Login';
-import Main from './UI/home/Main';
+import { useState, useEffect } from "react";
+import "./App.css";
+import { useNavigate, Route, Routes } from "react-router-dom";
+import FirstLoading from "./UI/etc/FirstLoading";
+import Login from "./UI/user/Login";
+import Main from "./UI/home/Main";
+import ChatList from "./UI/chat/ChatList";
+import ChatRoom from "./UI/chat/ChatRoom";
+import Drinkpost from "./UI/drinkpost/DrinkpostMain";
+import Navbar from "./UI/navbar/Navbar";
+import Footer from "./UI/footer/Footer";
 
 function App() {
   const navigate = useNavigate();
-  const [isLodaing, setIsLoading] = useState(false); // 개발시 isLoading true로 두고 하기
+  const [isLodaing, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
 
   useEffect(() => {
     setTimeout(() => {
@@ -18,6 +23,7 @@ function App() {
 
   return (
     <>
+      <Navbar />
       <Routes>
         <Route
           path="/"
@@ -36,9 +42,22 @@ function App() {
             </>
           }
         />
+        <Route
+          path="/drinkpost"
+          element={
+            <>
+              <Drinkpost />
+            </>
+          }
+        />
+        <Route path="/chatList" element={<ChatList></ChatList>}></Route>
+        <Route path="/chatList/:roomId" element={<ChatRoom></ChatRoom>} />
       </Routes>
+      <Footer />
     </>
   );
 }
 
 export default App;
+
+// 평가점수 1~5점을 받아 0~100 점으로 이루어져 있는 수치로 변환하는 함수를 작성하시오.
