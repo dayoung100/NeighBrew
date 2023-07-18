@@ -14,18 +14,15 @@ const Button = styled.button`
   background-color: white;
   border: none;
   margin: 1rem auto;
-  &:focus {
-    outline: none;
-    border-bottom: 2px solid #000000;
-  }
 `;
 
 const ChatList = () => {
   const [chatList, setChatList] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   const [directChatList, setdirectChatList] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
-  const MeetingIcon = meetingicon(chooseChat === 0 ? "black" : "#AAAAAA");
-  const directMessageIcon = directMessage(chooseChat === 0 ? "#AAAAAA" : "black");
+  const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
+  const directMessageIcon = directMessage(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
+
   return (
     <>
       <div>
@@ -33,7 +30,9 @@ const ChatList = () => {
           onClick={() => {
             setChooseChat(0);
           }}
-          autoFocus
+          style={{
+            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+          }}
         >
           {MeetingIcon}
         </Button>
@@ -41,18 +40,21 @@ const ChatList = () => {
           onClick={() => {
             setChooseChat(1);
           }}
+          style={{ borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)" }}
         >
           {directMessageIcon}
         </Button>
       </div>
-
-      {chooseChat === 0
-        ? chatList.map((chat, i) => {
-            return <Chat key={i} chooseChat={chooseChat}></Chat>;
-          })
-        : directChatList.map((chat, i) => {
-            return <Chat key={i} chooseChat={chooseChat}></Chat>;
-          })}
+      <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)" }}>
+        {chooseChat === 0
+          ? chatList.map((chat, i) => {
+              return <Chat key={i} chooseChat={chooseChat} chatRoomId={chat}></Chat>;
+            })
+          : directChatList.map((chat, i) => {
+              return <Chat key={i} chooseChat={chooseChat} chatRoomId={chat}></Chat>;
+            })}
+      </div>
+      <div style={{ height: "3rem" }}></div>
     </>
   );
 };
