@@ -21,11 +21,7 @@ public class DrinkService {
             throw new IllegalArgumentException("이미 존재하는 이름입니다.");
         });
 
-        Drink drink = new Drink();
-        drink.setName(drinkDto.getName());
-        drink.setImage(drinkDto.getImage());
-        drink.setDegree(drinkDto.getDegree());
-        drink.setDescription(drinkDto.getDescription());
+        Drink drink = drinkDto.toEntity();
 
         return drinkRepository.save(drink);
     }
@@ -44,13 +40,9 @@ public class DrinkService {
         return drinkRepository.findAll();
     }
 
-    public Drink updateDrink(DrinkDto drinkDto) {
-        Drink drink = drinkRepository.findById(drinkDto.getDrinkId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 음료입니다."));
-        drink.setName(drinkDto.getName());
-        drink.setImage(drinkDto.getImage());
-        drink.setDegree(drinkDto.getDegree());
-        drink.setDescription(drinkDto.getDescription());
-
+    public Drink updateDrink(Long drinkId, DrinkDto drinkDto) {
+        Drink drink = drinkRepository.findById(drinkId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 음료입니다."));
+        drink = drinkDto.updateEntity(drink);
         return drinkRepository.save(drink);
     }
 }

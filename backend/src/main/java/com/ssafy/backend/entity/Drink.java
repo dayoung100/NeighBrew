@@ -1,7 +1,9 @@
 package com.ssafy.backend.entity;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,7 +13,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Where(clause = "deleted = false")
 public class Drink {
     @Id
@@ -44,4 +46,25 @@ public class Drink {
     }
 
     private boolean deleted = false;
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+
+    @Builder
+    public Drink(String name, String image, Float degree, String description) {
+        this.name = name;
+        this.image = image;
+        this.degree = degree;
+        this.description = description;
+    }
+
+    public Drink update(String name, String image, float degree, String description) {
+        this.name = name;
+        this.image = image;
+        this.degree = degree;
+        this.description = description;
+        return this;
+    }
 }
