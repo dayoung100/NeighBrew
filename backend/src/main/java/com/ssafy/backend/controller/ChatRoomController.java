@@ -1,5 +1,6 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.entity.ChatMessage;
 import com.ssafy.backend.entity.ChatRoom;
 import com.ssafy.backend.entity.ChatRoomUser;
 import com.ssafy.backend.entity.User;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
@@ -50,8 +52,10 @@ public class ChatRoomController {
 
         chatRoomRepository.save(room); // 채팅방 저장
 
-        ChatRoomUser message = new ChatRoomUser(); // 입장 메시지 생성
+        ChatMessage message = new ChatMessage(); // 입장 메시지 생성
+        message.setSender("알림");
         message.setMessage(user.getName() + "님이 입장하셨습니다.");
+        message.setTimestamp(LocalDateTime.now());
         messagingTemplate.convertAndSend("/pub/room/" + roomId, message); // 채팅방에 입장 메시지 전송
     }
 
@@ -68,8 +72,10 @@ public class ChatRoomController {
             chatRoomRepository.save(room);
         }
 
-        ChatRoomUser message = new ChatRoomUser(); // 채팅방에 퇴장 메시지 전송
+        ChatMessage message = new ChatMessage(); // 채팅방에 퇴장 메시지 전송
+        message.setSender("알림");
         message.setMessage(user.getName() + "님이 퇴장하셨습니다."); // 채팅방에 퇴장 메시지 전송
+        message.setTimestamp(LocalDateTime.now());
         messagingTemplate.convertAndSend("/pub/room/" + roomId, message);
     }
 }
