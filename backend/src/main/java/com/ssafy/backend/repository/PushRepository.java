@@ -9,9 +9,9 @@ import java.util.List;
 
 
 @Repository
+
 public interface PushRepository extends JpaRepository<Push, Long>{
     List<Push> findAllByReceiver(User user);
     //findAllByReceiver : 모든 알림 목록을 조회할 때 사용한다. 아마 안쓸듯
-
 }
 
