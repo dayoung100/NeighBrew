@@ -4,20 +4,62 @@ import styled from "styled-components";
 import Navbar from "../navbar/Navbar";
 import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
 import { useNavigate } from "react-router-dom";
-const MessageBox = styled.div<{ messageId: number }>`
-  border-radius: ${props => (props.messageId === 1 ? "20px 20px 0px 20px" : "0px 20px 20px 20px")};
-  background-color: ${props => (props.messageId === 1 ? "#e5bcbc" : "#F0D389")};
-  /* max-width: 60%;
-  min-width: 40%; */
-  width: 60%;
-  padding: 1rem;
-  margin: 1rem auto;
-  display: inline-block;
+import temgif from "../../assets/temgif.gif";
+// const MessageBox = styled.div<{ messageId: number }>`
+//   border-radius: ${props => (props.messageId === 1 ? "20px 20px 0px 20px" : "0px 20px 20px 20px")};
+//   background-color: ${props => (props.messageId === 1 ? "#e5bcbc" : "#F0D389")};
+//   /* max-width: 60%;
+//   min-width: 40%; */
+//   width: 60%;
+//   padding: 1rem;
+//   margin: 1rem auto;
+//   display: inline-block;
+//   position: relative;
+//   right: ${props => (props.messageId === 0 ? "16%" : "-16%")};
+//   word-break: break-all;
+// `;
+const MyChat = styled.div`
   position: relative;
-  right: ${props => (props.messageId === 0 ? "16%" : "-16%")};
+  display: inline-block;
+  background-color: #e06565;
+  border-radius: 5px;
+  padding: 10px;
+  max-width: 60%;
   word-break: break-all;
+  margin-bottom: 5px;
+  margin-left: 1px;
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 0%;
+    transform: translateX(-50%);
+    border-style: solid;
+    border-width: 10px 10px 0 10px;
+    border-color: #e06565 transparent transparent transparent;
+  }
 `;
-
+const OtherChat = styled.div`
+  position: relative;
+  display: inline-block;
+  background-color: #e5bcbc;
+  border-radius: 5px;
+  padding: 10px;
+  max-width: 60%;
+  word-break: break-all;
+  margin-bottom: 5px;
+  margin-right: 1px;
+  &:before {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 100%;
+    transform: translateX(-50%);
+    border-style: solid;
+    border-width: 10px 10px 0 10px;
+    border-color: #e5bcbc transparent transparent transparent;
+  }
+`;
 const ChatNav = styled.div`
   box-sizing: border-box;
   padding: 0.5rem;
@@ -39,7 +81,55 @@ const RightModal = styled.div<{ isModal: boolean }>`
   background-color: white;
   transition: all 0.5s ease-in-out;
   z-index: 11;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2rem;
+`;
+const ImgDiv = styled.div`
+  width: 15%;
+  height: 100%;
+  overflow: hidden;
+  /* inline-size: 25ch; */
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  float: left;
+  margin-right: 2rem;
+`;
+
+const Img = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+const UserDiv = styled.div`
+  display: flex;
+  margin-bottom: 1rem;
+  font-size: 20px;
+  font-family: "SeoulNamsan";
+  width: 100%;
+  vertical-align: middle;
   align-items: center;
+`;
+
+const InputDiv = styled.div`
+  width: 100%;
+  background-color: white;
+  position: sticky;
+  height: 2.5rem;
+  box-sizing: border-box;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+`;
+
+const Input = styled.input`
+  width: 85%;
+  height: 70%;
+  border: 1px solid black;
+  // border는 삭제예정
+  border-radius: 3px;
 `;
 const ChatRoom = () => {
   const { id } = useParams();
@@ -48,13 +138,18 @@ const ChatRoom = () => {
     ["메세지", 0],
   ]);
   const [isModal, setIsModal] = useState(false);
+  const [users, setUsers] = useState(["현욱", "현빈", "준서", "다영", "영교", "동혁"]);
   const navigate = useNavigate();
   const rapperDiv = useRef<HTMLInputElement>(null);
   const makedummy = () => {
     return new Promise((resolve, reject) => {
       for (let i = 0; i < 10; i++) {
         setMessages(prev => {
-          return [...prev, ["메세지", 1], ["메세지", 0]];
+          return [
+            ...prev,
+            ["메세awdawdkhjabkfhjbaskdbfk지", 1],
+            ["메awdljawndljanwklujfnhaklfhklujashf세지", 0],
+          ];
         });
       }
       resolve("ok");
@@ -118,17 +213,23 @@ const ChatRoom = () => {
         </ChatNav>
       </header>
       <RightModal isModal={isModal}>
-        <h2>모임의 이름이 들어갑니다</h2>
-        <p>대전 서구 둔산동 연남</p>
-        <p>2023.01.17 PM 8:00</p>
+        <h2 style={{ fontFamily: "JejuGothic" }}>모임의 이름이 들어갑니다</h2>
+        <p style={{ fontFamily: "SeoulNamsan", marginBottom: "5px" }}>대전 서구 둔산동 연남</p>
+        <p style={{ marginBottom: "10px", fontFamily: "SeoulNamsan" }}>2023.01.17 PM 8:00</p>
         <div style={{ border: "1px solid var(--c-lightgray)" }}></div>
         <br />
-        <h3>참여자 목록</h3>
-        <p>이름</p>
-        <p>이름</p>
-        <p>이름</p>
-        <p>이름</p>
-        <div style={{ marginTop: "10rem" }}>
+        <h3 style={{ fontFamily: "JejuGothic" }}>참여자 목록</h3>
+        {users.map((user, i) => {
+          return (
+            <UserDiv key={i}>
+              <ImgDiv>
+                <Img src={temgif}></Img>
+              </ImgDiv>
+              <p>{user}</p>
+            </UserDiv>
+          );
+        })}
+        <div style={{ marginTop: "1rem" }}>
           <button onClick={OutRoomHandler}>채팅방 나가기</button>
         </div>
       </RightModal>
@@ -151,16 +252,26 @@ const ChatRoom = () => {
               }}
             >
               <p style={{ fontFamily: "JejuGothic", fontSize: "12px", margin: "0 1rem" }}>나</p>
-              <MessageBox messageId={message[1]} key={i}>
+              {message[1] === 0 ? (
+                <MyChat>{message[0]}</MyChat>
+              ) : (
+                <OtherChat>{message[0]}</OtherChat>
+              )}
+              {/* <MessageBox messageId={message[1]} key={i}>
                 <p style={{ fontFamily: "JejuGothic", fontSize: "14px" }}>{message[0]}</p>
-              </MessageBox>
+              </MessageBox> */}
             </div>
           );
         })}
-        <input type="text" placeholder="메세지 입력" />
         {/* </div> */}
         <div style={{ height: "5rem" }}></div>
       </div>
+      <footer>
+        <InputDiv>
+          <p style={{ fontFamily: "JejuGothic", fontSize: "20px", fontWeight: "400" }}>+</p>
+          <Input></Input>
+        </InputDiv>
+      </footer>
     </>
   );
 };
