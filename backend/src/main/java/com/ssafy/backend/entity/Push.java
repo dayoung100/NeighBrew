@@ -1,7 +1,6 @@
 package com.ssafy.backend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -10,13 +9,13 @@ import java.util.Date;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Where(clause = "deleted = false")
 public class Push{
 
     @Id
     @GeneratedValue
-    private Long pushId;
+    private Long id;
 
     @Lob
     private String content;
@@ -35,8 +34,17 @@ public class Push{
     @JoinColumn(name = "userId")
     private User user;
 
-    private boolean readYN = false;
-
+    @Column(name="push_read_YN")
+    private boolean isRead = false;
 
     private boolean deleted = false;
+
+    @Builder
+    public Push(User receiver, PushType pushType, String content, String url, boolean isRead){
+        this.user = receiver;
+        this.pushType = pushType;
+        this.content = content;
+        this.relatedURL = url;
+        this.isRead =isRead;
+    }
 }

@@ -10,9 +10,8 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     //모든 emitter를 저장하는 ConcurrentHashMap
     //ConCurrentHashMap을 사용함으로써 멀티쓰레드 환경에서도 동시성을 유지할 수 있게 한다.
 
-    //member와 관련된 모든 emitter를 찾는다.
+
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
-    //member와 관련된 모든 event를 찾는다.
     private final Map<String, Object> eventCache = new ConcurrentHashMap<>();
 
     //주어진 아이디와 emitter를 저장한다.
@@ -25,12 +24,14 @@ public class EmitterRepositoryImpl implements EmitterRepository {
         eventCache.put(emitterId,event);
     }
 
+    //member와 관련된 모든 emitter를 찾는다.
     public Map<String, SseEmitter> findAllEmitterStartWithByMemberId(String memberId) {
         return emitters.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(memberId))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    //member와 관련된 모든 event를 찾는다.
     public Map<String, Object> findAllEventCacheStartWithByMemberId(String memberId) {
         return eventCache.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(memberId))
