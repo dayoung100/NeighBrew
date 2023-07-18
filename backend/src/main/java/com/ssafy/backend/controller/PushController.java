@@ -1,5 +1,6 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.entity.PushType;
 import com.ssafy.backend.service.PushService;
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -39,35 +40,13 @@ public class PushController {
         return pushService.connect(id, lastEventId);
     }
 
-//    @GetMapping(value = "comment-like", produces = "text/event-stream")
-//    public ResponseEntity<?> pushCommentLike() throws Exception {
-//        logger.info("댓글 알림 접근");
-//        pushService.commentLikeRequest(2L, 1L);
-//        return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
-//    }
-//    @ResponseBody
-//    @GetMapping(value = "chat", produces = "text/event-stream")
-//    public void pushChat() throws Exception {
-//        logger.info("채팅 메세지 생성 알림 접근");
-//        pushService.chatRequest(2L, 1L);
-//    }
-//    @GetMapping(value = "meet-access", produces = "text/event-stream")
-//    public void pushMeetAccess() throws Exception {
-//        logger.info("모임 참여 수락 알림 접근");
-//        pushService.meetAccessRequest(2L, 1L);
-//    }
-//
-//    @GetMapping(value = "meet-reject", produces = "text/event-stream")
-//    public void pushMeetReject() throws Exception {
-//        logger.info("모임 참여 거절 알림 접근");
-//        pushService.meetRejectRequest(2L, 1L);
-//    }
-//
-//    @GetMapping(value = "meet-eval", produces = "text/event-stream")
-//    public void pushMeetEval() throws Exception {
-//        logger.info("모임 참여 평가 알림 접근");
-//        pushService.meetEvalRequest(1L, 2L);
-//    }
+    //Follow 알림을 위한 더미 데이터
+    @GetMapping(value = "follow", produces = "text/event-stream")
+    public ResponseEntity<?> pushFollow() throws Exception {
+        logger.info("팔로우 알림 접근");
+        pushService.send(1L, PushType.Follow, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "http://localhost/follow/follow");
+        return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+    }
 }
 
 // SSE SPEC

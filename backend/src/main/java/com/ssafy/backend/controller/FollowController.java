@@ -67,10 +67,5 @@ public class FollowController {
                 HttpStatus.OK);
     }
 
-    @GetMapping(value = "follow", produces = "text/event-stream")
-    public ResponseEntity<?> pushFollow() throws Exception {
-        logger.info("팔로우 알림 접근");
-        pushService.send(1L, PushType.Follow, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "http://localhost/follow/follow");
-        return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
-    }
+
 }

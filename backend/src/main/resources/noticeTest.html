@@ -39,7 +39,7 @@
 
 
       document.getElementById("follow").addEventListener("click", () => {
-        new EventSource(`http://localhost:8080/follow/follow`).addEventListener('message', (event) => {
+        new EventSource(`http://localhost:8080/push/follow`).addEventListener('message', (event) => {
           console.log(event)
           const p = document.createElement("div");
           p.innerText = event.data;
