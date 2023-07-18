@@ -16,12 +16,12 @@ public class DrinkController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> registDrink(DrinkDto drinkDto) {
+    public ResponseEntity<?> registDrink(@RequestBody DrinkDto drinkDto) {
         return new ResponseEntity<>(drinkService.registDrink(drinkDto), HttpStatus.CREATED);
     }
 
-    @GetMapping()
-    public ResponseEntity<?> getDrink(Long drinkId) {
+    @GetMapping("/{drinkId}")
+    public ResponseEntity<?> getDrink(@PathVariable Long drinkId) {
         return new ResponseEntity<>(drinkService.getDrink(drinkId), HttpStatus.OK);
     }
 
@@ -30,13 +30,13 @@ public class DrinkController {
         return new ResponseEntity<>(drinkService.getDrinkList(), HttpStatus.OK);
     }
 
-    @PutMapping()
-    public ResponseEntity<?> updateDrink(DrinkDto drinkDto) {
-        return new ResponseEntity<>(drinkService.updateDrink(drinkDto), HttpStatus.OK);
+    @PutMapping("/{drinkId}")
+    public ResponseEntity<?> updateDrink(@PathVariable Long drinkId, @RequestBody DrinkDto drinkDto) {
+        return new ResponseEntity<>(drinkService.updateDrink(drinkId, drinkDto), HttpStatus.OK);
     }
 
-    @DeleteMapping()
-    public ResponseEntity<?> deleteDrink(Long drinkId) {
+    @DeleteMapping("/{drinkId}")
+    public ResponseEntity<?> deleteDrink(@PathVariable Long drinkId) {
         drinkService.deleteDrink(drinkId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
