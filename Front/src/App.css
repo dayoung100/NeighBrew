@@ -1,9 +1,9 @@
 /** font import 영역 **/
-/* JejuGothic */
+/* font-family: "JejuGothic"; */
 @import url("https://webfontworld.github.io/jeju/JejuGothic.css");
-/* SeoulNamsan */
+/* font-family: "SeoulNamsan"; */
 @import url("https://webfontworld.github.io/seoulnamsan/SeoulNamsan.css");
-/* Noto Sans KR */
+/* font-family: "Noto Sans KR"; */
 @import url("https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700&display=swap");
 
 #root {
