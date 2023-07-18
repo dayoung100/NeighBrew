@@ -3,6 +3,7 @@ package com.ssafy.backend.repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -14,55 +15,56 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
     private final Map<String, Object> eventCache = new ConcurrentHashMap<>();
 
-    //주어진 아이디와 emitter를 저장한다.
-    public SseEmitter save(String emitterId, SseEmitter emitter){
-        emitters.put(emitterId, emitter);
-        return emitter;
-    };
-
-    public void saveEventCache(String emitterId, Object event) {
-        eventCache.put(emitterId,event);
+    //Emitter 저장
+    public SseEmitter save(String sseEmitterId, SseEmitter sseEmitter){
+        emitters.put(getEmitterKey(sseEmitterId), sseEmitter);
+        return sseEmitter;
     }
 
-    //member와 관련된 모든 emitter를 찾는다.
-    public Map<String, SseEmitter> findAllEmitterStartWithByMemberId(String memberId) {
+    @Override
+    public Optional<SseEmitter> get(String userId) {
+        return Optional.ofNullable(emitters.get(getEmitterKey(userId)));
+    }
+
+    private String getEmitterKey(String userId) {
+        return "Emitter:UID:" + userId;
+    }
+    private String getEventKey(String userId) {
+        return "Event:UID:" + userId;
+    }
+    //Event 저장
+    public void saveEventCache(String sseEmitterId, Object event) {
+        eventCache.put(getEventKey(sseEmitterId), event);
+    }
+
+    //회원과 관련된 Emitter를 모두 찾음
+    public Map<String, SseEmitter> findAllEmitterStartWithByUserId(String userId) {
         return emitters.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(memberId))
+                .filter(entry -> entry.getKey().equals(getEmitterKey(userId)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    //member와 관련된 모든 event를 찾는다.
-    public Map<String, Object> findAllEventCacheStartWithByMemberId(String memberId) {
+    //회원과 관련된 Event 모두 찾음
+    public Map<String, Object> findAllEventCacheStartWithByUserId(String userId) {
         return eventCache.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(memberId))
+                .filter(entry -> entry.getKey().equals(getEventKey(userId)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-
 
     //주어진 ID 와 Emitter를 제거
-    public void deleteById(String emitterId){
-        emitters.remove(emitterId);
+    public void deleteById(String sseEmitterId){
+        emitters.remove(getEmitterKey(sseEmitterId));
     };
 
-    public void deleteAllEmitterStartWithId(String memberId) {
+    //회원과 관련된 모든 Emitter 제거
+    public void deleteAllEmitterStartWithId(String userId) {
         emitters.forEach(
-                (key,emitter) -> {
-                    if(key.startsWith(memberId)){
-                        emitters.remove(key);
-                    }
-                }
-        );
+                (key,emitter) -> emitters.remove(key));
     }
-
-    public void deleteAllEventCacheStartWithId(String memberId) {
+    //회원과 관련된 모든 이벤트 제거
+    public void deleteAllEventCacheStartWithId(String userId) {
         eventCache.forEach(
-                (key,emitter) -> {
-                    if(key.startsWith(memberId)){
-                        eventCache.remove(key);
-                    }
-                }
-        );
-
+                (key,emitter) -> eventCache.remove(key));
     }
 }
 /* 구현 참고링크

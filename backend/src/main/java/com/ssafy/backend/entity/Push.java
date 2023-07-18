@@ -40,8 +40,8 @@ public class Push{
     private boolean deleted = false;
 
     @Builder
-    public Push(User receiver, PushType pushType, String content, String url, boolean isRead){
-        this.user = receiver;
+    public Push(User user, PushType pushType, String content, String url, boolean isRead){
+        this.user = user;
         this.pushType = pushType;
         this.content = content;
         this.relatedURL = url;

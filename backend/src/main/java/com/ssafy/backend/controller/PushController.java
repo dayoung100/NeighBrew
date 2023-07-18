@@ -4,6 +4,8 @@ import com.ssafy.backend.service.PushService;
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,22 +15,60 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequestMapping("/push")
+@CrossOrigin("*")
 public class PushController {
     private final PushService pushService;
+    private static final Logger logger = LoggerFactory.getLogger(PushController.class);
 
-
-    @Autowired
+    //@Autowired
     public PushController(PushService pushService) {
+        super();
         this.pushService = pushService;
     }
 
     //클라이언트에서 구독하기 위한 connect 메소드
     //@GetMapping(value = "/connect/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @GetMapping(value = "/connect/{id}", produces = "text/event-stream")
+    @GetMapping(value = "connect/{id}", produces = "text/event-stream")
     public SseEmitter connect(@PathVariable Long id,
                               @RequestHeader(value = "Last-Event-ID", required= false, defaultValue = "") String lastEventId) throws IOException {
+        logger.info("@@@@@@@@@@@ 연결 시도 => id :{}, lastEventId {}\n", id, lastEventId);
+
+        //클라이언트로 전달되는 것이 아닌, 클라이언트에게 지속적으로 알림을 제공하기 위한 연결 통로를 생성한다.
         return pushService.connect(id, lastEventId);
-        //이전에 받지 못한 이벤트가 있을 때(SSE 연결 시간 만료 및 종료 등), 마지막 이벤트 ID를 넘겨 이어서 받게하기 위한 변수
+    }
+
+    @GetMapping(value = "comment-like", produces = "text/event-stream")
+    public void pushCommentLike() throws Exception {
+        logger.info("댓글 알림 접근");
+        pushService.commentLikeRequest(1L, 2L);
+    }
+    @GetMapping(value = "follow", produces = "text/event-stream")
+    public void pushFollow() throws Exception {
+        logger.info("팔로우 알림 접근");
+        pushService.followRequest(1L, 2L);
+    }
+    @ResponseBody
+    @GetMapping(value = "chat", produces = "text/event-stream")
+    public void pushChat() throws Exception {
+        logger.info("채팅 메세지 생성 알림 접근");
+        pushService.chatRequest(1L, 2L);
+    }
+    @GetMapping("meet-access")
+    public void pushMeetAccess() throws Exception {
+        logger.info("모임 참여 수락 알림 접근");
+        pushService.meetAccessRequest(1L, 2L);
+    }
+
+    @GetMapping("meet-reject")
+    public void pushMeetReject() throws Exception {
+        logger.info("모임 참여 거절 알림 접근");
+        pushService.meetRejectRequest(1L, 2L);
+    }
+
+    @GetMapping("meet-eval")
+    public void pushMeetEval() throws Exception {
+        logger.info("모임 참여 평가 알림 접근");
+        pushService.meetEvalRequest(1L, 2L);
     }
 }
 
