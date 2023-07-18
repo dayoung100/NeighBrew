@@ -10,8 +10,6 @@ public interface EmitterRepository {
     SseEmitter save(String sseEmitterId, SseEmitter sseEmitter);
     //Event 저장
     void saveEventCache(String sseEmitterId, Object event);
-    Optional<SseEmitter> get(String userId);
-
     //회원과 관련된 Emitter를 모두 찾음
     Map<String, SseEmitter> findAllEmitterStartWithByUserId(String userId);
 

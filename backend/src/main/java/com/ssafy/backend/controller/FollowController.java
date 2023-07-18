@@ -1,9 +1,14 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.entity.Follow;
+import com.ssafy.backend.entity.PushType;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.FollowRepository;
+import com.ssafy.backend.repository.PushRepository;
 import com.ssafy.backend.repository.UserRepository;
+import com.ssafy.backend.service.PushService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +22,14 @@ import java.util.stream.Collectors;
 public class FollowController {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(FollowController.class);
+    private final PushService pushService;
 
     @Autowired
-    public FollowController(FollowRepository followRepository, UserRepository userRepository) {
+    public FollowController(FollowRepository followRepository, UserRepository userRepository, PushService pushService) {
         this.followRepository = followRepository;
         this.userRepository = userRepository;
+        this.pushService = pushService;
     }
 
     @PostMapping("/{followerId}/{followingId}")
@@ -57,5 +65,12 @@ public class FollowController {
         User user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
         return new ResponseEntity<>(followRepository.findByFollower(user).orElseThrow(() -> new IllegalArgumentException("팔로잉 하지 않았습니다.")).stream().map(Follow::getFollowing).collect(Collectors.toList()),
                 HttpStatus.OK);
+    }
+
+    @GetMapping(value = "follow", produces = "text/event-stream")
+    public ResponseEntity<?> pushFollow() throws Exception {
+        logger.info("팔로우 알림 접근");
+        pushService.send(1L, PushType.Follow, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "http://localhost/follow/follow");
+        return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
     }
 }

@@ -28,21 +28,20 @@ public class PushService {
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 10;
 
     private static final Logger logger = LoggerFactory.getLogger(PushService.class);
-
     private final EmitterRepository emitterRepository = new EmitterRepositoryImpl();
     private final PushRepository pushRepository;
 
-    //@Autowired
+    @Autowired
     public PushService(PushRepository pushRepository) {
-        super();
         this.pushRepository = pushRepository;
     }
 
     public SseEmitter connect(Long id, String lastEventId) {
-        //id에 이벤트가 발생한 시간을 더해 유실된 데이터를 찾을 수 있도록 한다.
-        logger.info("PushService 접근 : 접근 유저 id{}", id);
-        String sseEmitterId = String.valueOf(id);
+
+        logger.info("PushService 접근 : 접근 유저 id {}", id);
+
         //새로운 Ssemitter를 만든다.
+        String sseEmitterId = makeTimeIncludeId(id);
         SseEmitter sseEmitter = emitterRepository.save(sseEmitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
         //세션이 종료될 경우 저장한 SSEEmitter를 삭제한다.
@@ -50,32 +49,36 @@ public class PushService {
         sseEmitter.onTimeout(() -> emitterRepository.deleteById(sseEmitterId));
 
         // 503 에러가 발생하지 않도록 더미 데이터를 보내 연결을 유지한다.
-        sendToClient("Init Connect", sseEmitter, "Emitter:UID:"+sseEmitterId, "EventStream Created. [userId= " + id + "]");
+        sendToClient( sseEmitter, "Init Connect", makeTimeIncludeId(id), "EventStream Created. [userId= " + id + "]");
 
         //클라이언트가 미수신한 Event목록이 있을 경우 전송해 event 유실을 예방한다.
         if (!lastEventId.isEmpty()) {
-            //유저 ID에 해당하는 모든 SSE 이벤트를 가져온다.
-            Map<String, Object> events = emitterRepository.findAllEventCacheStartWithByUserId(sseEmitterId);
-
-            //map을 전체 탐색을 수행함. 이벤트에 해당하는 값을 사전순으로 정렬해 이전 데이터를 먼저 push 알림 전송
-            events.entrySet().stream()
-                    .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-                    .forEach(entry -> sendToClient(lastEventId, sseEmitter, entry.getKey(), entry.getValue()));
+            sendLostData(lastEventId, id, sseEmitterId, sseEmitter);
+        }else{
+            logger.info(">> 미수신 목록이 없음 <<");
         }
         return sseEmitter;
     }
 
     //클라이언트에게 데이터를 전송하는 메소드
-    private void sendToClient(String eventId, SseEmitter sseEmmitter, String sseEmitterId, Object data) {
+    private void sendToClient(SseEmitter sseEmmitter, String eventId, String sseEmitterId, Object data) {
         try {
             sseEmmitter.send(SseEmitter.event()
                     .id(eventId)
-                    //.name("sse") 이게뭐지
                     .data(data));
         } catch (IOException e) {
             emitterRepository.deleteById(sseEmitterId);
             sseEmmitter.completeWithError(e);
         }
+    }
+
+    private void sendLostData(String lastEventId, Long userId, String emitterId, SseEmitter emitter) {
+        //유저 ID에 해당하는 모든 SSE 이벤트를 가져온다.
+        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByUserId(String.valueOf(userId));
+        eventCaches.entrySet().stream()
+                //map을 전체 탐색을 수행함. 이벤트에 해당하는 값을 사전순으로 정렬해 이전 데이터를 먼저 push 알림 전송
+                .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
+                .forEach(entry -> sendToClient(emitter, entry.getKey(), emitterId, entry.getValue()));
     }
 
     /**
@@ -86,19 +89,28 @@ public class PushService {
      * @Param content : 전송할 메세지 내용
      * @Param url : redirect할 URL 정보 입력
      */
-    public void send(User receiver, PushType pushType, String content, String url) {
-        Push push = pushRepository.save(createPush(receiver, pushType, content, url));
+//    public void send(User receiver, PushType pushType, String content, String url) {
+        //Push push = pushRepository.save(createPush(receiver, pushType, content, url));
+    public void send(Long id, PushType pushType, String content, String url) {
+        PushDto pushDto = new PushDto();
+        pushDto.setId(1L);
+        pushDto.setContent(content);
+        pushDto.setUrl(url);
+        pushDto.setCreatedAt(String.valueOf(System.currentTimeMillis()));
 
-        String receiverId = String.valueOf(receiver.getUserId());
+        String receiverId = String.valueOf(id);
+        String eventId = makeTimeIncludeId(id);
 
         //로그인 한 유저의 모든 Emiiter를 불러온다
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(receiverId);
+        if(sseEmitters == null ) logger.info("null임ㅋ");
         sseEmitters.forEach(
                 (key, emitter) -> {
+                    logger.info("정보 출력 {}, {} ", key, emitter.getTimeout());
                     //데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
-                    emitterRepository.saveEventCache(key, push);
+                    emitterRepository.saveEventCache(key, pushDto);
                     //데이터를 receiver에게 전송
-                    sendToClient("send", emitter, key, PushDto.builder().push(push));
+                    sendToClient( emitter,eventId, key, pushDto);
                 }
         );
     }
@@ -111,122 +123,140 @@ public class PushService {
                 .isRead(false)
                 .build();
     }
-    
+
+    //id에 이벤트가 발생한 시간을 더해 유실된 데이터를 찾을 수 있도록 한다.
+    private String makeTimeIncludeId(Long memberId) {
+        return memberId + "_" + System.currentTimeMillis();
+    }
+
+
     //==================================================
     //                <<알림 전송 메소드>>
     //           pushService.XXXRequest(@Param)
     // 기능별 controller에서 적절한 파라미터를 입력해서 사용하자
     //==================================================
-    
-    //댓글 좋아요 클릭시 알림 전송
-    //팝업 메시지는 출력하지 않는다.
-    public void commentLikeRequest(Long clickUserId, Long writeUserId){
-        String writer = String.valueOf(writeUserId);
-        String clicker = String.valueOf(clickUserId);
-
-        Optional<SseEmitter> sseEmitter = emitterRepository.get(String.valueOf(writer));
-        if (sseEmitter.isPresent()) {
-            try {
-                sseEmitter.get().send(SseEmitter.event()
-                        .id(clicker)
-                        .name("commentLikeRequest")
-                        .data(clicker+"님이 회원님의 댓글을 좋아합니다."));
-            } catch (IOException exception) {
-                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
-                emitterRepository.deleteById(writer);
-            }
-        }
-    }
-
-    public void followRequest(Long fromUserId, Long toUserId){
-        String toUser = String.valueOf(toUserId);
-        String fromUser = String.valueOf(fromUserId);
-
-        Optional<SseEmitter> sseEmitter = emitterRepository.get(String.valueOf(toUser));
-        if (sseEmitter.isPresent()) {
-            try {
-                sseEmitter.get().send(SseEmitter.event()
-                        .id(fromUser)
-                        .name("followRequest")
-                        .data(fromUser+"님이 회원님을 팔로우하기 시작했습니다."));
-            } catch (IOException exception) {
-                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
-                emitterRepository.deleteById(toUser);
-            }
-        }
-    }
-
-    public void chatRequest(Long fromUserId, Long toUserId){
-        String toUser = String.valueOf(toUserId);
-        String fromUser = String.valueOf(fromUserId);
-
-        Optional<SseEmitter> sseEmitter = emitterRepository.get(String.valueOf(toUser));
-        if (sseEmitter.isPresent()) {
-            try {
-                sseEmitter.get().send(SseEmitter.event()
-                        .id(fromUser)
-                        .name("chatRequest")
-                        .data(fromUser+"님이 메세지를 보냈습니다."));
-            } catch (IOException exception) {
-                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
-                emitterRepository.deleteById(toUser);
-            }
-        }
-    }
-
-    public void meetAccessRequest(Long meetingId, Long toUserId){
-        String toUser = String.valueOf(toUserId);
-        String meet = String.valueOf(meetingId);
-
-        Optional<SseEmitter> sseEmitter = emitterRepository.get(String.valueOf(toUser));
-        if (sseEmitter.isPresent()) {
-            try {
-                sseEmitter.get().send(SseEmitter.event()
-                        .id(meet)
-                        .name("meetAccessRequest")
-                        .data(meet+"모임 참여에 승인 됬습니다."));
-            } catch (IOException exception) {
-                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
-                emitterRepository.deleteById(toUser);
-            }
-        }
-    }
-
-    public void meetRejectRequest(Long meetingId, Long toUserId){
-        String toUser = String.valueOf(toUserId);
-        String meet = String.valueOf(meetingId);
-
-        Optional<SseEmitter> sseEmitter = emitterRepository.get(String.valueOf(toUser));
-        if (sseEmitter.isPresent()) {
-            try {
-                sseEmitter.get().send(SseEmitter.event()
-                        .id(meet)
-                        .name("meetRejectRequest")
-                        .data(meet+"모임 참여에 거절 됬습니다."));
-            } catch (IOException exception) {
-                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
-                emitterRepository.deleteById(toUser);
-            }
-        }
-    }
-
-    public void meetEvalRequest(Long meetingId, Long toUserId){
-        String toUser = String.valueOf(toUserId);
-        String meet = String.valueOf(meetingId);
-
-        Optional<SseEmitter> sseEmitter = emitterRepository.get(String.valueOf(toUser));
-        if (sseEmitter.isPresent()) {
-            try {
-                sseEmitter.get().send(SseEmitter.event()
-                        .id(meet)
-                        .name("meetEvalRequest")
-                        .data(meet+"모임 평가를 해주세요~!"));
-            } catch (IOException exception) {
-                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
-                emitterRepository.deleteById(toUser);
-            }
-        }
-    }
+//
+//    //댓글 좋아요 클릭시 알림 전송
+//    //팝업 메시지는 출력하지 않는다.
+//    public void commentLikeRequest(Long clickUserId, Long writeUserId){
+//        String writer = String.valueOf(writeUserId);
+//        String clicker = String.valueOf(clickUserId);
+//
+//        Optional<SseEmitter> sseEmitter = emitterRepository.get(writer);
+//        if (sseEmitter.isPresent()) {
+//            try {
+//                sseEmitter.get().send(SseEmitter.event()
+//                        .id(clicker)
+//                        .name("commentLikeRequest")
+//                        .data(clicker).data("님이 회원님의 댓글을 좋아합니다."));
+//            } catch (IOException exception) {
+//                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
+//                emitterRepository.deleteById(writer);
+//            }
+//        }else{
+//            logger.info("댓글 알림 실패");
+//        }
+//    }
+//
+//    public void followRequest(Long fromUserId, Long toUserId){
+//        String toUser = String.valueOf(toUserId);
+//        String fromUser = String.valueOf(fromUserId);
+//
+//        Optional<SseEmitter> sseEmitter = emitterRepository.get(toUser);
+//        if (sseEmitter.isPresent()) {
+//            try {
+//                sseEmitter.get().send(SseEmitter.event()
+//                        .id(fromUser)
+//                        .name("followRequest")
+//                        .data(fromUser+"님이 회원님을 팔로우하기 시작했습니다."));
+//            } catch (IOException exception) {
+//                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
+//                emitterRepository.deleteById(toUser);
+//            }
+//        }else{
+//            logger.info("팔로우 알림 실패");
+//        }
+//    }
+//
+//    public void chatRequest(Long fromUserId, Long toUserId){
+//        String toUser = String.valueOf(toUserId);
+//        String fromUser = String.valueOf(fromUserId);
+//
+//        Optional<SseEmitter> sseEmitter = emitterRepository.get(toUser);
+//        if (sseEmitter.isPresent()) {
+//            try {
+//                sseEmitter.get().send(SseEmitter.event()
+//                        .id(fromUser)
+//                        .name("chatRequest")
+//                        .data(fromUser+"님이 메세지를 보냈습니다."));
+//            } catch (IOException exception) {
+//                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
+//                emitterRepository.deleteById(toUser);
+//            }
+//        }else{
+//            logger.info("채팅 알림 실패");
+//        }
+//    }
+//
+//    public void meetAccessRequest(Long meetingId, Long toUserId){
+//        String toUser = String.valueOf(toUserId);
+//        String meet = String.valueOf(meetingId);
+//
+//        Optional<SseEmitter> sseEmitter = emitterRepository.get(toUser);
+//        if (sseEmitter.isPresent()) {
+//            try {
+//                sseEmitter.get().send(SseEmitter.event()
+//                        .id(meet)
+//                        .name("meetAccessRequest")
+//                        .data(meet+"모임 참여에 승인 됬습니다."));
+//            } catch (IOException exception) {
+//                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
+//                emitterRepository.deleteById(toUser);
+//            }
+//        }else{
+//            logger.info("미팅 수락 알림 실패");
+//        }
+//    }
+//
+//    public void meetRejectRequest(Long meetingId, Long toUserId){
+//        String toUser = String.valueOf(toUserId);
+//        String meet = String.valueOf(meetingId);
+//
+//        Optional<SseEmitter> sseEmitter = emitterRepository.get(toUser);
+//        if (sseEmitter.isPresent()) {
+//            try {
+//                sseEmitter.get().send(SseEmitter.event()
+//                        .id(meet)
+//                        .name("meetRejectRequest")
+//                        .data(meet+"모임 참여에 거절 됬습니다."));
+//            } catch (IOException exception) {
+//                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
+//                emitterRepository.deleteById(toUser);
+//            }
+//        }else{
+//            logger.info("미팅 거절 알림 실패");
+//        }
+//    }
+//
+//    public void meetEvalRequest(Long meetingId, Long toUserId){
+//        String toUser = String.valueOf(toUserId);
+//        String meet = String.valueOf(meetingId);
+//
+//        Optional<SseEmitter> sseEmitter = emitterRepository.get(toUser);
+//        if (sseEmitter.isPresent()) {
+//            try {
+//                sseEmitter.get().send(SseEmitter.event()
+//                        .id(meet)
+//                        .name("meetEvalRequest")
+//                        .data(meet+"모임 평가를 해주세요~!"));
+//            } catch (IOException exception) {
+//                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
+//                emitterRepository.deleteById(toUser);
+//            }
+//        }else{
+//            logger.info("미팅 평가 알림 실패");
+//        }
+//    }
 
 }
 /*

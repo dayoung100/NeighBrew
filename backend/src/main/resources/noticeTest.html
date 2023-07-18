@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button type="button" id="comment">댓글 알림</button>
+    <br />
+    <button type="button" id="follow">팔로우 알림</button>
+    <br />
+    <button type="button" id="chat">채팅 알림</button>
+    <br />
+
+    <button type="button" id="accept">모임 수락 알림</button>
+    <br />
+    <button type="button" id="reject">모임 거절 알림</button>
+    <br />
+    <button type="button" id="evaluation">모임 평가 알림</button>
+
+    <div id="pushList">
+      <h3>이벤트 결과 출력</h3>
+    </div>
+    <script>
+      let userId = 1; //유저 아이디에 해당하는 것 넣으면 알림 이벤트와 연결시킴
+      //아아디 타입은 Long이니 전송할 때 닉네임 말고 PK값으로 전송해주시면 될 듯 합니다.
+
+      let eventSource = new EventSource(`http://localhost:8080/push/connect/${userId}`);
+
+
+
+      eventSource.addEventListener('message', (event) => {
+        console.log(event)
+        const p = document.createElement("div");
+        p.innerText = event.data;
+        document.getElementById("pushList").appendChild(p);
+      })
+
+
+      document.getElementById("follow").addEventListener("click", () => {
+        new EventSource(`http://localhost:8080/follow/follow`).addEventListener('message', (event) => {
+          console.log(event)
+          const p = document.createElement("div");
+          p.innerText = event.data;
+          document.getElementById("pushList").appendChild(p);
+        })
+      });
+      // document.getElementById("follow").addEventListener("click", () => {
+      //   eventSource.close();
+      //   eventSource = new EventSource(`http://localhost:8080/push/follow`);
+      // });
+      // document.getElementById("chat").addEventListener("click", () => {
+      //   eventSource.close();
+      //   eventSource = new EventSource(`http://localhost:8080/push/chat`);
+      // });
+      // document.getElementById("accept").addEventListener("click", () => {
+      //   eventSource.close();
+      //   eventSource = new EventSource(`http://localhost:8080/push/meet-access`);
+      // });
+      // document.getElementById("reject").addEventListener("click", () => {
+      //   eventSource.close();
+      //   eventSource = new EventSource(`http://localhost:8080/push/meet-reject`);
+      // });
+      // document.getElementById("evaluation").addEventListener("click", () => {
+      //   eventSource.close();
+      //   eventSource = new EventSource(`http://localhost:8080/push/meet-eval`);
+      // });
+
+    </script>
+  </body>
+</html>
