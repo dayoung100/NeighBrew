@@ -44,7 +44,37 @@ public class PushController {
     @GetMapping(value = "follow", produces = "text/event-stream")
     public ResponseEntity<?> pushFollow() throws Exception {
         logger.info("팔로우 알림 접근");
-        pushService.send(1L, PushType.Follow, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "http://localhost/follow/follow");
+        pushService.send(1L, PushType.Follow, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
+        return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+    }
+    @GetMapping(value = "comment", produces = "text/event-stream")
+    public ResponseEntity<?> pushComment() throws Exception {
+        logger.info("댓글 알림 접근");
+        pushService.send(1L, PushType.Follow, "유저 2님께서 회원님의 게시글에 공감을 표현했습니다.", "이동할 url");
+        return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+    }
+    @GetMapping(value = "chat", produces = "text/event-stream")
+    public ResponseEntity<?> pushChat() throws Exception {
+        logger.info("채팅 알림 접근");
+        pushService.send(1L, PushType.Follow, "유저 2님께서 회원님께 메세지를 보냈습니다.", "이동할 url");
+        return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+    }
+    @GetMapping(value = "accept", produces = "text/event-stream")
+    public ResponseEntity<?> pushAccept() throws Exception {
+        logger.info("수락 알림 접근");
+        pushService.send(1L, PushType.Follow, "모임A 신청에 수락되셨습니다.", "이동할 url");
+        return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+    }
+    @GetMapping(value = "reject", produces = "text/event-stream")
+    public ResponseEntity<?> pushReject() throws Exception {
+        logger.info("거절 알림 접근");
+        pushService.send(1L, PushType.Follow, "모임A 신청에 거절되셨습니다.", "이동할 url");
+        return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+    }
+    @GetMapping(value = "evaluation", produces = "text/event-stream")
+    public ResponseEntity<?> pushEval() throws Exception {
+        logger.info("평가 알림 접근");
+        pushService.send(1L, PushType.Follow, "모임A에 대한 평가를 진행해 주세요", "이동할 url");
         return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
     }
 }
