@@ -4,12 +4,12 @@ import filterIcon from "../../assets/meetingFilter.svg";
 
 const TestCateDiv = styled.div`
   height: 10rem;
-  border: 1px solid black;
+  border: 1px solid var(--c-black);
   margin: 2rem 1rem;
 `;
 
 const SearchResultDiv = styled.div`
-  background: #ececec;
+  background: var(--c-lightgray);
   padding: 1rem 0;
 `;
 
@@ -34,7 +34,7 @@ const FilterDiv = styled.div<{ isFilterOpen: boolean }>`
   display: flex;
   justify-content: center;
   margin: 0 1rem;
-  border-bottom: 1px solid #aaaaaa;
+  border-bottom: 1px solid --c-gray;
   display: ${props => (props.isFilterOpen ? "" : "none")};
 `;
 

@@ -6,6 +6,16 @@
 /* font-family: "Noto Sans KR"; */
 @import url("https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700&display=swap");
 
+/* 사용되는 컬러 변수화 */
+/* 사용예시: background: var(--c-lightgray); */
+:root {
+  --c-black: #322d29;
+  --c-gray: #aaaaaa;
+  --c-lightgray: #ececec;
+  --c-beige: #efe9e1;
+  --c-yellow: #f2bc79;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
