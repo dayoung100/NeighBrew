@@ -43,6 +43,7 @@ public class FollowController {
 
         followRepository.save(follow);
 
+        //로거 추가 및 push 이벤트 발생 테스트
         StringBuilder eventMessage = new StringBuilder();
         eventMessage.append(follower.getNickname())
                     .append("님께서 회원님을 팔로우하기 시작했습니다.");
