@@ -8,6 +8,7 @@ import ChatList from "./UI/chat/ChatList";
 import ChatRoom from "./UI/chat/ChatRoom";
 import Drinkpost from "./UI/drinkpost/DrinkpostMain";
 import MeetingMain from "./UI/meet/MeetingMain";
+import DrinkpostCreate from "./UI/drinkpost/DrinkpostCreate";
 
 function App() {
   const navigate = useNavigate();

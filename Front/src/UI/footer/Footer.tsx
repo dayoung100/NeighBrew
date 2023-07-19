@@ -2,14 +2,14 @@
 // import footerMypage from '../../assets/footerMypage.svg';
 // import footerGroup from '../../assets/footerDrinkpost.svg';
 // import footerDrinkpost from '../../assets/footerGroup.svg';
-import styled from 'styled-components';
+import styled from "styled-components";
 import {
   breweryFooterIcon,
   chatFooterIcon,
   meetingFooterIcon,
   myPageFooterIcon,
-} from '../../assets/AllIcon';
-import { useState } from 'react';
+} from "../../assets/AllIcon";
+import { useState } from "react";
 
 const Button = styled.button`
   width: 40%;
@@ -26,10 +26,10 @@ const Button = styled.button`
 
 const Footer = () => {
   const [chooseButton, setChooseButton] = useState(0);
-  const meetingIcon = meetingFooterIcon(chooseButton === 0 ? 'black' : '#AAAAAA');
-  const breweryIcon = breweryFooterIcon(chooseButton === 1 ? 'black' : '#AAAAAA');
-  const chatIcon = chatFooterIcon(chooseButton === 2 ? 'black' : '#AAAAAA');
-  const myIcon = myPageFooterIcon(chooseButton === 3 ? 'black' : '#AAAAAA');
+  const meetingIcon = meetingFooterIcon(chooseButton === 0 ? "black" : "#AAAAAA");
+  const breweryIcon = breweryFooterIcon(chooseButton === 1 ? "black" : "#AAAAAA");
+  const chatIcon = chatFooterIcon(chooseButton === 2 ? "black" : "#AAAAAA");
+  const myIcon = myPageFooterIcon(chooseButton === 3 ? "black" : "#AAAAAA");
 
   return (
     <footer className="footer">
