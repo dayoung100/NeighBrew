@@ -8,7 +8,7 @@ const ItemDiv = styled.div`
   width: 20rem;
   height: 6rem;
   background: white;
-  margin: 1rem auto;
+  margin: 1rem auto 0 auto;
   border-radius: 20px;
   padding: 0.5rem 0.5rem;
 `;
@@ -50,18 +50,26 @@ const InfoContent = styled.div`
   color: var(--c-gray);
 `;
 
-const InfoTag = styled.div`
+const Tag = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: absolute;
-  right: 3%;
-  top: 7%;
   background: var(--c-yellow);
   padding: 1.5% 2%;
   font-family: "JejuGothic";
   font-size: 7px;
   border-radius: 10px;
+  span {
+    display: flex;
+    justify-content: center;
+    min-width: 30px;
+  }
+`;
+
+const InfoTag = styled(Tag)`
+  right: 3%;
+  top: 7%;
   &::before {
     content: "";
     display: inline-block;
@@ -71,11 +79,11 @@ const InfoTag = styled.div`
     background-color: white;
     margin-right: 2px;
   }
-  span {
-    display: flex;
-    justify-content: center;
-    min-width: 30px;
-  }
+`;
+
+const WaitingTag = styled(Tag)`
+  left: 3%;
+  top: 7%;
 `;
 
 const InfoNumber = styled.div`
@@ -89,6 +97,7 @@ type ListInfoItemProps = {
   tag: string;
   content: any;
   numberInfo: any; //인원정보는 4/5 와 같이 들어올 수 있어서
+  isWaiting: boolean; //신청대기중인지
 };
 
 const ListInfoItem = (props: ListInfoItemProps) => {
@@ -105,6 +114,11 @@ const ListInfoItem = (props: ListInfoItemProps) => {
             <span>{props.tag}</span>
           </InfoTag>
           <InfoNumber>{props.numberInfo}</InfoNumber>
+          {props.isWaiting ? (
+            <WaitingTag>
+              <span>승인대기</span>
+            </WaitingTag>
+          ) : null}
         </ItemDiv>
       </div>
     </div>
