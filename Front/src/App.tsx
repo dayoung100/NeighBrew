@@ -7,8 +7,6 @@ import Main from './UI/home/Main';
 import ChatList from './UI/chat/ChatList';
 import ChatRoom from './UI/chat/ChatRoom';
 import Drinkpost from './UI/drinkpost/DrinkpostMain';
-import Navbar from './UI/navbar/Navbar';
-import Footer from './UI/footer/Footer';
 import MeetingMain from './UI/meet/MeetingMain';
 
 function App() {
@@ -24,7 +22,6 @@ function App() {
 
   return (
     <>
-      <Navbar />
       <Routes>
         <Route
           path="/"
@@ -55,7 +52,6 @@ function App() {
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:roomId" element={<ChatRoom></ChatRoom>} />
       </Routes>
-      <Footer />
     </>
   );
 }

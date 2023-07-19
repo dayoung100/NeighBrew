@@ -134,6 +134,46 @@ export const myIcon = (color: string) => {
     </svg>
   );
 };
+// 채팅 방 나가기 화살표 <
+export const arrowLeftIcon = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="18" viewBox="0 0 10 18" fill="none">
+      <path
+        d="M9.00299 1.00171L1.00347 9.00123L9.00299 17.0008"
+        stroke="#322D29"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};
+export const outRoom = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+      <path
+        d="M12.1756 12.0967C13.7056 10.8436 14.4706 10.0786 15.6643 8.60927C14.4719 7.13998 13.7069 6.3762 12.1769 5.12427"
+        stroke="#3E3E3E"
+        stroke-width="1.71429"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M4.862 8.60938H15.6242"
+        stroke="#3E3E3E"
+        stroke-width="1.71429"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M11.9461 1.67448C11.5275 1.29377 10.9918 1.06681 10.4271 1.03091C8.13496 0.867951 5.83418 0.867951 3.54207 1.03091C2.312 1.11955 1.37214 2.03634 1.31628 3.15227C1.22876 4.93349 1.18544 6.71661 1.18635 8.49998C1.18635 10.336 1.23128 12.1246 1.31628 13.8489C1.37214 14.9648 2.312 15.8816 3.54207 15.9691C5.83417 16.1321 8.13496 16.1321 10.4271 15.9691C10.9914 15.9329 11.5266 15.7059 11.9449 15.3255"
+        stroke="#3E3E3E"
+        stroke-width="1.71429"
+        stroke-linecap="round"
+      />
+    </svg>
+  );
+};
 
 export const breweryFooterIcon = (color: string) => {
   return (
