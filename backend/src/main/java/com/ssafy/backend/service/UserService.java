@@ -2,15 +2,35 @@ package com.ssafy.backend.service;
 
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
 
+    @Value("${oauth.kakao.client-id}")
+    private String clientId;
+
+    @Value("${oauth.kakao.url.auth}")
+    private String authUrl;
+
+
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
+
+    public String redirectApiUrl() {
+        String redirectUri = "http://localhost:8080/kakao/callback";
+        String responseType = "code";
+        String Url = authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
+
+        return Url;
+    }
+
+
 
 //    public User registerUser(User user) {
 //        // 이메일 중복 체크
