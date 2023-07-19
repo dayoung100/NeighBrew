@@ -1,7 +1,7 @@
-import logoNavbar from '../../assets/logoNavbar.svg';
-import styled from 'styled-components';
-import { alertNavIcon } from '../../assets/AllIcon';
-import { useState } from 'react';
+import logoNavbar from "../../assets/logoNavbar.svg";
+import styled from "styled-components";
+import { alertNavIcon } from "../../assets/AllIcon";
+import { useState } from "react";
 
 const Button = styled.button`
   width: 40%;
@@ -28,7 +28,7 @@ const NavbarWithoutSearch = () => {
         <Button
           onClick={() => {
             setNavButton(2);
-            console.log('alert!');
+            console.log("alert!");
           }}
         >
           {alertButton}

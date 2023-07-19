@@ -1,7 +1,7 @@
-import logoNavbar from '../../assets/logoNavbar.svg';
-import styled from 'styled-components';
-import { searchNavIcon, alertNavIcon } from '../../assets/AllIcon';
-import { useState } from 'react';
+import logoNavbar from "../../assets/logoNavbar.svg";
+import styled from "styled-components";
+import { searchNavIcon, alertNavIcon } from "../../assets/AllIcon";
+import { useState } from "react";
 
 const Button = styled.button`
   width: 40%;
@@ -29,7 +29,7 @@ const Navbar = () => {
         <Button
           onClick={() => {
             setNavButton(1);
-            console.log('search!');
+            console.log("search!");
           }}
         >
           {searchButton}
@@ -37,7 +37,7 @@ const Navbar = () => {
         <Button
           onClick={() => {
             setNavButton(2);
-            console.log('alert!');
+            console.log("alert!");
           }}
         >
           {alertButton}
