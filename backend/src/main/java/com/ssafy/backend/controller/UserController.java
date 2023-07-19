@@ -35,12 +35,15 @@ public class UserController {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
-    //현재 유저 접속 유저를 accessToken으로 조회
+    // 현재 접속한 유저가 JWT accessToken을 보내면 해당 유저 검증 후에 해당 유저 정보 출력
     @GetMapping("/{accessToken}")
     public ResponseEntity<User> findByAccessToken(@PathVariable String accessToken) {
+
         Long userId = authTokensGenerator.extractUserId(accessToken);
         return ResponseEntity.ok(userRepository.findById(userId).get());
     }
+
+
 
 
 
