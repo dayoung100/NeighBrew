@@ -98,29 +98,31 @@ type ListInfoItemProps = {
   content: any;
   numberInfo: any; //인원정보는 4/5 와 같이 들어올 수 있어서
   isWaiting: boolean; //신청대기중인지
+  routingFunc: any; //라우팅 함수
 };
 
 const ListInfoItem = (props: ListInfoItemProps) => {
   return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <ItemDiv>
-          <ImageArea />
-          <InfoArea>
-            <InfoTitle>{props.title}</InfoTitle>
-            <InfoContent>{props.content}</InfoContent>
-          </InfoArea>
-          <InfoTag>
-            <span>{props.tag}</span>
-          </InfoTag>
-          <InfoNumber>{props.numberInfo}</InfoNumber>
-          {props.isWaiting ? (
-            <WaitingTag>
-              <span>승인대기</span>
-            </WaitingTag>
-          ) : null}
-        </ItemDiv>
-      </div>
+    <div
+      style={{ display: "flex", justifyContent: "center" }}
+      onClick={() => props.routingFunc()}
+    >
+      <ItemDiv>
+        <ImageArea />
+        <InfoArea>
+          <InfoTitle>{props.title}</InfoTitle>
+          <InfoContent>{props.content}</InfoContent>
+        </InfoArea>
+        <InfoTag>
+          <span>{props.tag}</span>
+        </InfoTag>
+        <InfoNumber>{props.numberInfo}</InfoNumber>
+        {props.isWaiting ? (
+          <WaitingTag>
+            <span>승인대기</span>
+          </WaitingTag>
+        ) : null}
+      </ItemDiv>
     </div>
   );
 };

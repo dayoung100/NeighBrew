@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import filterIcon from "../../assets/meetingFilter.svg";
 import SearchBox from "../components/SearchBox";
 import ListInfoItem from "../components/ListInfoItem";
-import MeetingDetail from "./MeetingDetail";
+import MeetingDetail from "./MeetingDetailSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
 import autoAnimate from "@formkit/auto-animate";
 
@@ -113,12 +114,18 @@ const meetingFind = () => {
     "모임6",
     "모임7",
   ]);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
   const parent = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
+
+  const moveToMeetDetail = (meetId: number) => {
+    console.log(meetId, "find");
+    navigate(`/meet/${meetId}`);
+  };
 
   return (
     <div>
@@ -177,6 +184,7 @@ const meetingFind = () => {
               content={<MeetingDetail />}
               numberInfo={<PeopleNumInfo now={1} max={1} />}
               isWaiting={false}
+              routingFunc={() => moveToMeetDetail(1)}
             ></ListInfoItem>
           );
         })}
