@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import searchIcon from "../../assets/iconSearch.svg";
+import { searchNavIcon } from "../../assets/AllIcon";
 
 const SearchDiv = styled.div`
   display: flex;
@@ -19,7 +19,6 @@ const SearchDivInput = styled.input.attrs({ type: "text" })`
 `;
 
 const SearchBtn = styled.button`
-  background: url(${searchIcon});
   background-size: 100%;
   width: 1.5rem;
   height: 1.5rem;
@@ -31,10 +30,18 @@ type InputProps = {
 };
 
 const searchBox = (props: InputProps) => {
+  const searchButton = searchNavIcon();
+
   return (
     <SearchDiv>
       <SearchDivInput type="text" placeholder={props.placeholder} />
-      <SearchBtn />
+      <SearchBtn
+        onClick={() => {
+          console.log("search!");
+        }}
+      >
+        {searchButton}
+      </SearchBtn>
     </SearchDiv>
   );
 };
