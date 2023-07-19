@@ -1,5 +1,6 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

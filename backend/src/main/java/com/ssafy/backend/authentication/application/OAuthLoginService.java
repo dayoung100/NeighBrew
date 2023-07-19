@@ -3,12 +3,14 @@ package com.ssafy.backend.authentication.application;
 
 import com.ssafy.backend.authentication.domain.AuthTokens;
 import com.ssafy.backend.authentication.domain.AuthTokensGenerator;
+import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.RequestOAuthInfoService;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
