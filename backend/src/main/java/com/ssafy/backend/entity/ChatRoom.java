@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -15,10 +14,14 @@ import java.util.UUID;
 public class ChatRoom {
     @Id
     @GeneratedValue
-    private String chatRoomId;
+    private Long chatRoomId;
 
+    @Column(nullable = false, length = 100)
     private String chatRoomName;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<ChatMessage> messages;
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    private List<ChatRoomUser> users;
 }

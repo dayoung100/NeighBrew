@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,6 +18,13 @@ public class ChatMessage {
     @JoinColumn(name = "chatRoomId")
     private ChatRoom chatRoom;
 
+    @Column(nullable = false, length = 20)
     private String sender;
+
+    @Lob
+    @Column(nullable = false)
     private String message;
+
+    @Column(nullable = false)
+    private LocalDateTime timestamp;
 }
