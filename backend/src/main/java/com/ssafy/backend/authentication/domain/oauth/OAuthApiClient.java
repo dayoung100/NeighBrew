@@ -10,6 +10,8 @@ public interface OAuthApiClient {
     //Access Token 을 기반으로 Email, Nickname 이 포함된 프로필 정보를 획득
     OAuthInfoResponse requestOauthInfo(String accessToken);
 
+    String authApiUrl(OAuthLoginParams params);
+
 
 
 }

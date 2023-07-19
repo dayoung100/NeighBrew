@@ -25,4 +25,17 @@ public class AuthController {
     public ResponseEntity<AuthTokens> loginNaver(@RequestBody NaverLoginParams params) {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
+
+
+    @GetMapping("/login/kakao")
+    public ResponseEntity<String> loginRequset(KakaoLoginParams params) {
+        return ResponseEntity.ok(oAuthLoginService.redirectApiUrl(params));
+    }
+
+    @GetMapping("/login/naver")
+    public ResponseEntity<String> loginRequsetResponse (NaverLoginParams params) {
+        return ResponseEntity.ok(oAuthLoginService.redirectApiUrl(params));
+    }
+
+
 }

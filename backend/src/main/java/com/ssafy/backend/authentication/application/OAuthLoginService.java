@@ -59,15 +59,12 @@ public class OAuthLoginService {
     }
 
 
-    public String redirectApiUrl() {
-        String redirectUri = "http://localhost:8080/kakao/callback";
-        String responseType = "code";
-        String Url = authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
 
-        return Url;
+
+    public String redirectApiUrl(OAuthLoginParams params) {
+        String url = requestOAuthInfoService.authAptUrl(params);
+        return url;
     }
-
-
     }
 
 

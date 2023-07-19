@@ -81,5 +81,13 @@ public class KakaoApiClient implements OAuthApiClient {
         return restTemplate.postForObject(url, request, KakaoInfoResponse.class);
     }
 
+    @Override
+    public String authApiUrl(OAuthLoginParams params) {
+        String redirectUri = "http://localhost:8080/kakao/callback";
+        String responseType = "code";
+        String url = authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
+        return url;
+    }
+
 
 }
