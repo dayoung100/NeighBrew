@@ -8,18 +8,18 @@ const TopMenu = styled.div`
   display: flex;
   margin: 1rem 0.5rem 0 0.5rem;
   background-color: white;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--c-gray);
 `;
 
 const TopMenuDetail = styled.button<{ isFocused: boolean }>`
-  color: ${props => (props.isFocused ? "#322d29;" : "#AAAAAA;")};
+  color: var(--${props => (props.isFocused ? "c-black" : "c-gray")});
   font-family: "JejuGothic";
   font-size: 20px;
   line-height: 150%;
   padding: 0 1rem;
   outline: none;
   border: none;
-  border-bottom: ${props => (props.isFocused ? "2px solid #322d29;" : "none;")};
+  border-bottom: ${props => (props.isFocused ? "2px solid var(--c-black);" : "none;")};
   background: white;
 `;
 

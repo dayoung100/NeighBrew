@@ -1,14 +1,14 @@
 // 로그인 화면, 회원 가입을 누르면 Signup.tsx로 이동
-import { Input, Alert } from '../../style/common';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { SignUpData } from '../../Type/types';
-import axios from 'axios';
+import { Input, Alert } from "../../style/common";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { SignUpData } from "../../Type/types";
+import axios from "axios";
 
 const Login = () => {
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoginValid, setIsLoginValid] = useState(''); // 오류시 오류 메세지 출력
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoginValid, setIsLoginValid] = useState(""); // 오류시 오류 메세지 출력
   const navigate = useNavigate();
   const onChangeId = (e: React.ChangeEvent<HTMLInputElement>) => {
     setId(e.target.value);
@@ -18,13 +18,13 @@ const Login = () => {
   };
   const loginHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    return navigate('/home');
+    return navigate("/home");
     // 로그인 로직
     axios
-      .get('url')
+      .get("url")
       .then(res => {
-        if (res.data === 'success') {
-          navigate('/home');
+        if (res.data === "success") {
+          navigate("/home");
         } else {
           setIsLoginValid(res.data);
         }
@@ -36,6 +36,7 @@ const Login = () => {
   return (
     <>
       <h2>로그인</h2>
+      <button>kakao</button>
       <br />
       <form action="submit">
         {isLoginValid && (

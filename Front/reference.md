@@ -4,6 +4,12 @@ React.ChangeEvent<HTMLInputElement>
 // ButtonEvent
 React.MouseEvent<HTMLButtonElement>
 
+// KeyUpEvent
+React.KeyboardEvent<HTMLInputElement>
+
+- KeyDownEvent는 한국어로 칠 때 입력 지연이 있어서 두번 쳐지는 버그가 있으니 KeyUp으로 쓰도록 하자
+- 핸드폰에서 Enter이벤트는 e.keyCode === 13 로 사용하기
+
 // 무한스크롤 로직
 
 ```

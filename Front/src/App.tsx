@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import './App.css';
-import { useNavigate, Route, Routes } from 'react-router-dom';
-import FirstLoading from './UI/etc/FirstLoading';
-import Login from './UI/user/Login';
-import Main from './UI/home/Main';
-import ChatList from './UI/chat/ChatList';
-import ChatRoom from './UI/chat/ChatRoom';
-import Drinkpost from './UI/drinkpost/DrinkpostMain';
-import MeetingMain from './UI/meet/MeetingMain';
+import { useState, useEffect } from "react";
+import "./App.css";
+import { useNavigate, Route, Routes } from "react-router-dom";
+import FirstLoading from "./UI/etc/FirstLoading";
+import Login from "./UI/user/Login";
+import Main from "./UI/home/Main";
+import ChatList from "./UI/chat/ChatList";
+import ChatRoom from "./UI/chat/ChatRoom";
+import Drinkpost from "./UI/drinkpost/DrinkpostMain";
+import MeetingMain from "./UI/meet/MeetingMain";
 
 function App() {
   const navigate = useNavigate();
