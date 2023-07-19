@@ -26,8 +26,4 @@ public class RequestOAuthInfoService {
 
         return client.requestOauthInfo(accessToken);
     }
-
-
-
-
 }

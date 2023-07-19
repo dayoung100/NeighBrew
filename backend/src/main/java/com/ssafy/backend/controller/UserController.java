@@ -41,12 +41,4 @@ public class UserController {
         Long userId = authTokensGenerator.extractUserId(accessToken);
         return ResponseEntity.ok(userRepository.findById(userId).get());
     }
-
-
-
-
-
-
-
-
 }

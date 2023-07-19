@@ -25,19 +25,4 @@ public class AuthController {
     public ResponseEntity<AuthTokens> loginNaver(@RequestBody NaverLoginParams params) {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
-
-
-    //유저가 kakaoLogin시도하면 로그인 페이지로 보내줌
-    @GetMapping("/kakoLogin")
-    public ResponseEntity<String> requestKakao() {
-        String url = oAuthLoginService.redirectApiUrl();
-        return ResponseEntity.ok(url);
-    }
-
-
-
-
-
-
-
 }
