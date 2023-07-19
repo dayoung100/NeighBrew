@@ -1,4 +1,18 @@
+/*
+[ListInfoItem.tsx]
+모임 리스트 또는 술장 검색 결과 리스트에 사용되는 컴포넌트
+자세한 props는 type ListInfoItemProps 참고
+*/
 import styled from "styled-components";
+
+type ListInfoItemProps = {
+  title: string; //제목
+  tag: string; //주종 태그
+  content: any; //내용, 컴포넌트를 넣어도 됨
+  numberInfo: any; //인원정보 또는 후기 수, 컴포넌트를 넣어도 됨
+  isWaiting: boolean; //신청대기중인 모임인지(아니라면 false)
+  routingFunc: any; //라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
+};
 
 const ItemDiv = styled.div`
   position: relative;
@@ -92,21 +106,9 @@ const InfoNumber = styled.div`
   bottom: 7%;
 `;
 
-type ListInfoItemProps = {
-  title: string;
-  tag: string;
-  content: any;
-  numberInfo: any; //인원정보는 4/5 와 같이 들어올 수 있어서
-  isWaiting: boolean; //신청대기중인지
-  routingFunc: any; //라우팅 함수
-};
-
 const ListInfoItem = (props: ListInfoItemProps) => {
   return (
-    <div
-      style={{ display: "flex", justifyContent: "center" }}
-      onClick={() => props.routingFunc()}
-    >
+    <div style={{ display: "flex", justifyContent: "center" }} onClick={() => props.routingFunc()}>
       <ItemDiv>
         <ImageArea />
         <InfoArea>

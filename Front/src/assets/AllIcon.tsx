@@ -135,12 +135,12 @@ export const myIcon = (color: string) => {
   );
 };
 // 채팅 방 나가기 화살표 <
-export const arrowLeftIcon = () => {
+export const arrowLeftIcon = (color: string) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="18" viewBox="0 0 10 18" fill="none">
       <path
         d="M9.00299 1.00171L1.00347 9.00123L9.00299 17.0008"
-        stroke="#322D29"
+        stroke={color}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -354,6 +354,29 @@ export const drinkCategoryCircle = (color: string) => {
   return (
     <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="30" cy="30" r="30" fill={color} />
+    </svg>
+  );
+};
+
+export const personIcon = (color: string) => {
+  return (
+    <svg width="9" height="11" viewBox="0 0 9 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M6.625 2.875C6.625 3.91053 5.78553 4.75 4.75 4.75C3.71447 4.75 2.875 3.91053 2.875 2.875C2.875 1.83947 3.71447 1 4.75 1C5.24728 1 5.72419 1.19754 6.07583 1.54917C6.42746 1.90081 6.625 2.37772 6.625 2.875Z"
+        stroke={color}
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M6.9375 6.625H2.5625C1.69956 6.625 1 7.32456 1 8.1875C1 9.05044 1.69956 9.75 2.5625 9.75H6.9375C7.80044 9.75 8.5 9.05044 8.5 8.1875C8.5 7.32456 7.80044 6.625 6.9375 6.625V6.625Z"
+        stroke={color}
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
     </svg>
   );
 };
