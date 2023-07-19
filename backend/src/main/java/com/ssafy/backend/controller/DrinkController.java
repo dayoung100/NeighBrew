@@ -43,7 +43,9 @@ public class DrinkController {
     public ResponseEntity<?> delete(@PathVariable Long drinkId) throws IllegalArgumentException {
         try {
             drinkService.delete(drinkId);
-            return ResponseEntity.ok().build();
+            // 삭제완료 메시지
+            return ResponseEntity.ok("삭제 완료");
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
