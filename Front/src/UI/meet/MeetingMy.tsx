@@ -1,3 +1,8 @@
+/*
+[MeetingMy.tsx]
+내 모임 페이지
+내가 주최 중인 모임, 내가 참여 중인 모임, 내가 신청한 모임 출력
+*/
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -18,7 +23,7 @@ const MeetTitle = styled.div`
 const meetingMy = () => {
   const navigate = useNavigate();
 
-  const moveToMeetDetail = (meetId: number) => {
+  const GotoMeetDetailHandler = (meetId: number) => {
     console.log(meetId, "my");
     navigate(`/meet/${meetId}`);
   };
@@ -31,9 +36,9 @@ const meetingMy = () => {
           title="내가 주최 중인 모임의 이름"
           tag="소주/맥주"
           content={<MeetingDetail />}
-          numberInfo={<PeopleNumInfo now={1} max={1} />}
+          numberInfo={<PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />}
           isWaiting={false}
-          routingFunc={() => moveToMeetDetail(1)}
+          routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
       </MeetingDiv>
       <MeetingDiv>
@@ -42,9 +47,9 @@ const meetingMy = () => {
           title="내가 참여 중인 모임의 이름"
           tag="소주/맥주"
           content={<MeetingDetail />}
-          numberInfo={<PeopleNumInfo now={1} max={1} />}
+          numberInfo={<PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />}
           isWaiting={false}
-          routingFunc={() => moveToMeetDetail(1)}
+          routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
       </MeetingDiv>
       <MeetingDiv>
@@ -53,9 +58,9 @@ const meetingMy = () => {
           title="내가 신청한 모임의 이름"
           tag="소주/맥주"
           content={<MeetingDetail />}
-          numberInfo={<PeopleNumInfo now={1} max={1} />}
+          numberInfo={<PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />}
           isWaiting={true}
-          routingFunc={() => moveToMeetDetail(1)}
+          routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
         <ListInfoItem
           title="내가 신청한 모임의 이름"
@@ -63,7 +68,7 @@ const meetingMy = () => {
           content="주류 정보는 이렇게 다른 요소는 비워두고 쓰면 될 것 같다"
           numberInfo={null}
           isWaiting={false}
-          routingFunc={() => moveToMeetDetail(1)}
+          routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
       </MeetingDiv>
     </div>
