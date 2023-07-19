@@ -18,7 +18,6 @@
 
 body {
   margin: 0px;
-  /* padding-top: 3.5rem; */
 }
 header {
   position: sticky;
@@ -33,7 +32,6 @@ footer {
 #root {
   max-width: 1280px;
   min-width: 350px;
-  /* margin: 0 auto; */
   text-align: center;
 }
 
@@ -50,12 +48,10 @@ footer {
   justify-content: space-between;
   align-items: center;
   height: 2.5rem;
-  /* position: sticky; */
   background-color: white;
   width: 100%;
   padding: 1rem;
   box-sizing: border-box;
-  /* top: 0px; */
 }
 
 .footer {
@@ -72,4 +68,7 @@ footer {
 p {
   margin-block-end: 0;
   margin-block-start: 0;
+}
+.drinkCategories {
+  background-color: #ffffff;
 }
