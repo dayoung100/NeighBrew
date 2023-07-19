@@ -8,6 +8,8 @@ import ChatList from "./UI/chat/ChatList";
 import ChatRoom from "./UI/chat/ChatRoom";
 import Drinkpost from "./UI/drinkpost/DrinkpostMain";
 import MeetingMain from "./UI/meet/MeetingMain";
+import MeetingDetail from "./UI/meet/MeetingDetail";
+import Mypage from "./UI/user/MyPage";
 
 function App() {
   const navigate = useNavigate();
@@ -48,7 +50,9 @@ function App() {
             </>
           }
         />
-        <Route path="/meeting" element={<MeetingMain />}></Route>
+        <Route path="/meet" element={<MeetingMain />}></Route>
+        <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>
+        <Route path="/myPage/:userid" element={<Mypage></Mypage>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:roomId" element={<ChatRoom></ChatRoom>} />
       </Routes>

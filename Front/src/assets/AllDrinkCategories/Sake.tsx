@@ -185,7 +185,7 @@ export const Sake = (color: string) => {
       />
       <mask
         id="mask0_637_5146"
-        style={{ maskType: 'luminance' }}
+        style={{ maskType: "luminance" }}
         maskUnits="userSpaceOnUse"
         x="19"
         y="7"

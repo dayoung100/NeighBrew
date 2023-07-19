@@ -77,5 +77,14 @@ public class User {
 
     }
 
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", email='" + email + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", oAuthProvider=" + oAuthProvider +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

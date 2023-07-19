@@ -76,17 +76,18 @@ const ChatNav = styled.div`
   word-break: break-all;
   font-size: 0.9rem;
   align-items: center;
+  justify-content: space-between;
 `;
 
 const RightModal = styled.div<{ isModal: boolean }>`
-  transform: ${props => (props.isModal ? "translateX(6%)" : "translateX(150%)")};
+  transform: ${props => (props.isModal ? "translateX(6%)" : "translateX(100%)")};
   position: fixed;
   width: 95%;
-  overflow: hidden;
+  overflow-x: scroll;
   height: 100vh;
   background-color: white;
-  transition: all 0.5s ease-in-out;
-  z-index: 11;
+  transition: all 0.3s;
+  z-index: 16;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -114,7 +115,6 @@ const UserDiv = styled.div`
   font-size: 20px;
   font-family: "SeoulNamsan";
   width: 100%;
-  vertical-align: middle;
   align-items: center;
 `;
 
@@ -134,9 +134,20 @@ const Input = styled.input`
   width: 85%;
   height: 70%;
   border: none;
-  /* border: 1px solid black; */
-  // border는 삭제예정
-  /* border-radius: 3px; */
+  &:focus-visible {
+    outline: none;
+  }
+`;
+
+const BackDrop = styled.div<{ isModal: boolean }>`
+  display: ${props => (props.isModal ? "block" : "none")};
+  transition: all 1s;
+  width: 100%;
+  max-width: 430px;
+  height: 10000px;
+  position: fixed;
+  z-index: 15;
+  background-color: #322d29;
 `;
 const ChatRoom = () => {
   const { id } = useParams();
@@ -210,8 +221,8 @@ const ChatRoom = () => {
         <ChatNav>
           <div
             style={{
-              marginRight: "2.6rem",
-              marginLeft: "1rem",
+              marginRight: "0rem",
+              marginLeft: "0rem",
               textAlign: "center",
               cursor: "pointer",
             }}
@@ -219,18 +230,23 @@ const ChatRoom = () => {
           >
             {ArrowLeftIcon}
           </div>
-          <span style={{ marginRight: "0.5rem", fontFamily: "JejuGothic", fontSize: "20px" }}>
-            이런저런 ㅇㅇㅇㅇ방 이름
-          </span>{" "}
-          <span style={{ marginLeft: "0.5rem" }}>4</span>
+          <span style={{ marginRight: "0rem", fontFamily: "JejuGothic", fontSize: "20px" }}>
+            이런저런 ㅇㅇㅇㅇ방 이름{" "}
+            {
+              <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
+                &nbsp;&nbsp;&nbsp;&nbsp;4
+              </span>
+            }
+          </span>
           <div
-            style={{ marginLeft: "3rem", marginTop: "3px", cursor: "pointer" }}
+            style={{ marginLeft: "0rem", marginTop: "3px", cursor: "pointer" }}
             onClick={chaterInfoHandler}
           >
             {OutRoom}
           </div>
         </ChatNav>
       </header>
+      <BackDrop isModal={isModal} onClick={chaterInfoHandler}></BackDrop>
       <RightModal isModal={isModal}>
         <h2 style={{ fontFamily: "JejuGothic" }}>모임의 이름이 들어갑니다</h2>
         <p style={{ fontFamily: "SeoulNamsan", marginBottom: "5px" }}>대전 서구 둔산동 연남</p>
@@ -288,13 +304,7 @@ const ChatRoom = () => {
       <footer>
         <InputDiv>
           <p style={{ fontFamily: "JejuGothic", fontSize: "20px", fontWeight: "400" }}>+</p>
-          <Input
-            autoFocus
-            value={message}
-            onChange={messageHandler}
-            onKeyUp={sendMessageHandler}
-          ></Input>
-          <button>awd</button>
+          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
         </InputDiv>
       </footer>
     </>

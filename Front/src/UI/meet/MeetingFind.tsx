@@ -1,10 +1,12 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import filterIcon from "../../assets/meetingFilter.svg";
 import SearchBox from "../components/SearchBox";
 import ListInfoItem from "../components/ListInfoItem";
-import MeetingDetail from "./MeetingDetail";
+import MeetingDetail from "./MeetingDetailSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
+import autoAnimate from "@formkit/auto-animate";
 
 const TestCateDiv = styled.div`
   height: 10rem;
@@ -34,12 +36,11 @@ const FilterBtn = styled.button`
   border: none;
 `;
 
-const FilterDiv = styled.div<{ isFilterOpen: boolean }>`
+const FilterDiv = styled.div`
   display: flex;
   justify-content: center;
   margin: 0 1rem;
   border-bottom: 1px solid var(--c-gray);
-  display: ${props => (props.isFilterOpen ? "" : "none")};
 `;
 
 const FilterBg = styled.div`
@@ -89,8 +90,20 @@ const DateInput = styled.input.attrs({ type: "date" })`
 
 const meetingFind = () => {
   const [siList, setSiList] = useState(["서울", "경기", "대전", "인천"]);
-  const [guList, setGuList] = useState(["동구", "중구", "서구", "유성", "대덕"]);
-  const [dongList, setDongList] = useState(["봉명동", "중앙동", "갈마1동", "삼성동", "탄방동"]);
+  const [guList, setGuList] = useState([
+    "동구",
+    "중구",
+    "서구",
+    "유성",
+    "대덕",
+  ]);
+  const [dongList, setDongList] = useState([
+    "봉명동",
+    "중앙동",
+    "갈마1동",
+    "삼성동",
+    "탄방동",
+  ]);
 
   const [meetingList, setMeetingList] = useState([
     "모임의 제목이 들어갑니다",
@@ -101,62 +114,77 @@ const meetingFind = () => {
     "모임6",
     "모임7",
   ]);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
+  const parent = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    parent.current && autoAnimate(parent.current);
+  }, [parent]);
+
+  const moveToMeetDetail = (meetId: number) => {
+    console.log(meetId, "find");
+    navigate(`/meet/${meetId}`);
+  };
 
   return (
     <div>
       <TestCateDiv>category area - 컴포넌트로 빼기</TestCateDiv>
-      <SearchResultDiv>
+      <SearchResultDiv ref={parent}>
         <SearchResultHeader>
           지금 진행 중인 모임
           <FilterBtn onClick={() => setIsFilterOpen(!isFilterOpen)} />
         </SearchResultHeader>
-        <FilterDiv isFilterOpen={isFilterOpen}>
-          <FilterBg>
-            위치
-            <FilterElement>
-              <div>
-                <DropdownInput>
-                  {siList.map(si => {
-                    return <option>{si}</option>;
-                  })}
-                </DropdownInput>
-                시
+        {isFilterOpen && (
+          <FilterDiv>
+            <FilterBg>
+              위치
+              <FilterElement>
+                <div>
+                  <DropdownInput>
+                    {siList.map((si) => {
+                      return <option>{si}</option>;
+                    })}
+                  </DropdownInput>
+                  시
+                </div>
+                <div>
+                  <DropdownInput>
+                    {guList.map((gu) => {
+                      return <option>{gu}</option>;
+                    })}
+                  </DropdownInput>
+                  구
+                </div>
+                <div>
+                  <DropdownInput>
+                    {dongList.map((dong) => {
+                      return <option>{dong}</option>;
+                    })}
+                  </DropdownInput>
+                  동
+                </div>
+              </FilterElement>
+              시간
+              <FilterElement>
+                <DateInput type="date" /> ~
+                <DateInput type="date" />
+              </FilterElement>
+              <div style={{ gridColumn: "span 2" }}>
+                <SearchBox placeholder="정확한 술의 이름 또는 모임의 이름" />
               </div>
-              <div>
-                <DropdownInput>
-                  {guList.map(gu => {
-                    return <option>{gu}</option>;
-                  })}
-                </DropdownInput>
-                구
-              </div>
-              <div>
-                <DropdownInput>
-                  {dongList.map(dong => {
-                    return <option>{dong}</option>;
-                  })}
-                </DropdownInput>
-                동
-              </div>
-            </FilterElement>
-            시간
-            <FilterElement>
-              <DateInput type="date" /> ~
-              <DateInput type="date" />
-            </FilterElement>
-            <div style={{ gridColumn: "span 2" }}>
-              <SearchBox placeholder="정확한 술의 이름 또는 모임의 이름" />
-            </div>
-          </FilterBg>
-        </FilterDiv>
-        {meetingList.map(meeting => {
+            </FilterBg>
+          </FilterDiv>
+        )}
+        {meetingList.map((meeting) => {
           return (
             <ListInfoItem
               title={meeting}
               tag="소주/맥주"
               content={<MeetingDetail />}
               numberInfo={<PeopleNumInfo now={1} max={1} />}
+              isWaiting={false}
+              routingFunc={() => moveToMeetDetail(1)}
             ></ListInfoItem>
           );
         })}
