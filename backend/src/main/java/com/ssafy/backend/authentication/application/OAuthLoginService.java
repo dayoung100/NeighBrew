@@ -3,12 +3,15 @@ package com.ssafy.backend.authentication.application;
 
 import com.ssafy.backend.authentication.domain.AuthTokens;
 import com.ssafy.backend.authentication.domain.AuthTokensGenerator;
+import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.RequestOAuthInfoService;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +27,14 @@ public class OAuthLoginService {
     private final UserRepository userRepository;
     private final AuthTokensGenerator authTokensGenerator;
     private final RequestOAuthInfoService requestOAuthInfoService;
+
+
+    @Value("${oauth.kakao.client-id}")
+    private String clientId;
+
+    @Value("${oauth.kakao.url.auth}")
+    private String authUrl;
+
 
     public AuthTokens login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
@@ -46,4 +57,18 @@ public class OAuthLoginService {
 
         return userRepository.save(user).getUserId();
     }
-}
+
+
+    public String redirectApiUrl() {
+        String redirectUri = "http://localhost:8080/kakao/callback";
+        String responseType = "code";
+        String Url = authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
+
+        return Url;
+    }
+
+
+    }
+
+
+

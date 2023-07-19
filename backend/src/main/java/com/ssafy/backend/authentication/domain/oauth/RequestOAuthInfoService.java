@@ -19,11 +19,15 @@ public class RequestOAuthInfoService {
     }
 
     public OAuthInfoResponse request(OAuthLoginParams params) {
-        System.out.println("params = " + params.toString());
+
         OAuthApiClient client = clients.get(params.oAuthProvider());
-        System.out.println("client = " + client);
+
         String accessToken = client.requestAccessToken(params);
-        System.out.println("accessToken = " + accessToken);
+
         return client.requestOauthInfo(accessToken);
     }
+
+
+
+
 }
