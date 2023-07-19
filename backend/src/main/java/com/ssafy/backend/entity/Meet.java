@@ -17,6 +17,9 @@ public class Meet {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(nullable = false, name = "master")
+    private Long masterId;
+
     //최대 8명
     @Column(nullable = false, columnDefinition = "int default 0")
     private Integer number;
