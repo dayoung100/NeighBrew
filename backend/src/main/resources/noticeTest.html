@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+   <button onclick="requestNotificationPermission()">알림 허용 요청</button>
+   <br>
+   <button onclick="connectToServer()">서버 연결</button>
+   <br>
+   <button onclick="window.open('http://localhost:8080/push/comment','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">댓글 알림 테스트</button>
+    <br />
+   <button onclick="window.open('http://localhost:8080/push/follow','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">팔로우 알림 테스트</button>
+    <br />
+   <button onclick="window.open('http://localhost:8080/push/chat','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">채팅 알림 테스트</button>
+
+   <br />
+
+   <button onclick="window.open('http://localhost:8080/push/accept','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">모임 수락 테스트</button>
+    <br />
+   <button onclick="window.open('http://localhost:8080/push/reject','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">모임 거절 테스트</button>
+    <br />
+   <button onclick="window.open('http://localhost:8080/push/evaluation','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">모임 평가 테스트</button>
+
+
+
+   <div id="pushList">
+      <h3>이벤트 결과 출력</h3>
+    </div>
+    <script>
+      let userId = 1; //유저 아이디에 해당하는 것 넣으면 알림 이벤트와 연결시킴
+      //아아디 타입은 Long이니 전송할 때 닉네임 말고 PK값으로 전송해주시면 될 듯 합니다.
+
+      function connectToServer() {
+        let userId = 1; // 사용자 아이디
+        let eventSource = new EventSource(`http://localhost:8080/push/connect/${userId}`);
+        eventSource.onmessage = function (event) {
+          console.log(JSON.parse(event.data))
+          showResult(event.data);
+          showNotification(event.data);
+        };
+      }
+
+      function showNotification(data) {
+
+          if (Notification.permission === 'granted') {
+              const notificationOptions = {
+                  body: data.content,
+                  icon: 'path/to/icon.png', // 알림 아이콘
+              };
+
+              const notification = new Notification('Neighbrew알림', notificationOptions);
+
+              notification.onclick = function () {
+                  console.log('알림이 클릭되었습니다!');
+              };
+
+              notification.onclose = function () {
+                  console.log('알림이 닫혔습니다.');
+              };
+          }
+      }
+
+      function showResult(notificationData) {
+        const p = document.createElement("div");
+        p.innerText = notificationData;
+        document.getElementById("pushList").appendChild(p);
+      }
+
+      function requestNotificationPermission() {
+        Notification.requestPermission().then(function (permission) {
+          if (permission === 'granted') {
+            console.log('알림이 허용되었습니다!');
+          }
+        });
+      }
+
+
+    </script>
+  </body>
+</html>

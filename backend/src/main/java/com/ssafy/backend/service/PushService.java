@@ -89,8 +89,11 @@ public class PushService {
      * @Param content : 전송할 메세지 내용
      * @Param url : redirect할 URL 정보 입력
      */
-//    public void send(User receiver, PushType pushType, String content, String url) {
-        //Push push = pushRepository.save(createPush(receiver, pushType, content, url));
+
+
+    //public void send(User receiver, PushType pushType, String content, String url) {
+    //  Push push = pushRepository.save(createPush(receiver, pushType, content, url));
+    //  DB체크 완료되면 수행해야함, 유저 객체를 용해야하기 떄문
     public void send(Long id, PushType pushType, String content, String url) {
         PushDto pushDto = new PushDto();
         pushDto.setId(1L);
@@ -107,10 +110,8 @@ public class PushService {
         sseEmitters.forEach(
                 (key, emitter) -> {
                     logger.info("정보 출력 {}, {} ", key, emitter.getTimeout());
-                    //데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
-                    emitterRepository.saveEventCache(key, pushDto);
-                    //데이터를 receiver에게 전송
-                    sendToClient( emitter,eventId, key, pushDto);
+                    emitterRepository.saveEventCache(key, pushDto);//데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
+                    sendToClient( emitter,eventId, key, pushDto);//데이터를 receiver에게 전송
                 }
         );
     }
