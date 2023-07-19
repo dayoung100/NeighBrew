@@ -1,3 +1,8 @@
+/*
+[MeetingFind.tsx]
+모임 찾기 페이지
+주종별 검색, 필터 검색, 검색결과 리스트 출력
+*/
 import styled from "styled-components";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -90,20 +95,8 @@ const DateInput = styled.input.attrs({ type: "date" })`
 
 const meetingFind = () => {
   const [siList, setSiList] = useState(["서울", "경기", "대전", "인천"]);
-  const [guList, setGuList] = useState([
-    "동구",
-    "중구",
-    "서구",
-    "유성",
-    "대덕",
-  ]);
-  const [dongList, setDongList] = useState([
-    "봉명동",
-    "중앙동",
-    "갈마1동",
-    "삼성동",
-    "탄방동",
-  ]);
+  const [guList, setGuList] = useState(["동구", "중구", "서구", "유성", "대덕"]);
+  const [dongList, setDongList] = useState(["봉명동", "중앙동", "갈마1동", "삼성동", "탄방동"]);
 
   const [meetingList, setMeetingList] = useState([
     "모임의 제목이 들어갑니다",
@@ -114,7 +107,7 @@ const meetingFind = () => {
     "모임6",
     "모임7",
   ]);
-  const [isFilterOpen, setIsFilterOpen] = useState(true);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const parent = useRef(null);
   const navigate = useNavigate();
 
@@ -142,7 +135,7 @@ const meetingFind = () => {
               <FilterElement>
                 <div>
                   <DropdownInput>
-                    {siList.map((si) => {
+                    {siList.map(si => {
                       return <option>{si}</option>;
                     })}
                   </DropdownInput>
@@ -150,7 +143,7 @@ const meetingFind = () => {
                 </div>
                 <div>
                   <DropdownInput>
-                    {guList.map((gu) => {
+                    {guList.map(gu => {
                       return <option>{gu}</option>;
                     })}
                   </DropdownInput>
@@ -158,7 +151,7 @@ const meetingFind = () => {
                 </div>
                 <div>
                   <DropdownInput>
-                    {dongList.map((dong) => {
+                    {dongList.map(dong => {
                       return <option>{dong}</option>;
                     })}
                   </DropdownInput>
@@ -176,7 +169,7 @@ const meetingFind = () => {
             </FilterBg>
           </FilterDiv>
         )}
-        {meetingList.map((meeting) => {
+        {meetingList.map(meeting => {
           return (
             <ListInfoItem
               title={meeting}

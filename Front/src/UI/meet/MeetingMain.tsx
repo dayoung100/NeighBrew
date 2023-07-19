@@ -1,3 +1,7 @@
+/*
+[MeetingMain.tsx]
+모임 메인 페이지. 상단 탭에서 모임 찾기와 내 모임으로 전환 가능
+*/
 import { useState } from "react";
 import styled from "styled-components";
 import MeetingMy from "./MeetingMy";
@@ -14,15 +18,14 @@ const TopMenu = styled.div`
 `;
 
 const TopMenuDetail = styled.button<{ isFocused: boolean }>`
-  color: var(--${(props) => (props.isFocused ? "c-black" : "c-gray")});
+  color: var(--${props => (props.isFocused ? "c-black" : "c-gray")});
   font-family: "JejuGothic";
   font-size: 20px;
   line-height: 150%;
   padding: 0 1rem;
   outline: none;
   border: none;
-  border-bottom: ${(props) =>
-    props.isFocused ? "2px solid var(--c-black);" : "none;"};
+  border-bottom: ${props => (props.isFocused ? "2px solid var(--c-black);" : "none;")};
   background: white;
 `;
 
@@ -35,16 +38,10 @@ const meetingMain = () => {
         <NavbarWithoutSearch />
       </header>
       <TopMenu>
-        <TopMenuDetail
-          isFocused={selectedMenu === "find"}
-          onClick={() => setSelectedMenu("find")}
-        >
+        <TopMenuDetail isFocused={selectedMenu === "find"} onClick={() => setSelectedMenu("find")}>
           모임찾기
         </TopMenuDetail>
-        <TopMenuDetail
-          isFocused={selectedMenu === "my"}
-          onClick={() => setSelectedMenu("my")}
-        >
+        <TopMenuDetail isFocused={selectedMenu === "my"} onClick={() => setSelectedMenu("my")}>
           내모임
         </TopMenuDetail>
       </TopMenu>

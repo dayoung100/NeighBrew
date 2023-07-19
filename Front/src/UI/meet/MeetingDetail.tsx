@@ -1,3 +1,9 @@
+/*
+[MeetingDetail.tsx]
+특정한 모임의 상세 정보를 보여주는 페이지
+모임 리스트에서 하나를 클릭하면 이 페이지로 이동함
+모임 타이틀, 태그, 주최자, 위치, 시간, 선택한 술, 모임 소개, 참여자 리스트 출력
+*/
 import { arrowLeftIcon } from "../../assets/AllIcon";
 
 const MeetingDetail = () => {
