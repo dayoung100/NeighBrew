@@ -21,13 +21,16 @@ import temgif from "../../assets/temgif.gif";
 const MyChat = styled.div`
   position: relative;
   display: inline-block;
-  background-color: #e06565;
-  border-radius: 5px;
-  padding: 10px;
+  background-color: #f0d389;
+  border-radius: 12px;
+  padding: 14px;
   max-width: 60%;
   word-break: break-all;
   margin-bottom: 5px;
   margin-left: 1px;
+  font-size: 13px;
+  text-align: left;
+  font-family: "SeoulNamsan";
   &::before {
     content: "";
     position: absolute;
@@ -36,19 +39,22 @@ const MyChat = styled.div`
     transform: translateX(-50%);
     border-style: solid;
     border-width: 10px 10px 0 10px;
-    border-color: #e06565 transparent transparent transparent;
+    border-color: #f0d389 transparent transparent transparent;
   }
 `;
 const OtherChat = styled.div`
   position: relative;
   display: inline-block;
-  background-color: #e5bcbc;
-  border-radius: 5px;
-  padding: 10px;
+  background-color: white;
+  border-radius: 12px;
+  padding: 14px;
   max-width: 60%;
   word-break: break-all;
   margin-bottom: 5px;
   margin-right: 1px;
+  font-size: 13px;
+  text-align: right;
+  font-family: "SeoulNamsan";
   &:before {
     content: "";
     position: absolute;
@@ -57,7 +63,7 @@ const OtherChat = styled.div`
     transform: translateX(-50%);
     border-style: solid;
     border-width: 10px 10px 0 10px;
-    border-color: #e5bcbc transparent transparent transparent;
+    border-color: white transparent transparent transparent;
   }
 `;
 const ChatNav = styled.div`
@@ -127,9 +133,10 @@ const InputDiv = styled.div`
 const Input = styled.input`
   width: 85%;
   height: 70%;
-  border: 1px solid black;
+  border: none;
+  /* border: 1px solid black; */
   // border는 삭제예정
-  border-radius: 3px;
+  /* border-radius: 3px; */
 `;
 const ChatRoom = () => {
   const { id } = useParams();
@@ -281,7 +288,12 @@ const ChatRoom = () => {
       <footer>
         <InputDiv>
           <p style={{ fontFamily: "JejuGothic", fontSize: "20px", fontWeight: "400" }}>+</p>
-          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
+          <Input
+            autoFocus
+            value={message}
+            onChange={messageHandler}
+            onKeyUp={sendMessageHandler}
+          ></Input>
           <button>awd</button>
         </InputDiv>
       </footer>

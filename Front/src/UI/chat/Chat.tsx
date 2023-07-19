@@ -14,7 +14,7 @@ const ChatDiv = styled.div`
   background-color: #ffffff;
   /* border: 1px solid var(--c-gray); */
   display: flex;
-  text-align: center;
+  text-align: left;
   align-items: center;
   &:hover {
     cursor: pointer;
@@ -50,12 +50,18 @@ const Chat = (props: { chooseChat: number; chatRoomId: number }) => {
       </ImgDiv>
       <div style={{}}>
         <div style={{ textAlign: "left" }}>
-          <span style={{ marginRight: "3px", fontSize: "14px", fontFamily: "JejuGothic" }}>
+          <span
+            style={{
+              marginRight: "3px",
+              fontSize: "14px",
+              fontFamily: "JejuGothic",
+            }}
+          >
             채팅방 제목: 집에 가고 싶다
           </span>
           <span style={{ color: "var(--c-gray", fontSize: "12px" }}>4</span> <span></span>
         </div>
-        <p style={{ fontSize: "12px", fontFamily: "SeoulNamsan" }}>
+        <p style={{ fontSize: "12px", fontFamily: "SeoulNamsan", marginTop: "6px" }}>
           채팅방 설명 몇 자까지 가능 한가요 너무 많으면 이상해 집니다
         </p>
       </div>
