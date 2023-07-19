@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -26,16 +29,30 @@ public class AuthController {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
 
+//    @PostMapping("/logout")
+//    public ResponseEntity<Integer> logout(@RequestBody KakaoLoginParams params) {
+//        oAuthLoginService.logout(params);
+//        return ResponseEntity.ok(1);
+//    }
+
+
+
 
     @GetMapping("/login/kakao")
-    public ResponseEntity<String> loginRequset(KakaoLoginParams params) {
-        return ResponseEntity.ok(oAuthLoginService.redirectApiUrl(params));
+    public ResponseEntity<Map<String, String>> loginRequset(KakaoLoginParams params) {
+        Map<String, String> response = new HashMap<>();
+        response.put("URL" , oAuthLoginService.redirectApiUrl(params));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/login/naver")
-    public ResponseEntity<String> loginRequsetResponse (NaverLoginParams params) {
-        return ResponseEntity.ok(oAuthLoginService.redirectApiUrl(params));
+    public ResponseEntity<Map<String, String>> loginRequsetResponse (NaverLoginParams params) {
+        Map<String, String> response = new HashMap<>();
+        response.put("URL" , oAuthLoginService.redirectApiUrl(params));
+        return ResponseEntity.ok(response);
     }
+
+
 
 
 }
