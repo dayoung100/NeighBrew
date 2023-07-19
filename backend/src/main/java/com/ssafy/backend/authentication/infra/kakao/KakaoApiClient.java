@@ -44,24 +44,20 @@ public class KakaoApiClient implements OAuthApiClient {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        System.out.println("request Access Token params = " + params);
 
         MultiValueMap<String, String> body = params.makeBody();
         body.add("grant_type", GRANT_TYPE);
         body.add("client_id", clientId);
 
-        System.out.println("MultiValueMap = " + body.toString());
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
-        System.out.println("request = " + request);
 
         KakaoTokens response = restTemplate.postForObject(url, request, KakaoTokens.class);
 
-        System.out.println("response = " + response);
 
         assert response != null;
-        System.out.println("response.getAccessToken() = " + response.getAccessToken());
+
         return response.getAccessToken();
     }
 
