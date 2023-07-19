@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Navbar from "../navbar/Navbar";
 import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
@@ -31,7 +31,7 @@ const MyChat = styled.div`
   &::before {
     content: "";
     position: absolute;
-    bottom: -10px;
+    bottom: -5px;
     left: 0%;
     transform: translateX(-50%);
     border-style: solid;
@@ -52,7 +52,7 @@ const OtherChat = styled.div`
   &:before {
     content: "";
     position: absolute;
-    bottom: -10px;
+    bottom: -5px;
     left: 100%;
     transform: translateX(-50%);
     border-style: solid;
@@ -139,6 +139,18 @@ const ChatRoom = () => {
   ]);
   const [isModal, setIsModal] = useState(false);
   const [users, setUsers] = useState(["현욱", "현빈", "준서", "다영", "영교", "동혁"]);
+  const [message, setMessage] = useState("");
+  const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+  };
+  const sendMessageHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code === "Enter" || e.keyCode === 13) {
+      if (message === "") return;
+      setMessages(prev => [...prev, [message, 1]]);
+      setMessage("");
+      scroll();
+    }
+  };
   const navigate = useNavigate();
   const rapperDiv = useRef<HTMLInputElement>(null);
   const makedummy = () => {
@@ -269,7 +281,8 @@ const ChatRoom = () => {
       <footer>
         <InputDiv>
           <p style={{ fontFamily: "JejuGothic", fontSize: "20px", fontWeight: "400" }}>+</p>
-          <Input></Input>
+          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
+          <button>awd</button>
         </InputDiv>
       </footer>
     </>
