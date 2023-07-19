@@ -36,7 +36,7 @@ const Login = () => {
   return (
     <>
       <h2>로그인</h2>
-      <button>kakako</button>
+      <button>kakao</button>
       <br />
       <form action="submit">
         {isLoginValid && (

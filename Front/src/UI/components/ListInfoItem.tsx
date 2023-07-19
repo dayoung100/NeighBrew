@@ -1,18 +1,22 @@
 import styled from "styled-components";
 
 const ItemDiv = styled.div`
+  position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   width: 20rem;
   height: 6rem;
   background: white;
   margin: 1rem auto;
   border-radius: 20px;
-  padding: 0.5rem 0;
+  padding: 0.5rem 0.5rem;
 `;
 
 const ImageArea = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: var(--c-gray);
   border-radius: 15px;
   width: 30%;
@@ -27,13 +31,17 @@ const ImageArea = styled.div`
 const InfoArea = styled.div`
   width: 70%;
   text-align: left;
-  padding-left: 3%;
+  align-self: flex-start;
 `;
 
 const InfoTitle = styled.div`
   font-family: "JejuGothic";
   font-size: 14px;
   margin: 3% 0;
+  width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const InfoContent = styled.div`
@@ -48,7 +56,7 @@ const InfoTag = styled.div`
   align-items: center;
   position: absolute;
   right: 3%;
-  top: 15%;
+  top: 7%;
   background: var(--c-yellow);
   padding: 1.5% 2%;
   font-family: "JejuGothic";
@@ -72,34 +80,32 @@ const InfoTag = styled.div`
 
 const InfoNumber = styled.div`
   position: absolute;
-  right: 3%;
-  bottom: 15%;
+  right: 5%;
+  bottom: 7%;
 `;
 
 type ListInfoItemProps = {
   title: string;
   tag: string;
   content: any;
-  numberInfo: string; //인원정보는 4/5 와 같이 들어올 수 있어서
+  numberInfo: any; //인원정보는 4/5 와 같이 들어올 수 있어서
 };
 
 const ListInfoItem = (props: ListInfoItemProps) => {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <div style={{ position: "relative", width: "20rem" }}>
-          <ItemDiv>
-            <ImageArea />
-            <InfoArea>
-              <InfoTitle>{props.title}</InfoTitle>
-              <InfoContent>{props.content}</InfoContent>
-            </InfoArea>
-          </ItemDiv>
+        <ItemDiv>
+          <ImageArea />
+          <InfoArea>
+            <InfoTitle>{props.title}</InfoTitle>
+            <InfoContent>{props.content}</InfoContent>
+          </InfoArea>
           <InfoTag>
             <span>{props.tag}</span>
           </InfoTag>
           <InfoNumber>{props.numberInfo}</InfoNumber>
-        </div>
+        </ItemDiv>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import filterIcon from "../../assets/meetingFilter.svg";
 import SearchBox from "../components/SearchBox";
 import ListInfoItem from "../components/ListInfoItem";
 import MeetingDetail from "./MeetingDetail";
+import PeopleNumInfo from "./PeopleNumInfo";
 
 const TestCateDiv = styled.div`
   height: 10rem;
@@ -155,7 +156,7 @@ const meetingFind = () => {
               title={meeting}
               tag="소주/맥주"
               content={<MeetingDetail />}
-              numberInfo="4/8"
+              numberInfo={<PeopleNumInfo now={1} max={1} />}
             ></ListInfoItem>
           );
         })}
