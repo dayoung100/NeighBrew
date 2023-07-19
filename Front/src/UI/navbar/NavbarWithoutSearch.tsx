@@ -1,6 +1,6 @@
 import logoNavbar from '../../assets/logoNavbar.svg';
 import styled from 'styled-components';
-import { searchNavIcon, alertNavIcon } from '../../assets/AllIcon';
+import { alertNavIcon } from '../../assets/AllIcon';
 import { useState } from 'react';
 
 const Button = styled.button`
@@ -16,9 +16,8 @@ const Button = styled.button`
   }
 `;
 
-const Navbar = () => {
+const NavbarWithoutSearch = () => {
   const [navButton, setNavButton] = useState(0);
-  const searchButton = searchNavIcon();
   const alertButton = alertNavIcon();
   return (
     <nav className="nav">
@@ -26,14 +25,6 @@ const Navbar = () => {
         <img src={logoNavbar} />
       </span>
       <span className="searchAndIcon">
-        <Button
-          onClick={() => {
-            setNavButton(1);
-            console.log('search!');
-          }}
-        >
-          {searchButton}
-        </Button>
         <Button
           onClick={() => {
             setNavButton(2);
@@ -47,4 +38,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavbarWithoutSearch;
