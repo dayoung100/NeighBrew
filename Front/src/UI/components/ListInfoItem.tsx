@@ -11,7 +11,7 @@ type ListInfoItemProps = {
   content: any; //내용, 컴포넌트를 넣어도 됨
   numberInfo: any; //인원정보 또는 후기 수, 컴포넌트를 넣어도 됨
   isWaiting: boolean; //신청대기중인 모임인지(아니라면 false)
-  routingFunc: any; //라우팅 함수(ex.routingFunc={() => moveToMeetDetail(1)})
+  routingFunc: any; //라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
 };
 
 const ItemDiv = styled.div`

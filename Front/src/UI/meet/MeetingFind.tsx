@@ -115,7 +115,7 @@ const meetingFind = () => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
-  const moveToMeetDetail = (meetId: number) => {
+  const GotoMeetDetailHandler = (meetId: number) => {
     console.log(meetId, "find");
     navigate(`/meet/${meetId}`);
   };
@@ -175,9 +175,9 @@ const meetingFind = () => {
               title={meeting}
               tag="소주/맥주"
               content={<MeetingDetail />}
-              numberInfo={<PeopleNumInfo now={1} max={1} />}
+              numberInfo={<PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />}
               isWaiting={false}
-              routingFunc={() => moveToMeetDetail(1)}
+              routingFunc={() => GotoMeetDetailHandler(1)}
             ></ListInfoItem>
           );
         })}
