@@ -21,11 +21,6 @@ public class DrinkService {
         return drinkRepository.findAll();
     }
 
-    // 술 이름으로 조회
-    public List<Drink> findByNameContaining(String name) {
-        return drinkRepository.findAllByNameContaining(name).orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
-    }
-
     // 술 추가
     public Drink save(Drink drink) {
         if (drink.getName().equals("")) throw new IllegalArgumentException("술 이름이 없습니다.");
