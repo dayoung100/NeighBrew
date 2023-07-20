@@ -28,20 +28,22 @@ public class DrinkReviewController {
 
     @PostMapping("/guard")
     public ResponseEntity<?> createDrinkReview(HttpServletRequest request, @RequestBody DrinkReviewDto drinkReviewDto) {
-        Long userId = (Long) request.getAttribute("userId");
-        drinkReviewDto.setUserId(userId);
+        String userId = (String) request.getAttribute("userId");
+        drinkReviewDto.setUserId(Long.valueOf(userId));
         return ResponseEntity.status(HttpStatus.CREATED).body(drinkReviewService.createDrinkReview(drinkReviewDto));
     }
 
     @PutMapping("/guard/{drinkReviewId}")
     public ResponseEntity<?> updateDrinkReview(@PathVariable Long drinkReviewId, @RequestBody DrinkReviewUpdateDto drinkReviewUpdateDto, HttpServletRequest request) {
-        return ResponseEntity.ok(drinkReviewService.updateDrinkReview(drinkReviewId, drinkReviewUpdateDto, (Long) request.getAttribute("userId")));
+
+        String userId = (String) request.getAttribute("userId");
+        return ResponseEntity.ok(drinkReviewService.updateDrinkReview(drinkReviewId, drinkReviewUpdateDto, Long.valueOf(userId)));
     }
 
     @DeleteMapping("/guard/{drinkReviewId}")
     public ResponseEntity<?> deleteDrinkReview(HttpServletRequest request, @PathVariable Long drinkReviewId) throws IllegalArgumentException {
-        Long userId = (Long) request.getAttribute("userId");
-        drinkReviewService.deleteDrinkReview(drinkReviewId, userId);
+        String userId = (String) request.getAttribute("userId");
+        drinkReviewService.deleteDrinkReview(drinkReviewId, Long.valueOf(userId));
         return ResponseEntity.ok().build();
     }
 }

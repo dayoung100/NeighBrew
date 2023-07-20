@@ -61,6 +61,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    // refresh token을 이용한 access token 재발급
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshAccessToken(@RequestBody String refreshToken) {
         Claims claims;
@@ -80,7 +81,7 @@ public class UserController {
     }
 
     // Test용 일반 아이디 => 유저 아이디 넣으면 JWT 반환하는 코드 작성
-    @GetMapping("/test/{userId}")
+    @GetMapping("/access-token/{userId}")
     public ResponseEntity<?> jwtMaker(@PathVariable Long userId) {
         String accessToken = JwtUtil.generateToken(String.valueOf(userId));
         String refreshToken = JwtUtil.generateRefreshToken(String.valueOf(userId));
