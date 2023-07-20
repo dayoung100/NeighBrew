@@ -4,13 +4,15 @@
 모임 리스트에서 하나를 클릭하면 이 페이지로 이동함
 모임 타이틀, 태그, 주최자, 위치, 시간, 선택한 술, 모임 소개, 참여자 리스트 출력
 */
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
 import PeopleNumInfo from "./PeopleNumInfo";
 import ListInfoItem from "../components/ListInfoItem";
+import UserInfoItem from "../components/UserInfoItem";
+import FooterBigBtn from "../footer/FooterBigBtn";
 import backgroundImg from "../../assets/ForTest/backgroundImg.jpg";
-import Footer from "../footer/Footer";
 
 const MeetThumbnail = styled.div`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -49,7 +51,7 @@ const Tag = styled.div`
 
 const MeetDetailDiv = styled.div`
   background: var(--c-lightgray);
-  height: 70vh;
+  min-height: 70vh;
   border-radius: 30px 30px 0px 0px;
   position: relative;
   z-index: 1;
@@ -58,6 +60,9 @@ const MeetDetailDiv = styled.div`
 `;
 
 const MeetPosDateDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
   position: absolute;
   top: 12rem;
   left: 50%;
@@ -83,9 +88,20 @@ const MeetTitle = styled.div`
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const navigate = useNavigate();
+  const [memberList, setMemberList] = useState([
+    "주최자 이름",
+    "참여자1",
+    "참여자2",
+    "참여자3",
+  ]);
 
   const GoBackHandler = () => {
     navigate(-1);
+  };
+
+  const GotoMeetManageHandler = (meetId: number) => {
+    console.log("goto manage page, meetId is: ", meetId);
+    navigate(`/meet/${meetId}/manage`);
   };
 
   return (
@@ -121,24 +137,51 @@ const MeetingDetail = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              fontFamily: "SeoulNamsan",
+              fontSize: "15px",
             }}
           >
-            <img
-              src="../src/assets/tempgif.gif"
-              width="20rem"
-              style={{ borderRadius: "100px" }}
-            />
-            <div style={{ fontFamily: "SeoulNamsan", fontSize: "15px" }}>
-              주최자 이름이 들어갑니다
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <img
+                src="../src/assets/tempgif.gif"
+                width="20rem"
+                style={{ borderRadius: "100px" }}
+              />
+              <div>주최자 이름</div>
             </div>
+            <div>이 들어갑니다</div>
           </div>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <PeopleNumInfo now={1} max={4} color="white" size={11} />
+            <PeopleNumInfo now={4} max={4} color="white" size={11} />
           </div>
         </div>
       </MeetThumbnail>
       <MeetDetailDiv>
-        <div>각종 제한들</div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            fontSize: "13px",
+            fontFamily: "Noto Sans KR",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img
+              src="../src/assets/liver.svg"
+              width="20rem"
+              style={{ marginRight: "3px" }}
+            />
+            간수치 제한
+          </div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img
+              src="../src/assets/age.svg"
+              width="20rem"
+              style={{ marginRight: "3px" }}
+            />
+            나이 제한
+          </div>
+        </div>
         <MeetTitle>우리가 마실 것은</MeetTitle>
         <ListInfoItem
           title="주류의 이름이 들어갑니다"
@@ -169,16 +212,48 @@ const MeetingDetail = () => {
         </div>
         <div style={{ display: "flex" }}>
           <MeetTitle>참여 인원</MeetTitle>
-          <div style={{ marginTop: "1.3rem", marginLeft: "0.5rem" }}>
-            <PeopleNumInfo now={1} max={4} color="var(--c-black)" size={20} />
+          <div
+            style={{
+              marginTop: "1.6rem",
+              marginLeft: "0.5rem",
+            }}
+          >
+            <PeopleNumInfo now={4} max={4} color="var(--c-black)" size={13} />
           </div>
+        </div>
+        <div style={{ margin: "0 0.5rem" }}>
+          {memberList.map((member, index) => {
+            return (
+              <UserInfoItem
+                userId={1}
+                name={member}
+                intro="한 마디는 이렇게 저렇게 작성하기 한 마디는 이렇게 저렇게 작성하기"
+                imgSrc="../src/assets/tempgif.gif"
+                isMaster={index === 0}
+                width={15}
+              />
+            );
+          })}
         </div>
       </MeetDetailDiv>
       <MeetPosDateDiv>
-        모임 예정 장소와 시간, z-index올리고 position absolute로
+        <div>
+          <img src="../src/assets/mapPinColor.svg" width="20rem" />
+          <div>모임 예정 시, 구</div>
+          <div>상세 위치</div>
+        </div>
+        <div>
+          <img src="../src/assets/calendarColor.svg" width="20rem" />
+          <div>모임 날짜</div>
+          <div>시간 상세</div>
+        </div>
       </MeetPosDateDiv>
       <footer>
-        <Footer />
+        <FooterBigBtn
+          content="모임 관리"
+          reqFunc={() => GotoMeetManageHandler(1)}
+          color="var(--c-yellow)"
+        />
       </footer>
     </div>
   );

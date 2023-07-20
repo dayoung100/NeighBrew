@@ -24,7 +24,7 @@ const meetingMy = () => {
   const navigate = useNavigate();
 
   const GotoMeetDetailHandler = (meetId: number) => {
-    console.log(meetId, "my");
+    console.log("goto detail page, meetId is: ", meetId, "[my]");
     navigate(`/meet/${meetId}`);
   };
 

@@ -35,7 +35,6 @@ const ImageArea = styled.div<{ src: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  // background: var(--c-gray);
   border-radius: 15px;
   width: 30%;
   margin: 0 3%;
