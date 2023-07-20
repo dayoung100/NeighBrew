@@ -33,6 +33,7 @@ footer {
   max-width: 430px;
   min-width: 350px;
   text-align: center;
+  color: var(--c-black);
 }
 
 .card {
