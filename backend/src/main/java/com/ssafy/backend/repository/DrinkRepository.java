@@ -18,6 +18,6 @@ public interface DrinkRepository extends JpaRepository<Drink, Long> {
     // 술 이름과 태그로 조회
     Optional<List<Drink>> findByNameContainingAndTagId(String name, Long tagId);
 
-    //내가 가진 술 조회
-    Optional<List<Drink>> findMyDrinkByUserId(Long userId);
+//    //내가 가진 술 조회
+//    Optional<List<Drink>> findMyDrinkByUserId(Long userId);
 }
