@@ -1,4 +1,4 @@
-package com.ssafy.backend.entity;
+package com.ssafy.backend.Enum;
 
 public enum PushType {
     CommentLike, Follow, Chat, MeetAccess, MeetReject, MeetEvaluation

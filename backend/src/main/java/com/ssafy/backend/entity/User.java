@@ -57,7 +57,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Column(nullable = true, columnDefinition = "float default 40.0")
-    private Float iu;
+    private Float liverPoint;
 
     @Column(nullable = true, columnDefinition = "varchar(255) default 'no image'")
     private String profile;
@@ -75,16 +75,5 @@ public class User {
 
     public User() {
 
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", email='" + email + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", oAuthProvider=" + oAuthProvider +
-                ", deleted=" + deleted +
-                '}';
     }
 }

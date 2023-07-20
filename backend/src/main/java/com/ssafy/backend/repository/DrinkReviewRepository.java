@@ -10,6 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DrinkReviewRepository extends JpaRepository<DrinkReview, Long> {
+public interface  DrinkReviewRepository extends JpaRepository<DrinkReview, Long> {
     List<DrinkReview> findByDrink(Drink drink);
     List<DrinkReview> findAllByUserAndDrink(User user, Drink drink);}

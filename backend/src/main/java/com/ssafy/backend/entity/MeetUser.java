@@ -1,5 +1,8 @@
 package com.ssafy.backend.entity;
 
+
+import com.ssafy.backend.Enum.MeetType;
+import com.ssafy.backend.Enum.Status;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,8 +28,9 @@ public class MeetUser {
     // 승인, 대기, 거절, 모임 완료
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    // 유저가 생성, 참여, 신처
+    @Enumerated(EnumType.STRING)
+    private MeetType meetType;
 }
 
-enum Status {
-    ACCEPTED, WAITING, REJECTED, FINISHED
-}
