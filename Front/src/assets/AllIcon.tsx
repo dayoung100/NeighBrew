@@ -443,10 +443,14 @@ export const drinkCategoryCircle = (color: string) => {
 };
 
 //인원 정보 표시에 사용되는 사람 아이콘
+//가로 폭을 줄이면 아이콘도 줄어드는 문제가?!
 export const personIcon = (color: string, height: number) => {
+  const aspectRatio = 9 / 11; // SVG의 가로세로 비율 (width / height)
+  const width = height * aspectRatio;
+
   return (
     <svg
-      width="100%"
+      width={width}
       height={height}
       viewBox="0 0 9 11"
       fill="none"
