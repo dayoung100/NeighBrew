@@ -20,12 +20,12 @@ public class AuthController {
 
     //사용자가 동의 후 여기에 넣으면 됨
     @PostMapping("/kakao")
-    public ResponseEntity<AuthTokens> loginKakao(@RequestBody KakaoLoginParams params) {
+    public ResponseEntity<?> loginKakao(@RequestBody KakaoLoginParams params) {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
 
     @PostMapping("/naver")
-    public ResponseEntity<AuthTokens> loginNaver(@RequestBody NaverLoginParams params) {
+    public ResponseEntity<?> loginNaver(@RequestBody NaverLoginParams params) {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
 
@@ -36,23 +36,17 @@ public class AuthController {
 //    }
 
 
-
-
     @GetMapping("/login/kakao")
     public ResponseEntity<Map<String, String>> loginRequset(KakaoLoginParams params) {
         Map<String, String> response = new HashMap<>();
-        response.put("URL" , oAuthLoginService.redirectApiUrl(params));
+        response.put("URL", oAuthLoginService.redirectApiUrl(params));
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/login/naver")
-    public ResponseEntity<Map<String, String>> loginRequsetResponse (NaverLoginParams params) {
+    public ResponseEntity<Map<String, String>> loginRequsetResponse(NaverLoginParams params) {
         Map<String, String> response = new HashMap<>();
-        response.put("URL" , oAuthLoginService.redirectApiUrl(params));
+        response.put("URL", oAuthLoginService.redirectApiUrl(params));
         return ResponseEntity.ok(response);
     }
-
-
-
-
 }
