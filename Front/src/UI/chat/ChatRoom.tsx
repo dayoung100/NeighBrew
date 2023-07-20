@@ -149,6 +149,7 @@ const BackDrop = styled.div<{ isModal: boolean }>`
   z-index: 15;
   background-color: #322d29;
 `;
+
 const ChatRoom = () => {
   const { id } = useParams();
   const [messages, setMessages] = useState<[string, number][]>([
@@ -173,7 +174,7 @@ const ChatRoom = () => {
   const rapperDiv = useRef<HTMLInputElement>(null);
   const makedummy = () => {
     return new Promise((resolve, reject) => {
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 6; i++) {
         setMessages(prev => {
           return [
             ...prev,
@@ -188,8 +189,9 @@ const ChatRoom = () => {
 
   const scroll = () => {
     if (rapperDiv.current) {
-      window.scrollTo({ top: rapperDiv.current.scrollHeight, behavior: "smooth" });
-      console.log(window.screenTop);
+      setTimeout(() => {
+        window.scrollTo({ top: rapperDiv.current!.scrollHeight, behavior: "smooth" });
+      }, 10);
     }
   };
   useEffect(() => {
@@ -204,7 +206,7 @@ const ChatRoom = () => {
       return [...prev, ["메세지", 1], ["메세지", 0]];
     });
   };
-  const ArrowLeftIcon = arrowLeftIcon();
+  const ArrowLeftIcon = arrowLeftIcon("black");
   const OutRoom = outRoom();
 
   const OutRoomHandler = () => {
@@ -215,9 +217,9 @@ const ChatRoom = () => {
   };
 
   return (
-    <>
+    <div ref={rapperDiv}>
       <header>
-        <Navbar />
+        {/* <Navbar /> */}
         <ChatNav>
           <div
             style={{
@@ -269,7 +271,7 @@ const ChatRoom = () => {
         </div>
       </RightModal>
       <div
-        ref={rapperDiv}
+        // ref={rapperDiv}
         style={{
           backgroundColor: isModal ? "#757575" : "var(--c-lightgray)",
           height: "100%",
@@ -299,7 +301,7 @@ const ChatRoom = () => {
           );
         })}
         {/* </div> */}
-        <div style={{ height: "5rem" }}></div>
+        {/* <div style={{ height: "5rem" }}></div> */}
       </div>
       <footer>
         <InputDiv>
@@ -307,7 +309,7 @@ const ChatRoom = () => {
           <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
         </InputDiv>
       </footer>
-    </>
+    </div>
   );
 };
 
