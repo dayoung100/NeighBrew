@@ -6,10 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -28,14 +25,21 @@ public class MeetController {
     //모든 모임 정보 반환
     @GetMapping("")
     public ResponseEntity<?> findAll(){
-        return new ResponseEntity<>(meetService.findAll(), HttpStatus.OK);
+        return ResponseEntity.ok(meetService.findAll());
     };
 
-    //유저 아이디에 해당하는 정보 반환
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> findByUserId(@PathVariable Long userId){
-        return new ResponseEntity.ok();
+    //주종에 따른 모임 정보 반환 안쓸듯...
+    @GetMapping("/")
+    public ResponseEntity<?> findByDrinkCategory(@RequestParam(required = false) String tag){
+        return ResponseEntity.ok(meetService.findByDrinkCategory(tag));
+    };
+
+    //모임 생성 상세정보
+    @GetMapping("/{meetId}")
+    public ResponseEntity<?> findByMeetId(@PathVariable Long meetId){
+        return ResponseEntity.ok(meetService.findByMeetId(meetId));
     }
+
 
 
 }

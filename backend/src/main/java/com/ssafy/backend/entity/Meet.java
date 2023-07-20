@@ -30,7 +30,18 @@ public class Meet {
     @Temporal(TemporalType.DATE)
     private Date meetDate;
 
+    @Temporal(TemporalType.DATE)
+    @Column(name = "meet_reg_dt")
+    private Date createdAt;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "meet_update_dt")
+    private Date updatedAt;
+
     @ManyToOne
     @JoinColumn(name = "tagId")
     private Tag tag;
+
+
+
 }
