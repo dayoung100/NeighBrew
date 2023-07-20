@@ -44,7 +44,7 @@ public class UserController {
 
     // Test용 일반 아이디 => 유저 아이디 넣으면 JWT 반환하는 코드 작성
     @GetMapping("/test/{userId}")
-    public ResponseEntity<AuthTokens> jwtMaker(@PathVariable Long userId){
+    public ResponseEntity<AuthTokens> jwtMaker(@PathVariable Long userId) {
         AuthTokens accessToken = authTokensGenerator.generate(userId);
         return ResponseEntity.ok(accessToken);
     }
