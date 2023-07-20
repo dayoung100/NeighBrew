@@ -95,8 +95,20 @@ const DateInput = styled.input.attrs({ type: "date" })`
 
 const meetingFind = () => {
   const [siList, setSiList] = useState(["서울", "경기", "대전", "인천"]);
-  const [guList, setGuList] = useState(["동구", "중구", "서구", "유성", "대덕"]);
-  const [dongList, setDongList] = useState(["봉명동", "중앙동", "갈마1동", "삼성동", "탄방동"]);
+  const [guList, setGuList] = useState([
+    "동구",
+    "중구",
+    "서구",
+    "유성",
+    "대덕",
+  ]);
+  const [dongList, setDongList] = useState([
+    "봉명동",
+    "중앙동",
+    "갈마1동",
+    "삼성동",
+    "탄방동",
+  ]);
 
   const [meetingList, setMeetingList] = useState([
     "모임의 제목이 들어갑니다",
@@ -135,7 +147,7 @@ const meetingFind = () => {
               <FilterElement>
                 <div>
                   <DropdownInput>
-                    {siList.map(si => {
+                    {siList.map((si) => {
                       return <option>{si}</option>;
                     })}
                   </DropdownInput>
@@ -143,7 +155,7 @@ const meetingFind = () => {
                 </div>
                 <div>
                   <DropdownInput>
-                    {guList.map(gu => {
+                    {guList.map((gu) => {
                       return <option>{gu}</option>;
                     })}
                   </DropdownInput>
@@ -151,7 +163,7 @@ const meetingFind = () => {
                 </div>
                 <div>
                   <DropdownInput>
-                    {dongList.map(dong => {
+                    {dongList.map((dong) => {
                       return <option>{dong}</option>;
                     })}
                   </DropdownInput>
@@ -169,13 +181,16 @@ const meetingFind = () => {
             </FilterBg>
           </FilterDiv>
         )}
-        {meetingList.map(meeting => {
+        {meetingList.map((meeting) => {
           return (
             <ListInfoItem
               title={meeting}
+              imgSrc="../src/assets/ForTest/backgroundImg.jpg"
               tag="소주/맥주"
               content={<MeetingDetail />}
-              numberInfo={<PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />}
+              numberInfo={
+                <PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />
+              }
               isWaiting={false}
               routingFunc={() => GotoMeetDetailHandler(1)}
             ></ListInfoItem>

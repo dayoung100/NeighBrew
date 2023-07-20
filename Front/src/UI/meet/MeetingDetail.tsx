@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
 import PeopleNumInfo from "./PeopleNumInfo";
+import ListInfoItem from "../components/ListInfoItem";
 import backgroundImg from "../../assets/ForTest/backgroundImg.jpg";
 import Footer from "../footer/Footer";
 
@@ -53,7 +54,7 @@ const MeetDetailDiv = styled.div`
   position: relative;
   z-index: 1;
   top: -2rem;
-  padding-top: 5rem;
+  padding: 4.5rem 1rem;
 `;
 
 const MeetPosDateDiv = styled.div`
@@ -70,6 +71,13 @@ const MeetPosDateDiv = styled.div`
   padding: 1rem;
   font-family: "SeoulNamsan";
   font-size: 16px;
+`;
+
+const MeetTitle = styled.div`
+  font-family: "JejuGothic";
+  font-size: 20px;
+  text-align: left;
+  margin-top: 1.5rem;
 `;
 
 const MeetingDetail = () => {
@@ -90,17 +98,36 @@ const MeetingDetail = () => {
             padding: "1rem",
           }}
         >
-          <div style={{ cursor: "pointer", marginRight: "1rem" }} onClick={GoBackHandler}>
+          <div
+            style={{ cursor: "pointer", marginRight: "1rem" }}
+            onClick={GoBackHandler}
+          >
             {ArrowLeftIcon}
           </div>
           <Tag>소주/맥주</Tag>
         </div>
         <div style={{ textAlign: "center", padding: "2rem 0 7rem 0" }}>
-          <div style={{ fontFamily: "JejuGothic", fontSize: "32px", marginBottom: "0.5rem" }}>
+          <div
+            style={{
+              fontFamily: "JejuGothic",
+              fontSize: "32px",
+              marginBottom: "0.5rem",
+            }}
+          >
             모임의 제목이 들어갑니다
           </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <img src="../src/assets/tempgif.gif" width="20rem" style={{ borderRadius: "100px" }} />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              src="../src/assets/tempgif.gif"
+              width="20rem"
+              style={{ borderRadius: "100px" }}
+            />
             <div style={{ fontFamily: "SeoulNamsan", fontSize: "15px" }}>
               주최자 이름이 들어갑니다
             </div>
@@ -112,9 +139,20 @@ const MeetingDetail = () => {
       </MeetThumbnail>
       <MeetDetailDiv>
         <div>각종 제한들</div>
-        자세한 정보는 여기에, radius를 줘야
+        <MeetTitle>우리가 마실 것은</MeetTitle>
+        <ListInfoItem
+          title="주류의 이름이 들어갑니다"
+          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
+          tag="주종"
+          content="주류에 대한 간략한 정보가 여기에"
+          numberInfo={"후기 수 " + 3}
+          isWaiting={false}
+          routingFunc={null}
+        />
       </MeetDetailDiv>
-      <MeetPosDateDiv>모임 예정 장소와 시간, z-index올리고 position absolute로</MeetPosDateDiv>
+      <MeetPosDateDiv>
+        모임 예정 장소와 시간, z-index올리고 position absolute로
+      </MeetPosDateDiv>
       <footer>
         <Footer />
       </footer>
