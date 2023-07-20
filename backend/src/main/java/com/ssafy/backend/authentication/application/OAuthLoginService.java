@@ -7,6 +7,8 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.RequestOAuthInfoService;
+import com.ssafy.backend.authentication.infra.JwtTokenProvider;
+import com.ssafy.backend.authentication.infra.kakao.KakaoLoginParams;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,21 +29,29 @@ public class OAuthLoginService {
     private final UserRepository userRepository;
     private final AuthTokensGenerator authTokensGenerator;
     private final RequestOAuthInfoService requestOAuthInfoService;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
-    @Value("${oauth.kakao.client-id}")
-    private String clientId;
-
-    @Value("${oauth.kakao.url.auth}")
-    private String authUrl;
 
 
     public AuthTokens login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
+        System.out.println("oAuthInfoResponse = " + oAuthInfoResponse);
+        // 받아온 정보를 기반으로  userId를 추출
         Long userId = findOrCreateUser(oAuthInfoResponse);
+        System.out.println("2 : userId = " + userId);
+        // 그 아이디를 기반으로 token 생성
         return authTokensGenerator.generate(userId);
     }
 
+//    public void logout(OAuthLoginParams params) {
+//        OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.logout(params);
+//
+//
+//    }
+
+
+    // 해당 이메일로 user의 id를 반환
     private Long findOrCreateUser(OAuthInfoResponse oAuthInfoResponse) {
         return userRepository.findByEmail(oAuthInfoResponse.getEmail())
                 .map(User::getUserId)
@@ -65,7 +75,9 @@ public class OAuthLoginService {
         String url = requestOAuthInfoService.authAptUrl(params);
         return url;
     }
-    }
+
+
+}
 
 
 

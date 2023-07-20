@@ -31,4 +31,13 @@ public class AuthTokensGenerator {
     public Long extractUserId(String accessToken) {
         return Long.valueOf(jwtTokenProvider.extractSubject(accessToken));
     }
+
+    public boolean jwtTokenCheck(String accessToken){
+        return  jwtTokenProvider.tokenCheck(accessToken);
+    }
+
+
+
+
+
 }

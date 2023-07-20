@@ -1,5 +1,15 @@
+/*
+[SearchBox.tsx]
+검색창 컴포넌트, 서치 버튼 포함
+추후 검색 버튼 클릭시 적용될 함수를 props에서 받도록 수정 예정
+자세한 props는 type InputProps 참고
+*/
 import styled from "styled-components";
 import { searchNavIcon } from "../../assets/AllIcon";
+
+type InputProps = {
+  placeholder: string; //아무것도 입력하지 않았을 때 표시될 문구
+};
 
 const SearchDiv = styled.div`
   display: flex;
@@ -24,10 +34,6 @@ const SearchBtn = styled.button`
   height: 1.5rem;
   border: none;
 `;
-
-type InputProps = {
-  placeholder: string;
-};
 
 const searchBox = (props: InputProps) => {
   const searchButton = searchNavIcon();
