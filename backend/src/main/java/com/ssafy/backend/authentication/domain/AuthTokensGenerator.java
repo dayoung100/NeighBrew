@@ -36,8 +36,4 @@ public class AuthTokensGenerator {
         return  jwtTokenProvider.tokenCheck(accessToken);
     }
 
-
-
-
-
 }

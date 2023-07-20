@@ -44,11 +44,9 @@ public class OAuthLoginService {
         return authTokensGenerator.generate(userId);
     }
 
-//    public void logout(OAuthLoginParams params) {
-//        OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.logout(params);
-//
-//
-//    }
+
+
+
 
 
     // 해당 이메일로 user의 id를 반환

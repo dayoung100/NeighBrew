@@ -8,7 +8,5 @@ import java.util.List;
 
 @Repository
 public interface MeetRepository extends JpaRepository<Meet, Long> {
-    List<Meet> findByDrinkCategory(String drinkType);
 
-    Meet findByMeetId(Long meetId);
 }

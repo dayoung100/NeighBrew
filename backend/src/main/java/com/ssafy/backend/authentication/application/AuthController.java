@@ -29,30 +29,19 @@ public class AuthController {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<Integer> logout(@RequestBody KakaoLoginParams params) {
-//        oAuthLoginService.logout(params);
-//        return ResponseEntity.ok(1);
-//    }
-
-
-
-
     @GetMapping("/login/kakao")
     public ResponseEntity<Map<String, String>> loginRequset(KakaoLoginParams params) {
         Map<String, String> response = new HashMap<>();
-        response.put("URL" , oAuthLoginService.redirectApiUrl(params));
+        response.put("URL", oAuthLoginService.redirectApiUrl(params));
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/login/naver")
-    public ResponseEntity<Map<String, String>> loginRequsetResponse (NaverLoginParams params) {
+    public ResponseEntity<Map<String, String>> loginRequsetResponse(NaverLoginParams params) {
         Map<String, String> response = new HashMap<>();
-        response.put("URL" , oAuthLoginService.redirectApiUrl(params));
+        response.put("URL", oAuthLoginService.redirectApiUrl(params));
         return ResponseEntity.ok(response);
     }
-
-
 
 
 }

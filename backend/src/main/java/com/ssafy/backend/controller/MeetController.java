@@ -14,32 +14,6 @@ import java.util.Map;
 @RequestMapping("/meet")
 public class MeetController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MeetController.class);
-    private MeetService meetService;
-
-    @Autowired
-    public MeetController(MeetService meetService) {
-        this.meetService = meetService;
-    }
-
-    //모든 모임 정보 반환
-    @GetMapping("")
-    public ResponseEntity<?> findAll(){
-        return ResponseEntity.ok(meetService.findAll());
-    };
-
-    //주종에 따른 모임 정보 반환 안쓸듯...
-    @GetMapping("/")
-    public ResponseEntity<?> findByDrinkCategory(@RequestParam(required = false) String tag){
-        return ResponseEntity.ok(meetService.findByDrinkCategory(tag));
-    };
-
-    //모임 생성 상세정보
-    @GetMapping("/{meetId}")
-    public ResponseEntity<?> findByMeetId(@PathVariable Long meetId){
-        return ResponseEntity.ok(meetService.findByMeetId(meetId));
-    }
-
 
 
 }
