@@ -1,19 +1,13 @@
 package com.ssafy.backend.authentication.application;
 
 
-import com.ssafy.backend.authentication.domain.AuthTokens;
-import com.ssafy.backend.authentication.domain.AuthTokensGenerator;
-import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.RequestOAuthInfoService;
-import com.ssafy.backend.authentication.infra.JwtTokenProvider;
-import com.ssafy.backend.authentication.infra.kakao.KakaoLoginParams;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
+import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,21 +21,17 @@ public class OAuthLoginService {
      */
     //private final MemberRepository memberRepository;
     private final UserRepository userRepository;
-    private final AuthTokensGenerator authTokensGenerator;
     private final RequestOAuthInfoService requestOAuthInfoService;
-    private final JwtTokenProvider jwtTokenProvider;
 
 
-
-
-    public AuthTokens login(OAuthLoginParams params) {
+    public String login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
         System.out.println("oAuthInfoResponse = " + oAuthInfoResponse);
         // 받아온 정보를 기반으로  userId를 추출
         Long userId = findOrCreateUser(oAuthInfoResponse);
         System.out.println("2 : userId = " + userId);
         // 그 아이디를 기반으로 token 생성
-        return authTokensGenerator.generate(userId);
+        return JwtUtil.generateToken(String.valueOf(userId));
     }
 
 //    public void logout(OAuthLoginParams params) {
@@ -69,15 +59,7 @@ public class OAuthLoginService {
     }
 
 
-
-
     public String redirectApiUrl(OAuthLoginParams params) {
-        String url = requestOAuthInfoService.authAptUrl(params);
-        return url;
+        return requestOAuthInfoService.authAptUrl(params);
     }
-
-
 }
-
-
-
