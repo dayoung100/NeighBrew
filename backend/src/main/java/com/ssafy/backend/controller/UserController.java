@@ -1,13 +1,16 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.authentication.application.OAuthLoginService;
+import com.ssafy.backend.authentication.domain.AuthTokens;
 import com.ssafy.backend.authentication.domain.AuthTokensGenerator;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
 import com.ssafy.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -28,7 +31,6 @@ public class UserController {
     }
 
 
-
     //전체 유저 검색
     @GetMapping
     public ResponseEntity<List<User>> findAll() {
@@ -44,12 +46,10 @@ public class UserController {
     }
 
 
-
-
-
-
-
-
-
-
+    // Test용 일반 아이디 => 유저 아이디 넣으면 JWT 반환하는 코드 작성
+    @GetMapping("/test/{userId}")
+    public ResponseEntity<AuthTokens> jwtMaker(@PathVariable Long userId) {
+        AuthTokens accessToken = authTokensGenerator.generate(userId);
+        return ResponseEntity.ok(accessToken);
+    }
 }
