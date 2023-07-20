@@ -89,7 +89,7 @@ const MeetingDetail = () => {
   };
 
   return (
-    <>
+    <div style={{ color: "var(--c-black)" }}>
       <MeetThumbnail>
         <div
           style={{
@@ -133,7 +133,7 @@ const MeetingDetail = () => {
             </div>
           </div>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <PeopleNumInfo now={1} max={4} color="white" />
+            <PeopleNumInfo now={1} max={4} color="white" size={11} />
           </div>
         </div>
       </MeetThumbnail>
@@ -149,6 +149,30 @@ const MeetingDetail = () => {
           isWaiting={false}
           routingFunc={null}
         />
+        <MeetTitle>모임 소개</MeetTitle>
+        <div
+          style={{
+            color: "var(--c-black)",
+            fontFamily: "Noto Sans KR",
+            fontSize: "15px",
+            textAlign: "left",
+            marginTop: "0.5rem",
+          }}
+        >
+          아침이 겨울이 마디씩 위에 이름과, 쓸쓸함과 오는 했던 하나에 봅니다. 내
+          내린 쉬이 아름다운 오는 걱정도 사람들의 까닭입니다. 이름과, 가을로 별
+          언덕 이제 있습니다. 나의 나의 봄이 까닭이요, 별 듯합니다.쉬이 위에
+          내일 나의 까닭입니다. 가득 아스라히 이름과, 많은 못 하나에 이네들은
+          까닭입니다.무엇인지 노루, 언덕 이름자 있습니다. 것은 하나의 하나에
+          겨울이 버리었습니다. 이름과, 밤이 이름과, 릴케 별들을 오면 지나고
+          하나에 있습니다.
+        </div>
+        <div style={{ display: "flex" }}>
+          <MeetTitle>참여 인원</MeetTitle>
+          <div style={{ marginTop: "1.3rem", marginLeft: "0.5rem" }}>
+            <PeopleNumInfo now={1} max={4} color="var(--c-black)" size={20} />
+          </div>
+        </div>
       </MeetDetailDiv>
       <MeetPosDateDiv>
         모임 예정 장소와 시간, z-index올리고 position absolute로
@@ -156,7 +180,7 @@ const MeetingDetail = () => {
       <footer>
         <Footer />
       </footer>
-    </>
+    </div>
   );
 };
 export default MeetingDetail;

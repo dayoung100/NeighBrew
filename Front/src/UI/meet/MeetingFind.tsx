@@ -189,7 +189,12 @@ const meetingFind = () => {
               tag="소주/맥주"
               content={<MeetingDetail />}
               numberInfo={
-                <PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />
+                <PeopleNumInfo
+                  now={1}
+                  max={4}
+                  color={"var(--c-black)"}
+                  size={11}
+                />
               }
               isWaiting={false}
               routingFunc={() => GotoMeetDetailHandler(1)}
