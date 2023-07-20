@@ -27,7 +27,7 @@ const UserInfoItem = (props: UserInfoItemProps) => {
   //   라우팅 링크는 추후 변경될 수 있음
   const GotoUserDetailHandler = (userId: number) => {
     console.log("goto user detail page, userId is: ", userId);
-    navigate(`/user/${userId}`);
+    navigate(`/myPage/${userId}`);
   };
 
   return (
