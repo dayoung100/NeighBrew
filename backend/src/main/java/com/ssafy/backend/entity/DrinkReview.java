@@ -9,7 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DrinkReview {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long drinkReviewId;
 
     @ManyToOne
@@ -23,6 +23,9 @@ public class DrinkReview {
     @Lob
     private String content;
 
+    @Column(columnDefinition = "varchar(255) default 'no image'")
+    private String img;
+
     @Builder
     public DrinkReview(Long drinkReviewId, User user, Drink drink, String content) {
         this.drinkReviewId = drinkReviewId;
@@ -30,6 +33,7 @@ public class DrinkReview {
         this.drink = drink;
         this.content = content;
     }
+
 
     public void setContent(String content) {
         this.content = content;
