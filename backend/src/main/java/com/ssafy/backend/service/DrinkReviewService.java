@@ -9,6 +9,8 @@ import com.ssafy.backend.repository.DrinkRepository;
 import com.ssafy.backend.repository.DrinkReviewRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,10 +36,10 @@ public class DrinkReviewService {
         }
     }
 
-    public List<DrinkReview> getReviewsByDrinkId(Long drinkId) {
+    public Page<DrinkReview> getReviewsByDrinkId(Long drinkId, Pageable pageable) {
         Optional<Drink> drink = drinkRepository.findById(drinkId);
         if (drink.isPresent()) {
-            return drinkReviewRepository.findByDrink(drink.get());
+            return drinkReviewRepository.findByDrink(drink.get(),pageable);
         } else {
             throw new IllegalArgumentException("음료가 존재하지 않습니다.");
         }
