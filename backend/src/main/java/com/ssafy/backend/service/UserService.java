@@ -1,10 +1,12 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.dto.UserUpdateDto;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

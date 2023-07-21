@@ -71,15 +71,4 @@ public class User {
         this.nickname = nickname;
         this.oAuthProvider = oAuthProvider;
     }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", email='" + email + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", oAuthProvider=" + oAuthProvider +
-                ", deleted=" + deleted +
-                '}';
-    }
 }
