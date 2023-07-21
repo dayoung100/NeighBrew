@@ -22,7 +22,7 @@ const DrinkCard = (props: { drinkId: number }) => {
     navigate(`/drinkpost/${props.drinkId}`);
   };
   return (
-    <Card>
+    <Card onClick={() => moveToDrinkDetailHandler()}>
       <CardImage src={whiskeyImage}></CardImage>
       <p>술 이름</p>
     </Card>

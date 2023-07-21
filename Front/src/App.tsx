@@ -11,6 +11,9 @@ import MeetingMain from "./UI/meet/MeetingMain";
 import MeetingDetail from "./UI/meet/MeetingDetail";
 import Mypage from "./UI/user/MyPage";
 
+import DrinkpostCreate from "./UI/drinkpost/DrinkpostCreate";
+import DrinkpostDetail from "./UI/drinkpost/DrinkpostDetail";
+
 function App() {
   const navigate = useNavigate();
   const [isLodaing, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
@@ -55,6 +58,8 @@ function App() {
         <Route path="/myPage/:userid" element={<Mypage></Mypage>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:roomId" element={<ChatRoom></ChatRoom>} />
+        <Route path="/drinkpost/create" element={<DrinkpostCreate></DrinkpostCreate>} />
+        <Route path="/drinkpost/:drinkId" element={<DrinkpostDetail></DrinkpostDetail>} />
       </Routes>
     </>
   );
