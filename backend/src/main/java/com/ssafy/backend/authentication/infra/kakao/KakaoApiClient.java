@@ -6,6 +6,7 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +31,7 @@ public class KakaoApiClient implements OAuthApiClient {
     @Value("${oauth.kakao.client-id}")
     private String clientId;
 
+    @Qualifier("restTemplate")
     private final RestTemplate restTemplate;
 
     @Override
@@ -65,6 +67,7 @@ public class KakaoApiClient implements OAuthApiClient {
     public OAuthInfoResponse requestOauthInfo(String accessToken) {
         String url = apiUrl + "/v2/user/me";
 
+        System.out.println("들어옴");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         httpHeaders.set("Authorization", "Bearer " + accessToken);
@@ -72,6 +75,7 @@ public class KakaoApiClient implements OAuthApiClient {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("property_keys", "[\"kakao_account.email\", \"kakao_account.profile\"]");
 
+        System.out.println("body = " + body.toString());
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
         return restTemplate.postForObject(url, request, KakaoInfoResponse.class);
@@ -79,10 +83,9 @@ public class KakaoApiClient implements OAuthApiClient {
 
     @Override
     public String authApiUrl(OAuthLoginParams params) {
-        String redirectUri = "http://localhost:8080/kakao/callback";
+        String redirectUri = "http://localhost:5173/kakao/callback";
         String responseType = "code";
-        String url = authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
-        return url;
+        return authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
     }
 
 

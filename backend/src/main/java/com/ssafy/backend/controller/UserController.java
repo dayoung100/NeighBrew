@@ -1,55 +1,99 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.authentication.application.OAuthLoginService;
-import com.ssafy.backend.authentication.domain.AuthTokensGenerator;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
 import com.ssafy.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ssafy.backend.util.JwtUtil;
+import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/users")
+@RequiredArgsConstructor
+@RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
     private final UserRepository userRepository;
-    private final AuthTokensGenerator authTokensGenerator;
+    private final UserService userService;
 
 
-    @Autowired
-    public UserController(UserService userService, UserRepository userRepository, AuthTokensGenerator authTokensGenerator) {
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.authTokensGenerator = authTokensGenerator;
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
+        User foundUser = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
+
+        if (foundUser == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        String accessToken = JwtUtil.generateToken(user.getEmail());
+        String refreshToken = JwtUtil.generateRefreshToken(user.getEmail());
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        return ResponseEntity.ok(tokens);
     }
 
-
-
     //전체 유저 검색
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<User>> findAll() {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
-    // 현재 접속한 유저가 JWT accessToken을 보내면 해당 유저 검증 후에 해당 유저 정보 출력
-    @GetMapping("/{accessToken}")
-    public ResponseEntity<User> findByAccessToken(@PathVariable String accessToken) {
 
-        Long userId = authTokensGenerator.extractUserId(accessToken);
-        return ResponseEntity.ok(userRepository.findById(userId).get());
+    @GetMapping("/guard/userinfo")
+    public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        System.out.println("userId = " + userId);
+        User user = userRepository.findById(Long.valueOf(userId)).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+        return ResponseEntity.ok(user);
     }
 
+    // refresh token을 이용한 access token 재발급
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshAccessToken(@RequestBody String refreshToken) {
+        Claims claims;
+        try {
+            claims = JwtUtil.getClaims(refreshToken);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
 
+        String userId = claims.getSubject();
+        // 새로운 access 토큰 생성
+        String newAccessToken = JwtUtil.generateToken(userId);
 
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", newAccessToken);
+        return ResponseEntity.ok(tokens);
+    }
 
+    // Test용 일반 아이디 => 유저 아이디 넣으면 JWT 반환하는 코드 작성
 
+    @GetMapping("/access-token/{userId}")
+    public ResponseEntity<?> jwtMaker(@PathVariable Long userId) {
+        String accessToken = JwtUtil.generateToken(String.valueOf(userId));
+        String refreshToken = JwtUtil.generateRefreshToken(String.valueOf(userId));
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        return ResponseEntity.ok(tokens);
 
+    // 디비에 값이 있는지 없는지 확인 안하고 만들어줌
+//    @GetMapping("/test/{userId}")
+//    public ResponseEntity<AuthTokens> jwtMaker(@PathVariable Long userId) {
+//        AuthTokens accessToken = authTokensGenerator.generate(userId);
+//        return ResponseEntity.ok(accessToken);
 
-
-
-
+    }
 }

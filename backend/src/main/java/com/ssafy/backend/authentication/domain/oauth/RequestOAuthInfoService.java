@@ -22,7 +22,7 @@ public class RequestOAuthInfoService {
         // 어떤 클라이언트인지 확인
         OAuthApiClient client = clients.get(params.oAuthProvider());
 
-        //여기서 acessToken은 kakao, naver로부터 받아온 token
+        //여기서 accessToken은 kakao, naver로부터 받아온 token
         String accessToken = client.requestAccessToken(params);
         System.out.println("1 : accessToken = " + accessToken);
 
@@ -31,16 +31,8 @@ public class RequestOAuthInfoService {
     }
 
 
-
-    public String authAptUrl(OAuthLoginParams params){
+    public String authAptUrl(OAuthLoginParams params) {
         OAuthApiClient client = clients.get(params.oAuthProvider());
-        String url = client.authApiUrl(params);
-        return url;
+        return client.authApiUrl(params);
     }
-
-
-
-
-
-
 }
