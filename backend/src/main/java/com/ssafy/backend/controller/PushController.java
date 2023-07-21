@@ -1,7 +1,6 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.dto.UserDto;
-import com.ssafy.backend.entity.PushType;
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.service.PushService;
 import io.jsonwebtoken.io.IOException;
 import org.slf4j.Logger;

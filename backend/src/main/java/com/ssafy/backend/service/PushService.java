@@ -2,7 +2,7 @@ package com.ssafy.backend.service;
 
 import com.ssafy.backend.dto.PushDto;
 import com.ssafy.backend.entity.Push;
-import com.ssafy.backend.entity.PushType;
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.EmitterRepository;
 import com.ssafy.backend.repository.EmitterRepositoryImpl;
