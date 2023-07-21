@@ -9,5 +9,4 @@ import java.util.Optional;
 
 @Repository
 public interface MeetRepository extends JpaRepository<Meet, Long> {
-    Optional<Drink> deleteByMeetId(Long meetId);
 }

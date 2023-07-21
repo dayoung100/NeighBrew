@@ -59,7 +59,10 @@ public class MeetService {
 
     public void deleteMeet(Long meetId) {
         logger.info("meetId : {}인 모임 삭제", meetId);
-        meetRepository.deleteByMeetId(meetId).orElseThrow(() -> new IllegalArgumentException("해당 모임 정보를 찾을 수 없습니다."));
+        Meet meet = meetRepository.findById(meetId).orElse(null);
+        if(meet != null){
+            meetRepository.delete(meet);
+        }
     }
 
 

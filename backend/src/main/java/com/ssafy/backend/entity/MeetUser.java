@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.backend.Enum.MeetType;
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.dto.MeetUserDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,6 +43,17 @@ public class MeetUser {
                 .meetType(this.meetType)
                 .status(this.status)
                 .build();
+    }
+
+    public MeetUser() {
+    }
+
+    @Builder
+    public MeetUser( User user, Meet meet, Status status, MeetType meetType) {
+        this.user = user;
+        this.meet = meet;
+        this.status = status;
+        this.meetType = meetType;
     }
 }
 
