@@ -5,47 +5,52 @@ import com.ssafy.backend.entity.PushType;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.UserRepository;
+import com.ssafy.backend.service.FollowService;
 import com.ssafy.backend.service.PushService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/follow")
+@RequestMapping("/follow")
+@RequiredArgsConstructor
 public class FollowController {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
     private final PushService pushService;
+    private final FollowService followService;
 
-    @Autowired
-    public FollowController(FollowRepository followRepository, UserRepository userRepository, PushService pushService) {
-        this.followRepository = followRepository;
-        this.userRepository = userRepository;
-        this.pushService = pushService;
+    @GetMapping("/guard/followers")
+    public ResponseEntity<List<Follow>> getFollowers(HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new IllegalArgumentException("Invalid userId: " + userId));
+        List<Follow> followers = followService.getFollowers(Long.valueOf(userId));
+
+        return ResponseEntity.ok(followers);
     }
 
     @PostMapping("/guard/{followingId}")
-    public void followUser(HttpServletRequest request, @PathVariable("followingId") Long followingId) {
+    public ResponseEntity<?> followUser(HttpServletRequest request, @PathVariable("followingId") Long followingId) {
         String followerId = (String) request.getAttribute("userId");
         User follower = userRepository.findById(Long.valueOf(followerId)).orElseThrow(() -> new IllegalArgumentException("Invalid followerId: " + followerId));
         User following = userRepository.findById(followingId).orElseThrow(() -> new IllegalArgumentException("Invalid followingId: " + followingId));
 
-        Follow follow = new Follow();
-        follow.setFollower(follower);
-        follow.setFollowing(following);
+        // 토글 방식의 팔로우 기능 구현
+        followRepository.findByFollowerUserIdAndFollowingUserId(Long.valueOf(followerId), followingId).ifPresentOrElse(followRepository::delete, () -> {
+            Follow follow = new Follow();
+            follow.setFollower(follower);
+            follow.setFollowing(following);
 
-        followRepository.save(follow);
+            followRepository.save(follow);
 
-        //로거 추가 및 push 이벤트 발생 테스트
-        pushService.send(followerId, PushType.Follow, follower.getNickname() + "님께서 회원님을 팔로우하기 시작했습니다.", "http://localhost/mypage/" + follower.getUserId());
-    }
+            //로거 추가 및 push 이벤트 발생 테스트
+            pushService.send(followerId, PushType.Follow, follower.getNickname() + "님께서 회원님을 팔로우하기 시작했습니다.", "http://localhost/mypage/" + follower.getUserId());
+        });
 
-    @DeleteMapping("/guard/{followingId}")
-    public void unfollowUser(HttpServletRequest request, @PathVariable Long followingId) {
-        String followerId = (String) request.getAttribute("userId");
-        Follow follow = followRepository.findByFollowerUserIdAndFollowingUserId(Long.valueOf(followerId), followingId).orElseThrow(() -> new IllegalArgumentException("Follow not found"));
-
-        followRepository.delete(follow);
+        return ResponseEntity.ok().build();
     }
 }
