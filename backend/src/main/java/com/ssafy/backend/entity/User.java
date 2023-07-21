@@ -1,9 +1,7 @@
 package com.ssafy.backend.entity;
 
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,15 +9,17 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Where(clause = "deleted = false")
 public class User {
     // 최조 로그인 시 기본 정보를 가져와야함
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     @Column(nullable = false, unique = true, length = 50)
@@ -32,17 +32,17 @@ public class User {
     @Enumerated(EnumType.STRING)
     private OAuthProvider oAuthProvider;
 
-    @Column(nullable = true, length = 20)
+    @Column(nullable = false, length = 20)
     private String name;
 
-    @Column(nullable = true, length = 100)
+    @Column(nullable = false, length = 100)
     private String password;
 
-    @Column(nullable = true, unique = true, length = 20)
+    @Column(nullable = false, unique = true, length = 20)
     private String phone;
 
     @Temporal(TemporalType.DATE)
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Date birth;
 
 
@@ -56,10 +56,10 @@ public class User {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(nullable = true, columnDefinition = "float default 40.0")
+    @Column(nullable = false, columnDefinition = "float default 40.0")
     private Float iu;
 
-    @Column(nullable = true, columnDefinition = "varchar(255) default 'no image'")
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'no image'")
     private String profile;
 
     private boolean deleted = false;
@@ -70,11 +70,6 @@ public class User {
         this.email = email;
         this.nickname = nickname;
         this.oAuthProvider = oAuthProvider;
-    }
-
-
-    public User() {
-
     }
 
     @Override
