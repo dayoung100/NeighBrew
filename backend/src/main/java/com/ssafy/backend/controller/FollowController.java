@@ -5,28 +5,32 @@ import com.ssafy.backend.entity.PushType;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.UserRepository;
+import com.ssafy.backend.service.FollowService;
 import com.ssafy.backend.service.PushService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/follow")
+@RequiredArgsConstructor
 public class FollowController {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
     private final PushService pushService;
+    private final FollowService followService;
 
-    @Autowired
-    public FollowController(FollowRepository followRepository, UserRepository userRepository, PushService pushService) {
-        this.followRepository = followRepository;
-        this.userRepository = userRepository;
-        this.pushService = pushService;
+    @GetMapping("/guard/followers")
+    public ResponseEntity<List<Follow>> getFollowers(HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new IllegalArgumentException("Invalid userId: " + userId));
+        List<Follow> followers = followService.getFollowers(Long.valueOf(userId));
+
+        return ResponseEntity.ok(followers);
     }
 
     @PostMapping("/guard/{followingId}")
