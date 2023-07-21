@@ -26,4 +26,9 @@ public class NaverLoginParams implements OAuthLoginParams {
         body.add("state", state);
         return body;
     }
+
+    @Override
+    public String code() {
+        return null;
+    }
 }

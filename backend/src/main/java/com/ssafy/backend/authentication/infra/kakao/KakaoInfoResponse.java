@@ -1,5 +1,6 @@
 package com.ssafy.backend.authentication.infra.kakao;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
@@ -19,7 +20,11 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
         private final KakaoProfile profile;
         private final String email;
 
-        KakaoAccount(KakaoProfile profile, String email) {
+        @JsonCreator
+        public KakaoAccount(
+                @JsonProperty("profile") KakaoProfile profile,
+                @JsonProperty("email") String email
+        ) {
             this.profile = profile;
             this.email = email;
         }
@@ -30,7 +35,8 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
     static class KakaoProfile {
         private final String nickname;
 
-        KakaoProfile(String nickname) {
+        @JsonCreator
+        public KakaoProfile(@JsonProperty("nickname") String nickname) {
             this.nickname = nickname;
         }
     }
