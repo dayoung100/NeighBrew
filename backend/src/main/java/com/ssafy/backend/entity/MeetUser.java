@@ -1,8 +1,10 @@
 package com.ssafy.backend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.backend.Enum.MeetType;
 import com.ssafy.backend.Enum.Status;
+import com.ssafy.backend.dto.MeetUserDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,5 +34,14 @@ public class MeetUser {
     // 유저가 생성, 참여, 신처
     @Enumerated(EnumType.STRING)
     private MeetType meetType;
+
+    public MeetUserDto toDto(){
+        return MeetUserDto.builder()
+                .meetUserId(this.meetUserId)
+                .meet(this.meet)
+                .meetType(this.meetType)
+                .status(this.status)
+                .build();
+    }
 }
 
