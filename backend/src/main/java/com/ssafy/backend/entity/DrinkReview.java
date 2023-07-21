@@ -27,10 +27,11 @@ public class DrinkReview {
     private String img;
 
     @Builder
-    public DrinkReview(Long drinkReviewId, User user, Drink drink, String content) {
+    public DrinkReview(Long drinkReviewId, User user, Drink drink, String content, String img) {
         this.drinkReviewId = drinkReviewId;
         this.user = user;
         this.drink = drink;
+        this.img = img;
         this.content = content;
     }
 
