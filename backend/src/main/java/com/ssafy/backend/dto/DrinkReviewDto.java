@@ -14,12 +14,14 @@ public class DrinkReviewDto {
     private Long userId;
     private Long drinkId;
     private String content;
+    private String img;
 
     public DrinkReview toEntity(User user, Drink drink) {
         return DrinkReview.builder()
                 .user(user)
                 .drink(drink)
                 .content(content)
+                .img(img)
                 .build();
     }
 }
