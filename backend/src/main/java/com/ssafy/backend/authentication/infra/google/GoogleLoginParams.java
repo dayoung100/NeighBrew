@@ -1,4 +1,4 @@
-package com.ssafy.backend.authentication.infra.kakao;
+package com.ssafy.backend.authentication.infra.google;
 
 
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
@@ -10,30 +10,31 @@ import org.springframework.util.MultiValueMap;
 
 @Getter
 @NoArgsConstructor
-public class KakaoLoginParams implements OAuthLoginParams {
-    private String authorizationCode;
-
-    public KakaoLoginParams(String authorizationCode) {
-        this.authorizationCode = authorizationCode;
-    }
+public class GoogleLoginParams implements OAuthLoginParams {
+    private String code;
 
     @Override
     public OAuthProvider oAuthProvider() {
-        return OAuthProvider.KAKAO;
+        return OAuthProvider.GOOGLE;
     }
 
     @Override
     public MultiValueMap<String, String> makeBody() {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("code", authorizationCode);
+        body.add("code", code);
         return body;
     }
 
-
     @Override
     public String code() {
-        return null;
+        return code;
     }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+
 
 
 }

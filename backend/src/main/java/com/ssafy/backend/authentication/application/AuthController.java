@@ -2,12 +2,15 @@ package com.ssafy.backend.authentication.application;
 
 
 import com.ssafy.backend.authentication.domain.AuthTokens;
+import com.ssafy.backend.authentication.infra.google.GoogleLoginParams;
 import com.ssafy.backend.authentication.infra.kakao.KakaoLoginParams;
 import com.ssafy.backend.authentication.infra.naver.NaverLoginParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,11 +32,11 @@ public class AuthController {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<Integer> logout(@RequestBody KakaoLoginParams params) {
-//        oAuthLoginService.logout(params);
-//        return ResponseEntity.ok(1);
-//    }
+
+    @PostMapping("/google")
+    public ResponseEntity<?> loginGoogle(@RequestBody GoogleLoginParams params) {
+        return ResponseEntity.ok(oAuthLoginService.login(params));
+    }
 
 
     @GetMapping("/login/kakao")
@@ -49,4 +52,14 @@ public class AuthController {
         response.put("URL", oAuthLoginService.redirectApiUrl(params));
         return ResponseEntity.ok(response);
     }
+
+
+    @GetMapping("/login/google")
+    public ResponseEntity<Map<String, String>> loginRequsetResponse(GoogleLoginParams params)  {
+        Map<String, String> response = new HashMap<>();;
+        response.put("URL", oAuthLoginService.redirectApiUrl(params));
+        return ResponseEntity.ok(response);
+    }
+
+
 }

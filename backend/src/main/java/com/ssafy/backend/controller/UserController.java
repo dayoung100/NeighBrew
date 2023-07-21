@@ -81,6 +81,7 @@ public class UserController {
     }
 
     // Test용 일반 아이디 => 유저 아이디 넣으면 JWT 반환하는 코드 작성
+
     @GetMapping("/access-token/{userId}")
     public ResponseEntity<?> jwtMaker(@PathVariable Long userId) {
         String accessToken = JwtUtil.generateToken(String.valueOf(userId));
@@ -89,5 +90,12 @@ public class UserController {
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
         return ResponseEntity.ok(tokens);
+
+    // 디비에 값이 있는지 없는지 확인 안하고 만들어줌
+//    @GetMapping("/test/{userId}")
+//    public ResponseEntity<AuthTokens> jwtMaker(@PathVariable Long userId) {
+//        AuthTokens accessToken = authTokensGenerator.generate(userId);
+//        return ResponseEntity.ok(accessToken);
+
     }
 }
