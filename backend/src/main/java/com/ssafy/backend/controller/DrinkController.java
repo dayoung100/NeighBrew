@@ -2,6 +2,7 @@ package com.ssafy.backend.controller;
 
 import com.ssafy.backend.dto.DrinkDto;
 import com.ssafy.backend.service.DrinkService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,15 +17,16 @@ public class DrinkController {
 
     // 모든 술 조회
     @GetMapping()
-    public ResponseEntity<?> findAll() {
-        return ResponseEntity.ok(drinkService.findAll());
+    public ResponseEntity<?> findAll(Pageable pageable) {
+        return ResponseEntity.ok(drinkService.findAll(pageable));
     }
 
     // 술 이름과 태그로 조회
     @GetMapping("/")
-    public ResponseEntity<?> findByNameAndTag(@RequestParam(required = false) String name, @RequestParam(required = false) Long tag) {
-        return ResponseEntity.ok(drinkService.findByNameAndTag(name, tag));
+    public ResponseEntity<?> findByNameAndTag(@RequestParam(required = false) String name, @RequestParam(required = false) Long tag, Pageable pageable) {
+        return ResponseEntity.ok(drinkService.findByNameAndTag(name, tag, pageable));
     }
+
 
     // 술 추가
     @PostMapping()

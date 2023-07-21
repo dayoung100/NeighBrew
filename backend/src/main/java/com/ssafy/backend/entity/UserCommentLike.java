@@ -1,16 +1,15 @@
 package com.ssafy.backend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserCommentLike {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userCommentLikeId;
 
     @ManyToOne
@@ -20,4 +19,11 @@ public class UserCommentLike {
     @ManyToOne
     @JoinColumn(name = "reviewId")
     private DrinkReview drinkReview;
+
+    @Builder
+    public UserCommentLike(User user, DrinkReview drinkReview) {
+        this.user = user;
+        this.drinkReview = drinkReview;
+    }
 }
+

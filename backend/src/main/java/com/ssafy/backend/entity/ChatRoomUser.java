@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Setter
 public class ChatRoomUser {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatRoomUserId;
 
     @ManyToOne

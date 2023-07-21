@@ -2,9 +2,10 @@ package com.ssafy.backend.controller;
 
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
+import com.ssafy.backend.service.UserService;
 import com.ssafy.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
     private final UserRepository userRepository;
+    private final UserService userService;
 
-
-    @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
@@ -81,6 +79,7 @@ public class UserController {
     }
 
     // Test용 일반 아이디 => 유저 아이디 넣으면 JWT 반환하는 코드 작성
+
     @GetMapping("/access-token/{userId}")
     public ResponseEntity<?> jwtMaker(@PathVariable Long userId) {
         String accessToken = JwtUtil.generateToken(String.valueOf(userId));
@@ -89,5 +88,12 @@ public class UserController {
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
         return ResponseEntity.ok(tokens);
+
+    // 디비에 값이 있는지 없는지 확인 안하고 만들어줌
+//    @GetMapping("/test/{userId}")
+//    public ResponseEntity<AuthTokens> jwtMaker(@PathVariable Long userId) {
+//        AuthTokens accessToken = authTokensGenerator.generate(userId);
+//        return ResponseEntity.ok(accessToken);
+
     }
 }

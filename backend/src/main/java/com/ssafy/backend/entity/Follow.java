@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Setter
 public class Follow {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long followId;
 
     @ManyToOne
