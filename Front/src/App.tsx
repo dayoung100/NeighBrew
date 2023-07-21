@@ -10,6 +10,10 @@ import Drinkpost from "./UI/drinkpost/DrinkpostMain";
 import MeetingMain from "./UI/meet/MeetingMain";
 import MeetingDetail from "./UI/meet/MeetingDetail";
 import Mypage from "./UI/user/MyPage";
+import Follower from "./UI/user/Follower";
+import Follow from "./UI/user/Follow";
+import KakaoLogin from "./UI/user/KakaoLogin";
+import NaverLogin from "./UI/user/NaverLogin";
 
 function App() {
   const navigate = useNavigate();
@@ -53,8 +57,12 @@ function App() {
         <Route path="/meet" element={<MeetingMain />}></Route>
         <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>
         <Route path="/myPage/:userid" element={<Mypage></Mypage>}></Route>
+        <Route path="/myPage/follower/:userid" element={<Follower></Follower>}></Route>
+        <Route path="/myPage/follow/:userid" element={<Follower></Follower>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:roomId" element={<ChatRoom></ChatRoom>} />
+        <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
+        <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
       </Routes>
     </>
   );
