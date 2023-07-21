@@ -1,7 +1,7 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.entity.Follow;
-import com.ssafy.backend.entity.PushType;
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.UserRepository;
