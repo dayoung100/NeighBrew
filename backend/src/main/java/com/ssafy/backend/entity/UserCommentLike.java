@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Setter
 public class UserCommentLike {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userCommentLikeId;
 
     @ManyToOne

@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ChatRoom {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatRoomId;
 
     @Column(nullable = false, length = 100)
