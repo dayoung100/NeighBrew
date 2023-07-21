@@ -1,14 +1,15 @@
 // 마이 페이지
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { meetingicon, directMessage, brewery } from "../../assets/AllIcon";
+import { meetingicon, brewery } from "../../assets/AllIcon";
 import temgif from "../../assets/tempgif.gif";
 import bottle from "../../assets/bottle.png";
 import liver from "../../assets/liver.png";
 import siren from "../../assets/siren.png";
 import Navbar from "../navbar/Navbar";
-import MeetingMy from "../meet/MeetingMy";
+import MeetingMy from "./MeetingMyUseInUser";
+import Footer from "../footer/Footer";
 
 const Button = styled.button`
   width: 40%;
@@ -108,10 +109,20 @@ const MyPage = () => {
   const [tags, setTags] = useState(["태그1", "태그2", "태그3"]);
   const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
   const Brewery = brewery(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
+  const navigate = useNavigate();
   const followHandler = () => {
     setFollowing(prev => {
       return prev === 0 ? 1 : 0;
     });
+  };
+  const reportHandler = () => {
+    alert("신고되었습니다.");
+  };
+  const goFollowerPage = () => {
+    navigate("/myPage/follower/" + userid);
+  };
+  const goFollowPage = () => {
+    navigate("/myPage/follow/" + userid);
   };
   return (
     <>
@@ -147,7 +158,9 @@ const MyPage = () => {
               style={{
                 gridColumn: "1/3",
                 gridRow: "1/3",
+                cursor: "pointer",
               }}
+              onClick={goFollowPage}
             >
               <p>100</p>
               <p>팔로우</p>
@@ -156,7 +169,9 @@ const MyPage = () => {
               style={{
                 gridColumn: "3/5",
                 gridRow: "1/3",
+                cursor: "pointer",
               }}
+              onClick={goFollowerPage}
             >
               <p>100</p>
               <p>팔로워</p>
@@ -176,7 +191,11 @@ const MyPage = () => {
               {following === 0 ? "팔로우" : "언팔로우"}
             </button>
 
-            <img src={siren} style={{ gridColumn: "4/5", gridRow: "3/3", cursor: "pointer" }} />
+            <img
+              src={siren}
+              style={{ gridColumn: "4/5", gridRow: "3/3", cursor: "pointer" }}
+              onClick={reportHandler}
+            />
           </GripDiv>
         </UserDiv>
 
@@ -221,9 +240,10 @@ const MyPage = () => {
       </div>
       {chooseChat === 0 ? <MeetingMy></MeetingMy> : <p>임시 술장</p>}
 
-      {/* <Div>
-        <p>awdawd</p>
-      </Div> */}
+      <div style={{ height: "80px" }}></div>
+      <footer>
+        <Footer />
+      </footer>
     </>
   );
 };

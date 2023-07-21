@@ -187,11 +187,16 @@ const ChatRoom = () => {
     });
   };
 
+  useEffect(() => {
+    scroll();
+  }, [messages]);
+
   const scroll = () => {
     if (rapperDiv.current) {
-      setTimeout(() => {
-        window.scrollTo({ top: rapperDiv.current!.scrollHeight, behavior: "smooth" });
-      }, 10);
+      // setTimeout(() => {
+      //   window.scrollTo({ top: rapperDiv.current!.scrollHeight, behavior: "smooth" });
+      // }, 10);
+      window.scrollTo({ top: rapperDiv.current!.scrollHeight, behavior: "smooth" });
     }
   };
   useEffect(() => {
