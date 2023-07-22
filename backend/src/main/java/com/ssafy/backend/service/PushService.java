@@ -1,26 +1,20 @@
 package com.ssafy.backend.service;
 
-import com.ssafy.backend.controller.PushController;
 import com.ssafy.backend.dto.PushDto;
 import com.ssafy.backend.entity.Push;
-import com.ssafy.backend.entity.PushType;
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.EmitterRepository;
 import com.ssafy.backend.repository.EmitterRepositoryImpl;
 import com.ssafy.backend.repository.PushRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class PushService {
@@ -36,7 +30,7 @@ public class PushService {
         this.pushRepository = pushRepository;
     }
 
-    public SseEmitter connect(Long id, String lastEventId) {
+    public SseEmitter connect(String id, String lastEventId) {
 
         logger.info("PushService 접근 : 접근 유저 id {}", id);
 
@@ -72,7 +66,7 @@ public class PushService {
         }
     }
 
-    private void sendLostData(String lastEventId, Long userId, String emitterId, SseEmitter emitter) {
+    private void sendLostData(String lastEventId, String userId, String emitterId, SseEmitter emitter) {
         //유저 ID에 해당하는 모든 SSE 이벤트를 가져온다.
         Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByUserId(String.valueOf(userId));
         eventCaches.entrySet().stream()
@@ -94,7 +88,7 @@ public class PushService {
     //public void send(User receiver, PushType pushType, String content, String url) {
     //  Push push = pushRepository.save(createPush(receiver, pushType, content, url));
     //  DB체크 완료되면 수행해야함, 유저 객체를 용해야하기 떄문
-    public void send(Long id, PushType pushType, String content, String url) {
+    public void send(String id, PushType pushType, String content, String url) {
         PushDto pushDto = new PushDto();
         pushDto.setId(1L);
         pushDto.setContent(content);
@@ -126,7 +120,7 @@ public class PushService {
     }
 
     //id에 이벤트가 발생한 시간을 더해 유실된 데이터를 찾을 수 있도록 한다.
-    private String makeTimeIncludeId(Long memberId) {
+    private String makeTimeIncludeId(String memberId) {
         return memberId + "_" + System.currentTimeMillis();
     }
 

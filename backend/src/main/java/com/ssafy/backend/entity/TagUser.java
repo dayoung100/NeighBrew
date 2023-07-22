@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 public class TagUser {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tagUserId;
 
     @ManyToOne

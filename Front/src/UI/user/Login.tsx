@@ -1,69 +1,79 @@
 // 로그인 화면, 회원 가입을 누르면 Signup.tsx로 이동
-import { Input, Alert } from "../../style/common";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { SignUpData } from "../../Type/types";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import styled from "styled-components";
 import axios from "axios";
 
+const ImgDiv = styled.div`
+  width: 20%;
+  height: 50%;
+  overflow: hidden;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  float: left;
+  margin-right: 1rem;
+`;
+
+const Img = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const SocialDiv = styled.div`
+  display: flex;
+  width: 80%;
+  justify-content: space-between;
+  height: 50%;
+  min-height: 350px;
+  align-items: center;
+`;
 const Login = () => {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoginValid, setIsLoginValid] = useState(""); // 오류시 오류 메세지 출력
   const navigate = useNavigate();
-  const onChangeId = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setId(e.target.value);
-  };
-  const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-  const loginHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    return navigate("/home");
-    // 로그인 로직
-    axios
-      .get("url")
+  const location = useLocation();
+  const KakaologinHandler = async () => {
+    axios({
+      method: "get",
+      url: "http://192.168.31.71:8080/api/auth/login/kakao",
+    })
       .then(res => {
-        if (res.data === "success") {
-          navigate("/home");
-        } else {
-          setIsLoginValid(res.data);
-        }
+        const url = res.data.URL;
+        window.location.href = url;
       })
       .catch(err => {
         console.log(err);
       });
   };
+  const NaverloginHandler = async () => {
+    axios({
+      method: "get",
+      url: "http://192.168.31.71:8080/api/auth/login/naver",
+    })
+      .then(res => {
+        const url = res.data.URL;
+        window.location.href = url;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   return (
-    <>
+    <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
       <h2>로그인</h2>
-      <button>kakao</button>
-      <br />
-      <form action="submit">
-        {isLoginValid && (
-          <p>
-            <Alert>{isLoginValid}</Alert>
-          </p>
-        )}
-        <label htmlFor="ID">아이디</label>
-        <Input
-          type="text"
-          placeholder="아이디를 입력해주세요"
-          id="ID"
-          value={id}
-          onChange={onChangeId}
-        />
-        <br />
-        <label htmlFor="PASSWORD">비밀번호</label>
-        <Input
-          type="text"
-          placeholder="비밀번호를 입력해주세요"
-          id="PASSWORD"
-          value={password}
-          onChange={onChangePassword}
-        />
-        <button onClick={loginHandler}>로그인 하기</button>
-      </form>
-    </>
+      <SocialDiv>
+        <ImgDiv onClick={NaverloginHandler}>
+          <Img src="https://image.rocketpunch.com/company/5466/naver_logo.png?s=400x400&t=inside" />
+        </ImgDiv>
+        <ImgDiv onClick={KakaologinHandler}>
+          <Img src="https://cdn.imweb.me/thumbnail/20220403/a8e484f2dfe39.png" />
+        </ImgDiv>
+        <ImgDiv>
+          <Img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/800px-Google_%22G%22_Logo.svg.png" />
+        </ImgDiv>
+      </SocialDiv>
+      <div></div>
+    </div>
   );
 };
 export default Login;
