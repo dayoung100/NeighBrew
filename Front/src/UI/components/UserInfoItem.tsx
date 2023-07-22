@@ -29,6 +29,7 @@ const UserInfoItem = (props: UserInfoItemProps) => {
     console.log("goto user detail page, userId is: ", userId);
     navigate(`/myPage/${userId}`);
   };
+  console.log(props.imgSrc);
 
   return (
     <div
@@ -43,10 +44,8 @@ const UserInfoItem = (props: UserInfoItemProps) => {
             alignItems: "center",
           }}
         >
-          <div style={{ fontFamily: "JejuGothic", fontSize: "15px" }}>
-            {props.name}
-          </div>
-          {props.isMaster && <img src="../src/assets/star.svg" />}
+          <div style={{ fontFamily: "JejuGothic", fontSize: "15px" }}>{props.name}</div>
+          {props.isMaster && <img src="/src/assets/star.svg" />}
         </div>
         <div
           style={{

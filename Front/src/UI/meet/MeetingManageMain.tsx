@@ -3,10 +3,11 @@
 모임 관리 메인 페이지
 모임 정보 관리, 참여자 관리 버튼이 있음
 */
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 import NavbarSimple from "../navbar/NavbarSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import Footer from "../footer/Footer";
 
 const BigBtn = styled.div`
   border-radius: 30px;
@@ -19,11 +20,14 @@ const BigBtn = styled.div`
 const MeetingManageMain = () => {
   const navigate = useNavigate();
 
-  const GotoMeetInfoManage = () => {
-    navigate(-1);
+  const GotoMeetInfoManage = (meetId: number) => {
+    console.log("goto manage page, meetId is: ", meetId, "[member]");
+    navigate(`/meet/${meetId}/manage/member`);
   };
-  const GotoMemberManage = () => {
-    navigate(-1);
+
+  const GotoMemberManage = (meetId: number) => {
+    console.log("goto manage page, meetId is: ", meetId, "[member]");
+    navigate(`/meet/${meetId}/manage/member`);
   };
 
   return (
@@ -35,8 +39,11 @@ const MeetingManageMain = () => {
       <div style={{ margin: "0 10.5rem" }}>
         <PeopleNumInfo now={1} max={4} color="var(--c-black)" size={15} />
       </div>
-      <BigBtn onClick={GotoMeetInfoManage}>모임 정보 관리</BigBtn>
-      <BigBtn onClick={GotoMemberManage}>참여자 관리</BigBtn>
+      <BigBtn onClick={() => GotoMeetInfoManage(1)}>모임 정보 관리</BigBtn>
+      <BigBtn onClick={() => GotoMemberManage(1)}>참여자 관리</BigBtn>
+      <footer>
+        <Footer />
+      </footer>
     </div>
   );
 };
