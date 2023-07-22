@@ -11,12 +11,15 @@ import SearchBox from "../components/SearchBox";
 import ListInfoItem from "../components/ListInfoItem";
 import MeetingDetail from "./MeetingDetailSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
+import DrinkCategory from "../drinkCategory/DrinkCategory";
 import autoAnimate from "@formkit/auto-animate";
 
-const TestCateDiv = styled.div`
+const CateDiv = styled.div`
   height: 10rem;
-  border: 1px solid var(--c-black);
-  margin: 2rem 1rem;
+  margin: 1rem 1rem;
+  svg {
+    margin: auto 0.5rem;
+  }
 `;
 
 const SearchResultDiv = styled.div`
@@ -95,20 +98,8 @@ const DateInput = styled.input.attrs({ type: "date" })`
 
 const meetingFind = () => {
   const [siList, setSiList] = useState(["서울", "경기", "대전", "인천"]);
-  const [guList, setGuList] = useState([
-    "동구",
-    "중구",
-    "서구",
-    "유성",
-    "대덕",
-  ]);
-  const [dongList, setDongList] = useState([
-    "봉명동",
-    "중앙동",
-    "갈마1동",
-    "삼성동",
-    "탄방동",
-  ]);
+  const [guList, setGuList] = useState(["동구", "중구", "서구", "유성", "대덕"]);
+  const [dongList, setDongList] = useState(["봉명동", "중앙동", "갈마1동", "삼성동", "탄방동"]);
 
   const [meetingList, setMeetingList] = useState([
     "모임의 제목이 들어갑니다",
@@ -134,7 +125,9 @@ const meetingFind = () => {
 
   return (
     <div>
-      <TestCateDiv>category area - 컴포넌트로 빼기</TestCateDiv>
+      <CateDiv>
+        <DrinkCategory />
+      </CateDiv>
       <SearchResultDiv ref={parent}>
         <SearchResultHeader>
           지금 진행 중인 모임
@@ -147,7 +140,7 @@ const meetingFind = () => {
               <FilterElement>
                 <div>
                   <DropdownInput>
-                    {siList.map((si) => {
+                    {siList.map(si => {
                       return <option>{si}</option>;
                     })}
                   </DropdownInput>
@@ -155,7 +148,7 @@ const meetingFind = () => {
                 </div>
                 <div>
                   <DropdownInput>
-                    {guList.map((gu) => {
+                    {guList.map(gu => {
                       return <option>{gu}</option>;
                     })}
                   </DropdownInput>
@@ -163,7 +156,7 @@ const meetingFind = () => {
                 </div>
                 <div>
                   <DropdownInput>
-                    {dongList.map((dong) => {
+                    {dongList.map(dong => {
                       return <option>{dong}</option>;
                     })}
                   </DropdownInput>
@@ -181,21 +174,14 @@ const meetingFind = () => {
             </FilterBg>
           </FilterDiv>
         )}
-        {meetingList.map((meeting) => {
+        {meetingList.map(meeting => {
           return (
             <ListInfoItem
               title={meeting}
               imgSrc="../src/assets/ForTest/backgroundImg.jpg"
               tag="소주/맥주"
               content={<MeetingDetail />}
-              numberInfo={
-                <PeopleNumInfo
-                  now={1}
-                  max={4}
-                  color={"var(--c-black)"}
-                  size={11}
-                />
-              }
+              numberInfo={<PeopleNumInfo now={1} max={4} color={"var(--c-black)"} size={11} />}
               isWaiting={false}
               routingFunc={() => GotoMeetDetailHandler(1)}
             ></ListInfoItem>

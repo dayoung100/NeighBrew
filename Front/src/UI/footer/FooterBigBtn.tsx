@@ -13,14 +13,15 @@ type BigBtnProps = {
 };
 
 const Button = styled.button<{ btncolor: string }>`
-  margin-top: 0.3rem;
+  margin: 1rem auto;
   width: 15rem;
+  height: 3rem;
   border: none;
   border-radius: 35px;
   color: var(--c-black);
   font-family: "JejuGothic";
   font-size: 20px;
-  background: ${(props) => props.btncolor};
+  background: ${props => props.btncolor};
 `;
 
 const Footer = (props: BigBtnProps) => {

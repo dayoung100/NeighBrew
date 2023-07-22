@@ -45,7 +45,9 @@ const meetingMain = () => {
           내모임
         </TopMenuDetail>
       </TopMenu>
-      <div>{selectedMenu === "find" ? <MeetingFind /> : <MeetingMy />}</div>
+      <div style={{ marginBottom: "5rem" }}>
+        {selectedMenu === "find" ? <MeetingFind /> : <MeetingMy />}
+      </div>
       <footer>
         <Footer />
       </footer>
