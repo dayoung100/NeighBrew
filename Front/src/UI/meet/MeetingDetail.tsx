@@ -174,7 +174,7 @@ const MeetingDetail = () => {
           content="주류에 대한 간략한 정보가 여기에"
           numberInfo={"후기 수 " + 3}
           isWaiting={false}
-          routingFunc={null}
+          routingFunc={GoBackHandler}
         />
         <MeetTitle>모임 소개</MeetTitle>
         <div
@@ -235,6 +235,7 @@ const MeetingDetail = () => {
           content="모임 관리"
           reqFunc={() => GotoMeetManageHandler(1)}
           color="var(--c-yellow)"
+          bgColor="var(--c-lightgray)"
         />
       </footer>
     </div>

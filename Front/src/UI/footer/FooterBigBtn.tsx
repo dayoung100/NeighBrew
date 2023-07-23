@@ -9,8 +9,13 @@ import styled from "styled-components";
 type BigBtnProps = {
   content: string;
   color: string; //버튼의 색
+  bgColor: string; //배경의 색
   reqFunc: any; //버튼 클릭으로 실행할 함수(ex.reqFunc={() => GotoMeetManageHandler(1)})
 };
+
+const Footer = styled.footer<{ bgColor: string }>`
+  background: ${props => props.bgColor};
+`;
 
 const Button = styled.button<{ btncolor: string }>`
   margin: 1rem auto;
@@ -24,13 +29,13 @@ const Button = styled.button<{ btncolor: string }>`
   background: ${props => props.btncolor};
 `;
 
-const Footer = (props: BigBtnProps) => {
+const FooterBigBtn = (props: BigBtnProps) => {
   return (
-    <footer className="footer" style={{ background: "var(--c-lightgray)" }}>
+    <Footer bgColor={props.bgColor} className="footer">
       <Button onClick={() => props.reqFunc()} btncolor={props.color}>
         {props.content}
       </Button>
-    </footer>
+    </Footer>
   );
 };
-export default Footer;
+export default FooterBigBtn;

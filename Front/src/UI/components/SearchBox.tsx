@@ -26,6 +26,7 @@ const SearchDivInput = styled.input.attrs({ type: "text" })`
   width: 80%;
   border: none;
   text-align: right;
+  outline: none;
 `;
 
 const SearchBtn = styled.button`

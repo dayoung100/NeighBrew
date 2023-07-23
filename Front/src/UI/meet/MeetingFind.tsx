@@ -16,9 +16,15 @@ import autoAnimate from "@formkit/auto-animate";
 
 const CateDiv = styled.div`
   height: 10rem;
-  margin: 1rem 1rem;
-  svg {
-    margin: auto 0.5rem;
+  margin-top: 1rem;
+  div {
+    margin: 0;
+  }
+  .first,
+  .second {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 0.5rem;
   }
 `;
 
@@ -81,6 +87,7 @@ const DropdownInput = styled.select`
   border: none;
   border-bottom: 1px solid var(--c-gray);
   font-family: "SeoulNamsan";
+  outline: none;
   -webkit-appearance: none; /* 화살표 없애기 for chrome*/
   -moz-appearance: none; /* 화살표 없애기 for firefox*/
   appearance: none; /* 화살표 없애기 공통*/
@@ -94,6 +101,7 @@ const DateInput = styled.input.attrs({ type: "date" })`
   border: none;
   border-bottom: 1px solid var(--c-gray);
   background: white;
+  outline: none;
 `;
 
 const meetingFind = () => {
@@ -177,6 +185,7 @@ const meetingFind = () => {
         {meetingList.map(meeting => {
           return (
             <ListInfoItem
+              key={meeting}
               title={meeting}
               imgSrc="../src/assets/ForTest/backgroundImg.jpg"
               tag="소주/맥주"
