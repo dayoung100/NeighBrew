@@ -66,9 +66,23 @@ const DropdownInput = styled.select`
 const SearchResultDiv = styled.div`
   border-radius: 15px;
   border: 1px solid var(--c-gray);
-  height: 10rem;
-  overflow: auto;
+  height: 12rem;
   margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+`;
+
+const AddBtn = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: var(--c-yellow);
+  width: 5rem;
+  margin: auto auto;
+  padding: 2% 5%;
+  border-radius: 20px;
+  font-family: "SeoulNamsan";
+  font-size: 7px;
 `;
 
 const DateAndTimeInputStyle = css`
@@ -188,9 +202,24 @@ const MeetingCreate = () => {
           </SubTitle>
           <SearchBox placeholder="" />
           <SearchResultDiv>
-            {searchResultList.map(res => {
-              return <OneLineListItem content={res} tag="주종"></OneLineListItem>;
-            })}
+            <div style={{ overflow: "auto", height: "100%", flexGrow: "1" }}>
+              {searchResultList.map(res => {
+                return <OneLineListItem content={res} tag="주종"></OneLineListItem>;
+              })}
+            </div>
+            <div
+              style={{
+                position: "sticky",
+                bottom: "0",
+                height: "3rem",
+                zIndex: "3",
+              }}
+            >
+              <AddBtn>
+                <img src="/src/assets/plusButton.svg" width="13rem" />
+                <div>문서 추가하기</div>
+              </AddBtn>
+            </div>
           </SearchResultDiv>
         </QuestionDiv>
         <QuestionDiv>
