@@ -9,6 +9,7 @@ import styled, { css } from "styled-components";
 import DrinkCategory from "../drinkCategory/DrinkCategory";
 import SearchBox from "../components/SearchBox";
 import FooterBigBtn from "../footer/FooterBigBtn";
+import OneLineListItem from "../components/OneLineListItem";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -188,7 +189,7 @@ const MeetingCreate = () => {
           <SearchBox placeholder="" />
           <SearchResultDiv>
             {searchResultList.map(res => {
-              return <div>{res}</div>;
+              return <OneLineListItem content={res} tag="주종"></OneLineListItem>;
             })}
           </SearchResultDiv>
         </QuestionDiv>
