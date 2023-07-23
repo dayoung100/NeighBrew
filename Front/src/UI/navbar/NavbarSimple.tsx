@@ -33,6 +33,7 @@ const NavbarSimple = ({ title }: { title: string }) => {
     <div
       style={{
         padding: "1rem",
+        background: "white",
       }}
     >
       <Title>{title}</Title>

@@ -3,6 +3,7 @@
 모임 메인 페이지. 상단 탭에서 모임 찾기와 내 모임으로 전환 가능
 */
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MeetingMy from "./MeetingMy";
 import MeetingFind from "./MeetingFind";
@@ -29,8 +30,28 @@ const TopMenuDetail = styled.button<{ isFocused: boolean }>`
   background: white;
 `;
 
+const RoundBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 5.5rem;
+  right: 1rem;
+  background: var(--c-yellow);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100px;
+  z-index: 10;
+`;
+
 const meetingMain = () => {
   const [selectedMenu, setSelectedMenu] = useState("find");
+  const navigate = useNavigate();
+
+  const GotoCreateHandler = () => {
+    navigate(`/meet/create`);
+    console.log("goto meeting create page");
+  };
 
   return (
     <div>
@@ -48,6 +69,9 @@ const meetingMain = () => {
       <div style={{ marginBottom: "5rem" }}>
         {selectedMenu === "find" ? <MeetingFind /> : <MeetingMy />}
       </div>
+      <RoundBtn onClick={GotoCreateHandler}>
+        <img src="/src/assets/plusButton.svg" width="25rem" />
+      </RoundBtn>
       <footer>
         <Footer />
       </footer>

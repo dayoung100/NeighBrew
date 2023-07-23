@@ -1,3 +1,8 @@
+/*
+[MeetingMemeberManage.tsx]
+모임 관리 - 참여자 관리 페이지
+참여중인 인원, 신청한 인원을 보여주고 승인, 거절이 가능
+*/
 import { useState } from "react";
 import styled from "styled-components";
 import NavbarSimple from "../navbar/NavbarSimple";
@@ -16,6 +21,7 @@ const BtnSmall = styled.div`
   justify-content: center;
   border: none;
   width: 2rem;
+  min-width: 2rem;
   height: 2rem;
   border-radius: 5px;
   margin: 0 0.2rem;
@@ -46,46 +52,48 @@ const MeetingMemberManage = () => {
         <NavbarSimple title="모임 관리" />
       </header>
       <div style={{ fontSize: "32px", marginTop: "1rem" }}>모임의 제목이 들어갑니다</div>
-      <SubTitle style={{ display: "flex", alignItems: "center" }}>
-        <div>참여중</div>
-        <PeopleNumInfo now={1} max={4} color="var(--c-black)" size={15} />
-      </SubTitle>
-      <div style={{ margin: "0 1rem" }}>
-        {memberList.map((member, index) => {
-          return (
-            <UserInfoItem
-              userId={1}
-              name={member}
-              intro="한 마디는 이렇게 저렇게 작성하기 한 마디는 이렇게 저렇게 작성하기"
-              imgSrc="/src/assets/tempgif.gif"
-              isMaster={index === 0}
-              width={15}
-            />
-          );
-        })}
-      </div>
-      <SubTitle style={{ textAlign: "left" }}>참여 신청</SubTitle>
-      <div style={{ margin: "0 1rem" }}>
-        {applicantList.map((applicant, index) => {
-          return (
-            <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ marginBottom: "7rem" }}>
+        <SubTitle style={{ display: "flex", alignItems: "center" }}>
+          <div>참여중</div>
+          <PeopleNumInfo now={1} max={4} color="var(--c-black)" size={15} />
+        </SubTitle>
+        <div style={{ margin: "0 1rem" }}>
+          {memberList.map((member, index) => {
+            return (
               <UserInfoItem
                 userId={1}
-                name={applicant}
+                name={member}
                 intro="한 마디는 이렇게 저렇게 작성하기 한 마디는 이렇게 저렇게 작성하기"
                 imgSrc="/src/assets/tempgif.gif"
-                isMaster={false}
-                width={13}
+                isMaster={index === 0}
+                width={15}
               />
-              <OKBtn onClick={() => acceptHandler(applicant)}>
-                <img src="/src/assets/checkButtonIcon.svg" />
-              </OKBtn>
-              <NoBtn onClick={() => refuseHandler(applicant)}>
-                <img src="/src/assets/XButtonIcon.svg" />
-              </NoBtn>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+        <SubTitle style={{ textAlign: "left" }}>참여 신청</SubTitle>
+        <div style={{ margin: "0 1rem" }}>
+          {applicantList.map((applicant, index) => {
+            return (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <UserInfoItem
+                  userId={1}
+                  name={applicant}
+                  intro="한 마디는 이렇게 저렇게 작성하기 한 마디는 이렇게 저렇게 작성하기"
+                  imgSrc="/src/assets/tempgif.gif"
+                  isMaster={false}
+                  width={13}
+                />
+                <OKBtn onClick={() => acceptHandler(applicant)}>
+                  <img src="/src/assets/checkButtonIcon.svg" />
+                </OKBtn>
+                <NoBtn onClick={() => refuseHandler(applicant)}>
+                  <img src="/src/assets/XButtonIcon.svg" />
+                </NoBtn>
+              </div>
+            );
+          })}
+        </div>
       </div>
       <footer>
         <Footer />
