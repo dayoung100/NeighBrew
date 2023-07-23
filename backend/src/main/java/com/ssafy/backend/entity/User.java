@@ -46,7 +46,6 @@ public class User {
     private Date birth;
 
 
-
     @Lob
     private String intro;
 
@@ -70,10 +69,5 @@ public class User {
         this.email = email;
         this.nickname = nickname;
         this.oAuthProvider = oAuthProvider;
-    }
-
-
-    public User() {
-
     }
 }

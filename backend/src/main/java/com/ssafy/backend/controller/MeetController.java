@@ -110,37 +110,34 @@ public class MeetController {
     }
 
     //모임 삭제하기
-    @DeleteMapping("/{userId}/{meetId}")
-    public ResponseEntity<?> deleteMeet(@PathVariable Long userId,
-                                        @PathVariable Long meetId){
-        logger.info("삭제할 미팅ID : {}", meetId);
-        try{
-
-            meetService.deleteMeet(meetId);
-            User hostUser = userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
-            List<Follow> followers = followRepository.findByFollowing_UserId(userId).orElseThrow(()-> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."));
-
-            //MeetUser 정보를 삭제한다.
-            meetUserService.deleteMeetUser(createdMeet, hostUser);
-
-            for(Follow fw : followers){
-                logger.info("follower 정보 출력 : {}", fw.getFollower());
-                StringBuilder pushMessage = new StringBuilder();
-                pushMessage.append("모임 : ").append(meetDto.getMeetName()).append("의 내용이 수정되었습니다. 확인해 주세요.");
-                pushService.send(String.valueOf(fw.getFollower().getUserId()), PushType.MODIFIDEMEET, pushMessage.toString(), "이동할 URL 입력");
-            }
-
-            return ResponseEntity.ok("미팅 : " + meetId + " 삭제완료");
-        }catch(IllegalArgumentException e ){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+//    @DeleteMapping("/{userId}/{meetId}")
+//    public ResponseEntity<?> deleteMeet(@PathVariable Long userId,
+//                                        @PathVariable Long meetId){
+//        logger.info("삭제할 미팅ID : {}", meetId);
+//        try{
+//
+//            meetService.deleteMeet(meetId);
+//            User hostUser = userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+//            List<Follow> followers = followRepository.findByFollowing_UserId(userId).orElseThrow(()-> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."));
+//
+//            //MeetUser 정보를 삭제한다.
+//            meetUserService.deleteMeetUser(createdMeet, hostUser);
+//
+//            for(Follow fw : followers){
+//                logger.info("follower 정보 출력 : {}", fw.getFollower());
+//                StringBuilder pushMessage = new StringBuilder();
+//                pushMessage.append("모임 : ").append(meetDto.getMeetName()).append("의 내용이 수정되었습니다. 확인해 주세요.");
+//                pushService.send(String.valueOf(fw.getFollower().getUserId()), PushType.MODIFIDEMEET, pushMessage.toString(), "이동할 URL 입력");
+//            }
+//
+//            return ResponseEntity.ok("미팅 : " + meetId + " 삭제완료");
+//        }catch(IllegalArgumentException e ){
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
 
     // 참가자 : 모임 신청
 
     // 방장 : 모임 신청 관리
-
-
-
 }
 
