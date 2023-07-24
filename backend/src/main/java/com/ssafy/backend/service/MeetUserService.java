@@ -21,37 +21,13 @@ import java.util.stream.Collectors;
 public class MeetUserService {
 
     private final MeetUserRepository meetUserRepository;
-    private final MeetRepository meetRepository;
-    private final UserRepository userRepository;
-
     @Autowired
-    public MeetUserService(MeetUserRepository meetUserRepository,
-                           MeetRepository meetRepository,
-                           UserRepository userRepository) {
+    public MeetUserService(MeetUserRepository meetUserRepository) {
         this.meetUserRepository = meetUserRepository;
-        this.meetRepository = meetRepository;
-        this.userRepository = userRepository;
     }
 
     public List<MeetUser> findAll(){
         return meetUserRepository.findAll();
-    }
-
-
-    public Map<String, List<MeetUserDto>> getAllMeetstById(Long userId) {
-        Map<String, List<MeetUserDto>> userMeets = new HashMap<>();
-
-        //Long 형태의 userId로는 찾을 수 없다 -> meetUser엔티티는 User를 가지고 있으므로
-
-
-        userMeets.put("attend", meetUserRepository.findByUser_UserIdAndMeetType(userId, MeetType.ATTEND)
-                        .orElse(List.of()).stream().map(MeetUser::toDto).collect(Collectors.toList()));
-        userMeets.put("created", meetUserRepository.findByUser_UserIdAndMeetType(userId, MeetType.CREATE)
-                .orElse(List.of()).stream().map(MeetUser::toDto).collect(Collectors.toList()));
-        userMeets.put("apply", meetUserRepository.findByUser_UserIdAndMeetType(userId, MeetType.APPLY)
-                .orElse(List.of()).stream().map(MeetUser::toDto).collect(Collectors.toList()));
-
-        return userMeets;
     }
 
     public void saveMeetUser(Meet newMeet, User host){

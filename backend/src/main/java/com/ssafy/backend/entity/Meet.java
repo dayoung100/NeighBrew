@@ -1,5 +1,6 @@
 package com.ssafy.backend.entity;
 
+import com.ssafy.backend.dto.MeetDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -99,7 +100,22 @@ public class Meet {
         this.maxAge = meet.getMaxAge();
         this.minLiverPoint = meet.getMinLiverPoint();
         this.updatedAt = LocalDateTime.now();
-        System.out.println("@@@@@@@@@@@@@@@@"+LocalDateTime.now() +"@@@@@@@@@@@@@@");
+    }
+    public MeetDto toDto(){
+        return MeetDto.builder()
+                .meetId(this.meetId)
+                .meetName(this.meetName)
+                .description(this.description)
+                .hostId(this.hostId)
+                .meetDate(this.meetDate)
+                .tag(this.tag)
+                .sido(this.sido)
+                .gugun(this.gugun)
+                .dong(this.dong)
+                .minAge(this.minAge)
+                .maxAge(this.maxAge)
+                .minLiverPoint(this.minLiverPoint)
+                .build();
     }
 
     @Override

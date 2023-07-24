@@ -2,14 +2,20 @@ package com.ssafy.backend.dto;
 
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.Tag;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class MeetDto {
+    private Long meetId;
     private String meetName;
     private String description;
     private Long hostId;
@@ -21,6 +27,7 @@ public class MeetDto {
     private Integer minAge;
     private Integer maxAge;
     private Float minLiverPoint;
+    private List<UserDto> attendUser;
 
     public Meet toEntity(){
         Meet meet = Meet.builder()
@@ -56,5 +63,22 @@ public class MeetDto {
                 ", maxAge=" + maxAge +
                 ", minLiverPoint=" + minLiverPoint +
                 '}';
+    }
+
+    @Builder
+
+    public MeetDto(Long meetId, String meetName, String description, Long hostId, LocalDateTime meetDate, Tag tag, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint) {
+        this.meetId = meetId;
+        this.meetName = meetName;
+        this.description = description;
+        this.hostId = hostId;
+        this.meetDate = meetDate;
+        this.tag = tag;
+        this.sido = sido;
+        this.gugun = gugun;
+        this.dong = dong;
+        this.minAge = minAge;
+        this.maxAge = maxAge;
+        this.minLiverPoint = minLiverPoint;
     }
 }

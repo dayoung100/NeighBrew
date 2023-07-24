@@ -50,11 +50,18 @@ public class MeetController {
         return ResponseEntity.ok(meetService.findAll());
     }
 
-    //모임 상세 정보 출력
+    // meetId에 해당하는 모임 상세 정보 조회
     @GetMapping("/{meetId}")
     public ResponseEntity<?> getMeetById(@PathVariable Long meetId){
         logger.info("모임 정보 상세 출력 : {} ", meetId);
-        return ResponseEntity.ok(meetService.findById(meetId));
+        return ResponseEntity.ok(meetService.findMeetUserByMeetId(meetId));
+    }
+
+    //유저와 관련된 모임 모두 출력
+    @GetMapping("/mymeet/{userId}")
+    public ResponseEntity<?> getMyMeetsById(@PathVariable Long userId){
+        logger.info("모임 정보 상세 출력 : {} ", userId);
+        return ResponseEntity.ok(meetService.findByUserId(userId));
     }
 
     //모임 생성
@@ -114,7 +121,7 @@ public class MeetController {
         logger.info("삭제할 미팅ID : {}", meetId);
         try{
 
-            Meet deleteMeet = meetService.findById(meetId);
+            Meet deleteMeet = meetService.findByMeetId(meetId);
             User hostUser = userService.findByUserId(userId);
             List<Follow> followers = followService.findByFollower(userId);
 
