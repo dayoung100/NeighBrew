@@ -1,21 +1,4 @@
-/*
-[ListInfoItem.tsx]
-모임 리스트 또는 술장 검색 결과 리스트에 사용되는 컴포넌트
-간격을 위해 상단 margin이 1rem 주어져있음(ItemDiv 참고)
-자세한 props는 type ListInfoItemProps 참고
-*/
 import styled from "styled-components";
-
-type ListInfoItemProps = {
-  title: string; //제목
-  imgSrc: string; //이미지 경로
-  tag: string; //주종 태그
-  content: any; //내용, 컴포넌트를 넣어도 됨
-  numberInfo: any; //인원정보 또는 후기 수, 컴포넌트를 넣어도 됨
-  isWaiting: boolean; //신청대기중인 모임인지(아니라면 false)
-  outLine: boolean; //외곽선을 그릴 것인지 아닌지
-  routingFunc: any; //라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
-};
 
 const ItemDiv = styled.div<{ outLine: boolean }>`
   position: relative;
@@ -111,10 +94,33 @@ const InfoNumber = styled.div`
   bottom: 7%;
 `;
 
+type ListInfoItemProps = {
+  title: string; //제목
+  imgSrc: string; //이미지 경로
+  tag: string; //주종 태그
+  content: any; //내용, 컴포넌트를 넣어도 됨
+  numberInfo: any; //인원정보 또는 후기 수, 컴포넌트를 넣어도 됨
+  isWaiting?: boolean; //신청대기중인 모임인지(아니라면 false)
+  outLine?: boolean; //외곽선을 그릴 것인지 아닌지
+  routingFunc: any; //라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
+};
+
+/**
+ * 모임 리스트 또는 술장 검색 결과 리스트에 사용되는 컴포넌트.
+ * 간격을 위해 상단 margin이 1rem 주어져있음(ItemDiv 참고)
+ * @property {string} title 제목
+ * @property {string} imgSrc 이미지 경로
+ * @property {string} tag 주종 태그
+ * @property {any} content 내용. 컴포넌트를 넣어도 됨
+ * @property {any} numberInfo 인원정보 또는 후기 수. 컴포넌트를 넣어도 됨
+ * @property {boolean} isWaiting optional. 신청대기중인 모임인지(아니라면 false)
+ * @property {boolean} outLine optional. 외곽선을 그릴 것인지 아닌지
+ * @property {any} routingFunc 라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
+ */
 const ListInfoItem = (props: ListInfoItemProps) => {
   return (
     <div style={{ display: "flex", justifyContent: "center" }} onClick={() => props.routingFunc()}>
-      <ItemDiv outLine={props.outLine}>
+      <ItemDiv outLine={props.outLine ? props.outLine : false}>
         <ImageArea src={props.imgSrc} />
         <InfoArea>
           <InfoTitle>{props.title}</InfoTitle>
