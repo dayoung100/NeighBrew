@@ -34,7 +34,7 @@ const Login = () => {
   const KakaologinHandler = async () => {
     axios({
       method: "get",
-      url: "http://192.168.31.71:8080/api/auth/login/kakao",
+      url: "http://34.64.126.58/api/auth/login/kakao",
     })
       .then(res => {
         const url = res.data.URL;
@@ -47,7 +47,20 @@ const Login = () => {
   const NaverloginHandler = async () => {
     axios({
       method: "get",
-      url: "http://192.168.31.71:8080/api/auth/login/naver",
+      url: "http://34.64.126.58/api/auth/login/naver",
+    })
+      .then(res => {
+        const url = res.data.URL;
+        window.location.href = url;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  const GoogleloginHandler = async () => {
+    axios({
+      method: "get",
+      url: "http://34.64.126.58/api/auth/login/google",
     })
       .then(res => {
         const url = res.data.URL;
@@ -62,13 +75,13 @@ const Login = () => {
     <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
       <h2>로그인</h2>
       <SocialDiv>
-        <ImgDiv onClick={NaverloginHandler}>
+        <ImgDiv onClick={NaverloginHandler} style={{ cursor: "pointer" }}>
           <Img src="https://image.rocketpunch.com/company/5466/naver_logo.png?s=400x400&t=inside" />
         </ImgDiv>
-        <ImgDiv onClick={KakaologinHandler}>
+        <ImgDiv onClick={KakaologinHandler} style={{ cursor: "pointer" }}>
           <Img src="https://cdn.imweb.me/thumbnail/20220403/a8e484f2dfe39.png" />
         </ImgDiv>
-        <ImgDiv>
+        <ImgDiv onClick={GoogleloginHandler} style={{ cursor: "pointer" }}>
           <Img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/800px-Google_%22G%22_Logo.svg.png" />
         </ImgDiv>
       </SocialDiv>
