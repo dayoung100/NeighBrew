@@ -12,12 +12,11 @@ import java.util.Optional;
 
 @Repository
 public interface MeetUserRepository extends JpaRepository<MeetUser, Long> {
-
-    Optional<List<MeetUser>> findByUser_UserIdAndMeetType(Long userId, MeetType meetType);
     Optional<List<MeetUser>> findByUser_UserIdOrderByMeetType(Long userId);
-
     @Transactional
     void deleteByMeet_MeetIdAndUser_UserId(Long meetId, Long userId);
     Optional<List<MeetUser>> findByMeet_MeetId(Long meetId);
+
+    Optional<Object> findByUser_UserIdAndMeet_MeetId(Long userId, Long meetId);
 }
 

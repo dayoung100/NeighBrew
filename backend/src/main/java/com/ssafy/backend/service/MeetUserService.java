@@ -44,4 +44,8 @@ public class MeetUserService {
     public void deleteMeetUser(Meet deleteMeet, User host){
         meetUserRepository.deleteByMeet_MeetIdAndUser_UserId(deleteMeet.getMeetId(), host.getUserId());
     }
+
+    public void updateMeetStatus(Long userId, Long meetId) {
+        meetUserRepository.findByUser_UserIdAndMeet_MeetId(userId, meetId).orElseThrow(() -> new IllegalArgumentException("유저 정보 및 미팅 정보가 올바르지 않습니다."));
+    }
 }

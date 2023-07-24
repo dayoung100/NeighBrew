@@ -27,7 +27,7 @@ public class PushController {
     //@GetMapping(value = "/connect/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @GetMapping(value = "connect/{userId}", produces = "text/event-stream")
     @ResponseStatus(HttpStatus.OK)
-    public SseEmitter connect(@PathVariable String userId,
+    public SseEmitter connect(@PathVariable Long userId,
                               @RequestHeader(value = "Last-Event-ID", required= false, defaultValue = "") String lastEventId) throws IOException {
         logger.info("@@@@@@@@@@@ 연결 시도 => id :{}, lastEventId {}\n", userId, lastEventId);
 
@@ -37,34 +37,34 @@ public class PushController {
     //================================================
     //              알람을 위한 더미 테스트
     //================================================
-    @GetMapping(value = "follow", produces = "text/event-stream")
-    public void pushFollow() {
+    @GetMapping(value = "/follow/{userId}", produces = "text/event-stream")
+    public void pushFollow(@PathVariable Long userId) {
         logger.info("팔로우 알림 접근");
-        pushService.send(String.valueOf(1L), PushType.Follow, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
+        pushService.send(userId, PushType.FOLLOW, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
     }
-    @GetMapping(value = "comment", produces = "text/event-stream")
-    public void pushComment() {
+    @GetMapping(value = "/comment/{userId}", produces = "text/event-stream")
+    public void pushComment(@PathVariable Long userId) {
         logger.info("댓글 알림 접근");
-        pushService.send(String.valueOf(1L), PushType.Follow, "유저 2님께서 회원님의 게시글에 공감을 표현했습니다.", "이동할 url");
+        pushService.send(userId, PushType.FOLLOW, "유저 2님께서 회원님의 게시글에 공감을 표현했습니다.", "이동할 url");
     }
-    @GetMapping(value = "chat", produces = "text/event-stream")
-    public void pushChat() {
+    @GetMapping(value = "/chat/{userId}", produces = "text/event-stream")
+    public void pushChat(@PathVariable Long userId) {
         logger.info("채팅 알림 접근");
-        pushService.send(String.valueOf(1L), PushType.Follow, "유저 2님께서 회원님께 메세지를 보냈습니다.", "이동할 url");
+        pushService.send(userId, PushType.CHAT, "유저 2님께서 회원님께 메세지를 보냈습니다.", "이동할 url");
     }
-    @GetMapping(value = "accept", produces = "text/event-stream")
-    public void pushAccept() {
+    @GetMapping(value = "/accept/{userId}", produces = "text/event-stream")
+    public void pushAccept(@PathVariable Long userId) {
         logger.info("수락 알림 접근");
-        pushService.send(String.valueOf(1L), PushType.Follow, "모임A 신청에 수락되셨습니다.", "이동할 url");
+        pushService.send(userId, PushType.MEETACCESS, "모임A 신청에 수락되셨습니다.", "이동할 url");
     }
-    @GetMapping(value = "reject", produces = "text/event-stream")
-    public void pushReject() {
+    @GetMapping(value = "/reject/{userId}", produces = "text/event-stream")
+    public void pushReject(@PathVariable Long userId) {
         logger.info("거절 알림 접근");
-        pushService.send(String.valueOf(1L), PushType.Follow, "모임A 신청에 거절되셨습니다.", "이동할 url");
+        pushService.send(userId, PushType.MEETREJECT, "모임A 신청에 거절되셨습니다.", "이동할 url");
     }
-    @GetMapping(value = "evaluation", produces = "text/event-stream")
-    public void pushEval() {
+    @GetMapping(value = "/evaluation/{userId}", produces = "text/event-stream")
+    public void pushEval(@PathVariable Long userId) {
         logger.info("평가 알림 접근");
-        pushService.send(String.valueOf(1L), PushType.Follow, "모임A에 대한 평가를 진행해 주세요", "이동할 url");
+        pushService.send(userId, PushType.MEETEVALUATION, "모임A에 대한 평가를 진행해 주세요", "이동할 url");
     }
 }
