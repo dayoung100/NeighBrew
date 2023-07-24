@@ -9,4 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface MeetRepository extends JpaRepository<Meet, Long> {
+
 }

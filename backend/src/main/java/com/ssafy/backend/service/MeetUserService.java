@@ -21,51 +21,36 @@ import java.util.stream.Collectors;
 public class MeetUserService {
 
     private final MeetUserRepository meetUserRepository;
-    private final MeetRepository meetRepository;
-    private final UserRepository userRepository;
-
     @Autowired
-    public MeetUserService(MeetUserRepository meetUserRepository,
-                           MeetRepository meetRepository,
-                           UserRepository userRepository) {
+    public MeetUserService(MeetUserRepository meetUserRepository) {
         this.meetUserRepository = meetUserRepository;
-        this.meetRepository = meetRepository;
-        this.userRepository = userRepository;
     }
 
     public List<MeetUser> findAll(){
         return meetUserRepository.findAll();
     }
 
-
-    public Map<String, List<MeetUserDto>> getAllMeetstById(Long userId) {
-        Map<String, List<MeetUserDto>> userMeets = new HashMap<>();
-
-        //Long 형태의 userId로는 찾을 수 없다 -> meetUser엔티티는 User를 가지고 있으므로
-
-
-        userMeets.put("attend", meetUserRepository.findByUser_UserIdAndMeetType(userId, MeetType.ATTEND)
-                        .orElse(List.of()).stream().map(MeetUser::toDto).collect(Collectors.toList()));
-        userMeets.put("created", meetUserRepository.findByUser_UserIdAndMeetType(userId, MeetType.CREATE)
-                .orElse(List.of()).stream().map(MeetUser::toDto).collect(Collectors.toList()));
-        userMeets.put("apply", meetUserRepository.findByUser_UserIdAndMeetType(userId, MeetType.APPLY)
-                .orElse(List.of()).stream().map(MeetUser::toDto).collect(Collectors.toList()));
-
-        return userMeets;
-    }
-
-    public void saveMeetUser(Meet newMeet, User host){
+    public void saveMeetUser(Meet newMeet, User host, MeetType meetType, Status status){
         meetUserRepository.save(
                 MeetUser.builder()
                         .user(host)
                         .meet(newMeet)
-                        .meetType(MeetType.CREATE)
-                        .status(Status.ACCEPTED)
+                        .meetType(meetType)
+                        .status(status)
                         .build());
     }
 
     @Transactional
     public void deleteMeetUser(Meet deleteMeet, User host){
         meetUserRepository.deleteByMeet_MeetIdAndUser_UserId(deleteMeet.getMeetId(), host.getUserId());
+    }
+
+    public void updateMeetStatus(Long userId, Long meetId, MeetType meetType, Status status) {
+        //meetUser 정보를 가져온다.
+        MeetUser meetUser = meetUserRepository.findByUser_UserIdAndMeet_MeetId(userId, meetId).orElseThrow(() -> new IllegalArgumentException("유저 정보 및 미팅 정보가 올바르지 않습니다."));
+
+
+
+
     }
 }
