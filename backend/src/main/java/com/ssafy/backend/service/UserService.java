@@ -27,7 +27,15 @@ public class UserService {
         return Url;
     }
 
-    public User findByUserId(Long userId){
-        return userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+    public User findByUserId(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+    }
+
+    @Transactional
+    public User updateUser(Long userId, UserUpdateDto updateDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
+        user.updateFromDto(updateDto);
+        return userRepository.save(user);
     }
 }
