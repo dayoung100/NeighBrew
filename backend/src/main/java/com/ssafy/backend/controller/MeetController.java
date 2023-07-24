@@ -8,10 +8,7 @@ import com.ssafy.backend.entity.Push;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.UserRepository;
-import com.ssafy.backend.service.MeetService;
-import com.ssafy.backend.service.MeetUserService;
-import com.ssafy.backend.service.PushService;
-import com.ssafy.backend.service.UserService;
+import com.ssafy.backend.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +26,21 @@ public class MeetController {
     private final MeetService meetService;
     private final MeetUserService meetUserService;
     private final PushService pushService;
-    private final FollowRepository followRepository;
-    private final UserRepository userRepository;
+    private final FollowService followService;
+    private final UserService userService;
 
     @Autowired
     public MeetController(MeetService meetService,
                           MeetUserService meetUserService,
                           PushService pushService,
-                          FollowRepository followRepository,
-                          UserRepository  userRepository) {
+                          FollowService followService,
+                          UserService userService
+                          ) {
         this.meetService = meetService;
         this.meetUserService = meetUserService;
         this.pushService = pushService;
-        this.followRepository = followRepository;
-        this.userRepository= userRepository;
+        this.followService = followService;
+        this.userService = userService;
     }
 
     //모임 상세 정보 출력
@@ -66,13 +64,13 @@ public class MeetController {
         logger.info("유저{}가 모임 생성 : {}", userId, meetDto);
         try{
             Meet createdMeet = meetService.saveMeet(meetDto.toEntity());
-            User hostUser = userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+            User hostUser = userService.findByUserId(userId);
 
             //MeetUser 정보를 추가한다.
             meetUserService.saveMeetUser(createdMeet, hostUser);
             
             //팔로워에게 메세지를 보낸다
-            List<Follow> followers = followRepository.findByFollowing_UserId(userId).orElseThrow(()-> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."));
+            List<Follow> followers = followService.findByFollower(userId);
             for(Follow fw : followers){
                 logger.info("follower 정보 출력 : {}", fw.getFollower());
                 StringBuilder pushMessage = new StringBuilder();
@@ -94,7 +92,7 @@ public class MeetController {
         logger.info("\n수정하는 유저 :{} \n수정할 미팅ID : {}, \n 수정할 미팅 정보 : {}", meetId, meetDto);
         try{
             Meet updateMeet = meetService.updateMeet(meetId, meetDto.toEntity());
-            List<Follow> followers = followRepository.findByFollowing_UserId(userId).orElseThrow(()-> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."));
+            List<Follow> followers = followService.findByFollower(userId);
 
             for(Follow fw : followers){
                 logger.info("follower 정보 출력 : {}", fw.getFollower());
@@ -110,31 +108,34 @@ public class MeetController {
     }
 
     //모임 삭제하기
-//    @DeleteMapping("/{userId}/{meetId}")
-//    public ResponseEntity<?> deleteMeet(@PathVariable Long userId,
-//                                        @PathVariable Long meetId){
-//        logger.info("삭제할 미팅ID : {}", meetId);
-//        try{
-//
-//            meetService.deleteMeet(meetId);
-//            User hostUser = userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
-//            List<Follow> followers = followRepository.findByFollowing_UserId(userId).orElseThrow(()-> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."));
-//
-//            //MeetUser 정보를 삭제한다.
-//            meetUserService.deleteMeetUser(createdMeet, hostUser);
-//
-//            for(Follow fw : followers){
-//                logger.info("follower 정보 출력 : {}", fw.getFollower());
-//                StringBuilder pushMessage = new StringBuilder();
-//                pushMessage.append("모임 : ").append(meetDto.getMeetName()).append("의 내용이 수정되었습니다. 확인해 주세요.");
-//                pushService.send(String.valueOf(fw.getFollower().getUserId()), PushType.MODIFIDEMEET, pushMessage.toString(), "이동할 URL 입력");
-//            }
-//
-//            return ResponseEntity.ok("미팅 : " + meetId + " 삭제완료");
-//        }catch(IllegalArgumentException e ){
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
+    @DeleteMapping("/{userId}/{meetId}")
+    public ResponseEntity<?> deleteMeet(@PathVariable Long userId,
+                                        @PathVariable Long meetId){
+        logger.info("삭제할 미팅ID : {}", meetId);
+        try{
+
+            Meet deleteMeet = meetService.findById(meetId);
+            User hostUser = userService.findByUserId(userId);
+            List<Follow> followers = followService.findByFollower(userId);
+
+            //MeetUser 정보를 삭제한다.
+            meetUserService.deleteMeetUser(deleteMeet, hostUser);
+
+            //meet 정보를 삭제한다.
+            meetService.deleteMeet(meetId);
+
+            for(Follow fw : followers){
+                logger.info("follower 정보 출력 : {}", fw.getFollower());
+                StringBuilder pushMessage = new StringBuilder();
+                pushMessage.append("모임 : ").append(deleteMeet.getMeetName()).append("의 내용이 수정되었습니다. 확인해 주세요.");
+                pushService.send(String.valueOf(fw.getFollower().getUserId()), PushType.MODIFIDEMEET, pushMessage.toString(), "이동할 URL 입력");
+            }
+
+            return ResponseEntity.ok("미팅 : " + meetId + " 삭제완료");
+        }catch(IllegalArgumentException e ){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     // 참가자 : 모임 신청
 

@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 @Setter
 public class Meet {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long meetId;
 
     @Column(nullable = false, length = 100)
