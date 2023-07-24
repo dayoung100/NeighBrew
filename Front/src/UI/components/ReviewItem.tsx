@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import likeIcon from "../../assets/likeIcon.svg";
+import { useState, useRef } from "react";
 
 const ReviewCard = styled.div`
   background-color: white;
@@ -17,28 +19,58 @@ const ReviewImg = styled.div`
 const UserCard = styled.div`
   background-color: white;
   text-align: start;
+  display: flex;
+  justify-content: space-between;
 `;
 
-const ReviewItem = () => {
+const MoreButton = styled.button`
+  background-color: white;
+  border: none;
+`;
+
+type ReviewItemProps = {
+  userId: number;
+  image: string;
+  description: string;
+};
+
+const ReviewItem = (props: ReviewItemProps) => {
+  const [limit, setLimit] = useState(62);
+  const toggleEllipsis = (str: string, limit: number) => {
+    return {
+      string: str.slice(0, limit),
+      isShowMore: str.length > limit,
+    };
+  };
+
+  const onClickMore = (str: string) => () => {
+    setLimit(str.length);
+  };
   return (
     <>
       <ReviewCard>
         <ReviewImg>
-          <img src="#" alt="reviewImage" />
+          <img src="#" alt={props.image} />
         </ReviewImg>
         <div>
           <UserCard>
-            <span>
-              <img src="#" alt="profile" />
-            </span>
-            <span>userName</span>
+            <div>
+              <span>
+                <img src="#" alt="profile" />
+              </span>
+              <span>{props.userId}</span>
+            </div>
+            <div>
+              <img src={likeIcon} alt="like" />
+              <span>38</span>
+            </div>
           </UserCard>
           <div style={{ marginLeft: "10px" }}>
             <p style={{ textAlign: "start" }}>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusantium cum numquam
-              doloremque magnam excepturi adipisci cupiditate repudiandae perspiciatis, minima
-              debitis. Necessitatibus magnam, architecto saepe deserunt soluta corporis autem
-              mollitia. Magnam!
+              {toggleEllipsis(props.description, limit).string}
+              {toggleEllipsis(props.description, limit).isShowMore && (
+                <MoreButton onClick={onClickMore(props.description)}>...더보기</MoreButton>
+              )}
             </p>
           </div>
         </div>
