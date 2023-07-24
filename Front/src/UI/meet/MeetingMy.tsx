@@ -37,10 +37,9 @@ const meetingMy = () => {
           imgSrc="../src/assets/ForTest/backgroundImg.jpg"
           tag="소주/맥주"
           content={<MeetingDetail />}
-          numberInfo={
-            <PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />
-          }
+          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
           isWaiting={false}
+          outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
       </MeetingDiv>
@@ -51,10 +50,9 @@ const meetingMy = () => {
           imgSrc="../src/assets/ForTest/backgroundImg.jpg"
           tag="소주/맥주"
           content={<MeetingDetail />}
-          numberInfo={
-            <PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />
-          }
+          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
           isWaiting={false}
+          outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
       </MeetingDiv>
@@ -65,10 +63,9 @@ const meetingMy = () => {
           imgSrc="../src/assets/ForTest/backgroundImg.jpg"
           tag="소주/맥주"
           content={<MeetingDetail />}
-          numberInfo={
-            <PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />
-          }
+          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
           isWaiting={true}
+          outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
         <ListInfoItem
@@ -78,6 +75,7 @@ const meetingMy = () => {
           content="주류 정보는 이렇게 다른 요소는 비워두고 쓰면 될 것 같다"
           numberInfo={null}
           isWaiting={false}
+          outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
       </MeetingDiv>

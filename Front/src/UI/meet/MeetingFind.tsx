@@ -192,6 +192,7 @@ const meetingFind = () => {
               content={<MeetingDetail />}
               numberInfo={<PeopleNumInfo now={1} max={4} color={"var(--c-black)"} size={11} />}
               isWaiting={false}
+              outLine={false}
               routingFunc={() => GotoMeetDetailHandler(1)}
             ></ListInfoItem>
           );

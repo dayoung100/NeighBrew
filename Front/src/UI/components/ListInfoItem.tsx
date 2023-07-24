@@ -13,10 +13,11 @@ type ListInfoItemProps = {
   content: any; //내용, 컴포넌트를 넣어도 됨
   numberInfo: any; //인원정보 또는 후기 수, 컴포넌트를 넣어도 됨
   isWaiting: boolean; //신청대기중인 모임인지(아니라면 false)
+  outLine: boolean; //외곽선을 그릴 것인지 아닌지
   routingFunc: any; //라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
 };
 
-const ItemDiv = styled.div`
+const ItemDiv = styled.div<{ outLine: boolean }>`
   position: relative;
   display: flex;
   justify-content: space-between;
@@ -27,10 +28,11 @@ const ItemDiv = styled.div`
   margin: 1rem auto 0 auto;
   border-radius: 20px;
   padding: 0.5rem 0.5rem;
+  border: ${props => (props.outLine ? "1px solid var(--c-gray)" : "none")};
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${(props) => props.src}) no-repeat center;
+  background: url(${props => props.src}) no-repeat center;
   background-size: cover;
   display: flex;
   justify-content: center;
@@ -111,11 +113,8 @@ const InfoNumber = styled.div`
 
 const ListInfoItem = (props: ListInfoItemProps) => {
   return (
-    <div
-      style={{ display: "flex", justifyContent: "center" }}
-      onClick={() => props.routingFunc()}
-    >
-      <ItemDiv>
+    <div style={{ display: "flex", justifyContent: "center" }} onClick={() => props.routingFunc()}>
+      <ItemDiv outLine={props.outLine}>
         <ImageArea src={props.imgSrc} />
         <InfoArea>
           <InfoTitle>{props.title}</InfoTitle>
