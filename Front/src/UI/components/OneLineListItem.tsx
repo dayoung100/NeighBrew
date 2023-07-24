@@ -9,6 +9,7 @@ import styled from "styled-components";
 type OneLineListItemProps = {
   content: string; //항목의 이름
   tag: string; //항목이 해당하는 태그(주종, 좋아요/보통/아쉬워요 등)
+  getFunc: any; //getter 함수. 이 컴포넌트를 클릭시 해당하는 후기나 주류의 정보를 넘겨줌
 };
 
 const ItemDiv = styled.div`
@@ -32,7 +33,7 @@ const Tag = styled.div`
 
 const OneLineListItem = (props: OneLineListItemProps) => {
   return (
-    <ItemDiv>
+    <ItemDiv onClick={() => props.getFunc(props.content)}>
       <div>{props.content}</div>
       <Tag>{props.tag}</Tag>
     </ItemDiv>

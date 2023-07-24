@@ -10,6 +10,8 @@ import DrinkCategory from "../drinkCategory/DrinkCategory";
 import SearchBox from "../components/SearchBox";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import OneLineListItem from "../components/OneLineListItem";
+import ListInfoItem from "../components/ListInfoItem";
+import autoAnimate from "@formkit/auto-animate";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -155,8 +157,16 @@ const ImageArea = styled.div<{ src: string }>`
 `;
 
 const MeetingCreate = () => {
+  //파일 업로드 용
   const [imgFile, setImgFile] = useState("");
   const imgRef = useRef<HTMLInputElement>(null);
+  //검색 결과 창 애니메이션 용
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const parent = useRef(null);
+  useEffect(() => {
+    parent.current && autoAnimate(parent.current);
+  }, [parent]);
+  //검색 결과 데이터
   const [searchResultList, setSearchResultList] = useState([
     "조니워커 블루라벨",
     "조니워커 레드라벨",
@@ -169,7 +179,16 @@ const MeetingCreate = () => {
     "발렌타인 17Y",
     "발렌타인 21Y",
   ]);
-
+  //검색 후 선택한 주류 정보
+  const [selectedDrink, setSelectedDrink] = useState("");
+  const getDrink = (drink: string) => {
+    setSelectedDrink(drink);
+    setIsSearchFocused(false);
+  };
+  useEffect(() => {
+    console.log(selectedDrink);
+  }, [selectedDrink]);
+  //이미지 파일 업로드 시 미리보기
   const saveImgFile = () => {
     const file = imgRef.current.files[0];
     const reader = new FileReader();
@@ -191,7 +210,7 @@ const MeetingCreate = () => {
           <Title>모임의 이름</Title>
           <Input placeholder="모임의 이름을 입력해주세요" />
         </QuestionDiv>
-        <QuestionDiv>
+        <QuestionDiv ref={parent}>
           <Title>우리가 마실 것은</Title>
           <SubTitle>카테고리를 선택해주세요</SubTitle>
           <CateDiv>
@@ -200,27 +219,47 @@ const MeetingCreate = () => {
           <SubTitle style={{ marginBottom: "0.3rem" }}>
             정확한 술의 이름을 검색할 수 있어요
           </SubTitle>
-          <SearchBox placeholder="" />
-          <SearchResultDiv>
-            <div style={{ overflow: "auto", height: "100%", flexGrow: "1" }}>
-              {searchResultList.map(res => {
-                return <OneLineListItem content={res} tag="주종"></OneLineListItem>;
-              })}
+          {selectedDrink === "" && (
+            <div onFocus={() => setIsSearchFocused(true)}>
+              <SearchBox placeholder="" />
             </div>
-            <div
-              style={{
-                position: "sticky",
-                bottom: "0",
-                height: "3rem",
-                zIndex: "3",
-              }}
-            >
-              <AddBtn>
-                <img src="/src/assets/plusButton.svg" width="13rem" />
-                <div>문서 추가하기</div>
-              </AddBtn>
-            </div>
-          </SearchResultDiv>
+          )}
+          {isSearchFocused && selectedDrink === "" && (
+            <SearchResultDiv>
+              <div style={{ overflow: "auto", height: "100%", flexGrow: "1" }}>
+                {searchResultList.map(res => {
+                  return (
+                    <OneLineListItem content={res} tag="주종" getFunc={getDrink}></OneLineListItem>
+                  );
+                })}
+              </div>
+              <div
+                style={{
+                  position: "sticky",
+                  bottom: "0",
+                  height: "3rem",
+                  zIndex: "3",
+                }}
+              >
+                <AddBtn>
+                  <img src="/src/assets/plusButton.svg" width="13rem" />
+                  <div>문서 추가하기</div>
+                </AddBtn>
+              </div>
+            </SearchResultDiv>
+          )}
+          {selectedDrink !== "" && (
+            <ListInfoItem
+              title={selectedDrink}
+              imgSrc="/src/assets/ForTest/backgroundImg.jpg"
+              tag="주종"
+              content="술에 대한 내용"
+              numberInfo={3}
+              isWaiting={false}
+              outLine={true}
+              routingFunc={null}
+            />
+          )}
         </QuestionDiv>
         <QuestionDiv>
           <div
