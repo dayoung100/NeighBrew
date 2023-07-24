@@ -15,4 +15,8 @@ public class FollowService {
     public List<Follow> getFollowers(Long userId) {
         return followRepository.findFollowsByFollowing_UserId(userId);
     }
+
+    public List<Follow> findByFollower(Long userId) {
+        return followRepository.findByFollowing_UserId(userId).orElseThrow(()-> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."));
+    }
 }

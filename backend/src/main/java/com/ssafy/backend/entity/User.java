@@ -55,8 +55,8 @@ public class User {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(nullable = true, columnDefinition = "float default 40.0")
-    private Float iu;
+    @Column(nullable = false, columnDefinition = "float default 40.0")
+    private Float liverPoint;
 
     @Column(nullable = true, columnDefinition = "varchar(255) default 'no image'")
     private String profile;

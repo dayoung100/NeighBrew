@@ -1,8 +1,8 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.dto.UserUpdateDto;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
-import com.ssafy.backend.service.UserService;
 import com.ssafy.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,8 +22,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final UserService userService;
-
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
@@ -88,12 +87,27 @@ public class UserController {
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
         return ResponseEntity.ok(tokens);
+    }
 
-    // 디비에 값이 있는지 없는지 확인 안하고 만들어줌
-//    @GetMapping("/test/{userId}")
-//    public ResponseEntity<AuthTokens> jwtMaker(@PathVariable Long userId) {
-//        AuthTokens accessToken = authTokensGenerator.generate(userId);
-//        return ResponseEntity.ok(accessToken);
+    @PutMapping("/guard")
+    public ResponseEntity<?> updateUserInfo(@RequestBody UserUpdateDto userUpdateDto, HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
 
+        Optional<User> optionalUser = userRepository.findById(Long.valueOf(userId));
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        User user = optionalUser.get();
+
+        Optional.ofNullable(userUpdateDto.getNickname()).ifPresent(user::setNickname);
+        Optional.ofNullable(userUpdateDto.getIntro()).ifPresent(user::setIntro);
+        Optional.ofNullable(userUpdateDto.getProfile()).ifPresent(user::setProfile);
+        Optional.ofNullable(userUpdateDto.getLiverPoint()).ifPresent(user::setLiverPoint);
+
+        // 데이터베이스에 저장
+        userRepository.save(user);
+
+        return ResponseEntity.ok(user);
     }
 }
