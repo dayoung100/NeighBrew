@@ -22,27 +22,27 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = true, unique = true, length = 50)
     private String email;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = true, unique = true, length = 20)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @Enumerated(EnumType.STRING)
     private OAuthProvider oAuthProvider;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = true, length = 20)
     private String name;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = true, length = 100)
     private String password;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = true, unique = true, length = 20)
     private String phone;
 
     @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Date birth;
 
 
@@ -58,16 +58,17 @@ public class User {
     @Column(nullable = false, columnDefinition = "float default 40.0")
     private Float liverPoint;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default 'no image'")
+    @Column(nullable = true, columnDefinition = "varchar(255) default 'no image'")
     private String profile;
 
     private boolean deleted = false;
 
 
     @Builder
-    public User(String email, String nickname, OAuthProvider oAuthProvider) {
+    public User(String email, String nickname, String name, OAuthProvider oAuthProvider) {
         this.email = email;
         this.nickname = nickname;
+        this.name = name;
         this.oAuthProvider = oAuthProvider;
     }
 }

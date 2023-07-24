@@ -8,6 +8,7 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import com.ssafy.backend.authentication.infra.kakao.KakaoTokens;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -30,6 +31,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GoogleApiClient implements OAuthApiClient {
 
+    public static Logger getLog() {
+        return log;
+    }
 
     @Value("${oauth.google.url.auth}")
     private String authUrl;
@@ -52,6 +56,7 @@ public class GoogleApiClient implements OAuthApiClient {
 
     @Override
     public String requestAccessToken(OAuthLoginParams params) {
+        log.info("requestAccessToken :" + params);
         String url = apiUrl;
         String code = params.code();
         System.out.println("code = " + code);
@@ -72,7 +77,7 @@ public class GoogleApiClient implements OAuthApiClient {
         body.add("code", decodedData);
         body.add("client_id", clientId);
         body.add("client_secret", clientSecret);
-        body.add("redirect_uri","http://localhost:8080/google/callback" );
+        body.add("redirect_uri","http://localhost:5173/google/callback" );
         body.add("grant_type","authorization_code");
         System.out.println("body.toString() = " + body.toString());
 
@@ -93,7 +98,6 @@ public class GoogleApiClient implements OAuthApiClient {
         String url = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + accessToken;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
         log.info("Authorization: " + "Bearer " + accessToken);
 
         HttpEntity request = new HttpEntity(headers);
@@ -140,7 +144,8 @@ public class GoogleApiClient implements OAuthApiClient {
 
     @Override
     public String authApiUrl(OAuthLoginParams params) {
-        String redirectUri = "http://localhost:8080/google/callback";
+        log.info("authApiUrl :" + params);
+        String redirectUri = "http://localhost:5173/google/callback";
         String responseType = "code";
         String url = authUrl + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType +"&scope=email profile";
         return url;
