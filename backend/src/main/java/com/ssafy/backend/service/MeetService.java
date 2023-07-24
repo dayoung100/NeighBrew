@@ -67,7 +67,6 @@ public class MeetService {
         userMeets.put(MeetType.ATTEND.name(), new ArrayList<>());
         userMeets.put(MeetType.CREATE.name(), new ArrayList<>());
 
-
         List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByMeetType(userId).orElseThrow(()-> new IllegalArgumentException("유저ID 값이 올바르지 않습니다."));
 
         for(MeetUser mu : meetUsers){

@@ -1,6 +1,8 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.Enum.MeetType;
 import com.ssafy.backend.Enum.PushType;
+import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetUserDto;
 import com.ssafy.backend.entity.Follow;
@@ -71,7 +73,7 @@ public class MeetController {
             User hostUser = userService.findByUserId(userId);
 
             //MeetUser 정보를 추가한다.
-            meetUserService.saveMeetUser(createdMeet, hostUser);
+            meetUserService.saveMeetUser(createdMeet, hostUser, MeetType.CREATE, Status.ACCEPTED);
             
             //팔로워에게 메세지를 보낸다
             List<Follow> followers = followService.findByFollower(userId);
@@ -126,7 +128,7 @@ public class MeetController {
             for(User user : meetUser.getUsers()){
                 log.debug("삭제 알림 보낼 유저 정보 출력 : {}", user);
                 StringBuilder pushMessage = new StringBuilder();
-                StringBuilder append = pushMessage.append(hostUser.getName() + "님 께서 생성한 모임").append("모임(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
+                pushMessage.append(hostUser.getName() + "님 께서 생성한 모임").append("모임(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
                 pushService.send(user.getUserId(), PushType.DELETEMEET, pushMessage.toString(), "이동할 URL 입력");
             }
 
@@ -145,17 +147,33 @@ public class MeetController {
     // 참가자 : 모임 신청
     @PostMapping("/apply")
     public ResponseEntity<?> applyMeet(@RequestBody Map<String, Long> requestBody ){
-        Long userId = requestBody.get("userId");
-        Long meetId = requestBody.get("meetId");
-        log.info("모임 신청할 정보를 출력한다. : {}, {}", userId, meetId);
+        try{
+            Long userId = requestBody.get("userId");
+            Long meetId = requestBody.get("meetId");
+            log.info("모임 신청할 정보를 출력한다. : {}, {}", userId, meetId);
 
-        meetUserService.updateMeetStatus(userId, meetId);
+            Meet attendMeet = meetService.findByMeetId(meetId);
+            User attendUser = userService.findByUserId(userId);
 
-        return ResponseEntity.ok(meetId + "모임에 신청 완료");
+            //참가자의 모임 상태 추가 -> 데이터를 추가해야한다.
+            meetUserService.saveMeetUser(attendMeet, attendUser, MeetType.ATTEND, Status.WAITING);
+
+            //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
+            //public void send(Long receiver, PushType pushType, String content, String url) {
+            StringBuilder sb = new StringBuilder();
+            StringBuilder pushMessage = new StringBuilder();
+            pushMessage.append(attendUser.getName() + "님께서 " + attendMeet.getMeetName() + "모임에 참여하고 싶어 합니다.");
+            pushService.send(attendMeet.getHostId(), PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
+
+
+            return ResponseEntity.ok(meetId + "모임에 신청 완료");
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
-    
-
 
     // 방장 : 모임 신청 관리
+
 }
 

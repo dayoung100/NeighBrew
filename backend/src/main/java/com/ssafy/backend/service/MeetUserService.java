@@ -30,13 +30,13 @@ public class MeetUserService {
         return meetUserRepository.findAll();
     }
 
-    public void saveMeetUser(Meet newMeet, User host){
+    public void saveMeetUser(Meet newMeet, User host, MeetType meetType, Status status){
         meetUserRepository.save(
                 MeetUser.builder()
                         .user(host)
                         .meet(newMeet)
-                        .meetType(MeetType.CREATE)
-                        .status(Status.ACCEPTED)
+                        .meetType(meetType)
+                        .status(status)
                         .build());
     }
 
@@ -45,7 +45,12 @@ public class MeetUserService {
         meetUserRepository.deleteByMeet_MeetIdAndUser_UserId(deleteMeet.getMeetId(), host.getUserId());
     }
 
-    public void updateMeetStatus(Long userId, Long meetId) {
-        meetUserRepository.findByUser_UserIdAndMeet_MeetId(userId, meetId).orElseThrow(() -> new IllegalArgumentException("유저 정보 및 미팅 정보가 올바르지 않습니다."));
+    public void updateMeetStatus(Long userId, Long meetId, MeetType meetType, Status status) {
+        //meetUser 정보를 가져온다.
+        MeetUser meetUser = meetUserRepository.findByUser_UserIdAndMeet_MeetId(userId, meetId).orElseThrow(() -> new IllegalArgumentException("유저 정보 및 미팅 정보가 올바르지 않습니다."));
+
+
+
+
     }
 }
