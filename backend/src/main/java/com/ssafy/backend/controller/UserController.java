@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,22 +24,6 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserService userService;
-
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
-        User foundUser = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
-
-        if (foundUser == null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        String accessToken = JwtUtil.generateToken(user.getEmail());
-        String refreshToken = JwtUtil.generateRefreshToken(user.getEmail());
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-        return ResponseEntity.ok(tokens);
-    }
 
     //전체 유저 검색
     @GetMapping()

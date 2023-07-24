@@ -2,15 +2,16 @@ package com.ssafy.backend.entity;
 
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import com.ssafy.backend.dto.UserUpdateDto;
-import lombok.*;
-import org.hibernate.annotations.Where;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Getter
@@ -33,11 +34,6 @@ public class User {
     @Column(nullable = false, length = 20)
     private String name;
 
-    @Column(nullable = false, length = 100)
-    private String password;
-
-    @Column(nullable = false, unique = true, length = 20)
-    private String phone;
 
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
@@ -67,28 +63,28 @@ public class User {
 
 
     @Builder
-    public User(String email, String nickname, String name, OAuthProvider oAuthProvider) {
+    public User(String email, String nickname, String name, Float liverPoint, OAuthProvider oAuthProvider) {
         this.email = email;
         this.nickname = nickname;
+        this.liverPoint = liverPoint;
         this.name = name;
         this.oAuthProvider = oAuthProvider;
     }
 
     @Builder
-    public User(Long userId, String email, String nickname, OAuthProvider oAuthProvider, String name, String password,
-                String phone, Date birth, String intro, Float liverPoint, String profile) {
+    public User(Long userId, String email, String nickname, OAuthProvider oAuthProvider, String name,
+                Date birth, String intro, Float liverPoint, String profile) {
         this.userId = userId;
         this.email = email;
         this.nickname = nickname;
         this.oAuthProvider = oAuthProvider;
         this.name = name;
-        this.password = password;
-        this.phone = phone;
         this.birth = birth;
         this.intro = intro;
         this.liverPoint = liverPoint;
         this.profile = profile;
     }
+
     public void updateFromDto(UserUpdateDto updateDto) {
         if (updateDto.getNickname() != null) {
             this.nickname = updateDto.getNickname();

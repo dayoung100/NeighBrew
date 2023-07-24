@@ -2,7 +2,6 @@ package com.ssafy.backend.dto;
 
 import com.ssafy.backend.entity.User;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,8 +19,6 @@ public class UserDto {
 
     private String name;
 
-    private String phone;
-
     private Date birth;
 
     private String intro;
@@ -35,7 +32,6 @@ public class UserDto {
         this.email = user.getEmail();
         this.nickname = user.getNickname();
         this.name = user.getName();
-        this.phone = user.getPhone();
         this.birth = user.getBirth();
         this.intro = user.getIntro();
         this.liverPoint = user.getLiverPoint();
