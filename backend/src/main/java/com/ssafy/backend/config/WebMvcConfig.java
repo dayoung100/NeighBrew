@@ -21,6 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins("192.168.31.72:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("Authorization") // Allow Authorization header
+                .allowCredentials(false)
                 .maxAge(3000);
     }
 }
