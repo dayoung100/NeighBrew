@@ -19,14 +19,18 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
     static class KakaoAccount {
         private final KakaoProfile profile;
         private final String email;
+        private final String name;
+
 
         @JsonCreator
         public KakaoAccount(
                 @JsonProperty("profile") KakaoProfile profile,
-                @JsonProperty("email") String email
+                @JsonProperty("email") String email,
+                @JsonProperty("name") String name
         ) {
             this.profile = profile;
             this.email = email;
+            this.name = name;
         }
     }
 
@@ -48,6 +52,11 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
 
     @Override
     public String getNickname() {
+        return kakaoAccount.email;
+    }
+
+    @Override
+    public String getName() {
         return kakaoAccount.profile.nickname;
     }
 

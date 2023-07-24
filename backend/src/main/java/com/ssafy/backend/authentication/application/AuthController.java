@@ -6,6 +6,7 @@ import com.ssafy.backend.authentication.infra.google.GoogleLoginParams;
 import com.ssafy.backend.authentication.infra.kakao.KakaoLoginParams;
 import com.ssafy.backend.authentication.infra.naver.NaverLoginParams;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,11 +15,13 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
     private final OAuthLoginService oAuthLoginService;
+
 
 
     //사용자가 동의 후 여기에 넣으면 됨

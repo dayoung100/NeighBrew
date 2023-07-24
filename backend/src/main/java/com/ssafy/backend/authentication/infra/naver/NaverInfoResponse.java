@@ -19,10 +19,13 @@ public class NaverInfoResponse implements OAuthInfoResponse {
     static class Response {
         private final String email;
         private final String nickname;
+        private final String name;
 
-        Response(String email, String nickname) {
+
+        Response(String email, String nickname, String name) {
             this.email = email;
             this.nickname = nickname;
+            this.name = name;
         }
     }
 
@@ -33,6 +36,11 @@ public class NaverInfoResponse implements OAuthInfoResponse {
 
     @Override
     public String getNickname() {
+        return response.email;
+    }
+
+    @Override
+    public String getName() {
         return response.nickname;
     }
 

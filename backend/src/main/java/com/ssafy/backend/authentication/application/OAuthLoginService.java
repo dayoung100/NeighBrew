@@ -1,6 +1,7 @@
 package com.ssafy.backend.authentication.application;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.RequestOAuthInfoService;
@@ -26,8 +27,18 @@ public class OAuthLoginService {
 
     public String login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
-        System.out.println("oAuthInfoResponse = " + oAuthInfoResponse);
+
         // 받아온 정보를 기반으로  userId를 추출
+        ObjectMapper objectMapper = new ObjectMapper();
+        try{
+            String jsonString = objectMapper.writeValueAsString(oAuthInfoResponse);
+            System.out.println("JSON String: " + jsonString);
+        }catch (Exception e){
+
+        }
+
+
+
         Long userId = findOrCreateUser(oAuthInfoResponse);
         System.out.println("2 : userId = " + userId);
         // 그 아이디를 기반으로 token 생성
@@ -51,6 +62,7 @@ public class OAuthLoginService {
     private Long newUser(OAuthInfoResponse oAuthInfoResponse) {
         User user = User.builder()
                 .email(oAuthInfoResponse.getEmail())
+                .name(oAuthInfoResponse.getName())
                 .nickname(oAuthInfoResponse.getNickname())
                 .oAuthProvider(oAuthInfoResponse.getOAuthProvider())
                 .build();
