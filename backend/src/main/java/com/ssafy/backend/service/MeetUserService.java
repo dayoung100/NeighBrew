@@ -13,6 +13,7 @@ import com.ssafy.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,7 +64,8 @@ public class MeetUserService {
                         .build());
     }
 
-    public void deleteMeetUser(Meet newMeet, User host){
-
+    @Transactional
+    public void deleteMeetUser(Meet deleteMeet, User host){
+        meetUserRepository.deleteByMeet_MeetIdAndUser_UserId(deleteMeet.getMeetId(), host.getUserId());
     }
 }

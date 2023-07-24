@@ -24,4 +24,8 @@ public class UserService {
 
         return Url;
     }
+
+    public User findByUserId(Long userId){
+        return userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+    }
 }
