@@ -1,6 +1,6 @@
 /*
-[MeetingCreate.tsx]
-모임 생성 페이지
+[MeetingInfoManage.tsx]
+모임 정보 관리 페이지
 모임 이름, 주종 카테고리, 술 검색, 위치, 시간, 조건, 설명, 이미지 첨부 가능
 */
 import { useState, useRef, useEffect } from "react";
@@ -12,6 +12,7 @@ import FooterBigBtn from "../footer/FooterBigBtn";
 import OneLineListItem from "../components/OneLineListItem";
 import ListInfoItem from "../components/ListInfoItem";
 import autoAnimate from "@formkit/auto-animate";
+import { Meeting } from "../../Type/types";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -157,7 +158,14 @@ const ImageArea = styled.div<{ src: string }>`
   overflow: hidden;
 `;
 
-const MeetingCreate = () => {
+const MeetingInfoManage = () => {
+  //미팅 기존 정보
+  const meetingInfo: Meeting = {
+    userId: 1, // 주최자
+    participants: [1, 2, 3, 4], // 참가자
+    tags: ["와인"], // 태그
+    title: "와인 마셔요", // 제목
+  };
   //파일 업로드 용
   const [imgFile, setImgFile] = useState("");
   const imgRef = useRef<HTMLInputElement>(null);
@@ -204,12 +212,12 @@ const MeetingCreate = () => {
   return (
     <div>
       <header>
-        <NavbarSimple title="모임 만들기" />
+        <NavbarSimple title="모임 관리" />
       </header>
       <div style={{ padding: "0 1.5rem", marginBottom: "7rem" }}>
         <QuestionDiv>
           <Title>모임의 이름</Title>
-          <Input placeholder="모임의 이름을 입력해주세요" />
+          <Input placeholder="모임의 이름을 입력해주세요" value={meetingInfo.title} />
         </QuestionDiv>
         <QuestionDiv ref={parent}>
           <Title>우리가 마실 것은</Title>
@@ -346,13 +354,15 @@ const MeetingCreate = () => {
       </div>
       <footer>
         <FooterBigBtn
-          content="모임 만들기"
+          content="정보 수정 완료"
           color="var(--c-yellow)"
           bgColor="white"
-          reqFunc={null}
+          reqFunc={() => {
+            console.log("모임 정보 수정 완료");
+          }}
         />
       </footer>
     </div>
   );
 };
-export default MeetingCreate;
+export default MeetingInfoManage;
