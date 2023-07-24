@@ -28,17 +28,4 @@ public class MeetUserController {
         logger.info("생성된 모든 모임을 출력한다. : {}");
         return ResponseEntity.ok(meetUserService.findAll());
     }
-
-    //User가 주최한/참여한/신청한 모임을을 출력한다.
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> getCreatedMeetById(@PathVariable Long userId){
-        logger.info("유저의 모든 모임을 출력한다. : {}", userId );
-
-        return ResponseEntity.ok(meetUserService.getAllMeetstById(userId));
-    }
-
-    //유저가 모임에 가입 신청을 넣음
-
-    //
-
 }

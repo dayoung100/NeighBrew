@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,17 +21,20 @@ public class MeetUserDto {
 
     private Meet meet;
 
+    private List<User> users;
     // 승인, 대기, 거절, 모임 완료
-    private Status status;
+    private List<Status> statuses;
 
     // 유저가 생성, 참여, 신처
-    private MeetType meetType;
+    private List<MeetType> meetTypes;
 
     @Builder
-    public MeetUserDto(Long meetUserId, Meet meet, Status status, MeetType meetType) {
+    public MeetUserDto(Long meetUserId, Meet meet) {
         this.meetUserId = meetUserId;
         this.meet = meet;
-        this.status = status;
-        this.meetType = meetType;
+        this.users = new ArrayList<>();
+        this.statuses = new ArrayList<>();
+        this.meetTypes = new ArrayList<>();
     }
+
 }

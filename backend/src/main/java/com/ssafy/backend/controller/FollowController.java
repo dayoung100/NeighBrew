@@ -35,12 +35,11 @@ public class FollowController {
 
     @PostMapping("/guard/{followingId}")
     public ResponseEntity<?> followUser(HttpServletRequest request, @PathVariable("followingId") Long followingId) {
-        String followerId = (String) request.getAttribute("userId");
-        User follower = userRepository.findById(Long.valueOf(followerId)).orElseThrow(() -> new IllegalArgumentException("Invalid followerId: " + followerId));
+        User follower = userRepository.findById(followingId).orElseThrow(() -> new IllegalArgumentException("Invalid followerId: " + followingId));
         User following = userRepository.findById(followingId).orElseThrow(() -> new IllegalArgumentException("Invalid followingId: " + followingId));
 
         // 토글 방식의 팔로우 기능 구현
-        followRepository.findByFollowerUserIdAndFollowingUserId(Long.valueOf(followerId), followingId).ifPresentOrElse(followRepository::delete, () -> {
+        followRepository.findByFollowerUserIdAndFollowingUserId(followingId, followingId).ifPresentOrElse(followRepository::delete, () -> {
             Follow follow = new Follow();
             follow.setFollower(follower);
             follow.setFollowing(following);
@@ -48,7 +47,7 @@ public class FollowController {
             followRepository.save(follow);
 
             //로거 추가 및 push 이벤트 발생 테스트
-            pushService.send(followerId, PushType.Follow, follower.getNickname() + "님께서 회원님을 팔로우하기 시작했습니다.", "http://localhost/mypage/" + follower.getUserId());
+            pushService.send(followingId, PushType.FOLLOW, follower.getNickname() + "님께서 회원님을 팔로우하기 시작했습니다.", "http://localhost/mypage/" + follower.getUserId());
         });
 
         return ResponseEntity.ok().build();
