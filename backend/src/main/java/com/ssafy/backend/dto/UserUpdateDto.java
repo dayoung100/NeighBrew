@@ -3,6 +3,8 @@ package com.ssafy.backend.dto;
 
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -11,6 +13,7 @@ public class UserUpdateDto {
     private String nickname;
     private String intro;
     private String profile;
+    private Date birth;
     private Float liverPoint;
 
     @Builder

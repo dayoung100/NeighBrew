@@ -1,8 +1,10 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.dto.UserUpdateDto;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
+import com.ssafy.backend.service.UserService;
 import com.ssafy.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,22 +23,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserRepository userRepository;
-
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
-        User foundUser = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
-
-        if (foundUser == null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        String accessToken = JwtUtil.generateToken(user.getEmail());
-        String refreshToken = JwtUtil.generateRefreshToken(user.getEmail());
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-        return ResponseEntity.ok(tokens);
-    }
+    private final UserService userService;
 
     //전체 유저 검색
     @GetMapping()
@@ -49,13 +35,12 @@ public class UserController {
     @GetMapping("/guard/userinfo")
     public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
-        System.out.println("userId = " + userId);
         User user = userRepository.findById(Long.valueOf(userId)).orElse(null);
-
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        if (user != null) {
+            return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(user);
     }
 
     // refresh token을 이용한 access token 재발급
@@ -92,22 +77,7 @@ public class UserController {
     @PutMapping("/guard")
     public ResponseEntity<?> updateUserInfo(@RequestBody UserUpdateDto userUpdateDto, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
-
-        Optional<User> optionalUser = userRepository.findById(Long.valueOf(userId));
-        if (optionalUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-
-        User user = optionalUser.get();
-
-        Optional.ofNullable(userUpdateDto.getNickname()).ifPresent(user::setNickname);
-        Optional.ofNullable(userUpdateDto.getIntro()).ifPresent(user::setIntro);
-        Optional.ofNullable(userUpdateDto.getProfile()).ifPresent(user::setProfile);
-        Optional.ofNullable(userUpdateDto.getLiverPoint()).ifPresent(user::setLiverPoint);
-
-        // 데이터베이스에 저장
-        userRepository.save(user);
-
-        return ResponseEntity.ok(user);
+        User updatedUser = userService.updateUser(Long.valueOf(userId), userUpdateDto);
+        return ResponseEntity.ok(updatedUser);
     }
 }
