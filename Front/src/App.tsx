@@ -14,6 +14,7 @@ import Follower from "./UI/user/Follower";
 import Follow from "./UI/user/Follow";
 import KakaoLogin from "./UI/user/KakaoLogin";
 import NaverLogin from "./UI/user/NaverLogin";
+import GoogleLogin from "./UI/user/GoogleLogin";
 
 function App() {
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ function App() {
         <Route path="/chatList/:roomId" element={<ChatRoom></ChatRoom>} />
         <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
         <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
+        <Route path="/google/:str" element={<GoogleLogin></GoogleLogin>}></Route>
       </Routes>
     </>
   );
