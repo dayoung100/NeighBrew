@@ -103,7 +103,7 @@ public class UserController {
         Optional.ofNullable(userUpdateDto.getNickname()).ifPresent(user::setNickname);
         Optional.ofNullable(userUpdateDto.getIntro()).ifPresent(user::setIntro);
         Optional.ofNullable(userUpdateDto.getProfile()).ifPresent(user::setProfile);
-        Optional.ofNullable(userUpdateDto.getIu()).ifPresent(user::setIu);
+        Optional.ofNullable(userUpdateDto.getIu()).ifPresent(user::setLiverPoint);
 
         // 데이터베이스에 저장
         userRepository.save(user);
