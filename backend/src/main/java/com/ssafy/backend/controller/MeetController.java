@@ -1,8 +1,7 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.Enum.MeetType;
-import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.Enum.Status;
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetUserDto;
 import com.ssafy.backend.entity.Follow;
@@ -42,24 +41,24 @@ public class MeetController {
         this.userService = userService;
     }
 
-    //모임 상세 정보 출력
+    //모든 모임에 대해 출력
     @GetMapping()
     public ResponseEntity<?> getAllMeet(){
-        log.debug("모든 모임 모임 정보 상세 출력");
+        log.info("모든 모임 모임 정보 상세 출력");
         return ResponseEntity.ok(meetService.findAll());
     }
 
     // meetId에 해당하는 모임 상세 정보 조회
     @GetMapping("/{meetId}")
     public ResponseEntity<?> getMeetById(@PathVariable Long meetId){
-        log.debug("모임 정보 상세 출력 : {} ", meetId);
+        log.info("모임 정보 상세 출력 : {} ", meetId);
         return ResponseEntity.ok(meetService.findMeetUserByMeetId(meetId));
     }
 
     //유저와 관련된 모임 모두 출력
     @GetMapping("/mymeet/{userId}")
     public ResponseEntity<?> getMyMeetsById(@PathVariable Long userId){
-        log.debug("모임 정보 상세 출력 : {} ", userId);
+        log.info("모임 정보 상세 출력 : {} ", userId);
         return ResponseEntity.ok(meetService.findByUserId(userId));
     }
 
@@ -67,22 +66,26 @@ public class MeetController {
     @PostMapping("/{userId}")
     public ResponseEntity<?> saveMeet(@PathVariable Long userId,
                                       @RequestBody MeetDto meetDto) throws IllegalArgumentException{
-        log.debug("유저{}가 모임 생성 : {}", userId, meetDto);
+        log.info("유저{}가 모임 생성 : {}", userId, meetDto);
         try{
-            Meet createdMeet = meetService.saveMeet(meetDto.toEntity());
+            Meet createdMeet = meetService.saveMeet(meetDto);
             User hostUser = userService.findByUserId(userId);
 
             //MeetUser 정보를 추가한다.
-            meetUserService.saveMeetUser(createdMeet, hostUser, MeetType.CREATE, Status.ACCEPTED);
+            meetUserService.saveMeetUser(createdMeet, hostUser, Status.CREATE);
             
             //팔로워에게 메세지를 보낸다
             List<Follow> followers = followService.findByFollower(userId);
             for(Follow fw : followers){
-                log.debug("follower 정보 출력 : {}", fw.getFollower());
+                log.info("follower 정보 출력 : {}", fw.getFollower());
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append(hostUser.getNickname()).append("님께서 회원님께서 모임(").append(createdMeet.getMeetName()).append(")을 생성했습니다.");
                 pushService.send(fw.getFollower().getUserId(), PushType.CREATEMEET, pushMessage.toString(), "이동할 URL 입력");
             }
+
+            //모임에 대한 채팅방을 생성한다.
+
+            //
 
             return ResponseEntity.ok(createdMeet);
         }catch(IllegalArgumentException e){
@@ -91,18 +94,22 @@ public class MeetController {
     }
 
     //모임 수정
-    @PutMapping("/{userId}/{meetId}")
+    @PutMapping("/{userId}")
     public ResponseEntity<?> updateMeet(@PathVariable Long userId,
-                                        @PathVariable Long meetId,
                                         @RequestBody MeetDto meetDto){
-        log.debug("\n수정하는 유저 :{} \n수정할 미팅ID : {}, \n 수정할 미팅 정보 : {}", meetId, meetDto);
+        log.info("\n수정하는 유저 :{} \n 수정할 미팅 정보 : {}", meetDto);
+        if(userId != meetDto.getHostId())
+            return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임 정보를 수정할 수 없습니다.");
+
         try{
-            Meet updateMeet = meetService.updateMeet(meetId, meetDto.toEntity());
+            Meet updateMeet = meetService.updateMeet(meetDto.getMeetId(), meetDto);
+
             //모임이 수정되면 모임에 참여한 사람들에게 Push 알림을 보낸다.
-            MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetId);
+            MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetDto.getMeetId());
+            log.info("유저 리스트 길이? {}",meetUser.getUsers().size());
 
             for(User user : meetUser.getUsers()){
-                log.debug("수정 알림 보낼 유저 정보 출력 : {}", user);
+                log.info("수정 알림 보낼 유저 정보 출력 : {}", user.getUserId());
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append("모임( ").append(meetDto.getMeetName()).append(")의 내용이 수정되었습니다. 확인해 주세요.");
                 pushService.send(userId, PushType.MODIFIDEMEET, pushMessage.toString(), "이동할 URL 입력");
@@ -114,26 +121,32 @@ public class MeetController {
         }
     }
 
+
     //모임 삭제하기
-    @DeleteMapping("/{userId}/{meetId}")
-    public ResponseEntity<?> deleteMeet(@PathVariable Long userId,
-                                        @PathVariable Long meetId){
-        log.debug("삭제할 미팅ID : {}", meetId);
+    @DeleteMapping()
+    public ResponseEntity<?> deleteMeet(@RequestBody Map<String, Long> requestBody){
+        Long userId = requestBody.get("userId");
+        Long meetId = requestBody.get("meetId");
+
+        log.info("삭제할 미팅ID : {}", meetId);
         try{
             Meet deleteMeet = meetService.findByMeetId(meetId);
             User hostUser = userService.findByUserId(userId);
+
+            if(deleteMeet.getHostId() != userId) return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임을 삭제 할 수 없습니다.");
+
             MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetId);
 
             //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
             for(User user : meetUser.getUsers()){
-                log.debug("삭제 알림 보낼 유저 정보 출력 : {}", user);
+                log.info("삭제 알림 보낼 유저 정보 출력 : {}", user);
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append(hostUser.getName() + "님 께서 생성한 모임").append("모임(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
                 pushService.send(user.getUserId(), PushType.DELETEMEET, pushMessage.toString(), "이동할 URL 입력");
             }
 
             //MeetUser 정보를 삭제한다.
-            meetUserService.deleteMeetUser(deleteMeet, hostUser);
+            meetUserService.deleteMeetUser(deleteMeet);
 
             //meet 정보를 삭제한다.
             meetService.deleteMeet(meetId);
@@ -156,7 +169,7 @@ public class MeetController {
             User attendUser = userService.findByUserId(userId);
 
             //참가자의 모임 상태 추가 -> 데이터를 추가해야한다.
-            meetUserService.saveMeetUser(attendMeet, attendUser, MeetType.ATTEND, Status.WAITING);
+            meetUserService.saveMeetUser(attendMeet, attendUser, Status.ATTEND);
 
             //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
             //public void send(Long receiver, PushType pushType, String content, String url) {
@@ -170,10 +183,17 @@ public class MeetController {
         }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 
     // 방장 : 모임 신청 관리
+    @PostMapping("/manage")
+    public ResponseEntity<?> manageMeetApply(@RequestBody Map<String, Object> requestBody) {
+        try{
+            return ResponseEntity.ok("");
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }
 
