@@ -98,4 +98,6 @@ public class User {
             this.liverPoint = updateDto.getLiverPoint();
         }
     }
+
+
 }

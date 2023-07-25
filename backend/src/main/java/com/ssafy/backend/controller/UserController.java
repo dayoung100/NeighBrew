@@ -36,9 +36,22 @@ public class UserController {
     }
 
 
-    @GetMapping("/guard/userinfo")
-    public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
+    @GetMapping("/guard/myinfo")
+    public ResponseEntity<?> getMyInfo(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
+        User user = userRepository.findById(Long.valueOf(userId)).orElse(null);
+        UserDto userDto = new UserDto(user);
+        userDto.setFollower(userService.getFollowerCount(Long.valueOf(userId)));
+        userDto.setFollowing(userService.getFollowingCount(Long.valueOf(userId)));
+        if (user != null) {
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/guard/userinfo/{userId}")
+    public ResponseEntity<?> getUserInfo(@PathVariable String userId) {
         User user = userRepository.findById(Long.valueOf(userId)).orElse(null);
         if (user != null) {
             return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
@@ -46,6 +59,9 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
+
 
     // refresh token을 이용한 access token 재발급
     @PostMapping("/refresh-token")

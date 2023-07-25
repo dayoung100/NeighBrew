@@ -27,6 +27,10 @@ public class UserDto {
 
     private String profile;
 
+    private Long follower;
+
+    private Long following;
+
     public UserDto(User user) {
         this.userId = user.getUserId();
         this.email = user.getEmail();
@@ -36,5 +40,7 @@ public class UserDto {
         this.intro = user.getIntro();
         this.liverPoint = user.getLiverPoint();
         this.profile = user.getProfile();
+        this.follower = follower;
+        this.following = following;
     }
 }
