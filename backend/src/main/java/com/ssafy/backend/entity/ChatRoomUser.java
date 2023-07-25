@@ -1,13 +1,12 @@
 package com.ssafy.backend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatRoomUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +19,10 @@ public class ChatRoomUser {
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
+
+    @Builder
+    public ChatRoomUser(ChatRoom chatRoom, User user) {
+        this.chatRoom = chatRoom;
+        this.user = user;
+    }
 }
