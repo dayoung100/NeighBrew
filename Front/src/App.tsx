@@ -19,6 +19,8 @@ import Follow from "./UI/user/Follow";
 import KakaoLogin from "./UI/user/KakaoLogin";
 import NaverLogin from "./UI/user/NaverLogin";
 import GoogleLogin from "./UI/user/GoogleLogin";
+import DrinkpostDetail from "./UI/drinkpost/DrinkpostDetail";
+import DrinkpostCreate from "./UI/drinkpost/DrinkpostCreate";
 
 function App() {
   const navigate = useNavigate();
@@ -74,6 +76,9 @@ function App() {
         <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
         <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
         <Route path="/google/:str" element={<GoogleLogin></GoogleLogin>}></Route>
+
+        <Route path="/drinkpost/:drinkId" element={<DrinkpostDetail></DrinkpostDetail>}></Route>
+        <Route path="/drinkpost/create" element={<DrinkpostCreate></DrinkpostCreate>}></Route>
       </Routes>
     </>
   );
