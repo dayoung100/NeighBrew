@@ -1,16 +1,14 @@
 package com.ssafy.backend.service;
 
 
-import com.ssafy.backend.Enum.MeetType;
-import com.ssafy.backend.controller.MeetController;
+import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetUserDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.MeetUser;
 import com.ssafy.backend.repository.MeetRepository;
 import com.ssafy.backend.repository.MeetUserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class MeetService {
 
     private MeetRepository meetRepository;
     private MeetUserRepository meetUserRepository;
-    private static final Logger logger = LoggerFactory.getLogger(MeetService.class);
 
     @Autowired
     public MeetService(MeetRepository meetRepository,
@@ -34,24 +32,45 @@ public class MeetService {
         this.meetUserRepository = meetUserRepository;
     }
 
-    public List<Meet> findAll() {
-        logger.info("모든 모임 상세정보 출력 ");
-        return meetRepository.findAll();
+    public List<MeetDto> findAll() {
+        log.info("모든 모임 상세정보 출력 ");
+        List<Meet> list = meetRepository.findAll();
+
+        List<MeetDto> dtos = new ArrayList<>();
+        for(Meet meet : list){
+            dtos.add(MeetDto.builder()
+                    .meetId(meet.getMeetId())
+                    .meetName(meet.getMeetName())
+                    .description(meet.getDescription())
+                    .hostId(meet.getHostId())
+                    .nowParticipants(meet.getNowParticipants())
+                    .maxParticipants(meet.getMaxParticipants())
+                    .meetDate(meet.getMeetDate())
+                    .tag(meet.getTag())
+                    .sido(meet.getSido())
+                    .gugun(meet.getGugun())
+                    .dong(meet.getDong())
+                    .minAge(meet.getMinAge())
+                    .maxAge(meet.getMaxAge())
+                    .minLiverPoint(meet.getMinLiverPoint())
+                    .drink(meet.getDrink())
+                    .imgSrc(meet.getImgSrc())
+                    .build());
+        }
+        return dtos;
     }
 
     public MeetUserDto findMeetUserByMeetId(Long meetId) {
-        logger.info("meetId : {}인 모임 정보 출력 ", meetId);
+        log.info("meetId : {}인 모임 정보 출력 ", meetId);
 
-        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetId(meetId).orElseThrow(()-> new IllegalArgumentException("모임 ID 값이 올바르지 않습니다."));
+        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(()-> new IllegalArgumentException("모임 ID 값이 올바르지 않습니다."));
 
         MeetUserDto meetUserDto = MeetUserDto.builder()
                 .meetUserId(meetUsers.get(0).getMeetUserId())
                 .meet(meetUsers.get(0).getMeet())
                 .build();
-
         for(MeetUser mu : meetUsers){
             meetUserDto.getUsers().add(mu.getUser());
-            meetUserDto.getMeetTypes().add(mu.getMeetType());
             meetUserDto.getStatuses().add(mu.getStatus());
         }
         return meetUserDto;
@@ -63,25 +82,28 @@ public class MeetService {
 
     public Map<String, List<Meet>> findByUserId(Long userId) {
         Map<String, List<Meet>> userMeets = new HashMap<>();
-        userMeets.put(MeetType.APPLY.name(), new ArrayList<>());
-        userMeets.put(MeetType.ATTEND.name(), new ArrayList<>());
-        userMeets.put(MeetType.CREATE.name(), new ArrayList<>());
+        userMeets.put(Status.APPLY.name(), new ArrayList<>());
+        userMeets.put(Status.ATTEND.name(), new ArrayList<>());
+        userMeets.put(Status.CREATE.name(), new ArrayList<>());
 
-        List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByMeetType(userId).orElseThrow(()-> new IllegalArgumentException("유저ID 값이 올바르지 않습니다."));
+        List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByStatus(userId).orElseThrow(()-> new IllegalArgumentException("유저ID 값이 올바르지 않습니다."));
 
         for(MeetUser mu : meetUsers){
-            if(mu.getMeetType() == MeetType.ATTEND)
-                userMeets.get(MeetType.ATTEND.name()).add(mu.getMeet());
-            else if(mu.getMeetType() == MeetType.APPLY)
-                userMeets.get(MeetType.APPLY.name()).add(mu.getMeet());
-            else userMeets.get(MeetType.CREATE.name()).add(mu.getMeet());
+            if(mu.getStatus() == Status.ATTEND)
+                userMeets.get(Status.ATTEND.name()).add(mu.getMeet());
+            else if(mu.getStatus() == Status.APPLY)
+                userMeets.get(Status.APPLY.name()).add(mu.getMeet());
+            else userMeets.get(Status.CREATE.name()).add(mu.getMeet());
         }
 
         return userMeets;
     }
 
-    public Meet saveMeet(Meet meet) {
-        logger.info("모임 생성 : {} ", meet);
+    public Meet saveMeet(MeetDto meetDto) {
+        log.info("모임 생성 : {} ", meetDto);
+        meetDto.setNowParticipants(1);
+
+        Meet meet = meetDto.toEntity();
         meet.setCreatedAt(LocalDateTime.now());
         meet.setUpdatedAt(LocalDateTime.now());
 
@@ -90,21 +112,35 @@ public class MeetService {
         return meetRepository.save(meet);
     }
 
-    public Meet updateMeet(Long meetId, Meet meet) {
-        logger.info("meetId : {}인 모임 정보 업데이트 : {} ", meetId, meet);
+    public Meet updateMeet(Long meetId, MeetDto meetDto) {
+        log.info("meetId : {}인 모임 정보 업데이트 : {} ", meetId, meetDto);
+
+        Meet meet = meetDto.toEntity();
+
         Meet findMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
 
-        logger.info("업데이트할 meet : {} ", findMeet);
+        log.info("업데이트할 meet : {} ", findMeet);
         findMeet.update(meet);
-        logger.info("업데이트 후 meet : {} ", findMeet);
-        logger.info("\n >>>>> 현재시간 : {} ", LocalDateTime.now());
+        log.info("업데이트 후 meet : {} ", findMeet);
+        log.info("\n >>>>> 현재시간 : {} ", LocalDateTime.now());
 
+        return meetRepository.save(findMeet);
+    }
+
+    public Meet updateMeet(Long meetId, Meet meet) {
+        log.info("meetId : {}인 모임 정보 업데이트 : {} ", meetId, meet);
+        Meet findMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
+
+        log.info("업데이트할 meet : {} ", findMeet);
+        findMeet.update(meet);
+        log.info("업데이트 후 meet : {} ", findMeet);
+        log.info("\n >>>>> 현재시간 : {} ", LocalDateTime.now());
 
         return meetRepository.save(findMeet);
     }
 
     public void deleteMeet(Long meetId) {
-        logger.info("meetId : {}인 모임 삭제", meetId);
+        log.info("meetId : {}인 모임 삭제", meetId);
         Meet meet = meetRepository.findById(meetId).orElse(null);
         if(meet != null){
             meetRepository.delete(meet);

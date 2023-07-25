@@ -1,8 +1,6 @@
 package com.ssafy.backend.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ssafy.backend.Enum.MeetType;
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.dto.MeetUserDto;
 import lombok.Builder;
@@ -28,13 +26,9 @@ public class MeetUser {
     @JoinColumn(name = "meetId")
     private Meet meet;
 
-    // 승인, 대기, 거절, 모임 완료
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
     // 유저가 생성, 참여, 신처
     @Enumerated(EnumType.STRING)
-    private MeetType meetType;
+    private Status status;
 
     public MeetUserDto toDto(){
         return MeetUserDto.builder()
@@ -46,11 +40,10 @@ public class MeetUser {
     }
 
     @Builder
-    public MeetUser( User user, Meet meet, Status status, MeetType meetType) {
+    public MeetUser( User user, Meet meet, Status status) {
         this.user = user;
         this.meet = meet;
         this.status = status;
-        this.meetType = meetType;
     }
 }
 

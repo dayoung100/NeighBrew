@@ -4,6 +4,7 @@ import com.ssafy.backend.dto.MeetDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@ToString
 public class Meet {
     @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +28,13 @@ public class Meet {
     @Column(nullable = false)
     private Long hostId;
 
-    //최대 8명
+    //현재 참여 인원
     @Column(nullable = false, columnDefinition = "int default 1")
-    private Integer participants = 1;
+    private Integer nowParticipants = 1;
+
+    //최대 참여 인원
+    @Column(nullable = false, columnDefinition = "int default 8")
+    private Integer maxParticipants;
 
     //모임날짜
     private LocalDateTime meetDate;
@@ -49,27 +55,35 @@ public class Meet {
     private Integer maxAge;
     private Float minLiverPoint;
 
+    //술ID
+    @OneToOne
+    @JoinColumn(name="drinkId")
+    private Drink drink;
 
-    //@Temporal(TemporalType.TIMESTAMP)
-    //private Date createdAt;
+    //미팅 이미지 url
+    @Lob
+    @Column(nullable = true)
+    private String imgSrc;
+
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
 
-    //    @Temporal(TemporalType.TIMESTAMP)
-//    private LocalDateTime updatedAt;
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    public Meet() {
-
-    }
+    public Meet() {}
 
     @Builder
-    public Meet(String meetName, String description, Long hostId, Integer participants, LocalDateTime meetDate, Tag tag, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint) {
+    public Meet(String meetName, String description, Long hostId,
+                Integer nowParticipants, Integer maxParticipants,
+                LocalDateTime meetDate, Tag tag, String sido, String gugun,
+                String dong, Integer minAge, Integer maxAge, Float minLiverPoint,
+                Drink drink, String imgSrc) {
         this.meetName = meetName;
         this.description = description;
         this.hostId = hostId;
-        this.participants = participants;
+        this.nowParticipants = nowParticipants;
+        this.maxParticipants = maxParticipants;
         this.meetDate = meetDate;
         this.tag = tag;
         this.sido = sido;
@@ -78,18 +92,15 @@ public class Meet {
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.minLiverPoint = minLiverPoint;
+        this.drink = drink;
+        this.imgSrc = imgSrc;
     }
-
-//    @PrePersist
-//    public void prePersist() {
-//        if (this.createdAt == null) this.createdAt = LocalDateTime.now();
-//        if (this.updatedAt == null) this.updatedAt = LocalDateTime.now();
-//    }
 
     public void update(Meet meet) {
         this.meetName = meet.getMeetName();
         this.description = meet.getDescription();
-        this.participants = meet.getParticipants();
+        this.nowParticipants = meet.getNowParticipants();
+        this.maxParticipants = meet.getMaxParticipants();
         this.hostId = meet.getHostId();
         this.meetDate = meet.getMeetDate();
         this.tag = meet.getTag();
@@ -100,6 +111,8 @@ public class Meet {
         this.maxAge = meet.getMaxAge();
         this.minLiverPoint = meet.getMinLiverPoint();
         this.updatedAt = LocalDateTime.now();
+        this.drink = meet.getDrink();
+        this.imgSrc = meet.getImgSrc();
     }
     public MeetDto toDto(){
         return MeetDto.builder()
@@ -118,24 +131,4 @@ public class Meet {
                 .build();
     }
 
-    @Override
-    public String toString() {
-        return "Meet{" +
-                "meetId=" + meetId +
-                ", meetName='" + meetName + '\'' +
-                ", description='" + description + '\'' +
-                ", hostId=" + hostId +
-                ", participants=" + participants +
-                ", meetDate=" + meetDate +
-                ", tag=" + tag +
-                ", sido='" + sido + '\'' +
-                ", gugun='" + gugun + '\'' +
-                ", dong='" + dong + '\'' +
-                ", minAge=" + minAge +
-                ", maxAge=" + maxAge +
-                ", minLiverPoint=" + minLiverPoint +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
-    }
 }

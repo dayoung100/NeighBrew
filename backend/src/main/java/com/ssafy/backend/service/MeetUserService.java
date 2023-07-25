@@ -1,21 +1,16 @@
 package com.ssafy.backend.service;
 
 
-import com.ssafy.backend.Enum.MeetType;
 import com.ssafy.backend.Enum.Status;
-import com.ssafy.backend.dto.MeetUserDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.MeetUser;
 import com.ssafy.backend.entity.User;
-import com.ssafy.backend.repository.MeetRepository;
 import com.ssafy.backend.repository.MeetUserRepository;
-import com.ssafy.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class MeetUserService {
@@ -30,22 +25,21 @@ public class MeetUserService {
         return meetUserRepository.findAll();
     }
 
-    public void saveMeetUser(Meet newMeet, User host, MeetType meetType, Status status){
+    public void saveMeetUser(Meet newMeet, User host, Status status){
         meetUserRepository.save(
                 MeetUser.builder()
                         .user(host)
                         .meet(newMeet)
-                        .meetType(meetType)
                         .status(status)
                         .build());
     }
 
     @Transactional
-    public void deleteMeetUser(Meet deleteMeet, User host){
-        meetUserRepository.deleteByMeet_MeetIdAndUser_UserId(deleteMeet.getMeetId(), host.getUserId());
+    public void deleteMeetUser(Meet deleteMeet){
+        meetUserRepository.deleteByMeet_MeetId(deleteMeet.getMeetId());
     }
 
-    public void updateMeetStatus(Long userId, Long meetId, MeetType meetType, Status status) {
+    public void updateMeetStatus(Long userId, Long meetId, Status status) {
         //meetUser 정보를 가져온다.
         MeetUser meetUser = meetUserRepository.findByUser_UserIdAndMeet_MeetId(userId, meetId).orElseThrow(() -> new IllegalArgumentException("유저 정보 및 미팅 정보가 올바르지 않습니다."));
 
