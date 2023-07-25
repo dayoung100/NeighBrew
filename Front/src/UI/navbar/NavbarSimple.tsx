@@ -1,10 +1,3 @@
-/*
-[NavbarSimple.tsx]
-상단바 간단한 버전
-- 모임 관리, 모임 만들기, 술 정보 조회 등에 사용
-뒤로 가기 버튼과 제목만 포함
-props는 일단 title만!
-*/
 import { useNavigate } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
@@ -22,6 +15,12 @@ const ArrowBtn = styled.div`
   left: 1rem;
 `;
 
+/**
+ * 상단바 간단한 버전.
+ * 모임 관리, 모임 만들기, 술 정보 조회 등에 사용.
+ * 뒤로 가기 버튼과 제목만 포함
+ * @property {string} title 상단에 들어갈 제목
+ */
 const NavbarSimple = ({ title }: { title: string }) => {
   const ArrowLeftIcon = arrowLeftIcon("var(--c-black)");
   const navigate = useNavigate();
