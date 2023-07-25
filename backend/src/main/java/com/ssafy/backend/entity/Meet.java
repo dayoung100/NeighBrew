@@ -57,7 +57,7 @@ public class Meet {
 
     //술ID
     @OneToOne
-    @JoinColumn(name="drinkId")
+    @JoinColumn(name = "drinkId")
     private Drink drink;
 
     //미팅 이미지 url
@@ -71,7 +71,8 @@ public class Meet {
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    public Meet() {}
+    public Meet() {
+    }
 
     @Builder
     public Meet(String meetName, String description, Long hostId,
@@ -114,12 +115,15 @@ public class Meet {
         this.drink = meet.getDrink();
         this.imgSrc = meet.getImgSrc();
     }
-    public MeetDto toDto(){
+
+    public MeetDto toDto() {
         return MeetDto.builder()
                 .meetId(this.meetId)
                 .meetName(this.meetName)
                 .description(this.description)
                 .hostId(this.hostId)
+                .nowParticipants(nowParticipants)
+                .maxParticipants(maxParticipants)
                 .meetDate(this.meetDate)
                 .tag(this.tag)
                 .sido(this.sido)
@@ -128,6 +132,8 @@ public class Meet {
                 .minAge(this.minAge)
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)
+                .drink(this.drink)
+                .imgSrc(this.imgSrc)
                 .build();
     }
 

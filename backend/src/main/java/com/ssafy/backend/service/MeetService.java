@@ -66,8 +66,7 @@ public class MeetService {
         List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(()-> new IllegalArgumentException("모임 ID 값이 올바르지 않습니다."));
 
         MeetUserDto meetUserDto = MeetUserDto.builder()
-                .meetUserId(meetUsers.get(0).getMeetUserId())
-                .meet(meetUsers.get(0).getMeet())
+                .meetDto(meetUsers.get(0).getMeet().toDto())
                 .build();
         for(MeetUser mu : meetUsers){
             meetUserDto.getUsers().add(mu.getUser());
