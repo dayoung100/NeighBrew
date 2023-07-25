@@ -21,6 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
                 .allowedHeaders("X-Custom-Header", "Content-Type","Authorization")
+                .exposedHeaders("Authorization")
                 .allowCredentials(true);
     }
 }
