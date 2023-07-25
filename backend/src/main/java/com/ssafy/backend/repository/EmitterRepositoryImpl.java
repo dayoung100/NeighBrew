@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class EmitterRepositoryImpl implements EmitterRepository {
+public class EmitterRepositoryImpl implements EmitterRepository{
     //모든 emitter를 저장하는 ConcurrentHashMap
     //ConCurrentHashMap을 사용함으로써 멀티쓰레드 환경에서도 동시성을 유지할 수 있게 한다.
 
@@ -21,18 +21,18 @@ public class EmitterRepositoryImpl implements EmitterRepository {
 
     //Emitter 저장
     public SseEmitter save(String sseEmitterId, SseEmitter sseEmitter){
-        log.debug("EmitterRepository 잡속, {}, {} ", sseEmitterId, sseEmitter);
+        log.info("EmitterRepository 잡속, {}, {} ", sseEmitterId, sseEmitter);
 
         emitters.put(sseEmitterId, sseEmitter);
 
-        log.debug(">> emitters 저장 체크 {}<<",emitters.get(sseEmitterId));
+        log.info(">> emitters 저장 체크 {}<<",emitters.get(sseEmitterId));
 
         return sseEmitter;
     }
 
     //Event 저장
     public void saveEventCache(String eventCacheId, Object event) {
-        log.debug("saveEventCache 접근 {} ", eventCacheId);
+        log.info("saveEventCache 접근 {} ", eventCacheId);
         eventCache.put(eventCacheId, event);
     }
 

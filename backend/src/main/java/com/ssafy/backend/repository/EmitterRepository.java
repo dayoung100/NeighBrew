@@ -1,6 +1,8 @@
 package com.ssafy.backend.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.yaml.snakeyaml.emitter.Emitter;
 
 import java.util.Map;
 import java.util.Optional;
