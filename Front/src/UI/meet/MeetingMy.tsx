@@ -24,7 +24,7 @@ const meetingMy = () => {
   const navigate = useNavigate();
 
   const GotoMeetDetailHandler = (meetId: number) => {
-    console.log(meetId, "my");
+    console.log("goto detail page, meetId is: ", meetId, "[my]");
     navigate(`/meet/${meetId}`);
   };
 
@@ -34,10 +34,12 @@ const meetingMy = () => {
         <MeetTitle>내가 주최 중인 모임</MeetTitle>
         <ListInfoItem
           title="내가 주최 중인 모임의 이름"
+          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
           tag="소주/맥주"
           content={<MeetingDetail />}
-          numberInfo={<PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />}
+          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
           isWaiting={false}
+          outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
       </MeetingDiv>
@@ -45,10 +47,12 @@ const meetingMy = () => {
         <MeetTitle>내가 참여 중인 모임</MeetTitle>
         <ListInfoItem
           title="내가 참여 중인 모임의 이름"
+          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
           tag="소주/맥주"
           content={<MeetingDetail />}
-          numberInfo={<PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />}
+          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
           isWaiting={false}
+          outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
       </MeetingDiv>
@@ -56,18 +60,22 @@ const meetingMy = () => {
         <MeetTitle>내가 신청한 모임</MeetTitle>
         <ListInfoItem
           title="내가 신청한 모임의 이름"
+          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
           tag="소주/맥주"
           content={<MeetingDetail />}
-          numberInfo={<PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />}
+          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
           isWaiting={true}
+          outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
         <ListInfoItem
           title="내가 신청한 모임의 이름"
+          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
           tag="소주/맥주"
           content="주류 정보는 이렇게 다른 요소는 비워두고 쓰면 될 것 같다"
           numberInfo={null}
           isWaiting={false}
+          outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}
         ></ListInfoItem>
       </MeetingDiv>

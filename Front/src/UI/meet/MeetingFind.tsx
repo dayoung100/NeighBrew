@@ -11,12 +11,23 @@ import SearchBox from "../components/SearchBox";
 import ListInfoItem from "../components/ListInfoItem";
 import MeetingDetail from "./MeetingDetailSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
+import DrinkCategory from "../drinkCategory/DrinkCategory";
 import autoAnimate from "@formkit/auto-animate";
+import { useQuery } from "@tanstack/react-query";
+import { getMeetings } from "../../utils/api";
 
-const TestCateDiv = styled.div`
+const CateDiv = styled.div`
   height: 10rem;
-  border: 1px solid var(--c-black);
-  margin: 2rem 1rem;
+  margin-top: 1rem;
+  div {
+    margin: 0;
+  }
+  .first,
+  .second {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 0.5rem;
+  }
 `;
 
 const SearchResultDiv = styled.div`
@@ -78,6 +89,7 @@ const DropdownInput = styled.select`
   border: none;
   border-bottom: 1px solid var(--c-gray);
   font-family: "SeoulNamsan";
+  outline: none;
   -webkit-appearance: none; /* 화살표 없애기 for chrome*/
   -moz-appearance: none; /* 화살표 없애기 for firefox*/
   appearance: none; /* 화살표 없애기 공통*/
@@ -91,13 +103,21 @@ const DateInput = styled.input.attrs({ type: "date" })`
   border: none;
   border-bottom: 1px solid var(--c-gray);
   background: white;
+  outline: none;
 `;
 
 const meetingFind = () => {
-  const [siList, setSiList] = useState(["서울", "경기", "대전", "인천"]);
-  const [guList, setGuList] = useState(["동구", "중구", "서구", "유성", "대덕"]);
-  const [dongList, setDongList] = useState(["봉명동", "중앙동", "갈마1동", "삼성동", "탄방동"]);
+  //query
+  const { data, refetch } = useQuery(["meetings"], getMeetings, { enabled: false });
 
+  const testHandler = () => {
+    refetch();
+  };
+  useEffect(() => {
+    console.dir(data);
+  }, [data]);
+
+  //받아온 모임 정보 리스트
   const [meetingList, setMeetingList] = useState([
     "모임의 제목이 들어갑니다",
     "모임2",
@@ -107,14 +127,33 @@ const meetingFind = () => {
     "모임6",
     "모임7",
   ]);
+  //필터 애니메이션 관련
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const parent = useRef(null);
   const navigate = useNavigate();
-
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
-
+  //필터 지역 검색용
+  const [siList, setSiList] = useState(["서울", "경기", "대전", "인천"]);
+  const [guList, setGuList] = useState(["동구", "중구", "서구", "유성", "대덕"]);
+  const [dongList, setDongList] = useState(["봉명동", "중앙동", "갈마1동", "삼성동", "탄방동"]);
+  const [si, setSi] = useState("");
+  const [gu, setGu] = useState("");
+  const [dong, setDong] = useState("");
+  const siSetHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSi(e.target.value);
+    //여기서 si에 따라 guList 업데이트
+  };
+  const guSetHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setGu(e.target.value);
+    //여기서 si에 따라 guList 업데이트
+  };
+  const dongSetHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setDong(e.target.value);
+    //여기서 si에 따라 guList 업데이트
+  };
+  //모임 상세페이지로 이동
   const GotoMeetDetailHandler = (meetId: number) => {
     console.log(meetId, "find");
     navigate(`/meet/${meetId}`);
@@ -122,7 +161,10 @@ const meetingFind = () => {
 
   return (
     <div>
-      <TestCateDiv>category area - 컴포넌트로 빼기</TestCateDiv>
+      <button onClick={testHandler}>api요청</button>
+      <CateDiv>
+        <DrinkCategory />
+      </CateDiv>
       <SearchResultDiv ref={parent}>
         <SearchResultHeader>
           지금 진행 중인 모임
@@ -134,25 +176,37 @@ const meetingFind = () => {
               위치
               <FilterElement>
                 <div>
-                  <DropdownInput>
-                    {siList.map(si => {
-                      return <option>{si}</option>;
+                  <DropdownInput onChange={siSetHandler} value={si}>
+                    {siList.map(siItem => {
+                      return (
+                        <option value={siItem} key={siItem}>
+                          {siItem}
+                        </option>
+                      );
                     })}
                   </DropdownInput>
                   시
                 </div>
                 <div>
-                  <DropdownInput>
-                    {guList.map(gu => {
-                      return <option>{gu}</option>;
+                  <DropdownInput onChange={guSetHandler} value={gu}>
+                    {guList.map(guItem => {
+                      return (
+                        <option value={guItem} key={guItem}>
+                          {guItem}
+                        </option>
+                      );
                     })}
                   </DropdownInput>
                   구
                 </div>
                 <div>
-                  <DropdownInput>
-                    {dongList.map(dong => {
-                      return <option>{dong}</option>;
+                  <DropdownInput onChange={dongSetHandler} value={dong}>
+                    {dongList.map(dongItem => {
+                      return (
+                        <option value={dongItem} key={dongItem}>
+                          {dongItem}
+                        </option>
+                      );
                     })}
                   </DropdownInput>
                   동
@@ -172,11 +226,14 @@ const meetingFind = () => {
         {meetingList.map(meeting => {
           return (
             <ListInfoItem
+              key={meeting}
               title={meeting}
+              imgSrc="../src/assets/ForTest/backgroundImg.jpg"
               tag="소주/맥주"
               content={<MeetingDetail />}
-              numberInfo={<PeopleNumInfo now={1} max={1} color={"var(--c-black)"} />}
+              numberInfo={<PeopleNumInfo now={1} max={4} color={"var(--c-black)"} size={11} />}
               isWaiting={false}
+              outLine={false}
               routingFunc={() => GotoMeetDetailHandler(1)}
             ></ListInfoItem>
           );
