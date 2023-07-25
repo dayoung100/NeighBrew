@@ -1,6 +1,7 @@
 package com.ssafy.backend.repository;
 
 import com.ssafy.backend.controller.PushController;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -10,28 +11,28 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class EmitterRepositoryImpl implements EmitterRepository {
     //모든 emitter를 저장하는 ConcurrentHashMap
     //ConCurrentHashMap을 사용함으로써 멀티쓰레드 환경에서도 동시성을 유지할 수 있게 한다.
-    private static final Logger logger = LoggerFactory.getLogger(EmitterRepositoryImpl.class);
 
     private final  ConcurrentHashMap<String, SseEmitter> emitters = new ConcurrentHashMap<>();
     private final  ConcurrentHashMap<String, Object> eventCache = new ConcurrentHashMap<>();
 
     //Emitter 저장
     public SseEmitter save(String sseEmitterId, SseEmitter sseEmitter){
-        logger.info("EmitterRepository 잡속, {}, {} ", sseEmitterId, sseEmitter);
+        log.debug("EmitterRepository 잡속, {}, {} ", sseEmitterId, sseEmitter);
 
         emitters.put(sseEmitterId, sseEmitter);
 
-        logger.info(">> emitters 저장 체크 {}<<",emitters.get(sseEmitterId));
+        log.debug(">> emitters 저장 체크 {}<<",emitters.get(sseEmitterId));
 
         return sseEmitter;
     }
 
     //Event 저장
     public void saveEventCache(String eventCacheId, Object event) {
-        logger.info("saveEventCache 접근 {} ", eventCacheId);
+        log.debug("saveEventCache 접근 {} ", eventCacheId);
         eventCache.put(eventCacheId, event);
     }
 

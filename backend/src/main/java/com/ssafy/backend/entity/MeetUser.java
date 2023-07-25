@@ -38,10 +38,7 @@ public class MeetUser {
 
     public MeetUserDto toDto(){
         return MeetUserDto.builder()
-                .meetUserId(this.meetUserId)
                 .meet(this.meet)
-                .meetType(this.meetType)
-                .status(this.status)
                 .build();
     }
 

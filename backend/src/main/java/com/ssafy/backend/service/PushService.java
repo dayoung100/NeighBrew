@@ -7,8 +7,7 @@ import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.EmitterRepository;
 import com.ssafy.backend.repository.EmitterRepositoryImpl;
 import com.ssafy.backend.repository.PushRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -17,11 +16,10 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class PushService {
     //타임아웃 설정 - 10분으로 연결 설정한다.
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 10;
-
-    private static final Logger logger = LoggerFactory.getLogger(PushService.class);
     private final EmitterRepository emitterRepository = new EmitterRepositoryImpl();
     private final PushRepository pushRepository;
 
@@ -30,12 +28,12 @@ public class PushService {
         this.pushRepository = pushRepository;
     }
 
-    public SseEmitter connect(String id, String lastEventId) {
+    public SseEmitter connect(Long userId, String lastEventId) {
 
-        logger.info("PushService 접근 : 접근 유저 id {}", id);
+        log.debug("PushService 접근 : 접근 유저 id {}", userId);
 
         //새로운 Ssemitter를 만든다.
-        String sseEmitterId = makeTimeIncludeId(id);
+        String sseEmitterId = makeTimeIncludeId(userId);
         SseEmitter sseEmitter = emitterRepository.save(sseEmitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
         //세션이 종료될 경우 저장한 SSEEmitter를 삭제한다.
@@ -43,13 +41,13 @@ public class PushService {
         sseEmitter.onTimeout(() -> emitterRepository.deleteById(sseEmitterId));
 
         // 503 에러가 발생하지 않도록 더미 데이터를 보내 연결을 유지한다.
-        sendToClient( sseEmitter, "Init Connect", makeTimeIncludeId(id), "EventStream Created. [userId= " + id + "]");
+        sendToClient( sseEmitter, "Init Connect", makeTimeIncludeId(userId), "EventStream Created. [userId= " + userId + "]");
 
         //클라이언트가 미수신한 Event목록이 있을 경우 전송해 event 유실을 예방한다.
         if (!lastEventId.isEmpty()) {
-            sendLostData(lastEventId, id, sseEmitterId, sseEmitter);
+            sendLostData(lastEventId, userId, sseEmitterId, sseEmitter);
         }else{
-            logger.info(">> 미수신 목록이 없음 <<");
+            log.debug(">> 미수신 목록이 없음 <<");
         }
         return sseEmitter;
     }
@@ -66,7 +64,7 @@ public class PushService {
         }
     }
 
-    private void sendLostData(String lastEventId, String userId, String emitterId, SseEmitter emitter) {
+    private void sendLostData(String lastEventId, Long userId, String emitterId, SseEmitter emitter) {
         //유저 ID에 해당하는 모든 SSE 이벤트를 가져온다.
         Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByUserId(String.valueOf(userId));
         eventCaches.entrySet().stream()
@@ -88,22 +86,22 @@ public class PushService {
     //public void send(User receiver, PushType pushType, String content, String url) {
     //  Push push = pushRepository.save(createPush(receiver, pushType, content, url));
     //  DB체크 완료되면 수행해야함, 유저 객체를 용해야하기 떄문
-    public void send(String id, PushType pushType, String content, String url) {
+    public void send(Long receiver, PushType pushType, String content, String url) {
         PushDto pushDto = new PushDto();
-        pushDto.setId(1L);
+        pushDto.setId(receiver);
         pushDto.setContent(content);
         pushDto.setUrl(url);
         pushDto.setCreatedAt(String.valueOf(System.currentTimeMillis()));
 
-        String receiverId = String.valueOf(id);
-        String eventId = makeTimeIncludeId(id);
+        String receiverId = String.valueOf(receiver);
+        String eventId = makeTimeIncludeId(receiver);
 
         //로그인 한 유저의 모든 Emiiter를 불러온다
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(receiverId);
-        if(sseEmitters == null ) logger.info("null임ㅋ");
+        if(sseEmitters == null ) log.debug("null임ㅋ");
         sseEmitters.forEach(
                 (key, emitter) -> {
-                    logger.info("정보 출력 {}, {} ", key, emitter.getTimeout());
+                    log.debug("정보 출력 {}, {} ", key, emitter.getTimeout());
                     emitterRepository.saveEventCache(key, pushDto);//데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
                     sendToClient( emitter,eventId, key, pushDto);//데이터를 receiver에게 전송
                 }
@@ -120,15 +118,10 @@ public class PushService {
     }
 
     //id에 이벤트가 발생한 시간을 더해 유실된 데이터를 찾을 수 있도록 한다.
-    private String makeTimeIncludeId(String memberId) {
+    private String makeTimeIncludeId(Long memberId) {
         return memberId + "_" + System.currentTimeMillis();
     }
 
 
 
 }
-/*
-public enum PushType {
-    CommentLike, Follow, Following, SingleChat, MeetChat, MeetAccess, MeetReject, MeetEvaluation
-}
- */

@@ -10,6 +10,8 @@ import siren from "../../assets/siren.png";
 import Navbar from "../navbar/Navbar";
 import MeetingMy from "./MeetingMyUseInUser";
 import Footer from "../footer/Footer";
+import axios from "axios";
+import { User } from "../../Type/types";
 
 const Button = styled.button`
   width: 40%;
@@ -84,11 +86,11 @@ const TagDiv = styled.div`
   margin: auto 0.5rem;
   padding: 0.3rem;
 `;
-const LiverDiv = styled.div<{ liverIU: number }>`
+const LiverDiv = styled.div<{ liverPoint: number }>`
   position: relative;
   height: 100%;
   background-image: linear-gradient(to top, #e24965 50%, #fff 50%);
-  background-size: ${props => "50% " + (props.liverIU + 80) + "%"};
+  background-size: ${props => "50% " + (props.liverPoint + 80) + "%"};
   /* background-size: 50% 150%; */
   animation: fillAnimation 3s forwards;
   @keyframes fillAnimation {
@@ -101,10 +103,9 @@ const LiverDiv = styled.div<{ liverIU: number }>`
   }
 `;
 const MyPage = () => {
-  const [userData, setUserData] = useState<(string | number)[]>(["이름", "나이", 1]); // 유저 정보
+  const [userData, setUserData] = useState<User>(); // 유저 정보
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const [following, setFollowing] = useState(0); // 팔로잉 목록
-  const [liverIU, setLiverIU] = useState(40); // 간수치
   const { userid } = useParams();
   const [tags, setTags] = useState(["태그1", "태그2", "태그3"]);
   const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
@@ -124,9 +125,58 @@ const MyPage = () => {
   const goFollowPage = () => {
     navigate("/myPage/follow/" + userid);
   };
+
+  const userInfo = async () => {
+    let Authorization =
+      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwMTg3MTAyLCJleHAiOjE2OTAxOTA3MDJ9.qMiAA9eAcl6h_D6v3YAMyyABNyUj6FPPpVpfFYGL0E0";
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        Authorization: Authorization,
+      },
+    };
+
+    // await axios
+    //   .get("http://34.64.126.58/user/access-token/1")
+    //   .then(res => {
+    //     Authorization = `Bearer ${res.data.accessToken}`;
+    //     console.log(res.data.accessToken);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+    // var req = new XMLHttpRequest();
+    // req.open("GET", "http://34.64.126.58/user/guard/userinfo", true);
+    // req.setRequestHeader("Authorization", Authorization);
+    // req.onreadystatechange = function (aEvt) {
+    //   if (req.readyState == 4) {
+    //     console.log("Status: ", req.status);
+    //     console.log("Response message: ", req.responseText);
+    //   }
+    // };
+    // console.log(req);
+    await axios
+      .get("http://34.64.126.58/user/guard/userinfo", {
+        headers: {
+          Authorization: Authorization,
+        },
+      })
+      .then(res => {
+        console.log(res.data);
+        setUserData(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+        console.log(Authorization);
+      });
+  };
+  useEffect(() => {
+    userInfo();
+  }, []);
   return (
     <>
-      <header>
+      {/* <header>
         <Navbar />
       </header>
       <div
@@ -142,8 +192,8 @@ const MyPage = () => {
             <Img src={temgif}></Img>
           </ImgDiv>
           <ColumnDiv>
-            <p>{liverIU} IU/L</p>
-            <LiverDiv liverIU={liverIU}>
+            <p>{userData!.liverPoint} IU/L</p>
+            <LiverDiv liverPoint={userData!.liverPoint}>
               <img style={{ width: "38px", height: "38px" }} src={liver} alt="" />
             </LiverDiv>
             <p>간수치</p>
@@ -200,7 +250,7 @@ const MyPage = () => {
         </UserDiv>
 
         <UserInfoDiv>
-          <p style={{ marginLeft: "3rem", marginRight: "4rem" }}>{userData[0]}</p>
+          <p style={{ marginLeft: "3rem", marginRight: "4rem" }}>{userData!.nickname}</p>
           {tags.map(tag => {
             return <TagDiv>{tag}</TagDiv>;
           })}
@@ -213,7 +263,7 @@ const MyPage = () => {
             margin: "0 1rem",
           }}
         >
-          <p>한줄 설명 : 한줄 설명에는 뭘 넣을 까요????</p>
+          <p>{userData!.intro}</p>
         </div>
       </div>
       <div>
@@ -243,7 +293,7 @@ const MyPage = () => {
       <div style={{ height: "80px" }}></div>
       <footer>
         <Footer />
-      </footer>
+      </footer> */}
     </>
   );
 };
