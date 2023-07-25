@@ -69,4 +69,8 @@ public class DrinkService {
             }
         }
     }
+
+    public Drink findById(Long drinkId) {
+        return drinkRepository.findById(drinkId).orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
+    }
 }

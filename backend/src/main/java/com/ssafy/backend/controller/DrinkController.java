@@ -26,6 +26,10 @@ public class DrinkController {
     public ResponseEntity<?> findByNameAndTag(@RequestParam(required = false) String name, @RequestParam(required = false) Long tag, Pageable pageable) {
         return ResponseEntity.ok(drinkService.findByNameAndTag(name, tag, pageable));
     }
+    @GetMapping("/{drinkId}")
+    public ResponseEntity<?> findDrinkById(@PathVariable Long drinkId){
+        return ResponseEntity.ok(drinkService.findById(drinkId));
+    }
 
 
     // 술 추가
