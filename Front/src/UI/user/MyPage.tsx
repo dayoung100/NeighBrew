@@ -128,11 +128,9 @@ const MyPage = () => {
 
   const userInfo = async () => {
     let Authorization =
-      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwMTg3MTAyLCJleHAiOjE2OTAxOTA3MDJ9.qMiAA9eAcl6h_D6v3YAMyyABNyUj6FPPpVpfFYGL0E0";
+      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwMjQ3Mzk3LCJleHAiOjE2OTAyNTA5OTd9.iLOtbjhp-PlOiXxzvg8WD6WwG6XOpEIHVSlIXeEzJfs";
     let config = {
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
         Authorization: Authorization,
       },
     };

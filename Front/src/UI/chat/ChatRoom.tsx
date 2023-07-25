@@ -5,19 +5,11 @@ import Navbar from "../navbar/Navbar";
 import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
 import { useNavigate } from "react-router-dom";
 import temgif from "../../assets/temgif.gif";
-// const MessageBox = styled.div<{ messageId: number }>`
-//   border-radius: ${props => (props.messageId === 1 ? "20px 20px 0px 20px" : "0px 20px 20px 20px")};
-//   background-color: ${props => (props.messageId === 1 ? "#e5bcbc" : "#F0D389")};
-//   /* max-width: 60%;
-//   min-width: 40%; */
-//   width: 60%;
-//   padding: 1rem;
-//   margin: 1rem auto;
-//   display: inline-block;
-//   position: relative;
-//   right: ${props => (props.messageId === 0 ? "16%" : "-16%")};
-//   word-break: break-all;
-// `;
+import SockJS from "sockjs-client";
+import axios from "axios";
+import { CompatClient, Stomp } from "@stomp/stompjs";
+import { Chat } from "../../Type/types";
+
 const MyChat = styled.div`
   position: relative;
   display: inline-block;
@@ -152,45 +144,44 @@ const BackDrop = styled.div<{ isModal: boolean }>`
 
 const ChatRoom = () => {
   const { id } = useParams();
-  const [messages, setMessages] = useState<[string, number][]>([
-    ["메세지", 1],
-    ["메세지", 0],
-  ]);
+  const [messages, setMessages] = useState<Chat[]>([]);
   const [isModal, setIsModal] = useState(false);
   const [users, setUsers] = useState(["현욱", "현빈", "준서", "다영", "영교", "동혁"]);
   const [message, setMessage] = useState("");
   const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
+  // 엔터 누르면 메세지 전송
   const sendMessageHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Enter" || e.keyCode === 13) {
       if (message === "") return;
-      setMessages(prev => [...prev, [message, 1]]);
+      setMessages(prev => [...prev, { message: message, userid: 1 }]);
       setMessage("");
       scroll();
     }
   };
   const navigate = useNavigate();
   const rapperDiv = useRef<HTMLInputElement>(null);
+  // 테스트를 위한 더비 데이터 생성
   const makedummy = () => {
     return new Promise((resolve, reject) => {
       for (let i = 0; i < 6; i++) {
         setMessages(prev => {
           return [
             ...prev,
-            ["메세awdawdkhjabkfhjbaskdbfk지", 1],
-            ["메awdljawndljanwklujfnhaklfhklujashf세지", 0],
+            { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 1 },
+            { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 0 },
           ];
         });
       }
       resolve("ok");
     });
   };
-
+  // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
   useEffect(() => {
     scroll();
   }, [messages]);
-
+  // 스크롤 로직
   const scroll = () => {
     if (rapperDiv.current) {
       // setTimeout(() => {
@@ -208,7 +199,11 @@ const ChatRoom = () => {
   }, []);
   const dummyAdd = () => {
     setMessages(prev => {
-      return [...prev, ["메세지", 1], ["메세지", 0]];
+      return [
+        ...prev,
+        { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 1 },
+        { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 0 },
+      ];
     });
   };
   const ArrowLeftIcon = arrowLeftIcon("black");
@@ -221,6 +216,37 @@ const ChatRoom = () => {
     isModal ? setIsModal(false) : setIsModal(true);
   };
 
+  const client = useRef<CompatClient>();
+
+  // const connectHandler = () => {
+  //   client.current = Stomp.over(() => {
+  //     const sock = new SockJS(`http://34.64.126.58/api/${id}`);
+  //     return sock;
+  //   });
+  //   client.current.connect(
+  //     {
+  //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //     },
+  //     () => {
+  //       client.current?.subscribe(`/chat/room/${id}`, msg => {
+  //         const message = JSON.parse(msg.body);
+  //         setMessages(prev => [...prev, { message: message.content, userid: message.userId }]);
+  //       });
+  //     }
+  //   );
+  // };
+  // const sendHandler = () => {
+  //   client.current.send(
+  //       "/백엔드와 협의한 api주소",
+  //       {Authorization: `Bearer ${localStorage.getItem("token")}`},
+  //       JSON.stringify({
+  //         type: "TALK",
+  //         roomId: id,
+  //         sender: user.name,
+  //         message: message
+  //       })
+  //     );
+  // };
   return (
     <div ref={rapperDiv}>
       <header>
@@ -238,12 +264,12 @@ const ChatRoom = () => {
             {ArrowLeftIcon}
           </div>
           <span style={{ marginRight: "0rem", fontFamily: "JejuGothic", fontSize: "20px" }}>
-            이런저런 ㅇㅇㅇㅇ방 이름{" "}
-            {
+            이런저런 ㅇㅇㅇㅇ방 이름
+            <>
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
                 &nbsp;&nbsp;&nbsp;&nbsp;4
               </span>
-            }
+            </>
           </span>
           <div
             style={{ marginLeft: "0rem", marginTop: "3px", cursor: "pointer" }}
@@ -289,15 +315,15 @@ const ChatRoom = () => {
             <div
               style={{
                 display: "flex",
-                alignItems: message[1] === 0 ? "flex-start" : "flex-end",
+                alignItems: message.userid === 0 ? "flex-start" : "flex-end",
                 flexDirection: "column",
               }}
             >
               <p style={{ fontFamily: "JejuGothic", fontSize: "12px", margin: "0 1rem" }}>나</p>
-              {message[1] === 0 ? (
-                <MyChat>{message[0]}</MyChat>
+              {message.userid === 0 ? (
+                <MyChat>{message.message}</MyChat>
               ) : (
-                <OtherChat>{message[0]}</OtherChat>
+                <OtherChat>{message.message}</OtherChat>
               )}
               {/* <MessageBox messageId={message[1]} key={i}>
                 <p style={{ fontFamily: "JejuGothic", fontSize: "14px" }}>{message[0]}</p>
