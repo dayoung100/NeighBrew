@@ -11,6 +11,7 @@ import SearchBox from "../components/SearchBox";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import OneLineListItem from "../components/OneLineListItem";
 import ListInfoItem from "../components/ListInfoItem";
+import ImageInput from "../components/ImageInput";
 import autoAnimate from "@formkit/auto-animate";
 
 const Title = styled.div`
@@ -133,34 +134,7 @@ const InfoTextArea = styled.textarea`
   resize: none;
 `;
 
-const ImgInput = styled.div`
-  // label로 대신하고 input은 숨기기 위한 css
-  input[type="file"] {
-    position: absolute;
-    width: 0;
-    height: 0;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
-  }
-`;
-
-const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
-  background-size: cover;
-  border-radius: 15px;
-  position: relative;
-  width: 30%;
-  padding-bottom: 30%;
-  overflow: hidden;
-`;
-
 const MeetingCreate = () => {
-  //파일 업로드 용
-  const [imgFile, setImgFile] = useState("");
-  const imgRef = useRef<HTMLInputElement>(null);
   //검색 결과 창 애니메이션 용
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const parent = useRef(null);
@@ -189,17 +163,6 @@ const MeetingCreate = () => {
   useEffect(() => {
     console.log(selectedDrink);
   }, [selectedDrink]);
-  //이미지 파일 업로드 시 미리보기
-  const saveImgFile = () => {
-    const file = imgRef.current.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        setImgFile(reader.result);
-      }
-    };
-  };
 
   return (
     <div>
@@ -228,9 +191,13 @@ const MeetingCreate = () => {
           {isSearchFocused && selectedDrink === "" && (
             <SearchResultDiv>
               <div style={{ overflow: "auto", height: "100%", flexGrow: "1" }}>
-                {searchResultList.map(res => {
+                {searchResultList.map((res) => {
                   return (
-                    <OneLineListItem content={res} tag="주종" getFunc={getDrink}></OneLineListItem>
+                    <OneLineListItem
+                      content={res}
+                      tag="주종"
+                      getFunc={getDrink}
+                    ></OneLineListItem>
                   );
                 })}
               </div>
@@ -289,10 +256,6 @@ const MeetingCreate = () => {
             </DropdownInput>
             동
           </div>
-          <Input
-            placeholder="업장의 이름 등 세부 위치를 입력해주세요"
-            style={{ marginTop: "0.5rem" }}
-          />
         </QuestionDiv>
         <QuestionDiv>
           <Title>시간</Title>
@@ -303,17 +266,35 @@ const MeetingCreate = () => {
         </QuestionDiv>
         <QuestionDiv style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>
           <Title>조건</Title>
-          <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "0.5rem",
+            }}
+          >
             <SubTitle>최대 인원</SubTitle>
             <InputShort />명
           </div>
-          <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "0.5rem",
+            }}
+          >
             <img src="/src/assets/liver.svg" />
             <SubTitle>간수치</SubTitle>
             <InputShort placeholder="40" />
             IU/L이상
           </div>
-          <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "0.5rem",
+            }}
+          >
             <img src="/src/assets/age.svg" />
             <SubTitle>나이</SubTitle>
             <InputShort placeholder="20" />
@@ -325,24 +306,9 @@ const MeetingCreate = () => {
           <Title>설명</Title>
           <InfoTextArea placeholder="모임에 대한 소개글을 작성해주세요"></InfoTextArea>
         </QuestionDiv>
-        <QuestionDiv style={{ textAlign: "left" }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Title style={{ margin: "0" }}>대표 이미지</Title>
-            <ImgInput>
-              <label htmlFor="img_file">
-                <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
-              </label>
-              <input
-                type="file"
-                id="img_file"
-                accept="image/jpg, image/png, image/jpeg"
-                onChange={saveImgFile}
-                ref={imgRef}
-              />
-            </ImgInput>
-          </div>
-          {imgFile && <ImageArea src={imgFile}></ImageArea>}
-        </QuestionDiv>
+        <div>
+          <ImageInput />
+        </div>
       </div>
       <footer>
         <FooterBigBtn
