@@ -36,7 +36,6 @@ public class User {
 
 
     @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
     private Date birth;
 
 
