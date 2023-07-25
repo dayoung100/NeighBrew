@@ -1,0 +1,6 @@
+package com.ssafy.backend.Enum;
+
+public enum PushType {
+    COMMNETLIKE, FOLLOW, CHAT,
+    MEETACCESS, MEETREJECT, MEETEVALUATION, CREATEMEET, MODIFIDEMEET, DELETEMEET
+}

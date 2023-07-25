@@ -1,17 +1,14 @@
 package com.ssafy.backend.authentication.application;
 
 
-import com.ssafy.backend.authentication.domain.AuthTokens;
-import com.ssafy.backend.authentication.domain.AuthTokensGenerator;
-import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.RequestOAuthInfoService;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
+import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,23 +22,37 @@ public class OAuthLoginService {
      */
     //private final MemberRepository memberRepository;
     private final UserRepository userRepository;
-    private final AuthTokensGenerator authTokensGenerator;
     private final RequestOAuthInfoService requestOAuthInfoService;
 
 
-    @Value("${oauth.kakao.client-id}")
-    private String clientId;
-
-    @Value("${oauth.kakao.url.auth}")
-    private String authUrl;
-
-
-    public AuthTokens login(OAuthLoginParams params) {
+    public String login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
+
+        // 받아온 정보를 기반으로  userId를 추출
+        ObjectMapper objectMapper = new ObjectMapper();
+        try{
+            String jsonString = objectMapper.writeValueAsString(oAuthInfoResponse);
+            System.out.println("JSON String: " + jsonString);
+        }catch (Exception e){
+
+        }
+
+
+
         Long userId = findOrCreateUser(oAuthInfoResponse);
-        return authTokensGenerator.generate(userId);
+        System.out.println("2 : userId = " + userId);
+        // 그 아이디를 기반으로 token 생성
+        return JwtUtil.generateToken(String.valueOf(userId));
     }
 
+//    public void logout(OAuthLoginParams params) {
+//        OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.logout(params);
+//
+//
+//    }
+
+
+    // 해당 이메일로 user의 id를 반환
     private Long findOrCreateUser(OAuthInfoResponse oAuthInfoResponse) {
         return userRepository.findByEmail(oAuthInfoResponse.getEmail())
                 .map(User::getUserId)
@@ -51,6 +62,7 @@ public class OAuthLoginService {
     private Long newUser(OAuthInfoResponse oAuthInfoResponse) {
         User user = User.builder()
                 .email(oAuthInfoResponse.getEmail())
+                .name(oAuthInfoResponse.getName())
                 .nickname(oAuthInfoResponse.getNickname())
                 .oAuthProvider(oAuthInfoResponse.getOAuthProvider())
                 .build();
@@ -59,13 +71,7 @@ public class OAuthLoginService {
     }
 
 
-
-
     public String redirectApiUrl(OAuthLoginParams params) {
-        String url = requestOAuthInfoService.authAptUrl(params);
-        return url;
+        return requestOAuthInfoService.authAptUrl(params);
     }
-    }
-
-
-
+}

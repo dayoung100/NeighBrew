@@ -7,6 +7,8 @@ import Footer from "../footer/Footer";
 import useIntersectionObserver from "./../../hooks/useIntersectionObserver";
 import DrinkpostCreateButton from "./DrinkpostCreateButton";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { callApi } from "../../utils/api";
 
 const ShowcaseBody = styled.div`
   background-color: var(--c-black);
@@ -16,14 +18,10 @@ const ShowcaseBody = styled.div`
 // 무한 스크롤
 
 const drinkpost = () => {
+  const [page, setPage] = useState(0);
+  const url = `http://34.64.126.58/drink?page=${page}&size=12`;
   const navigate = useNavigate();
-  const drinkArray = new Array();
-  for (let i = 1; i <= 5; i++) {
-    // i <= num의 num부분을 수정하여 술병 갯수를 조정.
-    drinkArray.push(i);
-  }
 
-  const [drinkList, setDrinkList] = useState(drinkArray);
   const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
     console.log(`감지결과 : ${isIntersecting}`);
     // isIntersecting이 true면 감지했다는 뜻임
@@ -33,11 +31,18 @@ const drinkpost = () => {
   };
   const { setTarget } = useIntersectionObserver({ onIntersect });
   // 위의 두 변수로 검사할 요소를 observer로 설정
-  const [dumy, setDumy] = useState<number[]>(drinkArray);
-  const [page, setPage] = useState(1);
+  const [drinkList, setDrinkList] = useState<object[]>([]);
   // 여기에는 axios 요청 들어갈 예정
   useEffect(() => {
-    setDumy(prev => [...prev, 1, 2, 3, 4, 5, 6, 7, 8]);
+    callApi("get", url)
+      .then(res => {
+        setDrinkList(prev => [...prev, ...res.data.content]);
+        console.log(res.data);
+        console.log(drinkList);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }, [page]);
 
   return (
@@ -47,11 +52,17 @@ const drinkpost = () => {
         <h1 style={{ margin: "0px" }}>술장</h1>
 
         <div className="whole" style={{ display: "flex", flexWrap: "wrap", paddingBottom: "60px" }}>
-          {dumy.map((drink, i) => {
-            return <DrinkCard key={i} drinkId={drink}></DrinkCard>;
+          {drinkList.map((drink, i) => {
+            return <DrinkCard key={i} drink={drink}></DrinkCard>;
+            console.log(drink);
           })}
         </div>
-        <div ref={setTarget} style={{ height: "100px", backgroundColor: "--c-black" }}></div>
+        <div
+          ref={setTarget}
+          style={{ marginTop: "400px", height: "100px", backgroundColor: "--c-black" }}
+        >
+          내가 보여요?
+        </div>
       </ShowcaseBody>
       <DrinkpostCreateButton></DrinkpostCreateButton>
       <Footer></Footer>

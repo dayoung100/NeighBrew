@@ -11,7 +11,4 @@ public interface OAuthApiClient {
     OAuthInfoResponse requestOauthInfo(String accessToken);
 
     String authApiUrl(OAuthLoginParams params);
-
-
-
 }

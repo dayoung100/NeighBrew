@@ -9,10 +9,18 @@ import ChatRoom from "./UI/chat/ChatRoom";
 import Drinkpost from "./UI/drinkpost/DrinkpostMain";
 import MeetingMain from "./UI/meet/MeetingMain";
 import MeetingDetail from "./UI/meet/MeetingDetail";
+import MeetingCreate from "./UI/meet/MeetingCreate";
+import MeetingManageMain from "./UI/meet/MeetingManageMain";
+import MeetingMemberManage from "./UI/meet/MeetingMemberManage";
+import MeetingInfoManage from "./UI/meet/MeetingInfoManage";
 import Mypage from "./UI/user/MyPage";
-
-import DrinkpostCreate from "./UI/drinkpost/DrinkpostCreate";
+import Follower from "./UI/user/Follower";
+import Follow from "./UI/user/Follow";
+import KakaoLogin from "./UI/user/KakaoLogin";
+import NaverLogin from "./UI/user/NaverLogin";
+import GoogleLogin from "./UI/user/GoogleLogin";
 import DrinkpostDetail from "./UI/drinkpost/DrinkpostDetail";
+import DrinkpostCreate from "./UI/drinkpost/DrinkpostCreate";
 
 function App() {
   const navigate = useNavigate();
@@ -55,11 +63,22 @@ function App() {
         />
         <Route path="/meet" element={<MeetingMain />}></Route>
         <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>
+        <Route path="/meet/create" element={<MeetingCreate />}></Route>
+        <Route path="/meet/:meetId/manage" element={<MeetingManageMain />}></Route>
+        <Route path="/meet/:meetId/manage/member" element={<MeetingMemberManage />}></Route>
+        <Route path="/meet/:meetId/manage/info" element={<MeetingInfoManage />}></Route>
+
         <Route path="/myPage/:userid" element={<Mypage></Mypage>}></Route>
+        <Route path="/myPage/follower/:userid" element={<Follower></Follower>}></Route>
+        <Route path="/myPage/follow/:userid" element={<Follower></Follower>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:roomId" element={<ChatRoom></ChatRoom>} />
-        <Route path="/drinkpost/create" element={<DrinkpostCreate></DrinkpostCreate>} />
-        <Route path="/drinkpost/:drinkId" element={<DrinkpostDetail></DrinkpostDetail>} />
+        <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
+        <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
+        <Route path="/google/:str" element={<GoogleLogin></GoogleLogin>}></Route>
+
+        <Route path="/drinkpost/:drinkId" element={<DrinkpostDetail></DrinkpostDetail>}></Route>
+        <Route path="/drinkpost/create" element={<DrinkpostCreate></DrinkpostCreate>}></Route>
       </Routes>
     </>
   );

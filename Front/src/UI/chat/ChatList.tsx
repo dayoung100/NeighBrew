@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Chat from "./Chat";
 import { meetingicon, directMessage } from "../../assets/AllIcon";
+import Footer from "../footer/Footer";
 
 const Button = styled.button`
   width: 40%;
@@ -54,7 +55,10 @@ const ChatList = () => {
               return <Chat key={i} chooseChat={chooseChat} chatRoomId={chat}></Chat>;
             })}
       </div>
-      <div style={{ height: "3rem" }}></div>
+      <div style={{ height: "80px" }}></div>
+      <footer>
+        <Footer />
+      </footer>
     </>
   );
 };

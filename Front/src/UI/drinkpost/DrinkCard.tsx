@@ -16,15 +16,19 @@ const CardImage = styled.img`
   margin: 10px;
 `;
 
-const DrinkCard = (props: { drinkId: number }) => {
+type drink = {
+  drinkId: number;
+};
+
+const DrinkCard = (props: { drink: object }) => {
   const navigate = useNavigate();
   const moveToDrinkDetailHandler = () => {
-    navigate(`/drinkpost/${props.drinkId}`);
+    navigate(`/drinkpost/${props.drink.drinkId}`);
   };
   return (
     <Card onClick={() => moveToDrinkDetailHandler()}>
       <CardImage src={whiskeyImage}></CardImage>
-      <p>술 이름</p>
+      <p>{props.drink.name}</p>
     </Card>
   );
 };

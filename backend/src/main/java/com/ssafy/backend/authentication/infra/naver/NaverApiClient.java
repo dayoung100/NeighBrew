@@ -92,12 +92,9 @@ public class NaverApiClient implements OAuthApiClient {
         &state=1UNWOvlyrl
         &redirect_uri=http://localhost:8080/naver/callback
          */
-        String redirectUri = "http://localhost:8080/naver/callback";
+        String redirectUri = "http://localhost:5173/naver/callback";
         String responseType = "code";
-        String url = authUrl + "/oauth2.0/authorize" +  "?response_type=" + responseType + "&client_id=" + clientId + "&state=" + clientSecret +"&redirect_uri=" + redirectUri;
 
-        return url;
+        return authUrl + "/oauth2.0/authorize" +  "?response_type=" + responseType + "&client_id=" + clientId + "&state=" + clientSecret +"&redirect_uri=" + redirectUri;
     }
-
-
 }

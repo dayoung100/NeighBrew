@@ -1,12 +1,14 @@
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import whiskeyImage from "../../assets/whiskeyImage.png";
 import ReviewItem from "../components/ReviewItem";
 import styled from "styled-components";
 import reviewIcon from "../../assets/reviewIcon.svg";
 import backIcon from "../../assets/backIcon.svg";
 import sirenIcon from "../../assets/sirenIcon.svg";
+import { callApi } from "../../utils/api";
+import { useState, useEffect } from "react";
 
 const CreateReviewDiv = styled.div`
   display: flex;
@@ -51,6 +53,20 @@ const IconAndTextDiv = styled.div`
 `;
 
 const DrinkpostDetail = () => {
+  const id = useParams();
+
+  const [detail, setDetail] = useState({});
+  const [review, setReview] = useState([]);
+  const drinkUrl = `http://34.64.126.58/drink/${id.drinkId}`;
+  const reviewUrl = `http://34.64.126.58/drinkreview/${id.drinkId}`;
+  useEffect(() => {
+    callApi("get", drinkUrl)
+      .then(res => setDetail(res.data))
+      .catch(err => console.log(err));
+    // callApi("get", reviewUrl)
+    // .then(res=> )
+  }, []);
+
   return (
     <div>
       <Navbar></Navbar>
@@ -58,7 +74,7 @@ const DrinkpostDetail = () => {
         <NavbarBackIcon>
           <img src={backIcon} alt="" />
         </NavbarBackIcon>
-        <h2 style={{ margin: "12px 0px 8px 23px" }}>술 이름</h2>
+        <h2 style={{ margin: "12px 0px 8px 23px" }}>{detail.name}</h2>
         <NavbarSirenIcon>
           <img src={sirenIcon} alt="" />
         </NavbarSirenIcon>
@@ -69,10 +85,13 @@ const DrinkpostDetail = () => {
           <b>종류</b> : 종류를 받는 부분
         </p>
         <p>
-          <b>도수</b> : 도수를 받는 부분
+          <b>도수</b> : {detail.degree}도
         </p>
         <p>
           <b>국가</b> : 국가를 받는 부분
+        </p>
+        <p style={{ marginTop: "20px" }}>
+          <b>설명</b> : {detail.description}
         </p>
       </div>
       <div className="reviewBox">

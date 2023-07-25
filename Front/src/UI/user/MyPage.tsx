@@ -1,11 +1,17 @@
 // 마이 페이지
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { meetingicon, directMessage } from "../../assets/AllIcon";
+import { meetingicon, brewery } from "../../assets/AllIcon";
 import temgif from "../../assets/tempgif.gif";
 import bottle from "../../assets/bottle.png";
 import liver from "../../assets/liver.png";
+import siren from "../../assets/siren.png";
+import Navbar from "../navbar/Navbar";
+import MeetingMy from "./MeetingMyUseInUser";
+import Footer from "../footer/Footer";
+import axios from "axios";
+import { User } from "../../Type/types";
 
 const Button = styled.button`
   width: 40%;
@@ -13,12 +19,15 @@ const Button = styled.button`
   height: 3rem;
   background-color: white;
   border: none;
-  margin: 1rem auto;
+  font-size: 12px;
+  font-family: "JejuGothic";
+  /* margin: 1rem auto; */
 `;
 
 const Div = styled.div`
   width: 100%;
   background-color: var(--c-lightgray);
+  min-height: 800px;
 `;
 
 const ImgDiv = styled.div`
@@ -43,6 +52,7 @@ const UserDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  margin-bottom: 1rem;
 `;
 
 // 간수치, 술병 등의 div
@@ -52,15 +62,23 @@ const ColumnDiv = styled.div`
   padding: 8px;
   font-size: 14px;
   align-items: center;
+  font-size: 14px;
+  font-family: "JejuGothic";
 `;
 const GripDiv = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* grid-template-columns: 1fr 1fr; */
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 2fr 1fr;
+  font-size: 14px;
+  font-family: "JejuGothic";
 `;
 const UserInfoDiv = styled.div`
   display: flex;
   font-size: 14px;
   font-family: "JejuGothic";
+  margin-bottom: 1rem;
+  align-items: center;
 `;
 const TagDiv = styled.div`
   border-radius: 16px;
@@ -68,18 +86,100 @@ const TagDiv = styled.div`
   margin: auto 0.5rem;
   padding: 0.3rem;
 `;
+const LiverDiv = styled.div<{ liverPoint: number }>`
+  position: relative;
+  height: 100%;
+  background-image: linear-gradient(to top, #e24965 50%, #fff 50%);
+  background-size: ${props => "50% " + (props.liverPoint + 80) + "%"};
+  /* background-size: 50% 150%; */
+  animation: fillAnimation 3s forwards;
+  @keyframes fillAnimation {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 0 100%;
+    }
+  }
+`;
 const MyPage = () => {
-  const [userData, setUserData] = useState<(string | number)[]>(["이름", "나이", 1]); // 유저 정보
+  const [userData, setUserData] = useState<User>(); // 유저 정보
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
+  const [following, setFollowing] = useState(0); // 팔로잉 목록
   const { userid } = useParams();
   const [tags, setTags] = useState(["태그1", "태그2", "태그3"]);
   const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
-  const directMessageIcon = directMessage(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
+  const Brewery = brewery(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
+  const navigate = useNavigate();
+  const followHandler = () => {
+    setFollowing(prev => {
+      return prev === 0 ? 1 : 0;
+    });
+  };
+  const reportHandler = () => {
+    alert("신고되었습니다.");
+  };
+  const goFollowerPage = () => {
+    navigate("/myPage/follower/" + userid);
+  };
+  const goFollowPage = () => {
+    navigate("/myPage/follow/" + userid);
+  };
+
+  const userInfo = async () => {
+    let Authorization =
+      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwMjQ3Mzk3LCJleHAiOjE2OTAyNTA5OTd9.iLOtbjhp-PlOiXxzvg8WD6WwG6XOpEIHVSlIXeEzJfs";
+    let config = {
+      headers: {
+        Authorization: Authorization,
+      },
+    };
+
+    // await axios
+    //   .get("http://34.64.126.58/user/access-token/1")
+    //   .then(res => {
+    //     Authorization = `Bearer ${res.data.accessToken}`;
+    //     console.log(res.data.accessToken);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+    // var req = new XMLHttpRequest();
+    // req.open("GET", "http://34.64.126.58/user/guard/userinfo", true);
+    // req.setRequestHeader("Authorization", Authorization);
+    // req.onreadystatechange = function (aEvt) {
+    //   if (req.readyState == 4) {
+    //     console.log("Status: ", req.status);
+    //     console.log("Response message: ", req.responseText);
+    //   }
+    // };
+    // console.log(req);
+    await axios
+      .get("http://34.64.126.58/user/guard/userinfo", {
+        headers: {
+          Authorization: Authorization,
+        },
+      })
+      .then(res => {
+        console.log(res.data);
+        setUserData(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+        console.log(Authorization);
+      });
+  };
+  useEffect(() => {
+    userInfo();
+  }, []);
   return (
     <>
+      {/* <header>
+        <Navbar />
+      </header>
       <div
         style={{
-          minHeight: "250px",
+          minHeight: "200px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -90,8 +190,10 @@ const MyPage = () => {
             <Img src={temgif}></Img>
           </ImgDiv>
           <ColumnDiv>
-            <p>40 IU/L</p>
-            <img style={{ width: "38px", height: "38px" }} src={liver} alt="" />
+            <p>{userData!.liverPoint} IU/L</p>
+            <LiverDiv liverPoint={userData!.liverPoint}>
+              <img style={{ width: "38px", height: "38px" }} src={liver} alt="" />
+            </LiverDiv>
             <p>간수치</p>
           </ColumnDiv>
           <ColumnDiv>
@@ -100,31 +202,67 @@ const MyPage = () => {
             <p>술병수</p>
           </ColumnDiv>
           <GripDiv>
-            <ColumnDiv>
+            <ColumnDiv
+              style={{
+                gridColumn: "1/3",
+                gridRow: "1/3",
+                cursor: "pointer",
+              }}
+              onClick={goFollowPage}
+            >
               <p>100</p>
               <p>팔로우</p>
             </ColumnDiv>
-            <ColumnDiv>
+            <ColumnDiv
+              style={{
+                gridColumn: "3/5",
+                gridRow: "1/3",
+                cursor: "pointer",
+              }}
+              onClick={goFollowerPage}
+            >
               <p>100</p>
               <p>팔로워</p>
             </ColumnDiv>
             <button
               style={{
-                gridColumn: "1/3",
-                gridRow: "2/3",
+                gridColumn: "1/4",
+                gridRow: "3/3",
+                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+                border: "none",
+                borderRadius: "16px",
+                fontFamily: "JejuGothic",
+                cursor: "pointer",
               }}
+              onClick={followHandler}
             >
-              팔로잉
+              {following === 0 ? "팔로우" : "언팔로우"}
             </button>
+
+            <img
+              src={siren}
+              style={{ gridColumn: "4/5", gridRow: "3/3", cursor: "pointer" }}
+              onClick={reportHandler}
+            />
           </GripDiv>
         </UserDiv>
 
         <UserInfoDiv>
-          <p style={{ marginLeft: "3rem", marginRight: "4rem" }}>{userData[0]}</p>
+          <p style={{ marginLeft: "3rem", marginRight: "4rem" }}>{userData!.nickname}</p>
           {tags.map(tag => {
             return <TagDiv>{tag}</TagDiv>;
           })}
         </UserInfoDiv>
+        <div
+          style={{
+            fontSize: "14px",
+            fontFamily: "JejuGothic",
+            textAlign: "left",
+            margin: "0 1rem",
+          }}
+        >
+          <p>{userData!.intro}</p>
+        </div>
       </div>
       <div>
         <Button
@@ -136,6 +274,7 @@ const MyPage = () => {
           }}
         >
           {MeetingIcon}
+          <p style={{ color: chooseChat === 0 ? "var(--c-black)" : "var(--c-lightgray)" }}>모임</p>
         </Button>
         <Button
           onClick={() => {
@@ -143,12 +282,16 @@ const MyPage = () => {
           }}
           style={{ borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)" }}
         >
-          {directMessageIcon}
+          {Brewery}
+          <p style={{ color: chooseChat === 0 ? "var(--c-lightgray)" : "var(--c-black)" }}>술장</p>
         </Button>
       </div>
-      <Div>
-        <p>awdawd</p>
-      </Div>
+      {chooseChat === 0 ? <MeetingMy></MeetingMy> : <p>임시 술장</p>}
+
+      <div style={{ height: "80px" }}></div>
+      <footer>
+        <Footer />
+      </footer> */}
     </>
   );
 };
