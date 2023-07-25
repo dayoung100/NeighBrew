@@ -39,7 +39,7 @@ public class FollowController {
         User following = userRepository.findById(followingId).orElseThrow(() -> new IllegalArgumentException("Invalid followingId: " + followingId));
 
         // 토글 방식의 팔로우 기능 구현
-        followRepository.findByFollowerUserIdAndFollowingUserId(followingId, followingId).ifPresentOrElse(followRepository::delete, () -> {
+        followRepository.findByFollowerUserIdAndFollowingUserId(follower.getUserId(), followingId).ifPresentOrElse(followRepository::delete, () -> {
             Follow follow = new Follow();
             follow.setFollower(follower);
             follow.setFollowing(following);
