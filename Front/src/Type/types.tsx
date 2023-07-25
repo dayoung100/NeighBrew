@@ -14,3 +14,7 @@ export interface User {
   deleted: boolean;
   oauthProvider: string;
 }
+export interface Chat {
+  message: string;
+  userid: number;
+}
