@@ -1,10 +1,17 @@
 package com.ssafy.backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.entity.ChatMessage;
 import com.ssafy.backend.entity.ChatRoom;
 import com.ssafy.backend.entity.ChatRoomUser;
 import com.ssafy.backend.entity.User;
+import com.ssafy.backend.repository.ChatMessageRepository;
 import com.ssafy.backend.repository.ChatRoomRepository;
+import com.ssafy.backend.repository.ChatRoomUserRepository;
+import com.ssafy.backend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -20,15 +27,16 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/chat")
+@RequiredArgsConstructor
+@Slf4j
 public class ChatRoomController {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ChatRoomUserRepository chatRoomUserRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
-    public ChatRoomController(ChatRoomRepository chatRoomRepository, SimpMessagingTemplate messagingTemplate) {
-        this.chatRoomRepository = chatRoomRepository;
-        this.messagingTemplate = messagingTemplate;
-    }
 
     // 채팅방 생성
     @PostMapping("/room")
@@ -42,40 +50,49 @@ public class ChatRoomController {
 
     // 채팅방 입장 (채팅방에 유저 추가)
     @MessageMapping("/room/{roomId}/join")
-    public void joinChatRoom(@DestinationVariable Long roomId, @Payload User user) {
+    public void joinChatRoom(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
+        Long userId = Long.valueOf(new ObjectMapper().readTree(data).get("userId").asText());
+
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        ChatRoomUser chatRoomUser = new ChatRoomUser(); // 채팅방 유저 생성
-        chatRoomUser.setChatRoom(room);
-        chatRoomUser.setUser(user);
-        room.getUsers().add(chatRoomUser);
+        chatRoomUserRepository.findByUser_UserIdAndChatRoom_ChatRoomId(user.getUserId(), room.getChatRoomId()).ifPresent(
+                chatRoomUser -> {
+                    throw new IllegalArgumentException("이미 채팅방에 참여한 유저입니다.");
+                }
+        );
 
-        chatRoomRepository.save(room); // 채팅방 저장
+        ChatRoomUser chatRoomUser = ChatRoomUser
+                .builder()
+                .chatRoom(room)
+                .user(user)
+                .build();
+        log.info("chatRoomUser: {}", chatRoomUser);
 
-        ChatMessage message = new ChatMessage(); // 입장 메시지 생성
-        message.setSender("알림");
-        message.setMessage(user.getName() + "님이 입장하셨습니다.");
-        message.setTimestamp(LocalDateTime.now());
-        messagingTemplate.convertAndSend("/pub/room/" + roomId, message); // 채팅방에 입장 메시지 전송
+        chatRoomUserRepository.save(chatRoomUser);
     }
 
     // 채팅방 퇴장
     @MessageMapping("/room/{roomId}/leave")
-    public void leaveChatRoom(@DestinationVariable Long roomId, @Payload User user) {
+    public void leaveChatRoom(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다.")); // 채팅방 조회
+        Long userId = Long.valueOf(new ObjectMapper().readTree(data).get("userId").asText());
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다.")); // 유저 조회
 
         room.getUsers().removeIf(chatRoomUser -> chatRoomUser.getUser().equals(user)); // 해당 유저 삭제
 
-        if (room.getUsers().size() == 0 || room.getUsers().size() == 1) { // 채팅방에 유저가 0명이거나 1명이면 채팅방 삭제
+        if (room.getUsers().size() == 0) {//|| room.getUsers().size() == 1) { // 채팅방에 유저가 0명이거나 1명이면 채팅방 삭제
             chatRoomRepository.delete(room);
         } else {
             chatRoomRepository.save(room);
         }
 
-        ChatMessage message = new ChatMessage(); // 채팅방에 퇴장 메시지 전송
-        message.setSender("알림");
-        message.setMessage(user.getName() + "님이 퇴장하셨습니다."); // 채팅방에 퇴장 메시지 전송
-        message.setTimestamp(LocalDateTime.now());
+        ChatMessage message = ChatMessage.builder()
+                .message(user.getName() + "님이 퇴장하셨습니다.")
+                .timestamp(LocalDateTime.now())
+                .userId(user.getUserId())
+                .build();
+        chatMessageRepository.save(message);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, message);
     }
 }
