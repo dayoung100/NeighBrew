@@ -24,7 +24,7 @@ export interface Meeting {
   meetName: string;
   description: string;
   hostId: number;
-  participants: number;
+  attendUser: number;
   meetDate: string;
   tag: any;
   sido: string;

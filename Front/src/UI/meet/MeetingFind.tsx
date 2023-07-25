@@ -107,17 +107,12 @@ const DateInput = styled.input.attrs({ type: "date" })`
 `;
 
 const meetingFind = () => {
-<<<<<<< Updated upstream
   //받아온 모임 정보 리스트(전체)
   const [meetAllData, setMeetAllData] = useState<Meeting[]>([]);
   useEffect(() => {
     console.dir(meetAllData);
     setMeetData(meetAllData.map((item) => item));
   }, [meetAllData]);
-=======
-  //query
-  const { data, refetch } = useQuery(["meetings"], callApi("get", "api/meet"), { enabled: false });
->>>>>>> Stashed changes
 
   //필터링 한 후 모임 정보
   const [meetData, setMeetData] = useState<Meeting[]>([]);
@@ -129,7 +124,6 @@ const meetingFind = () => {
     const promise = callApi("get", "api/meet");
     promise.then((res) => {
       setMeetAllData(res.data);
-      setMeetData(res.data);
     });
     // setMeetAllData([
     //   {
@@ -303,16 +297,26 @@ const meetingFind = () => {
         </div>
         {meetData.map((meeting: Meeting) => {
           const meetId = meeting.meetId;
+          const hasAgeLimit = meeting.minAge || meeting.maxAge ? true : false;
+          const position = meeting.sido + meeting.gugun + meeting.dong;
           return (
             <ListInfoItem
               key={meetId}
               title={meeting.meetName}
               imgSrc="../src/assets/ForTest/backgroundImg.jpg"
               tag={meeting.tag.name}
-              content={<MeetingDetail />}
+              content={
+                <MeetingDetail
+                  position={position}
+                  time={meeting.meetDate}
+                  hostId={meeting.hostId}
+                  liverLimit={meeting.minLiverPoint ? true : false}
+                  ageLimit={hasAgeLimit}
+                />
+              }
               numberInfo={
                 <PeopleNumInfo
-                  now={meeting.participants}
+                  now={meeting.attendUser}
                   max={8}
                   color={"var(--c-black)"}
                   size={11}
