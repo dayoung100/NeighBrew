@@ -23,9 +23,33 @@ const ChatList = () => {
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
   const directMessageIcon = directMessage(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
-
+  const btn = () => {
+    // Notification.requestPermission().then((status) => {
+    //   console.log("Notification 상태", status);
+    //   if (status === "denied") {
+    //     alert("Notification 거부됨");
+    //   } else if (navigator.serviceWorker) {
+    //     navigator.serviceWorker
+    //       .register("/serviceworker.js") // serviceworker 등록
+    //       .then(function (registration) {
+    //         const subscribeOptions = {
+    //           userVisibleOnly: true,
+    //           // push subscription이 유저에게 항상 보이는지 여부. 알림을 숨기는 등 작업이 들어가지는에 대한 여부인데, 크롬에서는 true 밖에 지원안한다.
+    //           // https://developers.google.com/web/fundamentals/push-notifications/subscribing-a-user
+    //           applicationServerKey: "BIqrfyWBegSK9OBBB_HPzvOo_8oBtQcQkgsmBh9c9r_-4pL_Jmbj8SJmutwqzfapsYFnsMjdjBhj8Av90JHtrHI", // 발급받은 vapid public key
+    //         };
+    //         return registration.pushManager.subscribe(subscribeOptions);
+    //       })
+    //       .then(function (pushSubscription) {
+    //         // subscription 정보를 저장할 서버로 보낸다.
+    //         postSubscription(pushSubscription);
+    //       });
+    //   }
+    // });
+  };
   return (
     <>
+      <button onClick={btn}>button</button>
       <div>
         <Button
           onClick={() => {

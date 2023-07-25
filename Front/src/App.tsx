@@ -45,22 +45,8 @@ function App() {
             </>
           }
         />
-        <Route
-          path="/home"
-          element={
-            <>
-              <Main />
-            </>
-          }
-        />
-        <Route
-          path="/drinkpost"
-          element={
-            <>
-              <Drinkpost />
-            </>
-          }
-        />
+        <Route path="/home" element={<Main />} />
+        <Route path="/drinkpost" element={<Drinkpost />} />
         <Route path="/meet" element={<MeetingMain />}></Route>
         <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>
         <Route path="/meet/create" element={<MeetingCreate />}></Route>
@@ -70,7 +56,7 @@ function App() {
 
         <Route path="/myPage/:userid" element={<Mypage></Mypage>}></Route>
         <Route path="/myPage/follower/:userid" element={<Follower></Follower>}></Route>
-        <Route path="/myPage/follow/:userid" element={<Follower></Follower>}></Route>
+        <Route path="/myPage/follow/:userid" element={<Follow></Follow>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:roomId" element={<ChatRoom></ChatRoom>} />
         <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>

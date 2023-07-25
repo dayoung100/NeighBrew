@@ -7,12 +7,14 @@ const KakaoLogin = () => {
   const KakaologinHandler = async () => {
     const code = location.search.split("=")[1];
     axios
-      .post("http://34.64.126.58/api/auth/kakao", {
+      .post("http://34.64.126.58:5173/api/auth/kakao", {
         authorizationCode: code,
       })
       .then(res => {
         console.log("로그인 성공");
-        localStorage.setItem("token", res.data);
+        console.log(res.data);
+        localStorage.setItem("token", res.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.refreshToken);
         navigate("/meet");
       })
       .catch(err => {

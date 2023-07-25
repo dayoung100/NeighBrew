@@ -15,8 +15,8 @@ const NaverLogin = () => {
         state: state,
       })
       .then(res => {
-        console.log(1);
-        localStorage.setItem("token", res.data);
+        localStorage.setItem("token", res.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.refreshToken);
         navigate("/meet");
       })
       .catch(err => {
