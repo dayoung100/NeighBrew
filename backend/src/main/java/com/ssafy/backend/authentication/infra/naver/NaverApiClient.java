@@ -6,6 +6,7 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +34,7 @@ public class NaverApiClient implements OAuthApiClient {
     @Value("${oauth.naver.secret}")
     private String clientSecret;
 
+    @Qualifier("restTemplate")
     private final RestTemplate restTemplate;
 
     @Override
