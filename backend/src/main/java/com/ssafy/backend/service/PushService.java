@@ -20,7 +20,9 @@ import java.util.Map;
 public class PushService {
     //타임아웃 설정 - 10분으로 연결 설정한다.
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 10;
-    private final EmitterRepository emitterRepository = new EmitterRepositoryImpl();
+    private final EmitterRepositoryImpl emitterRepository = new EmitterRepositoryImpl();
+
+
     private final PushRepository pushRepository;
 
     @Autowired
@@ -30,10 +32,12 @@ public class PushService {
 
     public SseEmitter connect(Long userId, String lastEventId) {
 
-        log.debug("PushService 접근 : 접근 유저 id {}", userId);
+//        log.info("PushService 접근 : 접근 유저 id {}", userId);
+        log.info("PushService 접근 : 접근 유저 id {}", userId);
 
         //새로운 Ssemitter를 만든다.
         String sseEmitterId = makeTimeIncludeId(userId);
+        // 들어가서 알림 확인하고 해당 알림에 해당하는 내용 DB 저장
         SseEmitter sseEmitter = emitterRepository.save(sseEmitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
         //세션이 종료될 경우 저장한 SSEEmitter를 삭제한다.
@@ -45,9 +49,10 @@ public class PushService {
 
         //클라이언트가 미수신한 Event목록이 있을 경우 전송해 event 유실을 예방한다.
         if (!lastEventId.isEmpty()) {
+            // 미수신 목록들 DB에 저장 -> 상태 고려하여 작성해야함
             sendLostData(lastEventId, userId, sseEmitterId, sseEmitter);
         }else{
-            log.debug(">> 미수신 목록이 없음 <<");
+            log.info(">> 미수신 목록이 없음 <<");
         }
         return sseEmitter;
     }
@@ -98,10 +103,10 @@ public class PushService {
 
         //로그인 한 유저의 모든 Emiiter를 불러온다
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(receiverId);
-        if(sseEmitters == null ) log.debug("null임ㅋ");
+        if(sseEmitters == null ) log.info("null임ㅋ");
         sseEmitters.forEach(
                 (key, emitter) -> {
-                    log.debug("정보 출력 {}, {} ", key, emitter.getTimeout());
+                    log.info("정보 출력 {}, {} ", key, emitter.getTimeout());
                     emitterRepository.saveEventCache(key, pushDto);//데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
                     sendToClient( emitter,eventId, key, pushDto);//데이터를 receiver에게 전송
                 }
@@ -111,7 +116,7 @@ public class PushService {
         return Push.builder()
                 .user(receiver)
                 .pushType(pushType)
-                .content(content)
+                 .content(content)
                 .url(url)//url에 대한 컨벤션 정의가 필요할 듯 -> 클릭시 컨트롤러로 이동해야하니까
                 .isRead(false)
                 .build();
