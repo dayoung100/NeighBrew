@@ -23,7 +23,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "192.168.31.72:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
-                .exposedHeaders("*")
+                .exposedHeaders("*t ")
                 .allowCredentials(false)
                 .maxAge(3600);
     }
