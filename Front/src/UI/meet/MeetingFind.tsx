@@ -14,7 +14,7 @@ import PeopleNumInfo from "./PeopleNumInfo";
 import DrinkCategory from "../drinkCategory/DrinkCategory";
 import autoAnimate from "@formkit/auto-animate";
 import { useQuery } from "@tanstack/react-query";
-import { getMeetings } from "../../utils/api";
+import { callApi } from "../../utils/api";
 
 const CateDiv = styled.div`
   height: 10rem;
