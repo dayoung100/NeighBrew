@@ -7,13 +7,15 @@ const GoogleLogin = () => {
   const GoogleloginHandler = async () => {
     const temcode = location.search.split("=")[1];
     const code = temcode.split("&")[0];
+    //34.64.126.58
     axios
       .post("http://34.64.126.58/api/auth/google", {
         code: code,
       })
       .then(res => {
         console.log("로그인 성공");
-        localStorage.setItem("token", res.data);
+        localStorage.setItem("token", res.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.refreshToken);
         navigate("/meet");
       })
       .catch(err => {
