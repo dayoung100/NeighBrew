@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { callApi } from "../../utils/api";
 
 const ImgDiv = styled.div`
   width: 20%;
@@ -31,10 +32,21 @@ const SocialDiv = styled.div`
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  useEffect(() => {
+    if (localStorage.getItem("token") != null) {
+      callApi("post", "user/refresh", { refreshToken: localStorage.getItem("refreshToken") }).then(
+        res => {
+          localStorage.setItem("token", res.data.accestoken);
+          localStorage.setItem("refreshToken", res.data.refreshToken);
+          navigate("/meet");
+        }
+      );
+    }
+  }, []);
   const KakaologinHandler = async () => {
     axios({
       method: "get",
-      url: "http://34.64.126.58/api/auth/login/kakao",
+      url: "http://34.64.126.58:5173/api/auth/login/kakao",
     })
       .then(res => {
         const url = res.data.URL;
@@ -47,7 +59,7 @@ const Login = () => {
   const NaverloginHandler = async () => {
     axios({
       method: "get",
-      url: "http://34.64.126.58/api/auth/login/naver",
+      url: "http://34.64.126.58:5173/api/auth/login/naver",
     })
       .then(res => {
         const url = res.data.URL;
@@ -60,7 +72,7 @@ const Login = () => {
   const GoogleloginHandler = async () => {
     axios({
       method: "get",
-      url: "http://34.64.126.58/api/auth/login/google",
+      url: "http://34.64.126.58:5173/api/auth/login/google",
     })
       .then(res => {
         const url = res.data.URL;

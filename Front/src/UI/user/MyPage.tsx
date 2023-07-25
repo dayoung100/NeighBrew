@@ -12,6 +12,7 @@ import MeetingMy from "./MeetingMyUseInUser";
 import Footer from "../footer/Footer";
 import axios from "axios";
 import { User } from "../../Type/types";
+import { callApi } from "../../utils/api";
 
 const Button = styled.button`
   width: 40%;
@@ -125,56 +126,21 @@ const MyPage = () => {
   const goFollowPage = () => {
     navigate("/myPage/follow/" + userid);
   };
-
   const userInfo = async () => {
-    let Authorization =
-      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwMjQ3Mzk3LCJleHAiOjE2OTAyNTA5OTd9.iLOtbjhp-PlOiXxzvg8WD6WwG6XOpEIHVSlIXeEzJfs";
-    let config = {
-      headers: {
-        Authorization: Authorization,
-      },
-    };
-
-    // await axios
-    //   .get("http://34.64.126.58/user/access-token/1")
-    //   .then(res => {
-    //     Authorization = `Bearer ${res.data.accessToken}`;
-    //     console.log(res.data.accessToken);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
-    // var req = new XMLHttpRequest();
-    // req.open("GET", "http://34.64.126.58/user/guard/userinfo", true);
-    // req.setRequestHeader("Authorization", Authorization);
-    // req.onreadystatechange = function (aEvt) {
-    //   if (req.readyState == 4) {
-    //     console.log("Status: ", req.status);
-    //     console.log("Response message: ", req.responseText);
-    //   }
-    // };
-    // console.log(req);
-    await axios
-      .get("http://34.64.126.58/user/guard/userinfo", {
-        headers: {
-          Authorization: Authorization,
-        },
-      })
+    let data = "";
+    const api = callApi("get", "user/guard/myinfo")
       .then(res => {
-        console.log(res.data);
-        setUserData(res.data);
+        data = res.data;
+        console.log("cors 해결완료!!");
       })
-      .catch(err => {
-        console.log(err);
-        console.log(Authorization);
-      });
+      .catch(err => console.log(err));
   };
   useEffect(() => {
     userInfo();
   }, []);
   return (
     <>
-      {/* <header>
+      <header>
         <Navbar />
       </header>
       <div
@@ -291,7 +257,7 @@ const MyPage = () => {
       <div style={{ height: "80px" }}></div>
       <footer>
         <Footer />
-      </footer> */}
+      </footer>
     </>
   );
 };
