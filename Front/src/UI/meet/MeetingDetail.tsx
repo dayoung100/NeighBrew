@@ -1,9 +1,3 @@
-/*
-[MeetingDetail.tsx]
-특정한 모임의 상세 정보를 보여주는 페이지
-모임 리스트에서 하나를 클릭하면 이 페이지로 이동함
-모임 타이틀, 태그, 주최자, 위치, 시간, 선택한 술, 모임 소개, 참여자 리스트 출력
-*/
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
@@ -85,10 +79,20 @@ const MeetTitle = styled.div`
   margin-top: 1.5rem;
 `;
 
+/**
+ * 특정한 모임의 상세 정보를 보여주는 페이지.
+ * 모임 리스트에서 하나를 클릭하면 이 페이지로 이동함
+ * @property
+ */
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const navigate = useNavigate();
-  const [memberList, setMemberList] = useState(["주최자 이름", "참여자1", "참여자2", "참여자3"]);
+  const [memberList, setMemberList] = useState([
+    "주최자 이름",
+    "참여자1",
+    "참여자2",
+    "참여자3",
+  ]);
 
   const GoBackHandler = () => {
     navigate(-1);
@@ -109,7 +113,10 @@ const MeetingDetail = () => {
             padding: "1rem",
           }}
         >
-          <div style={{ cursor: "pointer", marginRight: "1rem" }} onClick={GoBackHandler}>
+          <div
+            style={{ cursor: "pointer", marginRight: "1rem" }}
+            onClick={GoBackHandler}
+          >
             {ArrowLeftIcon}
           </div>
           <Tag>소주/맥주</Tag>
@@ -158,11 +165,19 @@ const MeetingDetail = () => {
           }}
         >
           <div style={{ display: "flex", alignItems: "center" }}>
-            <img src="/src/assets/liver.svg" width="20rem" style={{ marginRight: "3px" }} />
+            <img
+              src="/src/assets/liver.svg"
+              width="20rem"
+              style={{ marginRight: "3px" }}
+            />
             간수치 제한
           </div>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <img src="/src/assets/age.svg" width="20rem" style={{ marginRight: "3px" }} />
+            <img
+              src="/src/assets/age.svg"
+              width="20rem"
+              style={{ marginRight: "3px" }}
+            />
             나이 제한
           </div>
         </div>
@@ -187,11 +202,13 @@ const MeetingDetail = () => {
             marginTop: "0.5rem",
           }}
         >
-          아침이 겨울이 마디씩 위에 이름과, 쓸쓸함과 오는 했던 하나에 봅니다. 내 내린 쉬이 아름다운
-          오는 걱정도 사람들의 까닭입니다. 이름과, 가을로 별 언덕 이제 있습니다. 나의 나의 봄이
-          까닭이요, 별 듯합니다.쉬이 위에 내일 나의 까닭입니다. 가득 아스라히 이름과, 많은 못 하나에
-          이네들은 까닭입니다.무엇인지 노루, 언덕 이름자 있습니다. 것은 하나의 하나에 겨울이
-          버리었습니다. 이름과, 밤이 이름과, 릴케 별들을 오면 지나고 하나에 있습니다.
+          아침이 겨울이 마디씩 위에 이름과, 쓸쓸함과 오는 했던 하나에 봅니다. 내
+          내린 쉬이 아름다운 오는 걱정도 사람들의 까닭입니다. 이름과, 가을로 별
+          언덕 이제 있습니다. 나의 나의 봄이 까닭이요, 별 듯합니다.쉬이 위에
+          내일 나의 까닭입니다. 가득 아스라히 이름과, 많은 못 하나에 이네들은
+          까닭입니다.무엇인지 노루, 언덕 이름자 있습니다. 것은 하나의 하나에
+          겨울이 버리었습니다. 이름과, 밤이 이름과, 릴케 별들을 오면 지나고
+          하나에 있습니다.
         </div>
         <div style={{ display: "flex" }}>
           <MeetTitle>참여 인원</MeetTitle>

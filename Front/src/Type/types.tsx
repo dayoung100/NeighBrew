@@ -18,3 +18,19 @@ export interface Chat {
   message: string;
   userid: number;
 }
+
+export interface Meeting {
+  meetId: number;
+  meetName: string;
+  description: string;
+  hostId: number;
+  participants: number;
+  meetDate: string;
+  tag: any;
+  sido: string;
+  gugun: string;
+  dong: string;
+  minAge?: number | null;
+  maxAge?: number | null;
+  minLiverPoint?: number | null;
+}
