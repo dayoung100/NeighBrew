@@ -1,5 +1,6 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.authentication.application.LoginResponse;
 import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.dto.UserUpdateDto;
 import com.ssafy.backend.entity.User;
@@ -8,6 +9,7 @@ import com.ssafy.backend.service.UserService;
 import com.ssafy.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,8 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+
+@Slf4j
 @RequestMapping("/user")
 public class UserController {
 
@@ -45,21 +49,27 @@ public class UserController {
 
     // refresh token을 이용한 access token 재발급
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshAccessToken(@RequestBody String refreshToken) {
+    public ResponseEntity<?> refreshAccessToken(@RequestBody LoginResponse refreshToken) {
         Claims claims;
+        log.info("refreshToken + " + refreshToken.getRefreshToken());
+
         try {
-            claims = JwtUtil.getClaims(refreshToken);
+            claims = JwtUtil.getClaims(refreshToken.getRefreshToken());
+            log.info("claims + " + claims.toString());
+
+            String userId = claims.getSubject();
+            // 새로운 access 토큰 생성
+            String newAccessToken = JwtUtil.generateToken(userId);
+            String newRreshToken = JwtUtil.generateRefreshToken(userId);
+
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("accessToken", newAccessToken);
+            tokens.put("refreshToken", newRreshToken);
+            return ResponseEntity.ok(tokens);
         } catch (Exception e) {
+            System.out.println("e.toString() = " + e.toString());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
-
-        String userId = claims.getSubject();
-        // 새로운 access 토큰 생성
-        String newAccessToken = JwtUtil.generateToken(userId);
-
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", newAccessToken);
-        return ResponseEntity.ok(tokens);
     }
 
     // Test용 일반 아이디 => 유저 아이디 넣으면 JWT 반환하는 코드 작성

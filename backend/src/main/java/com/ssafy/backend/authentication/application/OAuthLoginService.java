@@ -25,7 +25,7 @@ public class OAuthLoginService {
     private final RequestOAuthInfoService requestOAuthInfoService;
 
 
-    public String login(OAuthLoginParams params) {
+    public LoginResponse login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
 
         // 받아온 정보를 기반으로  userId를 추출
@@ -42,7 +42,12 @@ public class OAuthLoginService {
         Long userId = findOrCreateUser(oAuthInfoResponse);
         System.out.println("2 : userId = " + userId);
         // 그 아이디를 기반으로 token 생성
-        return JwtUtil.generateToken(String.valueOf(userId));
+
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setAccessToken(JwtUtil.generateToken(String.valueOf(userId)));
+        loginResponse.setRefreshToken(JwtUtil.generateRefreshToken(String.valueOf(userId)));
+
+        return loginResponse;
     }
 
 //    public void logout(OAuthLoginParams params) {

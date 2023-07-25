@@ -24,7 +24,7 @@ public class JwtUtil {
     public static String generateRefreshToken(String subject) {
         return Jwts.builder()
                 .setSubject(subject)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setIssuedAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) //1day
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 days
                 .signWith(secretKey)
                 .compact();
