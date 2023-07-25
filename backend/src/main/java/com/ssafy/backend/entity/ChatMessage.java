@@ -1,14 +1,13 @@
 package com.ssafy.backend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,13 +17,21 @@ public class ChatMessage {
     @JoinColumn(name = "chatRoomId")
     private ChatRoom chatRoom;
 
-    @Column(nullable = false, length = 20)
-    private String sender;
+    private Long userId;
 
     @Lob
     @Column(nullable = false)
     private String message;
 
     @Column(nullable = false)
+    @Setter
     private LocalDateTime timestamp;
+
+    @Builder
+    public ChatMessage(ChatRoom chatRoom, String message, Long userId, LocalDateTime timestamp) {
+        this.chatRoom = chatRoom;
+        this.message = message;
+        this.userId = userId;
+        this.timestamp = timestamp;
+    }
 }
