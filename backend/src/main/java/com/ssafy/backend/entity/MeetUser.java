@@ -32,7 +32,7 @@ public class MeetUser {
 
     public MeetUserDto toDto(){
         return MeetUserDto.builder()
-                .meet(this.meet)
+                .meetDto(this.meet.toDto())
                 .build();
     }
 

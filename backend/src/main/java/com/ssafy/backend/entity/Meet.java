@@ -30,7 +30,7 @@ public class Meet {
 
     //현재 참여 인원
     @Column(nullable = false, columnDefinition = "int default 1")
-    private Integer nowParticipants = 1;
+    private Integer nowParticipants;
 
     //최대 참여 인원
     @Column(nullable = false, columnDefinition = "int default 8")
@@ -125,14 +125,14 @@ public class Meet {
                 .nowParticipants(nowParticipants)
                 .maxParticipants(maxParticipants)
                 .meetDate(this.meetDate)
-                .tag(this.tag)
+                .tagId(this.tag.getTagId())
                 .sido(this.sido)
                 .gugun(this.gugun)
                 .dong(this.dong)
                 .minAge(this.minAge)
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)
-                .drink(this.drink)
+                .drinkId(this.drink.getDrinkId())
                 .imgSrc(this.imgSrc)
                 .build();
     }
