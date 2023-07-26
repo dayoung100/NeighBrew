@@ -102,7 +102,7 @@ public class MeetService {
 
     public Meet saveMeet(MeetDto meetDto) {
         log.info("모임 생성 : {} ", meetDto);
-        meetDto.setNowParticipants(1);
+        meetDto.setNowParticipants(1); //참여자는 방장 1명 뿐이기 때문
 
         Meet meet = meetDto.toEntity();
         meet.setCreatedAt(LocalDateTime.now());
