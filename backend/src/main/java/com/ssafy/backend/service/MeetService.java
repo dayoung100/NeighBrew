@@ -56,7 +56,7 @@ public class MeetService {
                     .minAge(meet.getMinAge())
                     .maxAge(meet.getMaxAge())
                     .minLiverPoint(meet.getMinLiverPoint())
-                    //.drinkId(meet.getDrink().getDrinkId())
+                    .drinkId(meet.getDrink().getDrinkId())
                     .imgSrc(meet.getImgSrc())
                     .build());
         }

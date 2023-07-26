@@ -1,7 +1,9 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.dto.DrinkUpdateDto;
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.repository.DrinkRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@Slf4j
 public class DrinkService {
     private final DrinkRepository drinkRepository;
 
@@ -33,44 +36,29 @@ public class DrinkService {
     }
 
     // 술 수정
-    public Drink update(Long id, Drink drink) {
-        Drink findDrink = drinkRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
-        findDrink.update(drink.getName(), drink.getImage(), drink.getDegree(), drink.getDescription());
-
-        return drinkRepository.save(findDrink);
-    }
-
-
-    public Page<Drink> findByNameAndTag(String name, Long tag, Pageable pageable) {
-        // 이름이 비어있다면
-        if (name == null || name.equals("")) {
-            // 태그가 비어있다면
-            if (tag == null) {
-                // 모든 술 조회
-                return drinkRepository.findAll(pageable);
-            }
-            // 태그가 있다면
-            else {
-                // 태그로 조회
-                return drinkRepository.findAllByTagId(tag, pageable);
-            }
-        }
-        // 이름이 있다면
-        else {
-            // 태그가 비어있다면
-            if (tag == null) {
-                // 이름으로 조회
-                return drinkRepository.findAllByNameContaining(name, pageable);
-            }
-            // 태그가 있다면
-            else {
-                // 이름과 태그로 조회
-                return drinkRepository.findByNameContainingAndTagId(name, tag, pageable);
-            }
-        }
+    public Drink updateDrink(Long drinkId, DrinkUpdateDto drinkUpdateDto) {
+        Drink drink = findById(drinkId);
+        drink.updateDrink(drinkUpdateDto);
+        return drinkRepository.save(drink);
     }
 
     public Drink findById(Long drinkId) {
         return drinkRepository.findById(drinkId).orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
+    }
+
+    // 이름과 태그로 술조회
+    // 이름이 없다면 태그로만 조회
+    // 태그가 없다면 이름으로 조회
+    // 결과가 없다면 null을 반환
+    public Page<Drink> findDrinkByName(String name, Long tagId, Pageable pageable) {
+        if (name == null && tagId == null) {
+            return drinkRepository.findAll(pageable);
+        } else if (name == null) {
+            return drinkRepository.findByTagId(tagId, pageable).orElse(null);
+        } else if (tagId == null) {
+            return drinkRepository.findByNameContains(name, pageable).orElse(null);
+        } else {
+            return drinkRepository.findByNameContainsAndTagId(name, tagId, pageable).orElse(null);
+        }
     }
 }

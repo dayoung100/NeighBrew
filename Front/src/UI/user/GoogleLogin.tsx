@@ -7,9 +7,10 @@ const GoogleLogin = () => {
   const GoogleloginHandler = async () => {
     const temcode = location.search.split("=")[1];
     const code = temcode.split("&")[0];
+    console.log(code);
     //34.64.126.58
     axios
-      .post("http://34.64.126.58/api/auth/google", {
+      .post("http://34.64.126.58:5173/api/auth/google", {
         code: code,
       })
       .then(res => {

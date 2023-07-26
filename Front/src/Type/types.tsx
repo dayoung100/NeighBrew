@@ -3,16 +3,12 @@ export interface User {
   email: string;
   nickname: string;
   name: string;
-  password: string;
-  phone: string;
-  birth: string;
-  intro: string;
-  createdAt: string;
-  updatedAt: string;
+  birth?: string;
+  intro?: string;
   liverPoint: number;
-  profileImg: string;
-  deleted: boolean;
-  oauthProvider: string;
+  profile: string;
+  follower: number;
+  following: number;
 }
 export interface Chat {
   message: string;
@@ -38,4 +34,13 @@ export interface Meetings {
   attendUser: null;
   drinkName: string;
   imgSrc: string;
+}
+
+export interface Drink {
+  degree: number;
+  description: string;
+  drinkId: number;
+  image: string;
+  name: string;
+  tagId: number;
 }

@@ -1,7 +1,7 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.entity.Follow;
 import com.ssafy.backend.Enum.PushType;
+import com.ssafy.backend.entity.Follow;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.UserRepository;
@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/follow")
 @RequiredArgsConstructor
+@RequestMapping("/api/follow")
 public class FollowController {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;

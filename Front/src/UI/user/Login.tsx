@@ -34,19 +34,23 @@ const Login = () => {
   const location = useLocation();
   useEffect(() => {
     if (localStorage.getItem("token") != null) {
-      callApi("post", "user/refresh", { refreshToken: localStorage.getItem("refreshToken") }).then(
-        res => {
-          localStorage.setItem("token", res.data.accestoken);
-          localStorage.setItem("refreshToken", res.data.refreshToken);
-          navigate("/meet");
-        }
-      );
+      callApi("post", "user/refresh-token", {
+        // axios
+        //   .post("http://192.168.31.71:8080/user/refresh-token", {
+        refreshToken: localStorage.getItem("refreshToken"),
+      }).then(res => {
+        localStorage.setItem("token", res.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.refreshToken);
+        // console.log(res.data);
+        navigate("/meet");
+      });
     }
   }, []);
   const KakaologinHandler = async () => {
     axios({
       method: "get",
       url: "http://34.64.126.58:5173/api/auth/login/kakao",
+      // url: "http://192.168.31.71:8080/api/auth/login/kakao",
     })
       .then(res => {
         const url = res.data.URL;
@@ -60,6 +64,7 @@ const Login = () => {
     axios({
       method: "get",
       url: "http://34.64.126.58:5173/api/auth/login/naver",
+      // url: "http://192.168.31.71:8080/api/auth/login/naver",
     })
       .then(res => {
         const url = res.data.URL;
@@ -73,6 +78,7 @@ const Login = () => {
     axios({
       method: "get",
       url: "http://34.64.126.58:5173/api/auth/login/google",
+      // url: "http://192.168.31.71:8080/api/auth/login/google",
     })
       .then(res => {
         const url = res.data.URL;
@@ -85,6 +91,7 @@ const Login = () => {
 
   return (
     <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+      <button>adwd</button>
       <h2>로그인</h2>
       <SocialDiv>
         <ImgDiv onClick={NaverloginHandler} style={{ cursor: "pointer" }}>

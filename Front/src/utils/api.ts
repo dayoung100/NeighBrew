@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://34.64.126.58:5173/",
+  baseURL: "/",
 });
 
 export const callApi = async (method: string, url: string, body: any = {}) => {
