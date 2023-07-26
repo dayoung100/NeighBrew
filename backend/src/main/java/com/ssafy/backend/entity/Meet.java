@@ -132,7 +132,7 @@ public class Meet {
                 .minAge(this.minAge)
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)
-                .drinkId(this.drink.getDrinkId())
+                .drink(this.drink)
                 .imgSrc(this.imgSrc)
                 .build();
     }

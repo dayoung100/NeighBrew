@@ -56,7 +56,7 @@ public class MeetService {
                     .minAge(meet.getMinAge())
                     .maxAge(meet.getMaxAge())
                     .minLiverPoint(meet.getMinLiverPoint())
-                    .drinkId(meet.getDrink().getDrinkId())
+                    .drink(meet.getDrink())
                     .imgSrc(meet.getImgSrc())
                     .build());
         }
@@ -82,8 +82,8 @@ public class MeetService {
         return meetRepository.findById(meetId).orElseThrow(()->new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
     }
 
-    public Map<String, List<Meet>> findByUserId(Long userId) {
-        Map<String, List<Meet>> userMeets = new HashMap<>();
+    public Map<String, List<MeetDto>> findByUserId(Long userId) {
+        Map<String, List<MeetDto>> userMeets = new HashMap<>();
         userMeets.put(Status.APPLY.name(), new ArrayList<>());
         userMeets.put(Status.ATTEND.name(), new ArrayList<>());
         userMeets.put(Status.CREATE.name(), new ArrayList<>());
@@ -91,11 +91,10 @@ public class MeetService {
         List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByStatus(userId).orElseThrow(()-> new IllegalArgumentException("유저ID 값이 올바르지 않습니다."));
 
         for(MeetUser mu : meetUsers){
-            if(mu.getStatus() == Status.ATTEND)
-                userMeets.get(Status.ATTEND.name()).add(mu.getMeet());
-            else if(mu.getStatus() == Status.APPLY)
-                userMeets.get(Status.APPLY.name()).add(mu.getMeet());
-            else userMeets.get(Status.CREATE.name()).add(mu.getMeet());
+            Status status = mu.getStatus();
+
+            if(status != Status.FINISH)
+                userMeets.get(status.name()).add(mu.getMeet().toDto());
         }
 
         return userMeets;
@@ -103,7 +102,7 @@ public class MeetService {
 
     public Meet saveMeet(MeetDto meetDto) {
         log.info("모임 생성 : {} ", meetDto);
-        meetDto.setNowParticipants(1);
+        meetDto.setNowParticipants(1); //참여자는 방장 1명 뿐이기 때문
 
         Meet meet = meetDto.toEntity();
         meet.setCreatedAt(LocalDateTime.now());
