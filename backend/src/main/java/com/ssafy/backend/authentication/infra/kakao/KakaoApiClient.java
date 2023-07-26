@@ -6,6 +6,7 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class KakaoApiClient implements OAuthApiClient {
 
@@ -75,15 +77,17 @@ public class KakaoApiClient implements OAuthApiClient {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("property_keys", "[\"kakao_account.email\", \"kakao_account.profile\"]");
 
-        System.out.println("body = " + body.toString());
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
-        return restTemplate.postForObject(url, request, KakaoInfoResponse.class);
+        log.info("출발");
+        KakaoInfoResponse response = restTemplate.postForObject(url, request, KakaoInfoResponse.class);
+        log.info(response.toString());
+        return response;
     }
 
     @Override
     public String authApiUrl(OAuthLoginParams params) {
-        String redirectUri = "https://tiny-cactus-3bb706.netlify.app/kakao/callback";
+        String redirectUri = "http://localhost:5173/kakao/callback";
         String responseType = "code";
         return authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
     }
