@@ -79,7 +79,7 @@ const DrinkpostDetail = () => {
         <NavbarBackIcon>
           <img src={backIcon} alt="" />
         </NavbarBackIcon>
-        <h2 style={{ margin: "12px 0px 8px 23px" }}>{detail.name}</h2>
+        <h2 style={{ margin: "12px 0px 8px 23px" }}>{detail?.name}</h2>
         <NavbarSirenIcon>
           <img src={sirenIcon} alt="" />
         </NavbarSirenIcon>
@@ -90,13 +90,13 @@ const DrinkpostDetail = () => {
           <b>종류</b> : 종류를 받는 부분
         </p>
         <p>
-          <b>도수</b> : {detail.degree}도
+          <b>도수</b> : {detail?.degree}도
         </p>
         <p>
           <b>국가</b> : 국가를 받는 부분
         </p>
         <p style={{ marginTop: "20px" }}>
-          <b>설명</b> : {detail.description}
+          <b>설명</b> : {detail?.description}
         </p>
       </div>
       <div className="reviewBox">

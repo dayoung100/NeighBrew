@@ -17,6 +17,15 @@ const ShowcaseBody = styled.div`
   color: white;
 `;
 
+// export type DrinkType = {
+//   drinkId: number;
+//   name: string;
+//   description: string;
+//   degree: number;
+//   tagId: number;
+//   image: string;
+// };
+
 // 무한 스크롤
 
 const drinkpost = () => {
@@ -60,7 +69,7 @@ const drinkpost = () => {
         </div>
         <div
           ref={setTarget}
-          style={{ marginTop: "400px", height: "100px", backgroundColor: "--c-black" }}
+          style={{ marginTop: "1000px", height: "100px", backgroundColor: "--c-black" }}
         >
           내가 보여요?
         </div>
