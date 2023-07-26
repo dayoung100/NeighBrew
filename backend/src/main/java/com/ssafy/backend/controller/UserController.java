@@ -35,7 +35,6 @@ public class UserController {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
-
     @GetMapping("/guard/myinfo")
     public ResponseEntity<?> getMyInfo(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");

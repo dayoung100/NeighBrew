@@ -32,12 +32,9 @@ public class OAuthLoginService {
         ObjectMapper objectMapper = new ObjectMapper();
         try{
             String jsonString = objectMapper.writeValueAsString(oAuthInfoResponse);
-            System.out.println("JSON String: " + jsonString);
         }catch (Exception e){
 
         }
-
-
 
         Long userId = findOrCreateUser(oAuthInfoResponse);
         System.out.println("2 : userId = " + userId);
@@ -50,11 +47,6 @@ public class OAuthLoginService {
         return loginResponse;
     }
 
-//    public void logout(OAuthLoginParams params) {
-//        OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.logout(params);
-//
-//
-//    }
 
 
     // 해당 이메일로 user의 id를 반환
@@ -77,6 +69,6 @@ public class OAuthLoginService {
 
 
     public String redirectApiUrl(OAuthLoginParams params) {
-        return requestOAuthInfoService.authAptUrl(params);
+        return requestOAuthInfoService.authApiUrl(params);
     }
 }

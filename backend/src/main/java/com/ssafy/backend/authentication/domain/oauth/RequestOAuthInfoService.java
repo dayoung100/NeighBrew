@@ -13,6 +13,12 @@ public class RequestOAuthInfoService {
     private final Map<OAuthProvider, OAuthApiClient> clients;
 
     public RequestOAuthInfoService(List<OAuthApiClient> clients) {
+        // this.clients   현재 클래스의 인스턴스를 의미
+        // client.stream()   : cilents를 스트림으로 반환한다.
+        // Stream : 데이터를 처리하는데 유용한 기능들을 제공하는 컬렉션의 개념
+        // collect : 스트림에서 요소들을 수집하는 메서드
+        // toMap() : OAuthApiClient객체들을 map 형식으로 받아온다
+        // OAuthApiClient::oAuthProvider : OAuthApiClient 클래스의 oAuthProvider 필드 값을 키로 사용
         this.clients = clients.stream().collect(
                 Collectors.toUnmodifiableMap(OAuthApiClient::oAuthProvider, Function.identity())
         );
@@ -26,12 +32,11 @@ public class RequestOAuthInfoService {
         String accessToken = client.requestAccessToken(params);
         System.out.println("1 : accessToken = " + accessToken);
 
-
         return client.requestOauthInfo(accessToken);
     }
 
 
-    public String authAptUrl(OAuthLoginParams params) {
+    public String authApiUrl(OAuthLoginParams params) {
         OAuthApiClient client = clients.get(params.oAuthProvider());
         return client.authApiUrl(params);
     }
