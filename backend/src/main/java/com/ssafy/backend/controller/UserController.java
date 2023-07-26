@@ -26,19 +26,19 @@ import java.util.Map;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private final UserRepository userRepository;
+
     private final UserService userService;
 
     //전체 유저 검색
     @GetMapping()
     public ResponseEntity<List<User>> findAll() {
-        return ResponseEntity.ok(userRepository.findAll());
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/guard/myinfo")
     public ResponseEntity<?> getMyInfo(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
-        User user = userRepository.findById(Long.valueOf(userId)).orElse(null);
+        User user = userService.findByUserId(Long.valueOf(userId));
         UserDto userDto = new UserDto(user);
         userDto.setFollower(userService.getFollowerCount(Long.valueOf(userId)));
         userDto.setFollowing(userService.getFollowingCount(Long.valueOf(userId)));
@@ -51,7 +51,7 @@ public class UserController {
 
     @GetMapping("/guard/userinfo/{userId}")
     public ResponseEntity<?> getUserInfo(@PathVariable String userId) {
-        User user = userRepository.findById(Long.valueOf(userId)).orElse(null);
+        User user = userService.findByUserId(Long.valueOf(userId));
         if (user != null) {
             return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
         } else {
