@@ -57,8 +57,9 @@ public class MeetController {
     @PostMapping("/{userId}")
     public ResponseEntity<?> saveMeet(@PathVariable Long userId,
                                       MeetDto meetDto,
+                                      Long drinkId,
                                       @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException {
-        log.info("유저{}가 모임 생성 : {}", userId, meetDto);
+        log.info("유저{}가 모임 생성 : {} + {}", userId, meetDto, drinkId);
         multipartFile.ifPresent(file -> log.info("파일 이름 : {} ", file.getOriginalFilename()));
 
         try {
@@ -88,10 +89,14 @@ public class MeetController {
     //모임 수정
     @PutMapping("/{userId}")
     public ResponseEntity<?> updateMeet(@PathVariable Long userId,
-                                        @RequestBody MeetDto meetDto) {
+                                        MeetDto meetDto,
+                                        Long drinkId,
+                                        @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) {
         log.info("\n수정하는 유저 :{} \n 수정할 미팅 정보 : {}", meetDto);
         if (userId != meetDto.getHostId())
             return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임 정보를 수정할 수 없습니다.");
+
+
 
         try {
             Meet updateMeet = meetService.updateMeet(meetDto.getMeetId(), meetDto);
@@ -115,7 +120,7 @@ public class MeetController {
 
 
     //모임 삭제하기
-    @DeleteMapping()
+    @DeleteMapping
     public ResponseEntity<?> deleteMeet(@RequestBody Map<String, Long> requestBody) {
         Long userId = requestBody.get("userId");
         Long meetId = requestBody.get("meetId");
@@ -144,6 +149,10 @@ public class MeetController {
             //meet 정보를 삭제한다.
             meetService.deleteMeet(meetId);
 
+            //meet 이미지를 지운다
+            String fileName = deleteMeet.getImgSrc().split("/")[4]; //url에서 파일 이름을 파싱한다.
+            s3Service.deleteImg(UploadType.MEET, fileName);
+
             return ResponseEntity.ok("미팅 : " + meetId + " 삭제완료");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -160,6 +169,10 @@ public class MeetController {
 
             Meet attendMeet = meetService.findByMeetId(meetId);
             User attendUser = userService.findByUserId(userId);
+
+            //모임의 인원수 체크
+            if(attendMeet.getNowParticipants() >= attendMeet.getMaxParticipants())
+                return ResponseEntity.badRequest().body("해당 모임에 참여 인원이 가득 찼습니다.");
 
             //참가자의 모임 상태 추가 -> 데이터를 추가해야한다.
             meetUserService.saveMeetUser(attendMeet, attendUser, Status.ATTEND);
