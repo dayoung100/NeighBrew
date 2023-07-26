@@ -1,3 +1,12 @@
+import styled from "styled-components";
+
+const InnerText = styled.div`
+  width: 5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 type MeetingDetailProps = {
   position: string;
   time: string;
@@ -21,7 +30,7 @@ const meetingDetail = (props: MeetingDetailProps) => {
       <div style={{ display: "flex" }}>
         <div style={{ display: "flex", alignContent: "center", width: "50%" }}>
           <img src="/src/assets/mapPin.svg" width="10rem"></img>
-          {props.position}
+          <InnerText>{props.position}</InnerText>
         </div>
         <div style={{ display: "flex", alignContent: "center" }}>
           <img src="/src/assets/calendar.svg" width="10rem" />
