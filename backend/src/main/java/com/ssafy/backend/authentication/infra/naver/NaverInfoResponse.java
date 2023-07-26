@@ -1,6 +1,7 @@
 package com.ssafy.backend.authentication.infra.naver;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
@@ -22,6 +23,8 @@ public class NaverInfoResponse implements OAuthInfoResponse {
         private final String name;
 
 
+
+        @JsonCreator
         Response(String email, String nickname, String name) {
             this.email = email;
             this.nickname = nickname;
