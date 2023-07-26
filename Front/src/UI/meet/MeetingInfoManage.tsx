@@ -162,6 +162,13 @@ const MeetingInfoManage = () => {
     "발렌타인 17Y",
     "발렌타인 21Y",
   ]);
+  //주종 카테고리 선택
+  const [selectedCategory, setSelectedCategory] = useState(0);
+  const getDrinkCategory = (tagId: number) => {
+    setSelectedCategory(tagId);
+    console.log(tagId);
+  };
+
   //검색 후 선택한 주류 정보
   const [selectedDrink, setSelectedDrink] = useState("");
   const getDrink = (drink: string) => {
@@ -189,7 +196,7 @@ const MeetingInfoManage = () => {
           <Title>우리가 마실 것은</Title>
           <SubTitle>카테고리를 선택해주세요</SubTitle>
           <CateDiv>
-            <DrinkCategory />
+            <DrinkCategory getFunc={getDrinkCategory} />
           </CateDiv>
           <SubTitle style={{ marginBottom: "0.3rem" }}>
             정확한 술의 이름을 검색할 수 있어요
