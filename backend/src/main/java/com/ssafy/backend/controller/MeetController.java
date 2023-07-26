@@ -2,6 +2,7 @@ package com.ssafy.backend.controller;
 
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.Enum.PushType;
+import com.ssafy.backend.Enum.UploadType;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetUserDto;
 import com.ssafy.backend.entity.Follow;
@@ -12,9 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 //모임 생성, 수정, 삭제를 관장하는 컨트롤러
 @RestController
@@ -26,38 +30,41 @@ public class MeetController {
     private final PushService pushService;
     private final FollowService followService;
     private final UserService userService;
+    private final S3Service s3Service;
 
     @Autowired
     public MeetController(MeetService meetService,
                           MeetUserService meetUserService,
                           PushService pushService,
                           FollowService followService,
-                          UserService userService
-                          ) {
+                          UserService userService,
+                          S3Service s3Service
+    ) {
         this.meetService = meetService;
         this.meetUserService = meetUserService;
         this.pushService = pushService;
         this.followService = followService;
         this.userService = userService;
+        this.s3Service = s3Service;
     }
 
     //모든 모임에 대해 출력
     @GetMapping()
-    public ResponseEntity<?> getAllMeet(){
+    public ResponseEntity<?> getAllMeet() {
         log.info("모든 모임 모임 정보 상세 출력");
         return ResponseEntity.ok(meetService.findAll());
     }
 
     // meetId에 해당하는 모임 상세 정보 조회
     @GetMapping("/{meetId}")
-    public ResponseEntity<?> getMeetById(@PathVariable Long meetId){
+    public ResponseEntity<?> getMeetById(@PathVariable Long meetId) {
         log.info("모임 정보 상세 출력 : {} ", meetId);
         return ResponseEntity.ok(meetService.findMeetUserByMeetId(meetId));
     }
 
     //유저와 관련된 모임 모두 출력
     @GetMapping("/mymeet/{userId}")
-    public ResponseEntity<?> getMyMeetsById(@PathVariable Long userId){
+    public ResponseEntity<?> getMyMeetsById(@PathVariable Long userId) {
         log.info("모임 정보 상세 출력 : {} ", userId);
         return ResponseEntity.ok(meetService.findByUserId(userId));
     }
@@ -65,50 +72,51 @@ public class MeetController {
     //모임 생성
     @PostMapping("/{userId}")
     public ResponseEntity<?> saveMeet(@PathVariable Long userId,
-                                      @RequestBody MeetDto meetDto) throws IllegalArgumentException{
+                                      MeetDto meetDto,
+                                      @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException {
         log.info("유저{}가 모임 생성 : {}", userId, meetDto);
-        try{
+        multipartFile.ifPresent(file -> log.info("파일 이름 : {} ", file.getOriginalFilename()));
+
+        try {
+            meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
             Meet createdMeet = meetService.saveMeet(meetDto);
             User hostUser = userService.findByUserId(userId);
 
             //MeetUser 정보를 추가한다.
             meetUserService.saveMeetUser(createdMeet, hostUser, Status.CREATE);
-            
+
             //팔로워에게 메세지를 보낸다
             List<Follow> followers = followService.findByFollower(userId);
-            for(Follow fw : followers){
+            for (Follow fw : followers) {
                 log.info("follower 정보 출력 : {}", fw.getFollower());
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append(hostUser.getNickname()).append("님께서 회원님께서 모임(").append(createdMeet.getMeetName()).append(")을 생성했습니다.");
                 pushService.send(fw.getFollower().getUserId(), PushType.CREATEMEET, pushMessage.toString(), "이동할 URL 입력");
             }
 
-            //모임에 대한 채팅방을 생성한다.
-
-            //
-
             return ResponseEntity.ok(createdMeet);
-        }catch(IllegalArgumentException e){
+        }catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+
     }
 
     //모임 수정
     @PutMapping("/{userId}")
     public ResponseEntity<?> updateMeet(@PathVariable Long userId,
-                                        @RequestBody MeetDto meetDto){
+                                        @RequestBody MeetDto meetDto) {
         log.info("\n수정하는 유저 :{} \n 수정할 미팅 정보 : {}", meetDto);
-        if(userId != meetDto.getHostId())
+        if (userId != meetDto.getHostId())
             return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임 정보를 수정할 수 없습니다.");
 
-        try{
+        try {
             Meet updateMeet = meetService.updateMeet(meetDto.getMeetId(), meetDto);
 
             //모임이 수정되면 모임에 참여한 사람들에게 Push 알림을 보낸다.
             MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetDto.getMeetId());
-            log.info("유저 리스트 길이? {}",meetUser.getUsers().size());
+            log.info("유저 리스트 길이? {}", meetUser.getUsers().size());
 
-            for(User user : meetUser.getUsers()){
+            for (User user : meetUser.getUsers()) {
                 log.info("수정 알림 보낼 유저 정보 출력 : {}", user.getUserId());
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append("모임( ").append(meetDto.getMeetName()).append(")의 내용이 수정되었습니다. 확인해 주세요.");
@@ -116,7 +124,7 @@ public class MeetController {
             }
 
             return ResponseEntity.ok(updateMeet);
-        }catch(IllegalArgumentException e ){
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -124,21 +132,22 @@ public class MeetController {
 
     //모임 삭제하기
     @DeleteMapping()
-    public ResponseEntity<?> deleteMeet(@RequestBody Map<String, Long> requestBody){
+    public ResponseEntity<?> deleteMeet(@RequestBody Map<String, Long> requestBody) {
         Long userId = requestBody.get("userId");
         Long meetId = requestBody.get("meetId");
 
         log.info("삭제할 미팅ID : {}", meetId);
-        try{
+        try {
             Meet deleteMeet = meetService.findByMeetId(meetId);
             User hostUser = userService.findByUserId(userId);
 
-            if(deleteMeet.getHostId() != userId) return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임을 삭제 할 수 없습니다.");
+            if (deleteMeet.getHostId() != userId)
+                return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임을 삭제 할 수 없습니다.");
 
             MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetId);
 
             //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
-            for(User user : meetUser.getUsers()){
+            for (User user : meetUser.getUsers()) {
                 log.info("삭제 알림 보낼 유저 정보 출력 : {}", user);
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append(hostUser.getName() + "님 께서 생성한 모임").append("모임(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
@@ -152,15 +161,15 @@ public class MeetController {
             meetService.deleteMeet(meetId);
 
             return ResponseEntity.ok("미팅 : " + meetId + " 삭제완료");
-        }catch(IllegalArgumentException e ){
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     // 참가자 : 모임 신청
     @PostMapping("/apply")
-    public ResponseEntity<?> applyMeet(@RequestBody Map<String, Long> requestBody ){
-        try{
+    public ResponseEntity<?> applyMeet(@RequestBody Map<String, Long> requestBody) {
+        try {
             Long userId = requestBody.get("userId");
             Long meetId = requestBody.get("meetId");
             log.info("모임 신청할 정보를 출력한다. : {}, {}", userId, meetId);
@@ -180,7 +189,7 @@ public class MeetController {
 
 
             return ResponseEntity.ok(meetId + "모임에 신청 완료");
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -188,9 +197,9 @@ public class MeetController {
     // 방장 : 모임 신청 관리
     @PostMapping("/manage")
     public ResponseEntity<?> manageMeetApply(@RequestBody Map<String, Object> requestBody) {
-        try{
+        try {
             return ResponseEntity.ok("");
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

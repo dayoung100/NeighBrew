@@ -1,13 +1,10 @@
 package com.ssafy.backend.dto;
 
-import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.Meet;
-import com.ssafy.backend.entity.Tag;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -20,8 +17,9 @@ public class MeetDto {
     private Long hostId;
     private Integer nowParticipants;
     private Integer maxParticipants;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime meetDate;
-    private Tag tag;
+    private Long tagId;
     private String sido;
     private String gugun;
     private String dong;
@@ -29,8 +27,30 @@ public class MeetDto {
     private Integer maxAge;
     private Float minLiverPoint;
     private List<UserDto> attendUser;
-    private Drink drink;
+    private Long drinkId;
     private String imgSrc;
+
+    public MeetDto() {}
+
+    @Builder
+    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint, Long drinkId, String imgSrc) {
+        this.meetId = meetId;
+        this.meetName = meetName;
+        this.description = description;
+        this.hostId = hostId;
+        this.nowParticipants = nowParticipants;
+        this.maxParticipants = maxParticipants;
+        this.meetDate = meetDate;
+        this.tagId = tagId;
+        this.sido = sido;
+        this.gugun = gugun;
+        this.dong = dong;
+        this.minAge = minAge;
+        this.maxAge = maxAge;
+        this.minLiverPoint = minLiverPoint;
+        this.drinkId = drinkId;
+        this.imgSrc = imgSrc;
+    }
 
     public Meet toEntity(){
         return Meet.builder()
@@ -40,7 +60,6 @@ public class MeetDto {
                 .nowParticipants(this.nowParticipants)
                 .maxParticipants(this.maxParticipants)
                 .meetDate(this.meetDate)
-                .tag(this.tag)
                 .sido(this.sido)
                 .gugun(this.gugun)
                 .dong(this.dong)
@@ -48,28 +67,5 @@ public class MeetDto {
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)
                 .build();
-    }
-
-    public MeetDto() {}
-
-    @Builder
-    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Tag tag, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint, List<UserDto> attendUser, Drink drink, String imgSrc) {
-        this.meetId = meetId;
-        this.meetName = meetName;
-        this.description = description;
-        this.hostId = hostId;
-        this.nowParticipants = nowParticipants;
-        this.maxParticipants = maxParticipants;
-        this.meetDate = meetDate;
-        this.tag = tag;
-        this.sido = sido;
-        this.gugun = gugun;
-        this.dong = dong;
-        this.minAge = minAge;
-        this.maxAge = maxAge;
-        this.minLiverPoint = minLiverPoint;
-        this.attendUser = attendUser;
-        this.drink = drink;
-        this.imgSrc = imgSrc;
     }
 }
