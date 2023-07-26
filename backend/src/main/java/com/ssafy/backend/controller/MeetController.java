@@ -57,8 +57,9 @@ public class MeetController {
     @PostMapping("/{userId}")
     public ResponseEntity<?> saveMeet(@PathVariable Long userId,
                                       MeetDto meetDto,
+                                      Long drinkId,
                                       @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException {
-        log.info("유저{}가 모임 생성 : {}", userId, meetDto);
+        log.info("유저{}가 모임 생성 : {} + {}", userId, meetDto, drinkId);
         multipartFile.ifPresent(file -> log.info("파일 이름 : {} ", file.getOriginalFilename()));
 
         try {
@@ -115,7 +116,7 @@ public class MeetController {
 
 
     //모임 삭제하기
-    @DeleteMapping()
+    @DeleteMapping
     public ResponseEntity<?> deleteMeet(@RequestBody Map<String, Long> requestBody) {
         Long userId = requestBody.get("userId");
         Long meetId = requestBody.get("meetId");
