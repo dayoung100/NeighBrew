@@ -14,7 +14,230 @@ import PeopleNumInfo from "./PeopleNumInfo";
 import DrinkCategory from "../drinkCategory/DrinkCategory";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
-import { Meeting } from "../../Type/types";
+import { Meetings } from "../../Type/types";
+
+const meetingFind = () => {
+  //네비게이터 : 모임 상세페이지로 이동
+  const navigate = useNavigate();
+  const GotoMeetDetailHandler = (meetId: number) => {
+    console.log(meetId, "find");
+    navigate(`/meet/${meetId}`);
+  };
+
+  //받아온 모임 정보 리스트(전체)
+  const [meetAllData, setMeetAllData] = useState<Meetings[]>([]);
+  //필터링 한 후 모임 정보
+  const [meetData, setMeetData] = useState<Meetings[]>([]);
+
+  useEffect(() => {
+    console.dir(meetAllData); //확인용
+    setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
+  }, [meetAllData]);
+
+  useEffect(() => {
+    console.dir(meetData); //확인용
+  }, [meetData]);
+
+  //api 호출
+  useEffect(() => {
+    const promise = callApi("get", "api/meet");
+    promise.then((res) => {
+      setMeetAllData(res.data); //받아온 데이터로 meetAllData 세팅
+    });
+  }, []);
+
+  //주종 카테고리 선택
+  const [selectedCategory, setSelectedCategory] = useState(0);
+  const getDrinkCategory = (tagId: number) => {
+    setSelectedCategory(tagId);
+    console.log(tagId);
+  };
+
+  //필터 애니메이션 관련
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const parent = useRef(null);
+  useEffect(() => {
+    parent.current && autoAnimate(parent.current);
+  }, [parent]);
+  //필터 지역 검색용
+  const [sidoList, setSiList] = useState(["서울", "경기", "대전", "시도"]);
+  const [gugunList, setGuList] = useState([
+    "동구",
+    "중구",
+    "서구",
+    "유성",
+    "대덕",
+  ]);
+  const [dongList, setDongList] = useState([
+    "봉명동",
+    "중앙동",
+    "갈마1동",
+    "삼성동",
+    "탄방동",
+  ]);
+  const [sido, setSido] = useState("");
+  const [gugun, setGugun] = useState("");
+  const [dong, setDong] = useState("");
+  const sidoSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedSido = e.target.value;
+    setSido(selectedSido);
+    //여기서 si에 따라 guList 업데이트
+    //모임 리스트 조건에 맞게 필터링
+    const filterData = meetAllData.filter((data) => data.sido === selectedSido);
+    setMeetData(filterData);
+  };
+  const gugunSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setGugun(e.target.value);
+    //여기서 gu에 따라 dongList 업데이트
+    //모임 리스트 조건에 맞게 필터링
+  };
+  const dongSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setDong(e.target.value);
+    //모임 리스트 조건에 맞게 필터링
+  };
+
+  //날짜와 시간 변환 함수
+  function formateDate(dateData: string) {
+    const date = new Date(dateData);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+
+    return `${month}월 ${day}일 ${hour}시 ${minute}분`;
+  }
+
+  //필터용 함수
+  //카테고리로 필터링
+  const CategoryFiltering = (data: Meetings) => {
+    if (selectedCategory === 0) {
+      return true;
+    }
+    return data.tag.tagId === selectedCategory;
+  };
+  //시도 정보로 필터링
+  const SidoFiltering = (data: Meetings) => {
+    if (sido === "") return true;
+    return data.sido === sido;
+  };
+
+  //전체 필터
+  useEffect(() => {
+    let filterData = [...meetData];
+    filterData = meetAllData.filter(CategoryFiltering);
+    if (sido !== "") {
+      filterData = meetAllData.filter(SidoFiltering);
+    }
+    setMeetData(filterData);
+  }, [selectedCategory, sido]);
+
+  return (
+    <div>
+      <CateDiv>
+        <DrinkCategory getFunc={getDrinkCategory} />
+      </CateDiv>
+      <SearchResultDiv>
+        <SearchResultHeader>
+          지금 진행 중인 모임
+          <FilterBtn onClick={() => setIsFilterOpen(!isFilterOpen)} />
+        </SearchResultHeader>
+        <div ref={parent}>
+          {isFilterOpen && (
+            <FilterDiv>
+              <FilterBg>
+                위치
+                <FilterElement>
+                  <div>
+                    <DropdownInput onChange={sidoSetter} value={sido}>
+                      {sidoList.map((siItem) => {
+                        return (
+                          <option value={siItem} key={siItem}>
+                            {siItem}
+                          </option>
+                        );
+                      })}
+                    </DropdownInput>
+                    시
+                  </div>
+                  <div>
+                    <DropdownInput onChange={gugunSetter} value={gugun}>
+                      {gugunList.map((guItem) => {
+                        return (
+                          <option value={guItem} key={guItem}>
+                            {guItem}
+                          </option>
+                        );
+                      })}
+                    </DropdownInput>
+                    구
+                  </div>
+                  <div>
+                    <DropdownInput onChange={dongSetter} value={dong}>
+                      {dongList.map((dongItem) => {
+                        return (
+                          <option value={dongItem} key={dongItem}>
+                            {dongItem}
+                          </option>
+                        );
+                      })}
+                    </DropdownInput>
+                    동
+                  </div>
+                </FilterElement>
+                시간
+                <FilterElement>
+                  <DateInput type="date" /> ~
+                  <DateInput type="date" />
+                </FilterElement>
+                <div style={{ gridColumn: "span 2" }}>
+                  <SearchBox placeholder="정확한 술의 이름 또는 모임의 이름" />
+                </div>
+              </FilterBg>
+            </FilterDiv>
+          )}
+        </div>
+        {meetData.map((meeting: Meetings) => {
+          const meetId = meeting.meetId;
+          const hasAgeLimit =
+            (meeting.minAge ?? 0) > 0 || (meeting.maxAge ?? 0) > 0
+              ? true
+              : false;
+          const position = `${meeting.sido} ${meeting.gugun} ${meeting.dong}`;
+          const formattedDate = formateDate(meeting.meetDate);
+          return (
+            <ListInfoItem
+              key={meetId}
+              title={meeting.meetName}
+              imgSrc="../src/assets/ForTest/backgroundImg.jpg"
+              tag={meeting.tag.name}
+              content={
+                <MeetingDetail
+                  position={position}
+                  time={formattedDate}
+                  hostId={meeting.hostId}
+                  liverLimit={(meeting.minLiverPoint ?? 0) > 0 ? true : false}
+                  ageLimit={hasAgeLimit}
+                />
+              }
+              numberInfo={
+                <PeopleNumInfo
+                  now={meeting.nowParticipants}
+                  max={meeting.maxParticipants}
+                  color={"var(--c-black)"}
+                  size={11}
+                />
+              }
+              isWaiting={false}
+              outLine={false}
+              routingFunc={() => GotoMeetDetailHandler(meetId)}
+            ></ListInfoItem>
+          );
+        })}
+      </SearchResultDiv>
+    </div>
+  );
+};
+export default meetingFind;
 
 const CateDiv = styled.div`
   height: 10rem;
@@ -105,231 +328,3 @@ const DateInput = styled.input.attrs({ type: "date" })`
   background: white;
   outline: none;
 `;
-
-const meetingFind = () => {
-  //받아온 모임 정보 리스트(전체)
-  const [meetAllData, setMeetAllData] = useState<Meeting[]>([]);
-  useEffect(() => {
-    console.dir(meetAllData);
-    setMeetData(meetAllData.map((item) => item));
-  }, [meetAllData]);
-
-  //필터링 한 후 모임 정보
-  const [meetData, setMeetData] = useState<Meeting[]>([]);
-  useEffect(() => {
-    console.dir(meetData);
-  }, [meetData]);
-
-  useEffect(() => {
-    const promise = callApi("get", "api/meet");
-    promise.then((res) => {
-      setMeetAllData(res.data);
-    });
-    // setMeetAllData([
-    //   {
-    //     meetId: 1,
-    //     meetName: "테스트모임1",
-    //     description: "2가만든 모임",
-    //     hostId: 3,
-    //     participants: 5,
-    //     meetDate: "2023-07-21T13:53:12",
-    //     tag: {
-    //       tagId: 1,
-    //       name: "위스키",
-    //     },
-    //     sido: "대전",
-    //     gugun: "유성구",
-    //     dong: "학하동",
-    //     minAge: null,
-    //     maxAge: null,
-    //     minLiverPoint: null,
-    //   },
-    //   {
-    //     meetId: 2,
-    //     meetName: "change Meet name",
-    //     description: "This is a sample meet.",
-    //     hostId: 2,
-    //     participants: 1,
-    //     meetDate: "2023-07-31T00:30:00",
-    //     tag: {
-    //       tagId: 2,
-    //       name: "와인",
-    //     },
-    //     sido: "서울",
-    //     gugun: "change  Gugun",
-    //     dong: "change  Dong",
-    //     minAge: 0,
-    //     maxAge: 0,
-    //     minLiverPoint: 50.0,
-    //   },
-    // ]);
-  }, []);
-
-  const [selectedDrink, setSelectedDrink] = useState("");
-  const wiskySelect = () => {
-    setSelectedDrink("위스키");
-  };
-  const wineSelect = () => {
-    setSelectedDrink("와인");
-  };
-  useEffect(() => {
-    const filterData = meetAllData.filter(
-      (data) => data.tag.name === selectedDrink
-    );
-    setMeetData(filterData);
-  }, [selectedDrink]);
-
-  //필터 애니메이션 관련
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const parent = useRef(null);
-  const navigate = useNavigate();
-  useEffect(() => {
-    parent.current && autoAnimate(parent.current);
-  }, [parent]);
-  //필터 지역 검색용
-  const [siList, setSiList] = useState(["서울", "경기", "대전", "인천"]);
-  const [guList, setGuList] = useState([
-    "동구",
-    "중구",
-    "서구",
-    "유성",
-    "대덕",
-  ]);
-  const [dongList, setDongList] = useState([
-    "봉명동",
-    "중앙동",
-    "갈마1동",
-    "삼성동",
-    "탄방동",
-  ]);
-  const [si, setSi] = useState("");
-  const [gu, setGu] = useState("");
-  const [dong, setDong] = useState("");
-  const siSetHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedSi = e.target.value;
-    setSi(selectedSi);
-    //여기서 si에 따라 guList 업데이트
-    //모임 리스트 조건에 맞게 필터링
-    console.log(selectedSi);
-    const filterData = meetAllData.filter((data) => data.sido === selectedSi);
-    setMeetData(filterData);
-  };
-  const guSetHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setGu(e.target.value);
-    //여기서 si에 따라 guList 업데이트
-  };
-  const dongSetHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDong(e.target.value);
-    //여기서 si에 따라 guList 업데이트
-  };
-  //모임 상세페이지로 이동
-  const GotoMeetDetailHandler = (meetId: number) => {
-    console.log(meetId, "find");
-    navigate(`/meet/${meetId}`);
-  };
-
-  return (
-    <div>
-      <button onClick={wiskySelect}>위스키</button>
-      <button onClick={wineSelect}>와인</button>
-      <CateDiv>
-        <DrinkCategory />
-      </CateDiv>
-      <SearchResultDiv>
-        <SearchResultHeader>
-          지금 진행 중인 모임
-          <FilterBtn onClick={() => setIsFilterOpen(!isFilterOpen)} />
-        </SearchResultHeader>
-        <div ref={parent}>
-          {isFilterOpen && (
-            <FilterDiv>
-              <FilterBg>
-                위치
-                <FilterElement>
-                  <div>
-                    <DropdownInput onChange={siSetHandler} value={si}>
-                      {siList.map((siItem) => {
-                        return (
-                          <option value={siItem} key={siItem}>
-                            {siItem}
-                          </option>
-                        );
-                      })}
-                    </DropdownInput>
-                    시
-                  </div>
-                  <div>
-                    <DropdownInput onChange={guSetHandler} value={gu}>
-                      {guList.map((guItem) => {
-                        return (
-                          <option value={guItem} key={guItem}>
-                            {guItem}
-                          </option>
-                        );
-                      })}
-                    </DropdownInput>
-                    구
-                  </div>
-                  <div>
-                    <DropdownInput onChange={dongSetHandler} value={dong}>
-                      {dongList.map((dongItem) => {
-                        return (
-                          <option value={dongItem} key={dongItem}>
-                            {dongItem}
-                          </option>
-                        );
-                      })}
-                    </DropdownInput>
-                    동
-                  </div>
-                </FilterElement>
-                시간
-                <FilterElement>
-                  <DateInput type="date" /> ~
-                  <DateInput type="date" />
-                </FilterElement>
-                <div style={{ gridColumn: "span 2" }}>
-                  <SearchBox placeholder="정확한 술의 이름 또는 모임의 이름" />
-                </div>
-              </FilterBg>
-            </FilterDiv>
-          )}
-        </div>
-        {meetData.map((meeting: Meeting) => {
-          const meetId = meeting.meetId;
-          const hasAgeLimit = meeting.minAge || meeting.maxAge ? true : false;
-          const position = meeting.sido + meeting.gugun + meeting.dong;
-          return (
-            <ListInfoItem
-              key={meetId}
-              title={meeting.meetName}
-              imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-              tag={meeting.tag.name}
-              content={
-                <MeetingDetail
-                  position={position}
-                  time={meeting.meetDate}
-                  hostId={meeting.hostId}
-                  liverLimit={meeting.minLiverPoint ? true : false}
-                  ageLimit={hasAgeLimit}
-                />
-              }
-              numberInfo={
-                <PeopleNumInfo
-                  now={meeting.attendUser}
-                  max={8}
-                  color={"var(--c-black)"}
-                  size={11}
-                />
-              }
-              isWaiting={false}
-              outLine={false}
-              routingFunc={() => GotoMeetDetailHandler(meetId)}
-            ></ListInfoItem>
-          );
-        })}
-      </SearchResultDiv>
-    </div>
-  );
-};
-export default meetingFind;

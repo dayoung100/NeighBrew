@@ -19,18 +19,33 @@ export interface Chat {
   userid: number;
 }
 
-export interface Meeting {
+//모임을 리스트로 받을 때
+export interface Meetings {
   meetId: number;
   meetName: string;
   description: string;
   hostId: number;
-  attendUser: number;
+  nowParticipants: number;
+  maxParticipants: number;
   meetDate: string;
-  tag: any;
+  tag: {
+    tagId: number;
+    name: string;
+  };
   sido: string;
   gugun: string;
   dong: string;
-  minAge?: number | null;
-  maxAge?: number | null;
-  minLiverPoint?: number | null;
+  minAge?: number;
+  maxAge?: number;
+  minLiverPoint?: number;
+  attendUser: null;
+  drink: {
+    drinkId: number;
+    name: string;
+    image: string;
+    degree: number;
+    description: string;
+    tagId: number;
+  };
+  imgSrc: string;
 }
