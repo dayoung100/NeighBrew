@@ -24,10 +24,7 @@ export interface Meetings {
   nowParticipants: number;
   maxParticipants: number;
   meetDate: string;
-  tag: {
-    tagId: number;
-    name: string;
-  };
+  tagId: number;
   sido: string;
   gugun: string;
   dong: string;
@@ -35,14 +32,7 @@ export interface Meetings {
   maxAge?: number;
   minLiverPoint?: number;
   attendUser: null;
-  drink: {
-    drinkId: number;
-    name: string;
-    image: string;
-    degree: number;
-    description: string;
-    tagId: number;
-  };
+  drinkName: string;
   imgSrc: string;
 }
 
