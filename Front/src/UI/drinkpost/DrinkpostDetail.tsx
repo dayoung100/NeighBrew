@@ -9,6 +9,7 @@ import backIcon from "../../assets/backIcon.svg";
 import sirenIcon from "../../assets/sirenIcon.svg";
 import { callApi } from "../../utils/api";
 import { useState, useEffect } from "react";
+import { Drink } from "../../Type/types";
 
 const CreateReviewDiv = styled.div`
   display: flex;
@@ -55,20 +56,24 @@ const IconAndTextDiv = styled.div`
 const DrinkpostDetail = () => {
   const id = useParams();
 
-  const [detail, setDetail] = useState({});
+  const [detail, setDetail] = useState<Drink>();
   const [review, setReview] = useState([]);
-  const drinkUrl = `http://34.64.126.58/drink/${id.drinkId}`;
-  const reviewUrl = `http://34.64.126.58/drinkreview/${id.drinkId}`;
+  const drinkUrl = `http://34.64.126.58:5173/drink/${id.drinkId}`;
+  const reviewUrl = `http://34.64.126.58:5173/drinkreview/${id.drinkId}`;
   useEffect(() => {
     callApi("get", drinkUrl)
-      .then(res => setDetail(res.data))
+      .then(res => {
+        setDetail(res.data);
+        console.log(1);
+        console.log(res);
+      })
       .catch(err => console.log(err));
     // callApi("get", reviewUrl)
     // .then(res=> )
   }, []);
 
   return (
-    <div>
+    <>
       <Navbar></Navbar>
       <DrinkpostDetailNavbar>
         <NavbarBackIcon>
@@ -114,7 +119,7 @@ const DrinkpostDetail = () => {
         </div>
       </div>
       {/* <Footer></Footer> */}
-    </div>
+    </>
   );
 };
 export default DrinkpostDetail;

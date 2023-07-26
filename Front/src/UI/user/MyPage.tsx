@@ -104,7 +104,17 @@ const LiverDiv = styled.div<{ liverPoint: number }>`
   }
 `;
 const MyPage = () => {
-  const [userData, setUserData] = useState<User>(); // 유저 정보
+  const [userData, setUserData] = useState<User>({
+    birth: "awd",
+    email: "awd",
+    follower: 0,
+    following: 9,
+    liverPoint: 9,
+    name: "s",
+    profile: "wd",
+    userId: 1,
+    nickname: "awd",
+  }); // 유저 정보
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const [following, setFollowing] = useState(0); // 팔로잉 목록
   const { userid } = useParams();
@@ -127,14 +137,13 @@ const MyPage = () => {
     navigate("/myPage/follow/" + userid);
   };
   const userInfo = async () => {
-    let data = "";
-    const api = callApi("get", "user/guard/myinfo")
+    const api = callApi("get", "api/user/guard/myinfo")
       .then(res => {
-        data = res.data;
-        console.log("cors 해결완료!!");
+        setUserData(res.data);
       })
       .catch(err => console.log(err));
   };
+
   useEffect(() => {
     userInfo();
   }, []);
@@ -227,7 +236,7 @@ const MyPage = () => {
             margin: "0 1rem",
           }}
         >
-          <p>{userData!.intro}</p>
+          <p>{userData.intro ? userData.intro : <p> 임시 한줄 설명 </p>}</p>
         </div>
       </div>
       <div>
