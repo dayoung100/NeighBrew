@@ -8,6 +8,7 @@ const KakaoLogin = () => {
     const code = location.search.split("=")[1];
     axios
       .post("http://34.64.126.58:5173/api/auth/kakao", {
+        // .post("http://192.168.31.71:8080/api/auth/kakao", {
         authorizationCode: code,
       })
       .then(res => {
