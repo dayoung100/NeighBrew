@@ -13,6 +13,7 @@ public class DrinkDto {
     private String image;
     private Float degree;
     private String description;
+    private Long tagId;
 
     public Drink toEntity() {
         return Drink.builder()
@@ -20,6 +21,7 @@ public class DrinkDto {
                 .image(image)
                 .degree(degree)
                 .description(description)
+                .tagId(tagId)
                 .build();
     }
 }
