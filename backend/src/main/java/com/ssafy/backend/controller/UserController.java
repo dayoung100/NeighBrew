@@ -23,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 
 @Slf4j
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserRepository userRepository;

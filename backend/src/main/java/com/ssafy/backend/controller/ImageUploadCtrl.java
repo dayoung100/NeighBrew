@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/img")
+@RequestMapping("/api/img")
 public class ImageUploadCtrl {
 
     private final S3UploadService s3UploadService;
