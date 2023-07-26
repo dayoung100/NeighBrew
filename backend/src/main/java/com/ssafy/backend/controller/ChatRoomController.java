@@ -17,20 +17,17 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@RestController
-@RequestMapping("/api/chat")
-@RequiredArgsConstructor
 @Slf4j
+@RestController
+@RequiredArgsConstructor
+@CrossOrigin("*")
+@RequestMapping("/api/chat")
 public class ChatRoomController {
-
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
