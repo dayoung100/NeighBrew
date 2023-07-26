@@ -23,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 
 @Slf4j
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -34,7 +34,6 @@ public class UserController {
     public ResponseEntity<List<User>> findAll() {
         return ResponseEntity.ok(userRepository.findAll());
     }
-
 
     @GetMapping("/guard/myinfo")
     public ResponseEntity<?> getMyInfo(HttpServletRequest request) {

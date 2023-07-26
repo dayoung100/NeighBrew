@@ -6,6 +6,7 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class NaverApiClient implements OAuthApiClient {
 
@@ -56,9 +58,13 @@ public class NaverApiClient implements OAuthApiClient {
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
+
+
         NaverTokens response = restTemplate.postForObject(url, request, NaverTokens.class);
 
         assert response != null;
+
+
         return response.getAccessToken();
     }
 
@@ -74,26 +80,14 @@ public class NaverApiClient implements OAuthApiClient {
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
+
+
         return restTemplate.postForObject(url, request, NaverInfoResponse.class);
     }
 
     @Override
     public String authApiUrl(OAuthLoginParams params) {
-        /*
-       https://nid.naver.com/oauth2.0/authorize
-        ?response_type=code
-        &client_id=X4sNS83Clp1HKYE6sMA6
-        &state=1UNWOvlyrl
-        &redirect_uri=http://localhost:8080/naver/callback
-         */
 
-        /*
-        https://nid.naver.com/oauth2.0/authorize
-        &response_type=code
-        &client_id=X4sNS83Clp1HKYE6sMA6
-        &state=1UNWOvlyrl
-        &redirect_uri=http://localhost:8080/naver/callback
-         */
         String redirectUri = "http://localhost:5173/naver/callback";
         String responseType = "code";
 

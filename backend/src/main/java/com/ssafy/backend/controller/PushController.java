@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 @RestController
-@RequestMapping("/push")
+@RequestMapping("/api/push")
 @CrossOrigin("*")
 public class PushController {
     private final PushService pushService;

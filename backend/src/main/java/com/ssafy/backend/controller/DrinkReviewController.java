@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/drinkreview")
+@RequestMapping("/api/drinkreview")
 @RequiredArgsConstructor
 public class DrinkReviewController {
     private final DrinkReviewService drinkReviewService;
