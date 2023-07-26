@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import Modal from "react-modal";
 import NavbarSimple from "../navbar/NavbarSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
 import Footer from "../footer/Footer";
@@ -18,24 +19,24 @@ const BigBtn = styled.div`
   padding: 1rem;
 `;
 
-const BlackBg = styled.div`
-position: fixed;
-  top:0; left: 0; bottom: 0; right: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 11;
-}
-`;
-
-const WhiteModal = styled.div`
-  position: absolute;
-  bottom: 10rem;
-  left: 50%;
-  transform: translate(-50%, 0);
-  width: 15rem;
-  padding: 1rem;
-  border-radius: 15px;
-  background: white;
-`;
+const WhiteModal = {
+  content: {
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "15rem",
+    height: "6rem",
+    padding: "0.5rem 1rem",
+    borderRadius: "15px",
+    background: "white",
+    textAlign: "center",
+    fontFamily: "SeoulNamsan",
+  },
+  overlay: {
+    background: "rgba(0, 0, 0, 0.5)",
+    zIndex: "11",
+  },
+};
 
 const MeetingManageMain = () => {
   const navigate = useNavigate();
@@ -57,48 +58,56 @@ const MeetingManageMain = () => {
       <header>
         <NavbarSimple title="모임 관리" />
       </header>
-      <div style={{ fontSize: "32px", marginTop: "1rem" }}>모임의 제목이 들어갑니다</div>
+      <div style={{ fontSize: "32px", marginTop: "1rem" }}>
+        모임의 제목이 들어갑니다
+      </div>
       <div style={{ margin: "0 10.5rem" }}>
         <PeopleNumInfo now={1} max={4} color="var(--c-black)" size={15} />
       </div>
       <BigBtn onClick={() => GotoMeetInfoManage(1)}>모임 정보 관리</BigBtn>
       <BigBtn onClick={() => GotoMemberManage(1)}>참여자 관리</BigBtn>
-      <BigBtn style={{ background: "#F28F79" }} onClick={() => setDeleteModalOn(true)}>
+      <BigBtn
+        style={{ background: "#F28F79" }}
+        onClick={() => setDeleteModalOn(true)}
+      >
         모임 삭제
       </BigBtn>
-      {deleteModalOn && (
-        <BlackBg
-          onClick={() => {
-            console.log("검은 배경 클릭, 모달 닫기");
-            setDeleteModalOn(false);
+      <Modal
+        isOpen={deleteModalOn}
+        onRequestClose={() => setDeleteModalOn(false)}
+        style={WhiteModal}
+      >
+        <div style={{ padding: "1rem 0" }}>
+          이 모임을 정말 삭제하시겠습니까?
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            alignItems: "center",
           }}
         >
-          <WhiteModal>
-            <div style={{ padding: "1rem 0" }}>이 모임을 정말 삭제하시겠습니까?</div>
-            <div style={{ display: "flex", justifyContent: "space-evenly", alignItems: "center" }}>
-              <div
-                onClick={() => {
-                  console.log("삭제 완료");
-                  setDeleteModalOn(false);
-                }}
-                style={{ width: "7rem", padding: "0.5rem 0" }}
-              >
-                예
-              </div>
-              <div>|</div>
-              <div
-                onClick={() => {
-                  console.log("삭제 취소");
-                  setDeleteModalOn(false);
-                }}
-                style={{ width: "7rem", padding: "0.5rem 0" }}
-              >
-                아니오
-              </div>
-            </div>
-          </WhiteModal>
-        </BlackBg>
-      )}
+          <div
+            onClick={() => {
+              console.log("삭제 완료");
+              setDeleteModalOn(false);
+            }}
+            style={{ width: "7rem", padding: "0.5rem 0" }}
+          >
+            예
+          </div>
+          <div>|</div>
+          <div
+            onClick={() => {
+              console.log("삭제 취소");
+              setDeleteModalOn(false);
+            }}
+            style={{ width: "7rem", padding: "0.5rem 0" }}
+          >
+            아니오
+          </div>
+        </div>
+      </Modal>
       <footer>
         <Footer />
       </footer>
