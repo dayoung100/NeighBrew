@@ -30,7 +30,6 @@ const meetingFind = () => {
   const [meetData, setMeetData] = useState<Meetings[]>([]);
 
   useEffect(() => {
-    console.dir(meetAllData); //확인용
     setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
   }, [meetAllData]);
 
@@ -50,7 +49,6 @@ const meetingFind = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
-    console.log(tagId);
   };
 
   //필터 애니메이션 관련
@@ -59,6 +57,7 @@ const meetingFind = () => {
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
+
   //필터 지역 검색용
   const [sidoList, setSiList] = useState(["서울", "경기", "대전", "시도"]);
   const [gugunList, setGuList] = useState([
@@ -82,19 +81,21 @@ const meetingFind = () => {
     const selectedSido = e.target.value;
     setSido(selectedSido);
     //여기서 si에 따라 guList 업데이트
-    //모임 리스트 조건에 맞게 필터링
-    const filterData = meetAllData.filter((data) => data.sido === selectedSido);
-    setMeetData(filterData);
   };
   const gugunSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setGugun(e.target.value);
     //여기서 gu에 따라 dongList 업데이트
-    //모임 리스트 조건에 맞게 필터링
   };
   const dongSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setDong(e.target.value);
-    //모임 리스트 조건에 맞게 필터링
   };
+
+  //필터에 날짜 검색용
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  //필터에 텍스트 검색용
+  const [inputText, setInputText] = useState("");
 
   //날짜와 시간 변환 함수
   function formateDate(dateData: string) {
@@ -109,24 +110,45 @@ const meetingFind = () => {
 
   //필터용 함수
   //카테고리로 필터링
-  const CategoryFiltering = (data: Meetings) => {
+  const categoryFiltering = (data: Meetings) => {
     if (selectedCategory === 0) {
       return true;
     }
-    return data.tag.tagId === selectedCategory;
+    return data.tagId === selectedCategory;
   };
   //시도 정보로 필터링
-  const SidoFiltering = (data: Meetings) => {
+  const sidoFiltering = (data: Meetings) => {
     if (sido === "") return true;
     return data.sido === sido;
   };
+  //구군 정보로 필터링
+  const gugunFiltering = (data: Meetings) => {
+    if (gugun === "") return true;
+    return data.gugun === gugun;
+  };
+  //동 정보로 필터링
+  const dongFiltering = (data: Meetings) => {
+    if (dong === "") return true;
+    return data.dong === dong;
+  };
+  //날짜 정보로 필터링
+  const dateFiltering = (data: Meetings) => {
+    if (startDate === "" && endDate === "") return true;
+    return data.meetDate > startDate && data.meetDate < endDate;
+  };
+  //모임 이름으로 필터링
+  const titleFiltering = (data: Meetings) => {
+    if (startDate === "" && endDate === "") return true;
+    return data.meetDate > startDate && data.meetDate < endDate;
+  };
+  //술의 이름으로 필터링
 
   //전체 필터
   useEffect(() => {
     let filterData = [...meetData];
-    filterData = meetAllData.filter(CategoryFiltering);
+    filterData = meetAllData.filter(categoryFiltering);
     if (sido !== "") {
-      filterData = meetAllData.filter(SidoFiltering);
+      filterData = meetAllData.filter(sidoFiltering);
     }
     setMeetData(filterData);
   }, [selectedCategory, sido]);
@@ -184,7 +206,7 @@ const meetingFind = () => {
                     동
                   </div>
                 </FilterElement>
-                시간
+                날짜
                 <FilterElement>
                   <DateInput type="date" /> ~
                   <DateInput type="date" />
@@ -197,6 +219,7 @@ const meetingFind = () => {
           )}
         </div>
         {meetData.map((meeting: Meetings) => {
+          //TODO: 태그 아이디로 태그 스트링으로 변환하기
           const meetId = meeting.meetId;
           const hasAgeLimit =
             (meeting.minAge ?? 0) > 0 || (meeting.maxAge ?? 0) > 0
@@ -209,7 +232,7 @@ const meetingFind = () => {
               key={meetId}
               title={meeting.meetName}
               imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-              tag={meeting.tag.name}
+              tag="태그"
               content={
                 <MeetingDetail
                   position={position}

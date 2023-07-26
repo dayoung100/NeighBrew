@@ -11,11 +11,11 @@ const ItemDiv = styled.div<{ outLine: boolean }>`
   margin: 1rem auto 0 auto;
   border-radius: 20px;
   padding: 0.5rem 0.5rem;
-  border: ${props => (props.outLine ? "1px solid var(--c-gray)" : "none")};
+  border: ${(props) => (props.outLine ? "1px solid var(--c-gray)" : "none")};
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   display: flex;
   justify-content: center;
@@ -119,7 +119,10 @@ type ListInfoItemProps = {
  */
 const ListInfoItem = (props: ListInfoItemProps) => {
   return (
-    <div style={{ display: "flex", justifyContent: "center" }} onClick={() => props.routingFunc()}>
+    <div
+      style={{ display: "flex", justifyContent: "center" }}
+      onClick={() => props.routingFunc()}
+    >
       <ItemDiv outLine={props.outLine ? props.outLine : false}>
         <ImageArea src={props.imgSrc} />
         <InfoArea>
