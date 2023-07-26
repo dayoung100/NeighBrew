@@ -36,8 +36,18 @@ const meetingMy = () => {
           title="내가 주최 중인 모임의 이름"
           imgSrc="../src/assets/ForTest/backgroundImg.jpg"
           tag="소주/맥주"
-          content={<MeetingDetail />}
-          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
+          content={
+            <MeetingDetail
+              position=""
+              time=""
+              hostId={1}
+              liverLimit={true}
+              ageLimit={true}
+            />
+          }
+          numberInfo={
+            <PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />
+          }
           isWaiting={false}
           outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}
@@ -49,8 +59,18 @@ const meetingMy = () => {
           title="내가 참여 중인 모임의 이름"
           imgSrc="../src/assets/ForTest/backgroundImg.jpg"
           tag="소주/맥주"
-          content={<MeetingDetail />}
-          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
+          content={
+            <MeetingDetail
+              position=""
+              time=""
+              hostId={1}
+              liverLimit={true}
+              ageLimit={true}
+            />
+          }
+          numberInfo={
+            <PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />
+          }
           isWaiting={false}
           outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}
@@ -62,8 +82,18 @@ const meetingMy = () => {
           title="내가 신청한 모임의 이름"
           imgSrc="../src/assets/ForTest/backgroundImg.jpg"
           tag="소주/맥주"
-          content={<MeetingDetail />}
-          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
+          content={
+            <MeetingDetail
+              position=""
+              time=""
+              hostId={1}
+              liverLimit={true}
+              ageLimit={true}
+            />
+          }
+          numberInfo={
+            <PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />
+          }
           isWaiting={true}
           outLine={false}
           routingFunc={() => GotoMeetDetailHandler(1)}

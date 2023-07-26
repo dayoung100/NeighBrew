@@ -1,3 +1,9 @@
+/*
+[MeetingDetail.tsx]
+특정한 모임의 상세 정보를 보여주는 페이지
+모임 리스트에서 하나를 클릭하면 이 페이지로 이동함
+모임 위치, 시간, 주최자, 간수치제한, 인원 제한 정보를 담고 있음
+*/
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
@@ -79,11 +85,6 @@ const MeetTitle = styled.div`
   margin-top: 1.5rem;
 `;
 
-/**
- * 특정한 모임의 상세 정보를 보여주는 페이지.
- * 모임 리스트에서 하나를 클릭하면 이 페이지로 이동함
- * @property
- */
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const navigate = useNavigate();
