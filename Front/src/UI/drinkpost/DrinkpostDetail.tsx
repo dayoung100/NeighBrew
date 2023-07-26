@@ -9,6 +9,7 @@ import backIcon from "../../assets/backIcon.svg";
 import sirenIcon from "../../assets/sirenIcon.svg";
 import { callApi } from "../../utils/api";
 import { useState, useEffect } from "react";
+import { Drink } from "../../Type/types";
 
 const CreateReviewDiv = styled.div`
   display: flex;
@@ -55,26 +56,30 @@ const IconAndTextDiv = styled.div`
 const DrinkpostDetail = () => {
   const id = useParams();
 
-  const [detail, setDetail] = useState({});
+  const [detail, setDetail] = useState<Drink>();
   const [review, setReview] = useState([]);
-  const drinkUrl = `http://34.64.126.58/drink/${id.drinkId}`;
-  const reviewUrl = `http://34.64.126.58/drinkreview/${id.drinkId}`;
+  const drinkUrl = `http://34.64.126.58:5173/drink/${id.drinkId}`;
+  const reviewUrl = `http://34.64.126.58:5173/drinkreview/${id.drinkId}`;
   useEffect(() => {
     callApi("get", drinkUrl)
-      .then(res => setDetail(res.data))
+      .then(res => {
+        setDetail(res.data);
+        console.log(1);
+        console.log(res);
+      })
       .catch(err => console.log(err));
     // callApi("get", reviewUrl)
     // .then(res=> )
   }, []);
 
   return (
-    <div>
+    <>
       <Navbar></Navbar>
       <DrinkpostDetailNavbar>
         <NavbarBackIcon>
           <img src={backIcon} alt="" />
         </NavbarBackIcon>
-        <h2 style={{ margin: "12px 0px 8px 23px" }}>{detail.name}</h2>
+        <h2 style={{ margin: "12px 0px 8px 23px" }}>{detail?.name}</h2>
         <NavbarSirenIcon>
           <img src={sirenIcon} alt="" />
         </NavbarSirenIcon>
@@ -85,13 +90,13 @@ const DrinkpostDetail = () => {
           <b>종류</b> : 종류를 받는 부분
         </p>
         <p>
-          <b>도수</b> : {detail.degree}도
+          <b>도수</b> : {detail?.degree}도
         </p>
         <p>
           <b>국가</b> : 국가를 받는 부분
         </p>
         <p style={{ marginTop: "20px" }}>
-          <b>설명</b> : {detail.description}
+          <b>설명</b> : {detail?.description}
         </p>
       </div>
       <div className="reviewBox">
@@ -114,7 +119,7 @@ const DrinkpostDetail = () => {
         </div>
       </div>
       {/* <Footer></Footer> */}
-    </div>
+    </>
   );
 };
 export default DrinkpostDetail;

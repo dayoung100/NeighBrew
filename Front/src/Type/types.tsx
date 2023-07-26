@@ -49,3 +49,12 @@ export interface Meetings {
   };
   imgSrc: string;
 }
+
+export interface Drink {
+  degree: number;
+  description: string;
+  drinkId: number;
+  image: string;
+  name: string;
+  tagId: number;
+}

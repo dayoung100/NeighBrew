@@ -31,7 +31,7 @@ const meetingFind = () => {
 
   useEffect(() => {
     console.dir(meetAllData); //확인용
-    setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
+    setMeetData(meetAllData.map(item => item)); //필터 적용을 위해 복사한 리스트 만들어두기
   }, [meetAllData]);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const meetingFind = () => {
   //api 호출
   useEffect(() => {
     const promise = callApi("get", "api/meet");
-    promise.then((res) => {
+    promise.then(res => {
       setMeetAllData(res.data); //받아온 데이터로 meetAllData 세팅
     });
   }, []);
@@ -61,20 +61,8 @@ const meetingFind = () => {
   }, [parent]);
   //필터 지역 검색용
   const [sidoList, setSiList] = useState(["서울", "경기", "대전", "시도"]);
-  const [gugunList, setGuList] = useState([
-    "동구",
-    "중구",
-    "서구",
-    "유성",
-    "대덕",
-  ]);
-  const [dongList, setDongList] = useState([
-    "봉명동",
-    "중앙동",
-    "갈마1동",
-    "삼성동",
-    "탄방동",
-  ]);
+  const [gugunList, setGuList] = useState(["동구", "중구", "서구", "유성", "대덕"]);
+  const [dongList, setDongList] = useState(["봉명동", "중앙동", "갈마1동", "삼성동", "탄방동"]);
   const [sido, setSido] = useState("");
   const [gugun, setGugun] = useState("");
   const [dong, setDong] = useState("");
@@ -83,7 +71,7 @@ const meetingFind = () => {
     setSido(selectedSido);
     //여기서 si에 따라 guList 업데이트
     //모임 리스트 조건에 맞게 필터링
-    const filterData = meetAllData.filter((data) => data.sido === selectedSido);
+    const filterData = meetAllData.filter(data => data.sido === selectedSido);
     setMeetData(filterData);
   };
   const gugunSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -149,7 +137,7 @@ const meetingFind = () => {
                 <FilterElement>
                   <div>
                     <DropdownInput onChange={sidoSetter} value={sido}>
-                      {sidoList.map((siItem) => {
+                      {sidoList.map(siItem => {
                         return (
                           <option value={siItem} key={siItem}>
                             {siItem}
@@ -161,7 +149,7 @@ const meetingFind = () => {
                   </div>
                   <div>
                     <DropdownInput onChange={gugunSetter} value={gugun}>
-                      {gugunList.map((guItem) => {
+                      {gugunList.map(guItem => {
                         return (
                           <option value={guItem} key={guItem}>
                             {guItem}
@@ -173,7 +161,7 @@ const meetingFind = () => {
                   </div>
                   <div>
                     <DropdownInput onChange={dongSetter} value={dong}>
-                      {dongList.map((dongItem) => {
+                      {dongList.map(dongItem => {
                         return (
                           <option value={dongItem} key={dongItem}>
                             {dongItem}
@@ -198,10 +186,7 @@ const meetingFind = () => {
         </div>
         {meetData.map((meeting: Meetings) => {
           const meetId = meeting.meetId;
-          const hasAgeLimit =
-            (meeting.minAge ?? 0) > 0 || (meeting.maxAge ?? 0) > 0
-              ? true
-              : false;
+          const hasAgeLimit = (meeting.minAge ?? 0) > 0 || (meeting.maxAge ?? 0) > 0 ? true : false;
           const position = `${meeting.sido} ${meeting.gugun} ${meeting.dong}`;
           const formattedDate = formateDate(meeting.meetDate);
           return (
