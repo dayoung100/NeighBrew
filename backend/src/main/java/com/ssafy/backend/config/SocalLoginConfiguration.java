@@ -19,12 +19,5 @@ public class SocalLoginConfiguration {
         return new RestTemplate();
     }
 
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
-        return restTemplateBuilder
-                .requestFactory(() -> new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
-                .additionalMessageConverters(new StringHttpMessageConverter(Charset.forName("UTF-8")))
-                .build();
-    }
 
 }

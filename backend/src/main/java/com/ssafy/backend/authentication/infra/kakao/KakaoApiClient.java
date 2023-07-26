@@ -83,7 +83,7 @@ public class KakaoApiClient implements OAuthApiClient {
 
     @Override
     public String authApiUrl(OAuthLoginParams params) {
-        String redirectUri = "http://localhost:5173/kakao/callback";
+        String redirectUri = "https://tiny-cactus-3bb706.netlify.app/kakao/callback";
         String responseType = "code";
         return authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
     }
