@@ -14,9 +14,9 @@ import java.util.List;
 @Setter
 public class MeetUserDto {
 
-    private Long meetUserId;
+    //private Long meetUserId;
 
-    private Meet meet;
+    private MeetDto meetDto;
 
     private List<User> users;
 
@@ -24,9 +24,10 @@ public class MeetUserDto {
     private List<Status> statuses;
 
     @Builder
-    public MeetUserDto(Long meetUserId, Meet meet) {
-        this.meetUserId = meetUserId;
-        this.meet = meet;
+    //public MeetUserDto(Long meetUserId, Meet meet) {
+    public MeetUserDto(Long meetUserId, MeetDto meetDto) {
+        //this.meetUserId = meetUserId;
+        this.meetDto = meetDto;
         this.users = new ArrayList<>();
         this.statuses = new ArrayList<>();
     }

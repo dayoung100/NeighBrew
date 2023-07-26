@@ -9,9 +9,11 @@ import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
 import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class OAuthLoginService {
 
@@ -32,15 +34,13 @@ public class OAuthLoginService {
         ObjectMapper objectMapper = new ObjectMapper();
         try{
             String jsonString = objectMapper.writeValueAsString(oAuthInfoResponse);
-            System.out.println("JSON String: " + jsonString);
+            log.info(jsonString);
+
         }catch (Exception e){
 
         }
 
-
-
         Long userId = findOrCreateUser(oAuthInfoResponse);
-        System.out.println("2 : userId = " + userId);
         // 그 아이디를 기반으로 token 생성
 
         LoginResponse loginResponse = new LoginResponse();
@@ -50,11 +50,6 @@ public class OAuthLoginService {
         return loginResponse;
     }
 
-//    public void logout(OAuthLoginParams params) {
-//        OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.logout(params);
-//
-//
-//    }
 
 
     // 해당 이메일로 user의 id를 반환
@@ -77,6 +72,6 @@ public class OAuthLoginService {
 
 
     public String redirectApiUrl(OAuthLoginParams params) {
-        return requestOAuthInfoService.authAptUrl(params);
+        return requestOAuthInfoService.authApiUrl(params);
     }
 }

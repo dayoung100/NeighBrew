@@ -8,6 +8,7 @@ import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.MeetUser;
 import com.ssafy.backend.repository.MeetRepository;
 import com.ssafy.backend.repository.MeetUserRepository;
+import com.ssafy.backend.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class MeetService {
 
     private MeetRepository meetRepository;
     private MeetUserRepository meetUserRepository;
+    private TagRepository tagRepository;
 
     @Autowired
     public MeetService(MeetRepository meetRepository,
@@ -38,6 +40,7 @@ public class MeetService {
 
         List<MeetDto> dtos = new ArrayList<>();
         for(Meet meet : list){
+
             dtos.add(MeetDto.builder()
                     .meetId(meet.getMeetId())
                     .meetName(meet.getMeetName())
@@ -46,14 +49,14 @@ public class MeetService {
                     .nowParticipants(meet.getNowParticipants())
                     .maxParticipants(meet.getMaxParticipants())
                     .meetDate(meet.getMeetDate())
-                    .tag(meet.getTag())
+                    .tagId(meet.getTag().getTagId())
                     .sido(meet.getSido())
                     .gugun(meet.getGugun())
                     .dong(meet.getDong())
                     .minAge(meet.getMinAge())
                     .maxAge(meet.getMaxAge())
                     .minLiverPoint(meet.getMinLiverPoint())
-                    .drink(meet.getDrink())
+                    .drinkId(meet.getDrink().getDrinkId())
                     .imgSrc(meet.getImgSrc())
                     .build());
         }
@@ -66,8 +69,7 @@ public class MeetService {
         List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(()-> new IllegalArgumentException("모임 ID 값이 올바르지 않습니다."));
 
         MeetUserDto meetUserDto = MeetUserDto.builder()
-                .meetUserId(meetUsers.get(0).getMeetUserId())
-                .meet(meetUsers.get(0).getMeet())
+                .meetDto(meetUsers.get(0).getMeet().toDto())
                 .build();
         for(MeetUser mu : meetUsers){
             meetUserDto.getUsers().add(mu.getUser());
@@ -106,8 +108,6 @@ public class MeetService {
         Meet meet = meetDto.toEntity();
         meet.setCreatedAt(LocalDateTime.now());
         meet.setUpdatedAt(LocalDateTime.now());
-
-        if (meet.getMeetName().trim().equals("")) throw new IllegalArgumentException("모임 이름 정보가 누락되었습니다.");
 
         return meetRepository.save(meet);
     }

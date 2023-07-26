@@ -57,4 +57,8 @@ public class UserService {
         user.updateFromDto(updateDto);
         return userRepository.save(user);
     }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
 }

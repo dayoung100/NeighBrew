@@ -1,3 +1,4 @@
+// main
 import { styled } from "styled-components";
 import DrinkCard from "./DrinkCard";
 // import singleShowcase from "./singleShowcase";

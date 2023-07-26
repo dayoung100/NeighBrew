@@ -4,7 +4,6 @@ import com.ssafy.backend.authentication.application.LoginResponse;
 import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.dto.UserUpdateDto;
 import com.ssafy.backend.entity.User;
-import com.ssafy.backend.repository.UserRepository;
 import com.ssafy.backend.service.UserService;
 import com.ssafy.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -19,48 +18,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-
-@Slf4j
 @RequestMapping("/api/user")
 public class UserController {
-
-    private final UserRepository userRepository;
     private final UserService userService;
 
     //전체 유저 검색
     @GetMapping()
     public ResponseEntity<List<User>> findAll() {
-        return ResponseEntity.ok(userRepository.findAll());
+        return ResponseEntity.ok(userService.findAll());
     }
-
 
     @GetMapping("/guard/myinfo")
     public ResponseEntity<?> getMyInfo(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
-        User user = userRepository.findById(Long.valueOf(userId)).orElse(null);
+        User user = userService.findByUserId(Long.valueOf(userId));
         UserDto userDto = new UserDto(user);
         userDto.setFollower(userService.getFollowerCount(Long.valueOf(userId)));
         userDto.setFollowing(userService.getFollowingCount(Long.valueOf(userId)));
-        if (user != null) {
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
     @GetMapping("/guard/userinfo/{userId}")
     public ResponseEntity<?> getUserInfo(@PathVariable String userId) {
-        User user = userRepository.findById(Long.valueOf(userId)).orElse(null);
+        User user = userService.findByUserId(Long.valueOf(userId));
         if (user != null) {
             return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-
 
 
     // refresh token을 이용한 access token 재발급
@@ -83,7 +72,7 @@ public class UserController {
             tokens.put("refreshToken", newRreshToken);
             return ResponseEntity.ok(tokens);
         } catch (Exception e) {
-            System.out.println("e.toString() = " + e.toString());
+            System.out.println("e.toString() = " + e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
     }

@@ -64,7 +64,7 @@ public class GoogleApiClient implements OAuthApiClient {
         try {
             String encodedData = null;
             decodedData = URLDecoder.decode(code, "UTF-8");
-            System.out.println(decodedData);
+//            System.out.println(decodedData);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

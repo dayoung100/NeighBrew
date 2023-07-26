@@ -24,13 +24,12 @@ public class S3Config {
     private String region;
 
     @Bean
-    public AmazonS3 amazonS3(){
-        AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
-        return AmazonS3ClientBuilder.standard()
+    public AmazonS3Client amazonS3Client(){
+        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+        return (AmazonS3Client) AmazonS3ClientBuilder
+                .standard()
                 .withRegion(region)
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .build();
     }
-    //run - vmOption에 다음과 같은 문장을 추가한다.
-    //Dcom.amazonaws.sdk.disableEc2Metadata=true
 }
