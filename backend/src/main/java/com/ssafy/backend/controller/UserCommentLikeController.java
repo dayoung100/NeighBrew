@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/like")
 @RequiredArgsConstructor
+@RequestMapping("/api/like")
 public class UserCommentLikeController {
     private final UserCommentLikeService userCommentLikeService;
 

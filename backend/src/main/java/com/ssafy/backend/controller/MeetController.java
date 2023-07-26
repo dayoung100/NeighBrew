@@ -1,7 +1,7 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.Enum.PushType;
+import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.Enum.UploadType;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetUserDto;
@@ -9,21 +9,21 @@ import com.ssafy.backend.entity.Follow;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.service.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 //모임 생성, 수정, 삭제를 관장하는 컨트롤러
+@Slf4j
 @RestController
 @RequestMapping("/api/meet")
-@Slf4j
+@RequiredArgsConstructor
 public class MeetController {
     private final MeetService meetService;
     private final MeetUserService meetUserService;
@@ -31,22 +31,6 @@ public class MeetController {
     private final FollowService followService;
     private final UserService userService;
     private final S3Service s3Service;
-
-    @Autowired
-    public MeetController(MeetService meetService,
-                          MeetUserService meetUserService,
-                          PushService pushService,
-                          FollowService followService,
-                          UserService userService,
-                          S3Service s3Service
-    ) {
-        this.meetService = meetService;
-        this.meetUserService = meetUserService;
-        this.pushService = pushService;
-        this.followService = followService;
-        this.userService = userService;
-        this.s3Service = s3Service;
-    }
 
     //모든 모임에 대해 출력
     @GetMapping()
@@ -95,7 +79,7 @@ public class MeetController {
             }
 
             return ResponseEntity.ok(createdMeet);
-        }catch(Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 

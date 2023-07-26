@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/drinkreview")
 @RequiredArgsConstructor
+@RequestMapping("/api/drinkreview")
 public class DrinkReviewController {
     private final DrinkReviewService drinkReviewService;
 

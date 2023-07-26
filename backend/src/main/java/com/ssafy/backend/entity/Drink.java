@@ -1,5 +1,6 @@
 package com.ssafy.backend.entity;
 
+import com.ssafy.backend.dto.DrinkUpdateDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,17 +39,29 @@ public class Drink {
 
 
     @Builder
-    public Drink(String name, String image, Float degree, String description) {
+    public Drink(String name, String image, Float degree, String description, Long tagId) {
         this.name = name;
         this.image = image;
         this.degree = degree;
         this.description = description;
+        this.tagId = tagId;
     }
 
-    public void update(String name, String image, Float degree, String description) {
-        this.name = name;
-        this.image = image;
-        this.degree = degree;
-        this.description = description;
+    public void updateDrink(DrinkUpdateDto drinkUpdateDto) {
+        if (drinkUpdateDto.getName() != null) {
+            this.name = drinkUpdateDto.getName();
+        }
+        if (drinkUpdateDto.getImage() != null) {
+            this.image = drinkUpdateDto.getImage();
+        }
+        if (drinkUpdateDto.getDegree() != null) {
+            this.degree = drinkUpdateDto.getDegree();
+        }
+        if (drinkUpdateDto.getDescription() != null) {
+            this.description = drinkUpdateDto.getDescription();
+        }
+        if (drinkUpdateDto.getTagId() != null) {
+            this.tagId = drinkUpdateDto.getTagId();
+        }
     }
 }

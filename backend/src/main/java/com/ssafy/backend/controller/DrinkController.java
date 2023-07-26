@@ -4,6 +4,7 @@ import com.ssafy.backend.dto.DrinkDto;
 import com.ssafy.backend.dto.DrinkUpdateDto;
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.service.DrinkService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,15 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/drink")
 @Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/drink")
 public class DrinkController {
     private final DrinkService drinkService;
-
-    public DrinkController(DrinkService drinkService) {
-        this.drinkService = drinkService;
-    }
 
     // 모든 술 조회
     @GetMapping()
