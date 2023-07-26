@@ -10,6 +10,7 @@ const GoogleLogin = () => {
     //34.64.126.58
     axios
       .post("http://34.64.126.58/api/auth/google", {
+        // .post("http://192.168.31.71:8080/api/auth/google", {
         code: code,
       })
       .then(res => {

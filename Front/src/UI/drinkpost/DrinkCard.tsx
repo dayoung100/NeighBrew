@@ -1,12 +1,15 @@
+// drinkcard
+
 // 술장에 올려질 술 하나하나의 컴포넌트입니다.
 // 큰 이미지 하나와 술의 이름으로 이루어져있습니다.
 
 import styled from "styled-components";
 import whiskeyImage from "../../assets/whiskeyImage.png";
 import { useNavigate } from "react-router-dom";
+import { Drink } from "../../Type/types";
 
 const Card = styled.span`
-  width: 25%;
+  width: 33%;
   margin-bottom: 30px;
 `;
 
@@ -16,19 +19,16 @@ const CardImage = styled.img`
   margin: 10px;
 `;
 
-type drink = {
-  drinkId: number;
-};
-
-const DrinkCard = (props: { drink: object }) => {
+const DrinkCard = ({ drink }: { drink: Drink }) => {
   const navigate = useNavigate();
+
   const moveToDrinkDetailHandler = () => {
-    navigate(`/drinkpost/${props.drink.drinkId}`);
+    navigate(`/drinkpost/${drink.drinkId}`);
   };
   return (
     <Card onClick={() => moveToDrinkDetailHandler()}>
       <CardImage src={whiskeyImage}></CardImage>
-      <p>{props.drink.name}</p>
+      <p>{drink.name}</p>
     </Card>
   );
 };
