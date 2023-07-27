@@ -1,10 +1,7 @@
 package com.ssafy.backend.entity;
 
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,8 +11,8 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @ToString
-@Builder
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class S3File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +24,11 @@ public class S3File {
     private String uploadFileUrl;
 
 
-    public S3File() {
+    @Builder
+    public S3File(String originalFileName, String uploadFileName, String uploadFilePath, String uploadFileUrl) {
+        this.originalFileName = originalFileName;
+        this.uploadFileName = uploadFileName;
+        this.uploadFilePath = uploadFilePath;
+        this.uploadFileUrl = uploadFileUrl;
     }
 }
