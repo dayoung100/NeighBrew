@@ -1,5 +1,5 @@
 import Navbar from "../navbar/Navbar";
-import Footer from "../footer/Footer";
+// import Footer from "../footer/Footer";
 import { useNavigate, useParams } from "react-router-dom";
 import whiskeyImage from "../../assets/whiskeyImage.png";
 import ReviewItem from "../components/ReviewItem";
@@ -9,7 +9,7 @@ import backIcon from "../../assets/backIcon.svg";
 import sirenIcon from "../../assets/sirenIcon.svg";
 import { callApi } from "../../utils/api";
 import { useState, useEffect } from "react";
-import { Drink } from "../../Type/types";
+import { Drink, Review } from "../../Type/types";
 
 const CreateReviewDiv = styled.div`
   display: flex;
@@ -55,9 +55,10 @@ const IconAndTextDiv = styled.div`
 
 const DrinkpostDetail = () => {
   const { drinkId } = useParams();
-
+  const navigate = useNavigate();
   const [detail, setDetail] = useState<Drink>();
-  const [review, setReview] = useState([]);
+  const [reviewList, setReviewList] = useState<Review[]>([]);
+
   // const drinkUrl = `http://34.64.126.58:5173/drink/${drinkId}`;
   // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
@@ -72,11 +73,20 @@ const DrinkpostDetail = () => {
     // .then(res=> )
   }, []);
 
+  useEffect(() => {
+    callApi("get", `api/drinkreview/${drinkId}`)
+      .then(res => {
+        setReviewList(prev => [...prev, ...res.data.content]);
+        console.log(res.data.content);
+      })
+      .catch(err => console.log(err));
+  }, []);
+
   return (
     <>
       <Navbar></Navbar>
       <DrinkpostDetailNavbar>
-        <NavbarBackIcon>
+        <NavbarBackIcon onClick={() => navigate(-1)}>
           <img src={backIcon} alt="" />
         </NavbarBackIcon>
         <h2 style={{ margin: "12px 0px 8px 23px" }}>{detail?.name}</h2>
@@ -104,18 +114,16 @@ const DrinkpostDetail = () => {
           <IconAndTextDiv>
             <img src={reviewIcon} alt="reviewIcon" />
             <p>후기 </p>
-            <p> 36</p>
+            <p>{reviewList.length}</p>
           </IconAndTextDiv>
           <CreateReviewButton>
             <span style={{ padding: "10px 0px 10px" }}>후기 작성하기</span>
           </CreateReviewButton>
         </CreateReviewDiv>
         <div className="reviewList">
-          <ReviewItem
-            userId={3}
-            image="reviewImage"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia quis nesciunt aliquid nulla eos nemo atque dolorem expedita, non reprehenderit. Quidem ad vero minima eum. Voluptatibus in reiciendis sunt et?"
-          ></ReviewItem>
+          {reviewList.map(review => {
+            return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
+          })}
         </div>
       </div>
       {/* <Footer></Footer> */}

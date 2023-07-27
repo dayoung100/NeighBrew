@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import likeIcon from "../../assets/likeIcon.svg";
-import { useState, useRef } from "react";
+import { useState } from "react";
+import { Review } from "../../Type/types";
 
 const ReviewCard = styled.div`
   background-color: white;
@@ -12,7 +13,7 @@ const ReviewCard = styled.div`
 const ReviewImg = styled.div`
   background-color: var(--c-gray);
   border-radius: 12px;
-  width: 90px;
+  min-width: 90px;
   height: 90px;
 `;
 
@@ -28,13 +29,7 @@ const MoreButton = styled.button`
   border: none;
 `;
 
-type ReviewItemProps = {
-  userId: number;
-  image: string;
-  description: string;
-};
-
-const ReviewItem = (props: ReviewItemProps) => {
+const ReviewItem = ({ review }: { review: Review }) => {
   const [limit, setLimit] = useState(62);
   const toggleEllipsis = (str: string, limit: number) => {
     return {
@@ -50,15 +45,15 @@ const ReviewItem = (props: ReviewItemProps) => {
     <>
       <ReviewCard>
         <ReviewImg>
-          <img src="#" alt={props.image} />
+          <img src={review.img} alt="reviewImg" />
         </ReviewImg>
         <div>
           <UserCard>
             <div>
               <span>
-                <img src="#" alt="profile" />
+                <img src={review.user.profile} alt="profile" />
               </span>
-              <span>{props.userId}</span>
+              <span>{review.user.name}</span>
             </div>
             <div>
               <img src={likeIcon} alt="like" />
@@ -67,9 +62,9 @@ const ReviewItem = (props: ReviewItemProps) => {
           </UserCard>
           <div style={{ marginLeft: "10px" }}>
             <p style={{ textAlign: "start" }}>
-              {toggleEllipsis(props.description, limit).string}
-              {toggleEllipsis(props.description, limit).isShowMore && (
-                <MoreButton onClick={onClickMore(props.description)}>...더보기</MoreButton>
+              {toggleEllipsis(review.content, limit).string}
+              {toggleEllipsis(review.content, limit).isShowMore && (
+                <MoreButton onClick={onClickMore(review.content)}>...더보기</MoreButton>
               )}
             </p>
           </div>
