@@ -22,7 +22,7 @@
       var stompClient = null;
 
       function connect() {
-        var socket = new SockJS("http://192.168.137.1:8080/ws"); // 서버의 WebSocket endpoint 경로를 지정
+        var socket = new SockJS("http://192.168.137.1:8080/ws"); // 서버의 WebSocket endpoint 경로를 지정함
         console.log(socket);
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
