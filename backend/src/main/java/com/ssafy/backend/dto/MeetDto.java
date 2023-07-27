@@ -1,5 +1,6 @@
 package com.ssafy.backend.dto;
 
+import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.Meet;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,14 +27,13 @@ public class MeetDto {
     private Integer minAge;
     private Integer maxAge;
     private Float minLiverPoint;
-    private List<UserDto> attendUser;
-    private Long drinkId;
+    private Drink drink;
     private String imgSrc;
 
     public MeetDto() {}
 
     @Builder
-    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint, Long drinkId, String imgSrc) {
+    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc) {
         this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;
@@ -48,7 +48,7 @@ public class MeetDto {
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.minLiverPoint = minLiverPoint;
-        this.drinkId = drinkId;
+        this.drink = drink;
         this.imgSrc = imgSrc;
     }
 
