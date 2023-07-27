@@ -63,8 +63,10 @@ public class MeetController {
         multipartFile.ifPresent(file -> log.info("파일 이름 : {} ", file.getOriginalFilename()));
 
         try {
-            meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
-            Meet createdMeet = meetService.saveMeet(meetDto);
+            if(drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
+            if(multipartFile.isPresent()) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
+
+            Meet createdMeet = meetService.saveMeet(meetDto, drinkId);
             User hostUser = userService.findByUserId(userId);
 
             //MeetUser 정보를 추가한다.

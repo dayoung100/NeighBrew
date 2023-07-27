@@ -136,5 +136,4 @@ public class Meet {
                 .imgSrc(this.imgSrc)
                 .build();
     }
-
 }

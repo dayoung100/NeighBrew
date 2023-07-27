@@ -6,33 +6,28 @@ import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetUserDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.MeetUser;
+import com.ssafy.backend.entity.Tag;
+import com.ssafy.backend.repository.DrinkRepository;
 import com.ssafy.backend.repository.MeetRepository;
 import com.ssafy.backend.repository.MeetUserRepository;
 import com.ssafy.backend.repository.TagRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MeetService {
 
     private MeetRepository meetRepository;
     private MeetUserRepository meetUserRepository;
     private TagRepository tagRepository;
-
-    @Autowired
-    public MeetService(MeetRepository meetRepository,
-                       MeetUserRepository meetUserRepository) {
-        this.meetRepository = meetRepository;
-        this.meetUserRepository = meetUserRepository;
-    }
+    private DrinkRepository drinkRepository;
 
     public List<MeetDto> findAll() {
         log.info("모든 모임 상세정보 출력 ");
@@ -100,13 +95,25 @@ public class MeetService {
         return userMeets;
     }
 
-    public Meet saveMeet(MeetDto meetDto) {
+    public Meet saveMeet(MeetDto meetDto, Long drinkId) {
         log.info("모임 생성 : {} ", meetDto);
         meetDto.setNowParticipants(1); //참여자는 방장 1명 뿐이기 때문
 
+        log.info("태그 Id 출력{}", meetDto.getTagId());
         Meet meet = meetDto.toEntity();
-        meet.setCreatedAt(LocalDateTime.now());
-        meet.setUpdatedAt(LocalDateTime.now());
+        try{
+            Optional<Tag> tag = tagRepository.findByTagId(meetDto.getTagId());
+            //log.info("끼엑{}",tagRepository.findByTagId(meetDto.getTagId()).get());
+            //meet.setTag(tagRepository.findByTagId(meetDto.getTagId()).orElseThrow(()-> new IllegalArgumentException("태그 정보가 올바르지 않습니다.")));
+            log.info("뿌애ㅔ에에에렉");
+            meet.setDrink(drinkRepository.findByDrinkId(drinkId).orElseThrow(()-> new IllegalArgumentException("주종 정보가 올바르지 않습니다.")));
+            meet.setCreatedAt(LocalDateTime.now());
+            meet.setUpdatedAt(LocalDateTime.now());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        log.info("얼라리 문제 생기나 : {} ", meet);
 
         return meetRepository.save(meet);
     }
