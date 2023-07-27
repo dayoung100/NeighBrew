@@ -93,7 +93,7 @@ const LiverDiv = styled.div<{ liverPoint: number }>`
   background-image: linear-gradient(to top, #e24965 50%, #fff 50%);
   background-size: ${props => "50% " + (props.liverPoint + 80) + "%"};
   /* background-size: 50% 150%; */
-  animation: fillAnimation 3s forwards;
+  animation: fillAnimation 5s forwards;
   @keyframes fillAnimation {
     0% {
       background-position: 0 0;
@@ -140,6 +140,7 @@ const MyPage = () => {
     const api = callApi("get", "api/user/guard/myinfo")
       .then(res => {
         setUserData(res.data);
+        console.log(res.data);
       })
       .catch(err => console.log(err));
   };
