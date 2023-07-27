@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import temgif from "../../assets/temgif.gif";
 import SockJS from "sockjs-client";
 import axios from "axios";
-import { CompatClient, Stomp } from "@stomp/stompjs";
+import { CompatClient, Stomp, Client } from "@stomp/stompjs";
 import { Chat } from "../../Type/types";
 
 const MyChat = styled.div`
@@ -215,40 +215,148 @@ const ChatRoom = () => {
   const chaterInfoHandler = () => {
     isModal ? setIsModal(false) : setIsModal(true);
   };
-
-  const client = useRef<CompatClient>();
+  // var stompClient: any = null;
+  // const connectHandler = () => {
+  //   var socket = new SockJS("http://192.168.137.1:8080/ws"); // 서버의 WebSocket endpoint 경로를 지정
+  //   console.log(socket);
+  //   stompClient = Stomp.over(socket);
+  //   stompClient.connect({}, function (frame: any) {
+  //     console.log("Connected: " + frame);
+  //     stompClient.subscribe("/sub/messages", function (chatMessage: any) {
+  //       console.log(chatMessage);
+  //     });
+  //   });
+  // };
+  // const client = useRef<CompatClient>();
 
   // const connectHandler = () => {
-  //   client.current = Stomp.over(() => {
-  //     const sock = new SockJS(`http://34.64.126.58/api/${id}`);
-  //     return sock;
+  //   // client.current = Stomp.over(() => {
+  //   //   const sock = new SockJS("http://192.168.137.1:8080/ws");
+  //   //   console.log(sock);
+  //   //   return sock;
+  //   // });
+  //   client.current = Stomp.client("ws://192.168.137.1:8080/ws");
+  //   client.current.connect({}, () => {
+  //     // callback 함수 설정, 대부분 여기에 sub 함수 씀
+  //     client.current!.subscribe(`/sub/messages`, message => {
+  //       setMessage(JSON.parse(message.body));
+  //     });
   //   });
-  //   client.current.connect(
-  //     {
-  //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+  // };
+  // const connectHandler = () => {
+  //   client.current = Stomp.over({
+  //     webSocketFactory: () => new SockJS("http://192.168.137.1:8080/ws"),
+  //     debug: function (str: any) {
+  //       console.log(str);
   //     },
-  //     () => {
-  //       client.current?.subscribe(`/chat/room/${id}`, msg => {
-  //         const message = JSON.parse(msg.body);
-  //         setMessages(prev => [...prev, { message: message.content, userid: message.userId }]);
-  //       });
-  //     }
+  //     reconnectDelay: 5000,
+  //     heartbeatIncoming: 4000,
+  //     heartbeatOutgoing: 4000,
+  //     onConnect: () => {
+  //       subscribe();
+  //     },
+  //     onStompError: (frame: any) => {
+  //       console.error(frame);
+  //     },
+  //   });
+
+  //   client.current.activate();
+  // };
+  // const subscribe = () => {
+  //   client.current!.subscribe(`/sub/messages`, message => {
+  //     setMessage(JSON.parse(message.body));
+  //   });
+  // };
+  // let stompClient: any = null;
+  // const connect = () => {
+  //   var socket = new SockJS("http://192.168.137.1:8080/ws"); // 서버의 WebSocket endpoint 경로를 지정
+  //   console.log(socket);
+  //   console.log(client);
+  //   stompClient = Stomp.over(socket);
+  //   stompClient.connect({}, function (frame: any) {
+  //     console.log("Connected: " + frame);
+  //     stompClient.subscribe("/sub/messages", function (chatMessage: any) {
+  //       console.log(chatMessage);
+  //     });
+  //   });
+  // };
+  // useEffect(() => {
+  //   connect();
+  // }, []);
+  // function disconnect() {
+  //   if (stompClient !== null) {
+  //     stompClient.disconnect();
+  //   }
+  //   console.log("Disconnected");
+  // }
+
+  // function joinChatRoom() {
+  //   stompClient.send(
+  //     "/sub/chat/1/sendMessage",
+  //     {},
+  //     JSON.stringify({
+  //       message: "Whoosp!!!!!!!!",
+  //       userId: 1,
+  //     })
+  //   );
+  // }
+
+  // function joinChatRoom() {
+  //     var messageInput = document.getElementById('message');
+  //     var message = messageInput.value;
+  //     stompClient.send("/sub/room/1/join", {}, JSON.stringify({ 'userId': 1 }));
+  // }
+
+  // const sendHandler = () => {
+  //   client.current!.send(
+  //     "/messages",
+  //     { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  //     JSON.stringify({
+  //       chatmessage: "a",
+  //     })
   //   );
   // };
-  // const sendHandler = () => {
-  //   client.current.send(
-  //       "/백엔드와 협의한 api주소",
-  //       {Authorization: `Bearer ${localStorage.getItem("token")}`},
-  //       JSON.stringify({
-  //         type: "TALK",
-  //         roomId: id,
-  //         sender: user.name,
-  //         message: message
-  //       })
-  //     );
-  // };
+  const client = new Client({
+    // brokerURL: "ws://192.168.137.1:8080/ws",
+    webSocketFactory: () => new SockJS("http://192.168.137.1:8080/ws"),
+    debug: function (str: string) {
+      console.log(str);
+    },
+  });
+
+  client.activate();
+
+  const onClick = (message: String) => {
+    console.log(client.connected);
+    if (!client.connected) return;
+
+    client.publish({
+      destination: "/sub/chat/1/sendMessage",
+      body: JSON.stringify({
+        message: message,
+      }),
+    });
+  };
+
+  const wsSubscribe = () => {
+    client.onConnect = () => {
+      client.subscribe(
+        "/sub/messages",
+        (msg: any) => {
+          const newMessage = JSON.parse(msg.body).message;
+        },
+        { id: "user" }
+      );
+    };
+  };
+
+  const wsDisconnect = () => {
+    client.deactivate();
+  };
   return (
     <div ref={rapperDiv}>
+      <button onClick={wsSubscribe}>연결</button>
+      {/* <button onClick={joinChatRoom}>메세지 보내기</button> */}
       <header>
         {/* <Navbar /> */}
         <ChatNav>

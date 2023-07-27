@@ -39,7 +39,7 @@ const meetingMy = () => {
         <MeetTitle>내가 주최 중인 모임</MeetTitle>
         <ListInfoItem
           title="내가 주최 중인 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
+          imgSrc="https://item.kakaocdn.net/do/c5c470298d527ef65eb52883f0f186c48f324a0b9c48f77dbce3a43bd11ce785"
           tag="소주/맥주"
           content={<MeetingDetail />}
           numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
@@ -52,7 +52,7 @@ const meetingMy = () => {
         <MeetTitle>내가 참여 중인 모임</MeetTitle>
         <ListInfoItem
           title="내가 참여 중인 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
+          imgSrc="https://item.kakaocdn.net/do/c5c470298d527ef65eb52883f0f186c48f324a0b9c48f77dbce3a43bd11ce785"
           tag="소주/맥주"
           content={<MeetingDetail />}
           numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
@@ -65,7 +65,7 @@ const meetingMy = () => {
         <MeetTitle>내가 신청한 모임</MeetTitle>
         <ListInfoItem
           title="내가 신청한 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
+          imgSrc="https://item.kakaocdn.net/do/c5c470298d527ef65eb52883f0f186c48f324a0b9c48f77dbce3a43bd11ce785"
           tag="소주/맥주"
           content={<MeetingDetail />}
           numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
@@ -75,7 +75,7 @@ const meetingMy = () => {
         ></ListInfoItem>
         <ListInfoItem
           title="내가 신청한 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
+          imgSrc="https://item.kakaocdn.net/do/c5c470298d527ef65eb52883f0f186c48f324a0b9c48f77dbce3a43bd11ce785"
           tag="소주/맥주"
           content="주류 정보는 이렇게 다른 요소는 비워두고 쓰면 될 것 같다"
           numberInfo={null}
