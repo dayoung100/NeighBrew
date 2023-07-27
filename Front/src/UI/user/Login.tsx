@@ -49,7 +49,7 @@ const Login = () => {
   const KakaologinHandler = async () => {
     axios({
       method: "get",
-      url: "http://34.64.126.58:5173/api/auth/login/kakao",
+      url: "http://34.64.126.58:9999/api/auth/login/kakao",
       // url: "http://192.168.31.71:8080/api/auth/login/kakao",
     })
       .then(res => {
@@ -62,8 +62,8 @@ const Login = () => {
   };
   const NaverloginHandler = async () => {
     axios({
-      method: "get", 
-      url: "http://34.64.126.58:5173/api/auth/login/naver",
+      method: "get",
+      url: "http://34.64.126.58:9999/api/auth/login/naver",
       // url: "http://192.168.31.71:8080/api/auth/login/naver",
     })
       .then(res => {
@@ -77,7 +77,7 @@ const Login = () => {
   const GoogleloginHandler = async () => {
     axios({
       method: "get",
-      url: "http://34.64.126.58:5173/api/auth/login/google",
+      url: "http://34.64.126.58:9999/api/auth/login/google",
       // url: "http://192.168.31.71:8080/api/auth/login/google",
     })
       .then(res => {
