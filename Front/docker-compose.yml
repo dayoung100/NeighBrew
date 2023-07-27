@@ -8,6 +8,3 @@ services:
     ports:
       - "5173:5173"
     restart: always
-    environment:
-      - NODE_ENV=production
-    # Add any other environment variables if required
