@@ -54,14 +54,14 @@ const IconAndTextDiv = styled.div`
 `;
 
 const DrinkpostDetail = () => {
-  const id = useParams();
+  const { drinkId } = useParams();
 
   const [detail, setDetail] = useState<Drink>();
   const [review, setReview] = useState([]);
-  const drinkUrl = `http://34.64.126.58:5173/drink/${id.drinkId}`;
-  const reviewUrl = `http://34.64.126.58:5173/drinkreview/${id.drinkId}`;
+  // const drinkUrl = `http://34.64.126.58:5173/drink/${drinkId}`;
+  // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
-    callApi("get", drinkUrl)
+    callApi("get", `api/drink/${drinkId}`)
       .then(res => {
         setDetail(res.data);
         console.log(1);
