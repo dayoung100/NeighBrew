@@ -15,7 +15,15 @@ export default defineConfig({
       },
     },
   },
-  define: {
-    global: {},
+  // define: {
+  //   global: {},
+  // },
+  optimizeDeps: {
+    esbuildOptions: {
+      // Node.js global to browser globalThis
+      define: {
+        global: "globalThis",
+      },
+    },
   },
 });

@@ -13,7 +13,7 @@ import OneLineListItem from "../components/OneLineListItem";
 import ListInfoItem from "../components/ListInfoItem";
 import ImageInput from "../components/ImageInput";
 import autoAnimate from "@formkit/auto-animate";
-import { Meeting } from "../../Type/types";
+import { Meetings } from "../../Type/types";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -187,10 +187,7 @@ const MeetingInfoManage = () => {
       <div style={{ padding: "0 1.5rem", marginBottom: "7rem" }}>
         <QuestionDiv>
           <Title>모임의 이름</Title>
-          <Input
-            placeholder="모임의 이름을 입력해주세요"
-            value={meetingInfo.title}
-          />
+          <Input placeholder="모임의 이름을 입력해주세요" value={meetingInfo.title} />
         </QuestionDiv>
         <QuestionDiv ref={parent}>
           <Title>우리가 마실 것은</Title>
@@ -209,13 +206,9 @@ const MeetingInfoManage = () => {
           {isSearchFocused && selectedDrink === "" && (
             <SearchResultDiv>
               <div style={{ overflow: "auto", height: "100%", flexGrow: "1" }}>
-                {searchResultList.map((res) => {
+                {searchResultList.map(res => {
                   return (
-                    <OneLineListItem
-                      content={res}
-                      tag="주종"
-                      getFunc={getDrink}
-                    ></OneLineListItem>
+                    <OneLineListItem content={res} tag="주종" getFunc={getDrink}></OneLineListItem>
                   );
                 })}
               </div>
