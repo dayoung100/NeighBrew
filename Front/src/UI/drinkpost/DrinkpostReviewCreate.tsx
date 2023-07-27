@@ -4,6 +4,7 @@ import defaultImage from "../../assets/defaultImage.svg";
 import imageButton from "../../assets/imageButton.svg";
 import styled from "styled-components";
 import { useState } from "react";
+import { callApi } from "../../utils/api";
 
 const Navdiv = styled.div`
   display: flex;
@@ -33,6 +34,18 @@ const DrinkpostReviewCreate = () => {
   const [review, setReview] = useState("");
   const reviewHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReview(e.target.value);
+  };
+
+  const reviewSubmit = () => {
+    callApi("post", "api/drinkreview/guard")
+      .then(res => {
+        console.log(res);
+        console.log("잘댐");
+      })
+      .catch(err => {
+        console.log(err);
+        console.log("안댐");
+      });
   };
 
   return (
