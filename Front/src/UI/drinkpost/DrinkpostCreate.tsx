@@ -90,7 +90,7 @@ const DrinkpostCreate = () => {
   const drinkAlcoholHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDrinkAlcohol(e.target.value);
   };
-
+  const temp = () => {};
   return (
     <div style={{ border: "2px solid black" }}>
       <h3>술 문서 등록하기</h3>
@@ -106,7 +106,7 @@ const DrinkpostCreate = () => {
         </InputDiv>
         <h3>카테고리</h3>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <DrinkCategory />
+          <DrinkCategory getFunc={temp} />
         </div>
         <GuideText>종류</GuideText>
         <InputDiv>
