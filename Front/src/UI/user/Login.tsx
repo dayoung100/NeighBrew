@@ -62,7 +62,7 @@ const Login = () => {
   };
   const NaverloginHandler = async () => {
     axios({
-      method: "get",
+      method: "get", 
       url: "http://34.64.126.58:5173/api/auth/login/naver",
       // url: "http://192.168.31.71:8080/api/auth/login/naver",
     })
