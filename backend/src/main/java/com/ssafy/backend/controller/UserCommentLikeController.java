@@ -17,11 +17,12 @@ public class UserCommentLikeController {
     private final UserCommentLikeService userCommentLikeService;
 
     @PostMapping("/guard/{reviewId}")
-    public ResponseEntity<?> userLikeReview(HttpServletRequest request, @PathVariable Long reviewId) {
+    public ResponseEntity<String> userLikeReview(HttpServletRequest request, @PathVariable Long reviewId) {
         String userId = (String) request.getAttribute("userId");
+        boolean isLiked = userCommentLikeService.toggleUserLike(Long.valueOf(userId), reviewId);
 
-        userCommentLikeService.createUserLike(Long.valueOf(userId), reviewId);
-
-        return ResponseEntity.ok().build();
+        return isLiked ? ResponseEntity.ok("좋아요 등록 성공")
+                :
+                ResponseEntity.ok("좋아요 취소 성공");
     }
 }
