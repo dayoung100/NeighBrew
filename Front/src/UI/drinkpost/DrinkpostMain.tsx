@@ -45,7 +45,7 @@ const drinkpost = () => {
   const [drinkList, setDrinkList] = useState<Drink[]>([]);
   // 여기에는 axios 요청 들어갈 예정
   useEffect(() => {
-    callApi("get", url)
+    callApi("get", `api/drink?page=${page}&size=12`)
       .then(res => {
         setDrinkList(prev => [...prev, ...res.data.content]);
         console.log(res.data);
