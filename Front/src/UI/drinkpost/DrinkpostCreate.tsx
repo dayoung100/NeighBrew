@@ -93,9 +93,6 @@ const DrinkpostCreate = () => {
   const drinkAlcoholHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDrinkAlcohol(e.target.value);
   };
-<<<<<<< Updated upstream
-  const temp = () => {};
-=======
   const drinkDescriptionHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDrinkDescription(e.target.value);
   };
@@ -115,7 +112,6 @@ const DrinkpostCreate = () => {
       .catch(err => console.log(err));
   };
 
->>>>>>> Stashed changes
   return (
     <div style={{ border: "2px solid black" }}>
       <h3>술 문서 등록하기</h3>
@@ -131,11 +127,7 @@ const DrinkpostCreate = () => {
         </InputDiv>
         <h3>카테고리</h3>
         <div style={{ display: "flex", justifyContent: "center" }}>
-<<<<<<< Updated upstream
-          <DrinkCategory getFunc={temp} />
-=======
           <DrinkCategory getFunc={getDrinkCategory}></DrinkCategory>
->>>>>>> Stashed changes
         </div>
         <GuideText>설명</GuideText>
         <InputDiv>
