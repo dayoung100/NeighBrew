@@ -1,10 +1,23 @@
-FROM node:lts-alpine
-ENV NODE_ENV=production
-WORKDIR /usr/src/app
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
-RUN npm install --production --silent && mv node_modules ../
+# Use Node.js v18 base image
+FROM node:18
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to container
+COPY package*.json ./
+
+# Install project dependencies
+RUN npm install
+
+# Copy the entire project to the container
 COPY . .
+
+# Build the project
+RUN npm run build
+
+# Expose the port your app is running on
 EXPOSE 5173
-RUN chown -R node /usr/src/app
-USER node
-CMD ["npm", "start"]
+
+# Command to run your app
+CMD ["npm", "run", "start"]
