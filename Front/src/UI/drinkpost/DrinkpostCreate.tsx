@@ -7,6 +7,8 @@ import { useState } from "react";
 import createButton from "../../assets/createButton.svg";
 import imageButton from "../../assets/imageButton.svg";
 import defaultImage from "../../assets/defaultImage.svg";
+import { callApi } from "../../utils/api";
+import { useNavigate } from "react-router-dom";
 
 // 여기부터 지정한 부분까지 style 부분입니다.
 // GuideText는 h3 tag가 상하 margin을 너무 많이 잡아서 새로 만든 겁니다.
@@ -69,26 +71,45 @@ const InputAlcohol = styled.input`
     border-bottom: 2px solid var(--c-black);
   }
 `;
+
 //여기까지 style 부분입니다.
 
 const DrinkpostCreate = () => {
+  const [selectedCategory, setSelectedCategory] = useState(0);
+  const getDrinkCategory = (tagId: number) => {
+    setSelectedCategory(tagId);
+  };
   const [drinkName, setDrinkName] = useState("");
   const [drinkType, setDrinkType] = useState("");
-  const [drinkNation, setDrinkNation] = useState("");
+  const [drinkDescription, setDrinkDescription] = useState("");
   const [drinkAlcohol, setDrinkAlcohol] = useState("");
+
+  const navigate = useNavigate();
 
   const drinkNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDrinkName(e.target.value);
     console.log("name");
   };
-  const drinkTypeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDrinkType(e.target.value);
-  };
-  const drinkNationHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDrinkNation(e.target.value);
-  };
   const drinkAlcoholHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDrinkAlcohol(e.target.value);
+  };
+  const drinkDescriptionHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDrinkDescription(e.target.value);
+  };
+
+  const submitHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    callApi("post", "api/drink", {
+      name: drinkName,
+      image: null,
+      description: drinkDescription,
+      degree: drinkAlcohol,
+    })
+      .then(res => {
+        console.log(res.data);
+        navigate(`/drinkpost/${res.data.drinkId}`);
+      })
+      .catch(err => console.log(err));
   };
 
   return (
@@ -106,22 +127,14 @@ const DrinkpostCreate = () => {
         </InputDiv>
         <h3>카테고리</h3>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <DrinkCategory />
+          <DrinkCategory getFunc={getDrinkCategory}></DrinkCategory>
         </div>
-        <GuideText>종류</GuideText>
+        <GuideText>설명</GuideText>
         <InputDiv>
           <Input
-            value={drinkType}
-            onChange={drinkTypeHandler}
-            placeholder="ex. 싱글몰트 위스키, 레드 와인"
-          ></Input>
-        </InputDiv>
-        <GuideText>국가</GuideText>
-        <InputDiv>
-          <Input
-            value={drinkNation}
-            onChange={drinkNationHandler}
-            placeholder="ex. 스코틀랜드, 일본"
+            value={drinkDescription}
+            onChange={drinkDescriptionHandler}
+            placeholder="ex. 탄닌 덕분에 은은한 단맛이 돌아요."
           ></Input>
         </InputDiv>
         <InputDivAlcohol>
@@ -129,6 +142,7 @@ const DrinkpostCreate = () => {
           <InputAlcohol value={drinkAlcohol} onChange={drinkAlcoholHandler}></InputAlcohol>
           <p>%</p>
         </InputDivAlcohol>
+
         <div style={{ marginTop: "20px", display: "flex", alignItems: "flex-end" }}>
           <span>
             <b>대표 이미지</b>
@@ -141,7 +155,7 @@ const DrinkpostCreate = () => {
           </span>
         </div>
       </div>
-      <div>
+      <div onClick={submitHandler}>
         <img src={createButton} alt="등록" />
       </div>
     </div>

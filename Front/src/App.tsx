@@ -37,7 +37,7 @@ function App() {
   return (
     <>
       <Routes>
-        {/* <Route
+        <Route
           path="/"
           element={
             <>
@@ -45,8 +45,8 @@ function App() {
               {isLodaing && <Login></Login>}
             </>
           }
-        /> */}
-        <Route path="/" element={<MeetingMain></MeetingMain>}></Route>
+        />
+        {/* <Route path="/" element={<MeetingMain></MeetingMain>}></Route> */}
         <Route path="/home" element={<Main />} />
         <Route path="/drinkpost" element={<Drinkpost />} />
         <Route path="/meet" element={<MeetingMain />}></Route>
