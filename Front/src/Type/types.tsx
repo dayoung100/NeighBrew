@@ -32,7 +32,10 @@ export interface Meetings {
   maxAge?: number;
   minLiverPoint?: number;
   attendUser: null;
-  drinkName: string;
+  drink: {
+    drinkId: number;
+    drinkName: string;
+  };
   imgSrc: string;
 }
 

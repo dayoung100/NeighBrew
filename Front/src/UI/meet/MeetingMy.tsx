@@ -9,6 +9,8 @@ import styled from "styled-components";
 import ListInfoItem from "../components/ListInfoItem";
 import MeetingDetail from "./MeetingDetailSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
+import { callApi } from "../../utils/api";
+import { Meetings } from "../../Type/types";
 
 const MeetingDiv = styled.div`
   margin-bottom: 2rem;
@@ -21,12 +23,39 @@ const MeetTitle = styled.div`
 `;
 
 const meetingMy = () => {
+  //네비게이터 : 모임 상세페이지로 이동
   const navigate = useNavigate();
-
   const GotoMeetDetailHandler = (meetId: number) => {
     console.log("goto detail page, meetId is: ", meetId, "[my]");
     navigate(`/meet/${meetId}`);
   };
+  //현재 유저의 userId
+  const [userId, setUserId] = useState();
+  //로컬 스토리지에서 userId 가져오기
+
+  //불러온 모임 데이터
+  const [meetData, setMeetData] = useState({
+    CREATE: [],
+    APPLY: [],
+    ATTEND: [],
+  }); //userId의 모임 전체
+  const [createMeet, setCreateMeet] = useState([]); //userId가 만든 모임
+  const [applyMeet, setApplyMeet] = useState([]); //userId가 지원한 모임
+  const [attendMeet, setAttendMeet] = useState([]); //userId가 참여한 모임
+
+  //api 호출
+  useEffect(() => {
+    const promise = callApi("get", `api/meet/mymeet/${userId}`);
+    promise.then((res) => {
+      setMeetData(res.data); //받아온 데이터로 meetData 세팅
+    });
+  }, []);
+  //create, apply, attend 모임 갱신
+  useEffect(() => {
+    setCreateMeet(meetData.CREATE);
+    setApplyMeet(meetData.APPLY);
+    setAttendMeet(meetData.ATTEND);
+  }, [meetData]);
 
   return (
     <div style={{ background: "var(--c-lightgray)", padding: "1rem" }}>

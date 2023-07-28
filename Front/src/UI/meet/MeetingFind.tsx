@@ -49,6 +49,7 @@ const meetingFind = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
+    console.log(tagId);
   };
 
   //필터 애니메이션 관련
@@ -64,8 +65,9 @@ const meetingFind = () => {
     "동구",
     "중구",
     "서구",
-    "유성",
-    "대덕",
+    "유성구",
+    "대덕구",
+    "구군",
   ]);
   const [dongList, setDongList] = useState([
     "봉명동",
@@ -73,10 +75,13 @@ const meetingFind = () => {
     "갈마1동",
     "삼성동",
     "탄방동",
+    "학하동",
+    "동",
   ]);
   const [sido, setSido] = useState("");
   const [gugun, setGugun] = useState("");
   const [dong, setDong] = useState("");
+  //TODO: 중복 코드인데 합칠 수 없나
   const sidoSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedSido = e.target.value;
     setSido(selectedSido);
@@ -93,6 +98,12 @@ const meetingFind = () => {
   //필터에 날짜 검색용
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const startDateSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setStartDate(e.target.value);
+  };
+  const endDateSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEndDate(e.target.value);
+  };
 
   //필터에 텍스트 검색용
   const [inputText, setInputText] = useState("");
@@ -106,6 +117,22 @@ const meetingFind = () => {
     const minute = date.getMinutes();
 
     return `${month}월 ${day}일 ${hour}시 ${minute}분`;
+  }
+
+  //태그ID를 태그 이름으로 변환
+  //TODO: 공용 변수로 빼기??
+  function getTagName(tagId: number) {
+    const tag = [
+      { tagId: 0, tagName: "전체" },
+      { tagId: 1, tagName: "양주" },
+      { tagId: 2, tagName: "전통주" },
+      { tagId: 3, tagName: "전체" },
+      { tagId: 4, tagName: "사케" },
+      { tagId: 5, tagName: "와인" },
+      { tagId: 6, tagName: "수제맥주" },
+      { tagId: 7, tagName: "소주/맥주" },
+    ];
+    return tag[tagId].tagName;
   }
 
   //필터용 함수
@@ -138,22 +165,40 @@ const meetingFind = () => {
   };
   //모임 이름으로 필터링
   const titleFiltering = (data: Meetings) => {
-    if (startDate === "" && endDate === "") return true;
-    return data.meetDate > startDate && data.meetDate < endDate;
+    if (inputText === "") return true;
+    return data.meetName === inputText;
   };
   //술의 이름으로 필터링
+  const drinkNameFiltering = (data: Meetings) => {
+    if (inputText === "") return true;
+    return data.drink.drinkName === inputText;
+  };
 
   //전체 필터
   useEffect(() => {
-    let filterData = [...meetData];
-    filterData = meetAllData.filter(categoryFiltering);
-    if (sido !== "") {
-      filterData = meetAllData.filter(sidoFiltering);
-    }
+    //전체 목록 중에 필터링 적용
+    const filterData = meetAllData.reduce((acc, cur) => {
+      //교집합만 push
+      if (
+        categoryFiltering(cur) &&
+        sidoFiltering(cur) &&
+        gugunFiltering(cur) &&
+        dongFiltering(cur) &&
+        dateFiltering(cur) &&
+        titleFiltering(cur) &&
+        drinkNameFiltering(cur)
+      ) {
+        acc.push(cur);
+      }
+      return acc;
+    }, []);
+    //필터링 후 모임들을 meetData에
     setMeetData(filterData);
-  }, [selectedCategory, sido]);
+  }, [selectedCategory, sido, gugun, dong, startDate, endDate, inputText]);
 
   return (
+    //TODO: 날짜 세팅에 props 설정
+    //TODO: 검색창 인풋에 props 설정
     <div>
       <CateDiv>
         <DrinkCategory getFunc={getDrinkCategory} />
@@ -219,7 +264,6 @@ const meetingFind = () => {
           )}
         </div>
         {meetData.map((meeting: Meetings) => {
-          //TODO: 태그 아이디로 태그 스트링으로 변환하기
           const meetId = meeting.meetId;
           const hasAgeLimit =
             (meeting.minAge ?? 0) > 0 || (meeting.maxAge ?? 0) > 0
@@ -227,12 +271,13 @@ const meetingFind = () => {
               : false;
           const position = `${meeting.sido} ${meeting.gugun} ${meeting.dong}`;
           const formattedDate = formateDate(meeting.meetDate);
+          const tagName = getTagName(meeting.tagId);
           return (
             <ListInfoItem
               key={meetId}
               title={meeting.meetName}
-              imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-              tag="태그"
+              imgSrc="../src/assets/tempgif.gif"
+              tag={tagName}
               content={
                 <MeetingDetail
                   position={position}
