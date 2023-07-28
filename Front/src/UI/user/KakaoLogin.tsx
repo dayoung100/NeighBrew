@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { callApi } from "../../utils/api";
 const KakaoLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -12,15 +13,19 @@ const KakaoLogin = () => {
         authorizationCode: code,
       })
       .then(res => {
-        console.log("로그인 성공");
-        console.log(res.data);
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
-        navigate("/meet");
+      })
+      .then(async () => {
+        await callApi("get", "api/user/guard/myinfo")
+          .then(res => {
+            localStorage.setItem("myId", JSON.stringify(res.data.userId));
+          })
+          .catch(err => console.log(err));
+        await navigate("/meet");
       })
       .catch(err => {
         console.log(err);
-        console.log("로그인 에러");
       });
   };
   useEffect(() => {
