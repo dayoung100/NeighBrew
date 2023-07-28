@@ -13,7 +13,6 @@ import com.ssafy.backend.repository.MeetUserRepository;
 import com.ssafy.backend.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,18 +23,16 @@ import java.util.*;
 @RequiredArgsConstructor
 public class MeetService {
 
-    private MeetRepository meetRepository;
-    private MeetUserRepository meetUserRepository;
-    private TagRepository tagRepository;
-    private DrinkRepository drinkRepository;
+    private final MeetRepository meetRepository;
+    private final MeetUserRepository meetUserRepository;
+    private final TagRepository tagRepository;
+    private final DrinkRepository drinkRepository;
 
     public List<MeetDto> findAll() {
-        log.info("모든 모임 상세정보 출력 ");
         List<Meet> list = meetRepository.findAll();
 
         List<MeetDto> dtos = new ArrayList<>();
         for(Meet meet : list){
-
             dtos.add(MeetDto.builder()
                     .meetId(meet.getMeetId())
                     .meetName(meet.getMeetName())
@@ -101,17 +98,11 @@ public class MeetService {
 
         log.info("태그 Id 출력{}", meetDto.getTagId());
         Meet meet = meetDto.toEntity();
-        try{
-            Optional<Tag> tag = tagRepository.findByTagId(meetDto.getTagId());
-            //log.info("끼엑{}",tagRepository.findByTagId(meetDto.getTagId()).get());
-            //meet.setTag(tagRepository.findByTagId(meetDto.getTagId()).orElseThrow(()-> new IllegalArgumentException("태그 정보가 올바르지 않습니다.")));
-            log.info("뿌애ㅔ에에에렉");
-            meet.setDrink(drinkRepository.findByDrinkId(drinkId).orElseThrow(()-> new IllegalArgumentException("주종 정보가 올바르지 않습니다.")));
-            meet.setCreatedAt(LocalDateTime.now());
-            meet.setUpdatedAt(LocalDateTime.now());
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+
+        meet.setDrink(drinkRepository.findByDrinkId(drinkId).orElseThrow(()-> new IllegalArgumentException("주종 정보가 올바르지 않습니다.")));
+        meet.setTag(tagRepository.findByTagId(meetDto.getTagId()).orElseThrow(()-> new IllegalArgumentException("태그 정보가 올바르지 않습니다.")));
+        meet.setCreatedAt(LocalDateTime.now());
+        meet.setUpdatedAt(LocalDateTime.now());
 
         log.info("얼라리 문제 생기나 : {} ", meet);
 

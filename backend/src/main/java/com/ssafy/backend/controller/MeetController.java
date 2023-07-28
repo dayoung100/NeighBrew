@@ -64,6 +64,7 @@ public class MeetController {
 
         try {
             if(drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
+            if(meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
             if(multipartFile.isPresent()) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
 
             Meet createdMeet = meetService.saveMeet(meetDto, drinkId);
@@ -85,7 +86,6 @@ public class MeetController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 
     //모임 수정
