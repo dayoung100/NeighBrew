@@ -44,3 +44,11 @@ export interface Drink {
   name: string;
   tagId: number;
 }
+
+export interface Review {
+  content: string;
+  drink: Drink;
+  drinkReviewId: number;
+  img: string;
+  user: User;
+}

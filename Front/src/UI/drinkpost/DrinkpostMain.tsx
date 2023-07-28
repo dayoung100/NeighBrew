@@ -7,7 +7,7 @@ import Navbar from "./../navbar/Navbar";
 import Footer from "../footer/Footer";
 import useIntersectionObserver from "./../../hooks/useIntersectionObserver";
 import DrinkpostCreateButton from "./DrinkpostCreateButton";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 // import axios from "axios";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
@@ -30,8 +30,8 @@ const ShowcaseBody = styled.div`
 
 const drinkpost = () => {
   const [page, setPage] = useState(0);
-  const url = `http://34.64.126.58:5173/drink?page=${page}&size=12`;
-  const navigate = useNavigate();
+
+  // const navigate = useNavigate();
 
   const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
     console.log(`감지결과 : ${isIntersecting}`);
