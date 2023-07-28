@@ -86,6 +86,7 @@ const TagDiv = styled.div`
   background-color: var(--c-yellow);
   margin: auto 0.5rem;
   padding: 0.3rem;
+  font-size: 12px;
 `;
 const LiverDiv = styled.div<{ liverPoint: number }>`
   position: relative;
@@ -116,15 +117,29 @@ const MyPage = () => {
     nickname: "awd",
   }); // 유저 정보
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
-  const [following, setFollowing] = useState(0); // 팔로잉 목록
+  const [following, setFollowing] = useState(0); // 팔로잉,팔로워 목록
   const { userid } = useParams();
   const [tags, setTags] = useState(["태그1", "태그2", "태그3"]);
   const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
   const Brewery = brewery(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
   const navigate = useNavigate();
-  const followHandler = () => {
-    setFollowing(prev => {
-      return prev === 0 ? 1 : 0;
+  console.log(userid);
+  const followHandler = async () => {
+    const api = await callApi("post", `api/follow/guard/${userid}`)
+      .then(res => {
+        followers();
+      })
+      .catch(err => console.log(err));
+    await userInfo();
+  };
+  // 팔로우가 되어있는지 확인 (팔로우 버튼 색깔 변경)
+  const followers = async () => {
+    const api = await callApi("get", "api/follow/guard/followers").then(res => {
+      res.data.follower.map(user => {
+        if (user.userId === localStorage.getItem("userId")) {
+          setFollowing(1);
+        }
+      });
     });
   };
   const reportHandler = () => {
@@ -147,6 +162,7 @@ const MyPage = () => {
 
   useEffect(() => {
     userInfo();
+    followers();
   }, []);
   return (
     <>
@@ -186,7 +202,7 @@ const MyPage = () => {
               }}
               onClick={goFollowPage}
             >
-              <p>100</p>
+              <p>{userData!.following}</p>
               <p>팔로우</p>
             </ColumnDiv>
             <ColumnDiv
@@ -197,7 +213,7 @@ const MyPage = () => {
               }}
               onClick={goFollowerPage}
             >
-              <p>100</p>
+              <p>{userData!.follower}</p>
               <p>팔로워</p>
             </ColumnDiv>
             <button

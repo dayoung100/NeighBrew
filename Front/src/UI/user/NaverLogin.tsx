@@ -18,7 +18,14 @@ const NaverLogin = () => {
       .then(res => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
-        navigate("/meet");
+      })
+      .then(async () => {
+        await callApi("get", "api/user/guard/myinfo")
+          .then(res => {
+            localStorage.setItem("myId", JSON.stringify(res.data.userId));
+          })
+          .catch(err => console.log(err));
+        await navigate("/meet");
       })
       .catch(err => {
         console.log(err);
