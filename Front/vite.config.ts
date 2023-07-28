@@ -1,9 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
-// import dns from "dns";
+import dns from "dns";
 
-// dns.setDefaultResultOrder("verbatim");
+dns.setDefaultResultOrder("verbatim");
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://server:9999/",
+        target: "http://34.64.126.58:9999/",
         changeOrigin: true,
         secure: false,
         // rewrite: path => path.replace(/^\/api/, ""),
