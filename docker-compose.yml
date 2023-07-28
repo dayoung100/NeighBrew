@@ -8,9 +8,6 @@ services:
     ports:
       - "5173:5173"
     restart: always
-    depends_on:
-      - serviceName: server
-        condition: service_healthy
   server:
     container_name: server
     build:
