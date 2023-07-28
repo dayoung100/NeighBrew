@@ -33,6 +33,13 @@ public class FollowController {
         return ResponseEntity.ok(followers);
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<Follow>> getFollowers(@PathVariable Long userId) {
+
+        List<Follow> followers = followService.getFollowers(Long.valueOf(userId));
+        return ResponseEntity.ok(followers);
+    }
+
     @PostMapping("/guard/{followingId}")
     public ResponseEntity<?> followUser(HttpServletRequest request, @PathVariable("followingId") Long followingId) {
         String userId = (String) request.getAttribute("userId");
