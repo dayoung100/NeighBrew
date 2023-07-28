@@ -8,8 +8,8 @@ import reviewIcon from "../../assets/reviewIcon.svg";
 import backIcon from "../../assets/backIcon.svg";
 import sirenIcon from "../../assets/sirenIcon.svg";
 import { callApi } from "../../utils/api";
-import { useState, useEffect } from "react";
-import { Drink, Review } from "../../Type/types";
+import { useState, useEffect, useRef } from "react";
+import { Drink, Review, User } from "../../Type/types";
 
 const CreateReviewDiv = styled.div`
   display: flex;
@@ -53,7 +53,46 @@ const IconAndTextDiv = styled.div`
   width: 30%;
 `;
 
+const DescriptionDiv = styled.div`
+  margin-top: 20px;
+
+  /* 추가하기 */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  &.show {
+    display: block;
+    max-height: none;
+    overflow: auto;
+    -webkit-line-clamp: unset;
+  }
+`;
+
+const MoreButton = styled.button`
+  max-height: 2rem;
+  line-height: 2rem;
+  border: none;
+
+  background: rgb(2, 0, 36);
+  background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 18%
+  );
+  &.hide {
+    display: none;
+  }
+`;
+
 const DrinkpostDetail = () => {
+  const contentRef = useRef(null);
+  const moreBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    contentRef.current.classList.add("show");
+    e.currentTarget.classList.add("hide");
+  };
+
   const { drinkId } = useParams();
   const navigate = useNavigate();
   const [detail, setDetail] = useState<Drink>();
@@ -102,12 +141,10 @@ const DrinkpostDetail = () => {
         <p>
           <b>도수</b> : {detail?.degree}도
         </p>
-        <p>
-          <b>국가</b> : 국가를 받는 부분
-        </p>
-        <p style={{ marginTop: "20px" }}>
+        <DescriptionDiv ref={contentRef}>
           <b>설명</b> : {detail?.description}
-        </p>
+        </DescriptionDiv>
+        <MoreButton onClick={moreBtn}>...더보기</MoreButton>
       </div>
       <div className="reviewBox">
         <CreateReviewDiv>
@@ -116,7 +153,7 @@ const DrinkpostDetail = () => {
             <p>후기 </p>
             <p>{reviewList.length}</p>
           </IconAndTextDiv>
-          <CreateReviewButton>
+          <CreateReviewButton onClick={() => navigate(`/drinkpost/${drinkId}/review/create`)}>
             <span style={{ padding: "10px 0px 10px" }}>후기 작성하기</span>
           </CreateReviewButton>
         </CreateReviewDiv>
