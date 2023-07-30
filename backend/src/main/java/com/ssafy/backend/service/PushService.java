@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
@@ -45,14 +46,12 @@ public class PushService {
         sseEmitter.onTimeout(() -> emitterRepository.deleteById(sseEmitterId));
 
         // 503 에러가 발생하지 않도록 더미 데이터를 보내 연결을 유지한다.
-        sendToClient( sseEmitter, "Init Connect", makeTimeIncludeId(userId), "EventStream Created. [userId= " + userId + "]");
+        sendToClient(sseEmitter, "Init Connect", makeTimeIncludeId(userId), "EventStream Created. [userId= " + userId + "]");
 
         //클라이언트가 미수신한 Event목록이 있을 경우 전송해 event 유실을 예방한다.
         if (!lastEventId.isEmpty()) {
             // 미수신 목록들 DB에 저장 -> 상태 고려하여 작성해야함
             sendLostData(lastEventId, userId, sseEmitterId, sseEmitter);
-        }else{
-            log.info(">> 미수신 목록이 없음 <<");
         }
         return sseEmitter;
     }
@@ -86,40 +85,28 @@ public class PushService {
      * @Param content : 전송할 메세지 내용
      * @Param url : redirect할 URL 정보 입력
      */
-
-
     //public void send(User receiver, PushType pushType, String content, String url) {
-    //  Push push = pushRepository.save(createPush(receiver, pushType, content, url));
-    //  DB체크 완료되면 수행해야함, 유저 객체를 용해야하기 떄문
     public void send(Long receiver, PushType pushType, String content, String url) {
-        PushDto pushDto = new PushDto();
-        pushDto.setId(receiver);
-        pushDto.setContent(content);
-        pushDto.setUrl(url);
-        pushDto.setCreatedAt(String.valueOf(System.currentTimeMillis()));
+        PushDto pushDto = PushDto.builder()
+                .content(content)
+                .pushType(pushType)
+                .url(url)
+                .createdAt(LocalDateTime.now())
+                .build();
 
         String receiverId = String.valueOf(receiver);
         String eventId = makeTimeIncludeId(receiver);
 
         //로그인 한 유저의 모든 Emiiter를 불러온다
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(receiverId);
-        if(sseEmitters == null ) log.info("null임ㅋ");
+        if (sseEmitters == null) log.info("");
         sseEmitters.forEach(
                 (key, emitter) -> {
                     log.info("정보 출력 {}, {} ", key, emitter.getTimeout());
                     emitterRepository.saveEventCache(key, pushDto);//데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
-                    sendToClient( emitter,eventId, key, pushDto);//데이터를 receiver에게 전송
+                    sendToClient(emitter, eventId, key, pushDto);//데이터를 receiver에게 전송
                 }
         );
-    }
-    private Push createPush(User receiver, PushType pushType, String content, String url) {
-        return Push.builder()
-                .user(receiver)
-                .pushType(pushType)
-                 .content(content)
-                .url(url)//url에 대한 컨벤션 정의가 필요할 듯 -> 클릭시 컨트롤러로 이동해야하니까
-                .isRead(false)
-                .build();
     }
 
     //id에 이벤트가 발생한 시간을 더해 유실된 데이터를 찾을 수 있도록 한다.
@@ -128,5 +115,14 @@ public class PushService {
     }
 
 
-
 }
+
+//    private Push createPush(User receiver, PushType pushType, String content, String url) {
+//        return Push.builder()
+//                .user(receiver)
+//                .pushType(pushType)
+//                .content(content)
+//                .url(url)//url에 대한 컨벤션 정의가 필요할 듯 -> 클릭시 컨트롤러로 이동해야하니까
+//                .isRead(false)
+//                .build();
+//    }

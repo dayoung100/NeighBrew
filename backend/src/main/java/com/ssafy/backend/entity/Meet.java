@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @ToString
 public class Meet {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="meet_id")
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long meetId;
 
     @Column(nullable = false, length = 100)
