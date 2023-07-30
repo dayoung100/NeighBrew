@@ -19,23 +19,53 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class PushController {
     private final PushService pushService;
 
-    @GetMapping(value = "connect/{userId}", produces = "text/event-stream")
+    @GetMapping(value = "/connect/{userId}", produces = "text/event-stream")
     @ResponseStatus(HttpStatus.OK)
     public SseEmitter connect(@PathVariable Long userId,
                               @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) throws IOException {
-        log.info("@@@@@@@@@@@ 연결 시도 => id :{}, lastEventId {}\n", userId, lastEventId);
+        //log.info("@@@@@@@@@@@ 연결 시도 => id :{}, lastEventId {}\n", userId, lastEventId);
+        log.info("{}", lastEventId);
         //클라이언트로 전달되는 것이 아닌, 클라이언트에게 지속적으로 알림을 제공하기 위한 연결 통로를 생성한다.
         return pushService.connect(userId, lastEventId);
     }
+    @GetMapping(value = "/follow/{userId}", produces = "text/event-stream")
+    public void pushFollow(@PathVariable Long userId) {
+        log.info("왔나");
+        pushService.send(userId, PushType.FOLLOW, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
+    }
+}
+/* 원격 서버 헤더를 가지고 오고 싶을 경우 origin에 응답해야함
+let source = new EventSource("https://another-site.com/events", {
+  withCredentials: true
+});
+혹은
+const evtSource = new EventSource("//api.example.com/ssedemo.php", { withCredentials: true } );
 
-    //================================================
-    //              알람을 위한 더미 테스트
-    //================================================
-//    @GetMapping(value = "/follow/{userId}", produces = "text/event-stream")
-//    public void pushFollow(@PathVariable Long userId) {
-//        logger.info("팔로우 알림 접근");
-//        pushService.send(userId, PushType.FOLLOW, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
-//    }
+연결이 끊어지면 막 메세지 마다 Id를 필요로 하게 된다.
+-> Last-Event-ID를 헤더에 포함해서 보내야함
+
+클라이언트에서 eventSource의 이벤트 종류
+message : 서버로 부터 데이터가 왔을 때 처리 하는 메소드
+open : 첫 connection
+error : 에러 발생
+
+
+서버 응답 형식 데이터
+data :
+id :
+retry:
+event :
+
+>> nginx 도입 시 주의사항 <<
+nginx는 was로 http/1.0 데이터만 보내므로 1.1로 설정을 바꿔줘야한다.
+proxy_set_header Connection '';
+proxy_http_version 1.1;
+* */
+
+//================================================
+//              알람을 위한 더미 테스트
+//================================================
+
 //
 //    @GetMapping(value = "/comment/{userId}", produces = "text/event-stream")
 //    public void pushComment(@PathVariable Long userId) {
@@ -66,4 +96,3 @@ public class PushController {
 //        logger.info("평가 알림 접근");
 //        pushService.send(userId, PushType.MEETEVALUATION, "모임A에 대한 평가를 진행해 주세요", "이동할 url");
 //    }
-}

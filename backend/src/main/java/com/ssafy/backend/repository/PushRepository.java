@@ -7,12 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
-/**
- * sseEmitter를 이용해 알림을 실제 보내게 되는데, 어떤 회원에게 어떤 emitter가 연결 되어 있는지 저장해야함
- * 어떤 이벤트들이 현재 발생했는지도 저장(추후 emitter 연결 끊길 경우 이어서 전송해줘야하기 때문)
- * => EnitterRepository인 이유
- * */
+// DB에 저장하기 위한 Repository
 @Repository
 public interface PushRepository extends JpaRepository<Push, Long> {
     List<Push> findAllByUser(User user);

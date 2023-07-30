@@ -77,8 +77,8 @@ public class MeetService {
     public Map<String, List<MeetDto>> findByUserId(Long userId) {
         Map<String, List<MeetDto>> userMeets = new HashMap<>();
         userMeets.put(Status.APPLY.name(), new ArrayList<>());
-        userMeets.put(Status.ATTEND.name(), new ArrayList<>());
-        userMeets.put(Status.CREATE.name(), new ArrayList<>());
+        userMeets.put(Status.GUEST.name(), new ArrayList<>());
+        userMeets.put(Status.HOST.name(), new ArrayList<>());
 
         List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByStatus(userId).orElseThrow(()-> new IllegalArgumentException("유저ID 값이 올바르지 않습니다."));
 
