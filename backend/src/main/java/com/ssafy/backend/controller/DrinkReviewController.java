@@ -45,6 +45,6 @@ public class DrinkReviewController {
     public ResponseEntity<?> deleteDrinkReview(HttpServletRequest request, @PathVariable Long drinkReviewId) throws IllegalArgumentException {
         String userId = (String) request.getAttribute("userId");
         drinkReviewService.deleteDrinkReview(drinkReviewId, Long.valueOf(userId));
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("삭제 완료");
     }
 }
