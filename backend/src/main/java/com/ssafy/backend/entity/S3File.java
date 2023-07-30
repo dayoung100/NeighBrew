@@ -23,7 +23,6 @@ public class S3File {
     private String uploadFilePath;
     private String uploadFileUrl;
 
-
     @Builder
     public S3File(String originalFileName, String uploadFileName, String uploadFilePath, String uploadFileUrl) {
         this.originalFileName = originalFileName;
