@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Meet {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue
     private Long meetId;
 
@@ -136,5 +136,4 @@ public class Meet {
                 .imgSrc(this.imgSrc)
                 .build();
     }
-
 }
