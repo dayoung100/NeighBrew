@@ -2,6 +2,7 @@ package com.ssafy.backend.dto;
 
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.Meet;
+import com.ssafy.backend.entity.Tag;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -66,6 +67,8 @@ public class MeetDto {
                 .minAge(this.minAge)
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)
+                .drink(this.drink)
+                .imgSrc(this.imgSrc)
                 .build();
     }
 }

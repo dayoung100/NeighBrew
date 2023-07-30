@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface DrinkRepository extends JpaRepository<Drink, Long> {
+    Optional<Drink> findByDrinkId(Long drinkId);
 
     // 술 삭제
     Optional<Drink> deleteByDrinkId(Long drinkId);
