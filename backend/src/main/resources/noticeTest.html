@@ -9,20 +9,10 @@
    <button onclick="requestNotificationPermission()">알림 허용 요청</button>
    <br>
    <button onclick="connectToServer()">서버 연결</button>
+   <button onclick="myClear()">clear</button>
    <br>
-   <button onclick="window.open('http://localhost:8080/push/comment/1','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">댓글 알림 테스트</button>
+   <button onclick="window.open('http://localhost:8080/api/push/follow/5','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">팔로우 알림 테스트</button>
     <br />
-   <button onclick="window.open('http://localhost:8080/push/follow/1','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">팔로우 알림 테스트</button>
-    <br />
-   <button onclick="window.open('http://localhost:8080/push/chat/1','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">채팅 알림 테스트</button>
-
-   <br />
-
-   <button onclick="window.open('http://localhost:8080/push/accept/1','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">모임 수락 테스트</button>
-    <br />
-   <button onclick="window.open('http://localhost:8080/push/reject/1','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">모임 거절 테스트</button>
-    <br />
-   <button onclick="window.open('http://localhost:8080/push/evaluation/1','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');">모임 평가 테스트</button>
 
 
 
@@ -33,14 +23,28 @@
       let userId = 1; //유저 아이디에 해당하는 것 넣으면 알림 이벤트와 연결시킴
       //아아디 타입은 Long이니 전송할 때 닉네임 말고 PK값으로 전송해주시면 될 듯 합니다.
 
+      function myClear(){
+          document.getElementById("pushList").innerText= ""
+      }
       function connectToServer() {
-        let userId = 1; // 사용자 아이디
-        let eventSource = new EventSource(`http://localhost:8080/push/connect/${userId}`);
-        eventSource.onmessage = function (event) {
-          console.log(JSON.parse(event.data))
-          showResult(event.data);
-          showNotification(event.data);
-        };
+        let userId = 5; // 사용자 아이디
+        let eventSource = new EventSource(`http://localhost:8080/api/push/connect/${userId}`, {
+            withCredentials: true,
+        });
+        eventSource.addEventListener('open', (event) => {
+            console.log(event)
+            showResult(`연결 시작`)
+              //showNotification(event.data);
+        })
+        eventSource.addEventListener('sse', (event) => {
+            console.log(event.lastEventId)
+            showResult(event.data);
+        })
+        // eventSource.onmessage = function (event) {
+        //   console.log(JSON.parse(event))
+        //   showResult(event.data);
+        //   //showNotification(event.data);
+        // };
       }
 
       function showNotification(data) {

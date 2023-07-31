@@ -1,15 +1,14 @@
 package com.ssafy.backend.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class ChatRoom {
     @Id
@@ -24,4 +23,9 @@ public class ChatRoom {
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<ChatRoomUser> users;
+
+    @Builder
+    public ChatRoom(String chatRoomName) {
+        this.chatRoomName = chatRoomName;
+    }
 }

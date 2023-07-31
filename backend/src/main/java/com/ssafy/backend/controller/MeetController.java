@@ -63,12 +63,15 @@ public class MeetController {
         multipartFile.ifPresent(file -> log.info("파일 이름 : {} ", file.getOriginalFilename()));
 
         try {
-            meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
-            Meet createdMeet = meetService.saveMeet(meetDto);
+            if(drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
+            if(meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
+            if(multipartFile.isPresent()) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
+
+            Meet createdMeet = meetService.saveMeet(meetDto, drinkId);
             User hostUser = userService.findByUserId(userId);
 
             //MeetUser 정보를 추가한다.
-            meetUserService.saveMeetUser(createdMeet, hostUser, Status.CREATE);
+            meetUserService.saveMeetUser(createdMeet, hostUser, Status.HOST);
 
             //팔로워에게 메세지를 보낸다
             List<Follow> followers = followService.findByFollower(userId);
@@ -83,7 +86,6 @@ public class MeetController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 
     //모임 수정
@@ -175,7 +177,7 @@ public class MeetController {
                 return ResponseEntity.badRequest().body("해당 모임에 참여 인원이 가득 찼습니다.");
 
             //참가자의 모임 상태 추가 -> 데이터를 추가해야한다.
-            meetUserService.saveMeetUser(attendMeet, attendUser, Status.ATTEND);
+            meetUserService.saveMeetUser(attendMeet, attendUser, Status.GUEST);
 
             //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
             //public void send(Long receiver, PushType pushType, String content, String url) {

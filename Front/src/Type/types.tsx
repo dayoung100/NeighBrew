@@ -9,14 +9,17 @@ export interface User {
   profile: string;
   follower: number;
   following: number;
+  createdAt?: string;
+  updatedAt?: string;
+  oauthProvider?: string;
 }
 export interface Chat {
   message: string;
   userid: number;
 }
 
-//모임을 리스트로 받을 때
-export interface Meetings {
+//모임 인터페이스
+export interface Meeting {
   meetId: number;
   meetName: string;
   description: string;
@@ -31,8 +34,7 @@ export interface Meetings {
   minAge?: number;
   maxAge?: number;
   minLiverPoint?: number;
-  attendUser: null;
-  drinkName: string;
+  drink: Drink;
   imgSrc: string;
 }
 
@@ -51,4 +53,10 @@ export interface Review {
   drinkReviewId: number;
   img: string;
   user: User;
+}
+// 특정 유저의 팔로잉과 팔로워 목록을 보여줌
+export interface Followers {
+  followerId: number; // 그냥 pk임
+  follower: User[];
+  following: User[];
 }

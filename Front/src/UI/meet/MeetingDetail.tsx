@@ -4,7 +4,7 @@
 모임 리스트에서 하나를 클릭하면 이 페이지로 이동함
 모임 위치, 시간, 주최자, 간수치제한, 인원 제한 정보를 담고 있음
 */
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
@@ -86,6 +86,7 @@ const MeetTitle = styled.div`
 `;
 
 const MeetingDetail = () => {
+  const meetPosDateRef = useRef(null);
   const ArrowLeftIcon = arrowLeftIcon("white");
   const navigate = useNavigate();
   const [memberList, setMemberList] = useState([
@@ -237,7 +238,7 @@ const MeetingDetail = () => {
           })}
         </div>
       </MeetDetailDiv>
-      <MeetPosDateDiv>
+      <MeetPosDateDiv ref={meetPosDateRef}>
         <div>
           <img src="/src/assets/mapPinColor.svg" width="20rem" />
           <div>모임 예정 시, 구</div>

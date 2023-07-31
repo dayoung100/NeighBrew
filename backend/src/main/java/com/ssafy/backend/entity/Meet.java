@@ -1,21 +1,20 @@
 package com.ssafy.backend.entity;
 
 import com.ssafy.backend.dto.MeetDto;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
-@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Meet {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue
     private Long meetId;
 
@@ -62,7 +61,6 @@ public class Meet {
 
     //미팅 이미지 url
     @Lob
-    @Column(nullable = true)
     private String imgSrc;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
@@ -71,8 +69,6 @@ public class Meet {
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    public Meet() {
-    }
 
     @Builder
     public Meet(String meetName, String description, Long hostId,
@@ -137,4 +133,9 @@ public class Meet {
                 .build();
     }
 
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 }
