@@ -18,8 +18,8 @@ export interface Chat {
   userid: number;
 }
 
-//모임을 리스트로 받을 때
-export interface Meetings {
+//모임 인터페이스
+export interface Meeting {
   meetId: number;
   meetName: string;
   description: string;
@@ -34,8 +34,7 @@ export interface Meetings {
   minAge?: number;
   maxAge?: number;
   minLiverPoint?: number;
-  attendUser: null;
-  drinkName: string;
+  drink: Drink;
   imgSrc: string;
 }
 
