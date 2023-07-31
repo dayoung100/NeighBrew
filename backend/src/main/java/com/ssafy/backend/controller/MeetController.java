@@ -90,7 +90,7 @@ public class MeetController {
     }
 
     //모임 수정
-    @PutMapping("/{userId}")
+    @PutMapping("/modify")
     public ResponseEntity<?> updateMeet(@PathVariable Long userId,
                                         MeetDto meetDto,
                                         Long drinkId,
