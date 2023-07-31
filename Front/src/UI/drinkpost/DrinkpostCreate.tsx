@@ -97,7 +97,7 @@ const DrinkpostCreate = () => {
     setDrinkDescription(e.target.value);
   };
 
-  const submitHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const submitHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     callApi("post", "api/drink", {
       name: drinkName,

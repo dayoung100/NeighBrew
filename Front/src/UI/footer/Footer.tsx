@@ -29,7 +29,7 @@ const Footer = () => {
   const chatIcon = chatFooterIcon(chooseMenu === 2 ? "black" : "#AAAAAA");
   const myIcon = myPageFooterIcon(chooseMenu === 3 ? "black" : "#AAAAAA");
   const navigate = useNavigate();
-
+  const userid = localStorage.getItem("myId");
   const chooseMenuHandler = (num: number) => {
     setChooseMenu(num);
     localStorage.setItem("chooseMenu", num.toString());
@@ -73,7 +73,7 @@ const Footer = () => {
       <Button
         onClick={() => {
           chooseMenuHandler(3);
-          navigate("/myPage/1");
+          navigate(`/myPage/${userid}`);
         }}
         now={3}
         choosebutton={chooseMenu}
