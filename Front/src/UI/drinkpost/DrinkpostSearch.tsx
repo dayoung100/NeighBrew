@@ -73,6 +73,20 @@ const DrinkpostSearch = () => {
     }
   };
 
+  const clickSearchHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setSearchResult([]);
+    if (searchWord === "") return;
+
+    let data: Drink[] = [];
+    await callApi("get", `api/drink/search?name=${searchWord}&size=2`).then(res => {
+      data = res.data.content;
+    });
+    await console.log(data);
+    await setSearchResult(prev => [...prev, ...data]);
+    console.log(searchResult);
+  };
+
   return (
     <>
       <div
@@ -95,13 +109,7 @@ const DrinkpostSearch = () => {
               onChange={searchHandler}
               onKeyUp={sendSearchHandler}
             />
-            <SearchBtn
-              onClick={() => {
-                console.log("search!");
-              }}
-            >
-              {searchButton}
-            </SearchBtn>
+            <SearchBtn onClick={clickSearchHandler}>{searchButton}</SearchBtn>
           </SearchDiv>
         </div>
       </div>

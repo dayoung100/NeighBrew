@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 interface useIntersectionObserverProps {
   root?: null;
@@ -9,7 +9,7 @@ interface useIntersectionObserverProps {
 
 const useIntersectionObserver = ({
   root,
-  rootMargin = '0px',
+  rootMargin = "0px",
   threshold = 0,
   onIntersect,
 }: useIntersectionObserverProps) => {
@@ -25,7 +25,7 @@ const useIntersectionObserver = ({
     });
     observer.observe(target);
 
-    return () => observer.unobserve(target);
+    return () => observer && observer.unobserve(target);
   }, [onIntersect, root, rootMargin, target, threshold]);
 
   return { setTarget };
