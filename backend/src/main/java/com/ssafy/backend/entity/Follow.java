@@ -1,15 +1,13 @@
 package com.ssafy.backend.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
