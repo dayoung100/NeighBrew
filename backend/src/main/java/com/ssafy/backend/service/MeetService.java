@@ -32,7 +32,8 @@ public class MeetService {
         List<Meet> list = meetRepository.findAll();
 
         List<MeetDto> dtos = new ArrayList<>();
-        for(Meet meet : list){
+        for (Meet meet : list) {
+
             dtos.add(MeetDto.builder()
                     .meetId(meet.getMeetId())
                     .meetName(meet.getMeetName())
@@ -58,12 +59,12 @@ public class MeetService {
     public MeetUserDto findMeetUserByMeetId(Long meetId) {
         log.info("meetId : {}인 모임 정보 출력 ", meetId);
 
-        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(()-> new IllegalArgumentException("모임 ID 값이 올바르지 않습니다."));
+        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(() -> new IllegalArgumentException("모임 ID 값이 올바르지 않습니다."));
 
         MeetUserDto meetUserDto = MeetUserDto.builder()
                 .meetDto(meetUsers.get(0).getMeet().toDto())
                 .build();
-        for(MeetUser mu : meetUsers){
+        for (MeetUser mu : meetUsers) {
             meetUserDto.getUsers().add(mu.getUser());
             meetUserDto.getStatuses().add(mu.getStatus());
         }
@@ -71,7 +72,7 @@ public class MeetService {
     }
 
     public Meet findByMeetId(Long meetId) {
-        return meetRepository.findById(meetId).orElseThrow(()->new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
+        return meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
     }
 
     public Map<String, List<MeetDto>> findByUserId(Long userId) {
@@ -80,12 +81,12 @@ public class MeetService {
         userMeets.put(Status.GUEST.name(), new ArrayList<>());
         userMeets.put(Status.HOST.name(), new ArrayList<>());
 
-        List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByStatus(userId).orElseThrow(()-> new IllegalArgumentException("유저ID 값이 올바르지 않습니다."));
+        List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByStatus(userId).orElseThrow(() -> new IllegalArgumentException("유저ID 값이 올바르지 않습니다."));
 
-        for(MeetUser mu : meetUsers){
+        for (MeetUser mu : meetUsers) {
             Status status = mu.getStatus();
 
-            if(status != Status.FINISH)
+            if (status != Status.FINISH)
                 userMeets.get(status.name()).add(mu.getMeet().toDto());
         }
 
@@ -98,11 +99,6 @@ public class MeetService {
 
         log.info("태그 Id 출력{}", meetDto.getTagId());
         Meet meet = meetDto.toEntity();
-
-        meet.setDrink(drinkRepository.findByDrinkId(drinkId).orElseThrow(()-> new IllegalArgumentException("주종 정보가 올바르지 않습니다.")));
-        meet.setTag(tagRepository.findByTagId(meetDto.getTagId()).orElseThrow(()-> new IllegalArgumentException("태그 정보가 올바르지 않습니다.")));
-        meet.setCreatedAt(LocalDateTime.now());
-        meet.setUpdatedAt(LocalDateTime.now());
 
         log.info("얼라리 문제 생기나 : {} ", meet);
 
@@ -138,9 +134,6 @@ public class MeetService {
 
     public void deleteMeet(Long meetId) {
         log.info("meetId : {}인 모임 삭제", meetId);
-        Meet meet = meetRepository.findById(meetId).orElse(null);
-        if(meet != null){
-            meetRepository.delete(meet);
-        }
+        meetRepository.findById(meetId).ifPresent(meet -> meetRepository.delete(meet));
     }
 }
