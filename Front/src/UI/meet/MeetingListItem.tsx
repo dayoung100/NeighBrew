@@ -4,10 +4,17 @@ import ListInfoItem from "../components/ListInfoItem";
 import MeetingDetail from "./MeetingDetailSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
 
+type MeetingListItemProps = {
+  data: Meeting[];
+  isWaiting?: boolean;
+};
+
 /**
  * ListInfoItem에 데이터 넣기
+ * @props data : Meeting[] 타입
+ * @props isWaiting : boolean 타입, optional, 기본값은 false
  */
-const MeetingListItem = ({ data }: { data: Meeting[] }) => {
+const MeetingListItem = ({ data, isWaiting = false }: MeetingListItemProps) => {
   //네비게이터 : 모임 상세페이지로 이동
   const navigate = useNavigate();
   const GotoMeetDetailHandler = (meetId: number) => {
@@ -74,7 +81,7 @@ const MeetingListItem = ({ data }: { data: Meeting[] }) => {
                 size={11}
               />
             }
-            isWaiting={false}
+            isWaiting={isWaiting}
             outLine={false}
             routingFunc={() => GotoMeetDetailHandler(meetId)}
           ></ListInfoItem>

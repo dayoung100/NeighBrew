@@ -6,12 +6,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import ListInfoItem from "../components/ListInfoItem";
-import MeetingDetail from "./MeetingDetailSimple";
-import PeopleNumInfo from "./PeopleNumInfo";
 import MeetingListItem from "./MeetingListItem";
 import { callApi } from "../../utils/api";
-import { Meeting } from "../../Type/types";
 
 const MeetingDiv = styled.div`
   margin-bottom: 2rem;
@@ -24,15 +20,8 @@ const MeetTitle = styled.div`
 `;
 
 const meetingMy = () => {
-  //네비게이터 : 모임 상세페이지로 이동
-  const navigate = useNavigate();
-  const GotoMeetDetailHandler = (meetId: number) => {
-    console.log("goto detail page, meetId is: ", meetId, "[my]");
-    navigate(`/meet/${meetId}`);
-  };
   //현재 유저의 userId
-  const [userId, setUserId] = useState(1);
-  //TODO: 로컬 스토리지에서 userId 가져오기
+  const [userId, setUserId] = useState(0);
 
   //불러온 모임 데이터
   const [meetData, setMeetData] = useState({
@@ -44,14 +33,22 @@ const meetingMy = () => {
   const [applyMeet, setApplyMeet] = useState([]); //userId가 지원한 모임
   const [guestMeet, setGuestMeet] = useState([]); //userId가 참여한 모임
 
+  useEffect(() => {
+    //로컬 스토리지에서 userId 가져오기
+    setUserId(parseInt(localStorage.getItem("myId")));
+  }, []);
+
   //api 호출
   useEffect(() => {
-    const promise = callApi("get", `api/meet/mymeet/${userId}`);
-    promise.then((res) => {
-      console.dir(res.data);
-      setMeetData(res.data); //받아온 데이터로 meetData 세팅
-    });
-  }, []);
+    if (userId !== 0) {
+      const promise = callApi("get", `api/meet/mymeet/${userId}`);
+      promise.then((res) => {
+        console.dir(res.data);
+        setMeetData(res.data); //받아온 데이터로 meetData 세팅
+      });
+    }
+  }, [userId]);
+
   //create, apply, attend 모임 갱신
   useEffect(() => {
     setHostMeet(meetData.HOST);
@@ -71,7 +68,7 @@ const meetingMy = () => {
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>내가 신청한 모임</MeetTitle>
-        <MeetingListItem data={applyMeet} />
+        <MeetingListItem data={applyMeet} isWaiting={true} />
       </MeetingDiv>
     </div>
   );

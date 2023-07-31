@@ -63,7 +63,7 @@ const MeetPosDateDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
-  position: fixed;
+  position: absolute;
   top: 12rem;
   left: 50%;
   transform: translate(-50%, 0%);
