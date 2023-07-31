@@ -38,8 +38,9 @@ public class ChatRoomController {
     // 채팅방 생성
     @PostMapping("/room")
     public ResponseEntity<ChatRoom> createChatRoom(@RequestBody Map<String, String> map) {
-        ChatRoom room = new ChatRoom();
-        room.setChatRoomName(map.get("name"));
+        ChatRoom room = ChatRoom.builder()
+                .chatRoomName(map.get("name"))
+                .build();
         chatRoomRepository.save(room);
         return ResponseEntity.ok(room);
     }
@@ -78,7 +79,7 @@ public class ChatRoomController {
 
         room.getUsers().removeIf(chatRoomUser -> chatRoomUser.getUser().equals(user)); // 해당 유저 삭제
 
-        if (room.getUsers().size() == 0) {//|| room.getUsers().size() == 1) { // 채팅방에 유저가 0명이거나 1명이면 채팅방 삭제
+        if (room.getUsers().isEmpty()) {//|| room.getUsers().size() == 1) { // 채팅방에 유저가 0명이거나 1명이면 채팅방 삭제
             chatRoomRepository.delete(room);
         } else {
             chatRoomRepository.save(room);

@@ -88,6 +88,7 @@ public class NaverApiClient implements OAuthApiClient {
     @Override
     public String authApiUrl(OAuthLoginParams params) {
 
+//        String redirectUri = "http://i9b310.p.ssafy.io//naver/callback";
         String redirectUri = "http://localhost:5173/naver/callback";
         String responseType = "code";
 
