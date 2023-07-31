@@ -28,7 +28,7 @@ const UserCard = styled.div`
 
 const DescriptionDiv = styled.div`
   margin-left: 10px;
-
+  text-align: start;
   /* 추가하기 */
   display: -webkit-box;
   -webkit-line-clamp: 4;
