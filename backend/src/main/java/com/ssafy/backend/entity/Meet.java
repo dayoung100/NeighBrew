@@ -1,17 +1,16 @@
 package com.ssafy.backend.entity;
 
 import com.ssafy.backend.dto.MeetDto;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Meet {
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)

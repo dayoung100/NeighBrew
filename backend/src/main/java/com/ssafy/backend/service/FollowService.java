@@ -35,7 +35,7 @@ public class FollowService {
 
         return followRepository.findByFollowerUserIdAndFollowingUserId(userId, followingId).map(existingFollow -> {
             followRepository.delete(existingFollow);
-            pushService.send(followingId, PushType.FOLLOW, follower.getNickname() + "님이 팔로우하기 취소했습니다.", "http://localhost/mypage/" + follower.getUserId());
+            pushService.send(following, PushType.FOLLOW, follower.getNickname() + "님이 팔로우하기 취소했습니다.", "http://localhost/mypage/" + follower.getUserId());
 
             // 팔로우가 취소된 경우
             return following.getNickname() + "님을 팔로우 취소하였습니다.";
@@ -47,7 +47,7 @@ public class FollowService {
             followRepository.save(follow);
 
             // push 이벤트 발생
-            pushService.send(followingId, PushType.FOLLOW, follower.getNickname() + "님이 팔로우하기 시작했습니다.", "http://localhost/mypage/" + follower.getUserId());
+            pushService.send(following, PushType.FOLLOW, follower.getNickname() + "님이 팔로우하기 시작했습니다.", "http://localhost/mypage/" + follower.getUserId());
             // 팔로우가 성공한 경우
             return following.getNickname() + "님을 팔로우하였습니다.";
         });
