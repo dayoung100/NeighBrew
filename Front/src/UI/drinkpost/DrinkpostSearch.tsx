@@ -77,7 +77,6 @@ const DrinkpostSearch = () => {
     e.preventDefault();
     setSearchResult([]);
     if (searchWord === "") return;
-    if (e.keyCode === 229) return;
 
     let data: Drink[] = [];
     await callApi("get", `api/drink/search?name=${searchWord}&size=2`).then(res => {
