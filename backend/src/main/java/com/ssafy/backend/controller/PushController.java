@@ -28,11 +28,11 @@ public class PushController {
         //클라이언트로 전달되는 것이 아닌, 클라이언트에게 지속적으로 알림을 제공하기 위한 연결 통로를 생성한다.
         return pushService.connect(userId, lastEventId);
     }
-    @GetMapping(value = "/follow/{userId}", produces = "text/event-stream")
-    public void pushFollow(@PathVariable Long userId) {
-        log.info("왔나");
-        pushService.send(userId, PushType.FOLLOW, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
-    }
+//    @GetMapping(value = "/follow/{userId}", produces = "text/event-stream")
+//    public void pushFollow(@PathVariable Long userId) {
+//        log.info("왔나");
+//        pushService.send(userId, PushType.FOLLOW, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
+//    }
 }
 /* 원격 서버 헤더를 가지고 오고 싶을 경우 origin에 응답해야함
 let source = new EventSource("https://another-site.com/events", {

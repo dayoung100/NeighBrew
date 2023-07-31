@@ -80,25 +80,27 @@ public class PushService {
     }
 
     //알림을 생성하고 지정된 수신자에게 알림을 전송하는 기능 수행
-//    public void send(User receiver, PushType pushType, String content, String url) {
-//      Push push = pushRepository.save(createPush(receiver, pushType, content, url));
-    public void send(Long receiver, PushType pushType, String content, String url) {
-        User user = userRepository.findById(receiver).orElseThrow(() -> new IllegalArgumentException("유저 정보가 존재하지 않습니다."));
+    public void send(User receiver, PushType pushType, String content, String url) {
         //Push 객체를 생성 및 저장
-        Push push = pushRepository.save(createPush(user, pushType, content, url));
+        try{
+            Push push = pushRepository.save(createPush(receiver, pushType, content, url));
+            Long receiverId = receiver.getUserId();
+            String eventId = makeTimeIncludeId(receiverId);
 
-        String receiverId = String.valueOf(receiver);
-        String eventId = makeTimeIncludeId(receiver);
+            //로그인 한 유저의 모든 Emiiter를 불러온다
+            Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(String.valueOf(receiverId));
+            sseEmitters.forEach(
+                    (key, emitter) -> {
+                        log.info("전송 key {} ", key );
+                        emitterRepository.saveEventCache(key, push.toDto());//데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
+                        sendEventToClient(emitter, eventId, key, push.toDto());//데이터를 receiver에게 전송
+                    }
+            );
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        //로그인 한 유저의 모든 Emiiter를 불러온다
-        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(receiverId);
-        sseEmitters.forEach(
-                (key, emitter) -> {
-                    log.info("전송 key {} ", key );
-                    emitterRepository.saveEventCache(key, push.toDto());//데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
-                    sendEventToClient(emitter, eventId, key, push.toDto());//데이터를 receiver에게 전송
-                }
-        );
+
     }
 
     private Push createPush(User receiver, PushType pushType, String content, String url) {
