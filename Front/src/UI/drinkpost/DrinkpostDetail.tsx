@@ -53,9 +53,9 @@ const IconAndTextDiv = styled.div`
   width: 30%;
 `;
 
-const DescriptionDiv = styled.div`
+const DescriptionP = styled.p`
   margin-top: 20px;
-
+  text-align: start;
   /* 추가하기 */
   display: -webkit-box;
   -webkit-line-clamp: 4;
@@ -95,9 +95,12 @@ const DrinkpostDetail = () => {
 
   const { drinkId } = useParams();
   const navigate = useNavigate();
+  const [showMore, setShowMore] = useState(false);
   const [detail, setDetail] = useState<Drink>();
   const [reviewList, setReviewList] = useState<Review[]>([]);
-
+  const toggleShowMore = () => {
+    setShowMore(!showMore);
+  };
   // const drinkUrl = `http://34.64.126.58:5173/drink/${drinkId}`;
   // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
@@ -125,7 +128,7 @@ const DrinkpostDetail = () => {
     <>
       <Navbar></Navbar>
       <DrinkpostDetailNavbar>
-        <NavbarBackIcon onClick={() => navigate(-1)}>
+        <NavbarBackIcon onClick={() => navigate("/drinkpost/")}>
           <img src={backIcon} alt="" />
         </NavbarBackIcon>
         <h2 style={{ margin: "12px 0px 8px 23px" }}>{detail?.name}</h2>
@@ -141,10 +144,14 @@ const DrinkpostDetail = () => {
         <p>
           <b>도수</b> : {detail?.degree}도
         </p>
-        <DescriptionDiv ref={contentRef}>
+        <DescriptionP className={showMore ? "show" : ""}>
           <b>설명</b> : {detail?.description}
-        </DescriptionDiv>
-        <MoreButton onClick={moreBtn}>...더보기</MoreButton>
+        </DescriptionP>
+        {detail?.description.split("\n").length > 4 && (
+          <MoreButton onClick={toggleShowMore} className={showMore ? "hide" : ""}>
+            ...더보기
+          </MoreButton>
+        )}
       </div>
       <div className="reviewBox">
         <CreateReviewDiv>
