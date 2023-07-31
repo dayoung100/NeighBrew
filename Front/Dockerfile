@@ -1,5 +1,5 @@
 # Use Node.js v18 base image
-FROM node:18
+FROM node:18 AS build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -18,6 +18,5 @@ COPY . .
 
 # Expose the port your app is running on
 EXPOSE 5173
+CMD [ "npm", "run", "build" ]
 
-# Command to run your app
-CMD ["npm", "run", "dev"]
