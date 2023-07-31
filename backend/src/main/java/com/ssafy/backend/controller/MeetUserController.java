@@ -21,7 +21,6 @@ public class MeetUserController {
     //모든 미팅 정보를 출력한다.
     @GetMapping()
     public ResponseEntity<?> getAllMeets() {
-        logger.info("생성된 모든 모임을 출력한다. : {}");
         return ResponseEntity.ok(meetUserService.findAll());
     }
 }
