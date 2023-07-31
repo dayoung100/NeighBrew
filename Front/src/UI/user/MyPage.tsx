@@ -13,7 +13,6 @@ import Footer from "../footer/Footer";
 import axios from "axios";
 import { User } from "../../Type/types";
 import { callApi } from "../../utils/api";
-
 const Button = styled.button`
   width: 40%;
   display: inline-block;
@@ -88,11 +87,11 @@ const TagDiv = styled.div`
   padding: 0.3rem;
   font-size: 12px;
 `;
-const LiverDiv = styled.div<{ liverPoint: number }>`
+const LiverDiv = styled.div<{ liverpoint: number }>`
   position: relative;
   height: 100%;
   background-image: linear-gradient(to top, #e24965 50%, #fff 50%);
-  background-size: ${props => "50% " + (props.liverPoint + 80) + "%"};
+  background-size: ${props => "50% " + (props.liverpoint + 80) + "%"};
   /* background-size: 50% 150%; */
   animation: fillAnimation 5s forwards;
   @keyframes fillAnimation {
@@ -123,18 +122,17 @@ const MyPage = () => {
   const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
   const Brewery = brewery(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
   const navigate = useNavigate();
-  console.log(userid);
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/guard/${userid}`)
       .then(res => {
-        userInfo();
+        followers();
       })
       .catch(err => console.log(err));
   };
   // 팔로우가 되어있는지 확인 (팔로우 버튼 색깔 변경)
   const followers = async () => {
     const api = await callApi("get", `api/follow/${userid}`).then(res => {
-      userData.follower = res.data.follower;
+      setUserData(userData => ({ ...userData, follower: res.data.length }));
     });
   };
   const reportHandler = () => {
@@ -179,7 +177,7 @@ const MyPage = () => {
           </ImgDiv>
           <ColumnDiv>
             <p>{userData!.liverPoint} IU/L</p>
-            <LiverDiv liverPoint={userData!.liverPoint}>
+            <LiverDiv liverpoint={userData!.liverPoint}>
               <img style={{ width: "38px", height: "38px" }} src={liver} alt="" />
             </LiverDiv>
             <p>간수치</p>
@@ -198,7 +196,7 @@ const MyPage = () => {
               }}
               onClick={goFollowPage}
             >
-              <p>{userData!.following}</p>
+              <p>{userData.following ?? 0}</p>
               <p>팔로우</p>
             </ColumnDiv>
             <ColumnDiv
@@ -209,7 +207,7 @@ const MyPage = () => {
               }}
               onClick={goFollowerPage}
             >
-              <p>{userData!.follower}</p>
+              <p>{userData.follower ?? 0}</p>
               <p>팔로워</p>
             </ColumnDiv>
             <button
@@ -237,8 +235,8 @@ const MyPage = () => {
 
         <UserInfoDiv>
           <p style={{ marginLeft: "3rem", marginRight: "4rem" }}>{userData!.nickname}</p>
-          {tags.map(tag => {
-            return <TagDiv>{tag}</TagDiv>;
+          {tags.map((tag, i) => {
+            return <TagDiv key={i}>{tag}</TagDiv>;
           })}
         </UserInfoDiv>
         <div
@@ -274,7 +272,7 @@ const MyPage = () => {
           <p style={{ color: chooseChat === 0 ? "var(--c-lightgray)" : "var(--c-black)" }}>술장</p>
         </Button>
       </div>
-      {chooseChat === 0 ? <MeetingMy></MeetingMy> : <p>임시 술장</p>}
+      {chooseChat === 0 ? <MeetingMy userId={parseInt(userid)}></MeetingMy> : <p>임시 술장</p>}
 
       <div style={{ height: "80px" }}></div>
       <footer>
