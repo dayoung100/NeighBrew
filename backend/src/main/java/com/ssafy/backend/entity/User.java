@@ -58,6 +58,8 @@ public class User {
     public void prePersist() {
         this.liverPoint = 40.0f;
         this.profile = "no image";
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
 

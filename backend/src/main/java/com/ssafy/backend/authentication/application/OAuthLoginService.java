@@ -34,7 +34,6 @@ public class OAuthLoginService {
         ObjectMapper objectMapper = new ObjectMapper();
         try{
             String jsonString = objectMapper.writeValueAsString(oAuthInfoResponse);
-            log.info(jsonString);
 
         }catch (Exception e){
 

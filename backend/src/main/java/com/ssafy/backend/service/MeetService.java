@@ -6,36 +6,29 @@ import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetUserDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.MeetUser;
+import com.ssafy.backend.entity.Tag;
+import com.ssafy.backend.repository.DrinkRepository;
 import com.ssafy.backend.repository.MeetRepository;
 import com.ssafy.backend.repository.MeetUserRepository;
 import com.ssafy.backend.repository.TagRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MeetService {
 
-    private MeetRepository meetRepository;
-    private MeetUserRepository meetUserRepository;
-    private TagRepository tagRepository;
-
-    @Autowired
-    public MeetService(MeetRepository meetRepository,
-                       MeetUserRepository meetUserRepository) {
-        this.meetRepository = meetRepository;
-        this.meetUserRepository = meetUserRepository;
-    }
+    private final MeetRepository meetRepository;
+    private final MeetUserRepository meetUserRepository;
+    private final TagRepository tagRepository;
+    private final DrinkRepository drinkRepository;
 
     public List<MeetDto> findAll() {
-        log.info("모든 모임 상세정보 출력 ");
         List<Meet> list = meetRepository.findAll();
 
         List<MeetDto> dtos = new ArrayList<>();
@@ -85,8 +78,8 @@ public class MeetService {
     public Map<String, List<MeetDto>> findByUserId(Long userId) {
         Map<String, List<MeetDto>> userMeets = new HashMap<>();
         userMeets.put(Status.APPLY.name(), new ArrayList<>());
-        userMeets.put(Status.ATTEND.name(), new ArrayList<>());
-        userMeets.put(Status.CREATE.name(), new ArrayList<>());
+        userMeets.put(Status.GUEST.name(), new ArrayList<>());
+        userMeets.put(Status.HOST.name(), new ArrayList<>());
 
         List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByStatus(userId).orElseThrow(() -> new IllegalArgumentException("유저ID 값이 올바르지 않습니다."));
 
@@ -100,11 +93,14 @@ public class MeetService {
         return userMeets;
     }
 
-    public Meet saveMeet(MeetDto meetDto) {
+    public Meet saveMeet(MeetDto meetDto, Long drinkId) {
         log.info("모임 생성 : {} ", meetDto);
         meetDto.setNowParticipants(1); //참여자는 방장 1명 뿐이기 때문
 
+        log.info("태그 Id 출력{}", meetDto.getTagId());
         Meet meet = meetDto.toEntity();
+
+        log.info("얼라리 문제 생기나 : {} ", meet);
 
         return meetRepository.save(meet);
     }
