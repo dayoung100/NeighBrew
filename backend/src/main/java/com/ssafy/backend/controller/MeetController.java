@@ -90,7 +90,7 @@ public class MeetController {
     }
 
     //모임 수정
-    @PutMapping("/{userId}")
+    @PutMapping("/modify")
     public ResponseEntity<?> updateMeet(@PathVariable Long userId,
                                         MeetDto meetDto,
                                         Long drinkId,
@@ -120,9 +120,8 @@ public class MeetController {
         }
     }
 
-
     //모임 삭제하기
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteMeet(@RequestBody Map<String, Long> requestBody) {
         Long userId = requestBody.get("userId");
         Long meetId = requestBody.get("meetId");
@@ -169,23 +168,29 @@ public class MeetController {
             Long meetId = requestBody.get("meetId");
             log.info("모임 신청할 정보를 출력한다. : {}, {}", userId, meetId);
 
-            Meet attendMeet = meetService.findByMeetId(meetId);
+            MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetId);
+            Long hostId = meetUser.getMeetDto().getHostId();
+
             User attendUser = userService.findByUserId(userId);
-            User hostUser = userService.findByUserId(attendMeet.getHostId());
+            User hostUser = userService.findByUserId(hostId);
 
             //모임의 인원수 체크
-            if (attendMeet.getNowParticipants() >= attendMeet.getMaxParticipants())
+            if (meetUser.getMeetDto().getNowParticipants() >= meetUser.getMeetDto().getMaxParticipants())
                 return ResponseEntity.badRequest().body("해당 모임에 참여 인원이 가득 찼습니다.");
 
+            //모임에 참가 했을 경우 제외한다.
+            for(User user : meetUser.getUsers()){
+                if(userId == user.getUserId()) return ResponseEntity.badRequest().body("이미 참여하신 모임 입니다.");
+            }
+
             //참가자의 모임 상태 추가 -> 데이터를 추가해야한다.
-            meetUserService.saveMeetUser(attendMeet, attendUser, Status.APPLY);
+            meetUserService.saveMeetUser(meetUser.getMeetDto().toEntity(), attendUser, Status.APPLY);
 
             //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
             StringBuilder sb = new StringBuilder();
             StringBuilder pushMessage = new StringBuilder();
-            pushMessage.append(attendUser.getName() + "님께서 " + attendMeet.getMeetName() + "모임에 참여하고 싶어 합니다.");
+            pushMessage.append(attendUser.getName() + "님께서 " + meetUser.getMeetDto().getMeetName() + "모임에 참여하고 싶어 합니다.");
             pushService.send(hostUser, PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
-
 
             return ResponseEntity.ok(meetId + "모임에 신청 완료");
         } catch (IllegalArgumentException e) {

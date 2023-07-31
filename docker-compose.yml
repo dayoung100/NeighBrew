@@ -5,11 +5,10 @@ services:
     build:
       context: ./Front
       dockerfile: Dockerfile
-    volumes:
-      - ./nginx/dist/:/app/dist
+    # volumes:
+    #   - ./nginx/dist/:/app/dist
     ports:
       - "5173:5173"
-    restart: always
   server:
     container_name: server
     build:
@@ -17,15 +16,3 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9999:9999"
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/dist/:/usr/share/nginx/html
-    ports:
-      - "80:80"
-    depends_on:
-      - frontend
-      - server
-    command: /bin/bash -c "nginx -g 'daemon off;'"

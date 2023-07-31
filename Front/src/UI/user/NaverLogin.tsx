@@ -10,8 +10,7 @@ const NaverLogin = () => {
     const code = temcode.split("&")[0];
     const state = location.search.split("=")[2];
     axios
-      .post("http://34.64.126.58:9999/api/auth/naver", {
-        // .post("http://192.168.31.71:8080/api/auth/naver", {
+      .post("/api/auth/naver", {
         authorizationCode: code,
         state: state,
       })
