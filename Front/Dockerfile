@@ -14,9 +14,9 @@ RUN npm install
 COPY . .
 
 # Build the project
-# RUN npm run build
+RUN npm run build
+
 
 # Expose the port your app is running on
 EXPOSE 5173
-CMD [ "npm", "run", "build" ]
 
