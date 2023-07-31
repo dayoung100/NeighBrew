@@ -30,6 +30,7 @@ const ShowcaseBody = styled.div`
 
 const drinkpost = () => {
   const [page, setPage] = useState(0);
+  const [drinkList, setDrinkList] = useState<Drink[]>([]);
 
   // const navigate = useNavigate();
 
@@ -37,24 +38,27 @@ const drinkpost = () => {
     console.log(`감지결과 : ${isIntersecting}`);
     // isIntersecting이 true면 감지했다는 뜻임
     if (isIntersecting) {
-      setPage(prev => prev + 1);
+      if (page < 6) {
+        setTimeout(() => {
+          callApi("get", `api/drink?page=${page}&size=12`)
+            .then(res => {
+              setDrinkList(prev => [...prev, ...res.data.content]);
+              console.log(res.data.content);
+              console.log(drinkList);
+              console.log(page);
+              setPage(prev => prev + 1);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+          console.log(page);
+        }, 100);
+      }
     }
   };
   const { setTarget } = useIntersectionObserver({ onIntersect });
   // 위의 두 변수로 검사할 요소를 observer로 설정
-  const [drinkList, setDrinkList] = useState<Drink[]>([]);
   // 여기에는 axios 요청 들어갈 예정
-  useEffect(() => {
-    callApi("get", `api/drink?page=${page}&size=12`)
-      .then(res => {
-        setDrinkList(prev => [...prev, ...res.data.content]);
-        console.log(res.data);
-        console.log(drinkList);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }, [page]);
 
   return (
     <>
@@ -69,7 +73,7 @@ const drinkpost = () => {
         </div>
         <div
           ref={setTarget}
-          style={{ marginTop: "1000px", height: "100px", backgroundColor: "--c-black" }}
+          style={{ marginTop: "100px", height: "5px", backgroundColor: "--c-black" }}
         >
           내가 보여요?
         </div>

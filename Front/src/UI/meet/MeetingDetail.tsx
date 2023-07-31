@@ -4,7 +4,7 @@
 모임 리스트에서 하나를 클릭하면 이 페이지로 이동함
 모임 위치, 시간, 주최자, 간수치제한, 인원 제한 정보를 담고 있음
 */
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
@@ -13,6 +13,8 @@ import ListInfoItem from "../components/ListInfoItem";
 import UserInfoItem from "../components/UserInfoItem";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import backgroundImg from "../../assets/ForTest/backgroundImg.jpg";
+import { callApi } from "../../utils/api";
+import { Meeting, User } from "../../Type/types";
 
 const MeetThumbnail = styled.div`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -85,25 +87,41 @@ const MeetTitle = styled.div`
   margin-top: 1.5rem;
 `;
 
-const MeetingDetail = () => {
-  const meetPosDateRef = useRef(null);
-  const ArrowLeftIcon = arrowLeftIcon("white");
-  const navigate = useNavigate();
-  const [memberList, setMemberList] = useState([
-    "주최자 이름",
-    "참여자1",
-    "참여자2",
-    "참여자3",
-  ]);
+type MeetDetail = {
+  meetDto: Meeting;
+  users: User[];
+  statuses: [];
+};
 
+const MeetingDetail = () => {
+  const [meetId, setMeetId] = useState(0); //모임 아이디
+  const [meetDetailData, setMeetDetailData] = useState<MeetDetail>(); //모임 데이터
+  const ArrowLeftIcon = arrowLeftIcon("white");
+  const [memberList, setMemberList] = useState([]); //참여자 리스트
+
+  //네비게이터 : 모임 관리 페이지로 이동, 뒤로가기 기능
+  const navigate = useNavigate();
   const GoBackHandler = () => {
     navigate(-1);
   };
-
   const GotoMeetManageHandler = (meetId: number) => {
     console.log("goto manage page, meetId is: ", meetId);
     navigate(`/meet/${meetId}/manage`);
   };
+
+  //users에서 apply인 유저 제외하고 memberList에 넣기
+
+  //api 호출
+  useEffect(() => {
+    const promise = callApi("get", `api/meet/${meetId}`);
+    promise.then((res) => {
+      setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
+    });
+  }, []);
+
+  useEffect(() => {
+    setMemberList(meetDetailData.users);
+  }, [meetDetailData]);
 
   return (
     <div style={{ color: "var(--c-black)" }}>
@@ -238,7 +256,7 @@ const MeetingDetail = () => {
           })}
         </div>
       </MeetDetailDiv>
-      <MeetPosDateDiv ref={meetPosDateRef}>
+      <MeetPosDateDiv>
         <div>
           <img src="/src/assets/mapPinColor.svg" width="20rem" />
           <div>모임 예정 시, 구</div>
@@ -253,7 +271,7 @@ const MeetingDetail = () => {
       <footer>
         <FooterBigBtn
           content="모임 관리"
-          reqFunc={() => GotoMeetManageHandler(1)}
+          reqFunc={() => GotoMeetManageHandler(meetId)}
           color="var(--c-yellow)"
           bgColor="var(--c-lightgray)"
         />

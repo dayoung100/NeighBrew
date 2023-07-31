@@ -118,6 +118,7 @@ type ListInfoItemProps = {
  * @property {any} routingFunc 라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
  */
 const ListInfoItem = (props: ListInfoItemProps) => {
+  //TODO: props를 object로 받도록 수정?
   return (
     <div
       style={{ display: "flex", justifyContent: "center" }}

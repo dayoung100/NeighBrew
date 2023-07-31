@@ -4,7 +4,6 @@
 내가 주최 중인 모임, 내가 참여 중인 모임, 내가 신청한 모임 출력
 */
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MeetingListItem from "./MeetingListItem";
 import { callApi } from "../../utils/api";
@@ -42,7 +41,7 @@ const meetingMy = () => {
   useEffect(() => {
     if (userId !== 0) {
       const promise = callApi("get", `api/meet/mymeet/${userId}`);
-      promise.then((res) => {
+      promise.then(res => {
         console.dir(res.data);
         setMeetData(res.data); //받아온 데이터로 meetData 세팅
       });
