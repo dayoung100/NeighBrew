@@ -70,11 +70,12 @@ public class Meet {
 
 
     @Builder
-    public Meet(String meetName, String description, Long hostId,
+    public Meet(Long meetId, String meetName, String description, Long hostId,
                 Integer nowParticipants, Integer maxParticipants,
                 LocalDateTime meetDate, Tag tag, String sido, String gugun,
                 String dong, Integer minAge, Integer maxAge, Float minLiverPoint,
                 Drink drink, String imgSrc) {
+        this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;
         this.hostId = hostId;
