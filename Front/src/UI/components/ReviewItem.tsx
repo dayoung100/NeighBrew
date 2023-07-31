@@ -26,12 +26,12 @@ const UserCard = styled.div`
   padding-bottom: 5px;
 `;
 
-const DescriptionDiv = styled.div`
+const DescriptionP = styled.p`
   margin-left: 10px;
   text-align: start;
   /* 추가하기 */
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   &.show {
@@ -60,15 +60,9 @@ const MoreButton = styled.button`
 `;
 
 const ReviewItem = ({ review }: { review: Review }) => {
-  const contentRef = useRef(null);
-  const moreBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
-    contentRef.current.classList.add("show");
-    e.currentTarget.classList.add("hide");
-  };
-  const [limit, setLimit] = useState(62);
-
-  const onClickMore = (str: string) => () => {
-    setLimit(str.length);
+  const [showMore, setShowMore] = useState(false);
+  const toggleShowMore = () => {
+    setShowMore(!showMore);
   };
   return (
     <>
@@ -89,10 +83,14 @@ const ReviewItem = ({ review }: { review: Review }) => {
               <span>38</span>
             </div>
           </UserCard>
-          <DescriptionDiv ref={contentRef}>
-            <p>{review.content}</p>
-          </DescriptionDiv>
-          <MoreButton onClick={moreBtn}>...더보기</MoreButton>
+          <div style={{ textAlign: "start" }}>
+            <DescriptionP className={showMore ? "show" : ""}>{review?.content}</DescriptionP>
+            {review?.content.length > 100 && (
+              <MoreButton onClick={toggleShowMore} className={showMore ? "hide" : ""}>
+                ...더보기
+              </MoreButton>
+            )}
+          </div>
         </div>
       </ReviewCard>
     </>
