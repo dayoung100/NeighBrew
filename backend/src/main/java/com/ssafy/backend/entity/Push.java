@@ -9,6 +9,7 @@ import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -40,7 +41,7 @@ public class Push{
     private User user;
 
     @CreatedDate
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Builder
     public Push(User user, PushType pushType, String content, String url, boolean isRead){
@@ -49,6 +50,7 @@ public class Push{
         this.content = content;
         this.url = url;
         this.isRead =isRead;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Push() {
