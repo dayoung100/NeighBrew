@@ -5,29 +5,19 @@
 */
 import styled from "styled-components";
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import filterIcon from "../../assets/meetingFilter.svg";
 import SearchBox from "../components/SearchBox";
-import ListInfoItem from "../components/ListInfoItem";
-import MeetingDetail from "./MeetingDetailSimple";
-import PeopleNumInfo from "./PeopleNumInfo";
 import DrinkCategory from "../drinkCategory/DrinkCategory";
+import MeetingListItem from "./MeetingListItem";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
-import { Meetings } from "../../Type/types";
+import { Meeting } from "../../Type/types";
 
 const meetingFind = () => {
-  //네비게이터 : 모임 상세페이지로 이동
-  const navigate = useNavigate();
-  const GotoMeetDetailHandler = (meetId: number) => {
-    console.log(meetId, "find");
-    navigate(`/meet/${meetId}`);
-  };
-
   //받아온 모임 정보 리스트(전체)
-  const [meetAllData, setMeetAllData] = useState<Meetings[]>([]);
+  const [meetAllData, setMeetAllData] = useState<Meeting[]>([]);
   //필터링 한 후 모임 정보
-  const [meetData, setMeetData] = useState<Meetings[]>([]);
+  const [meetData, setMeetData] = useState<Meeting[]>([]);
 
   useEffect(() => {
     setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
@@ -108,70 +98,44 @@ const meetingFind = () => {
   //필터에 텍스트 검색용
   const [inputText, setInputText] = useState("");
 
-  //날짜와 시간 변환 함수
-  function formateDate(dateData: string) {
-    const date = new Date(dateData);
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hour = date.getHours();
-    const minute = date.getMinutes();
-
-    return `${month}월 ${day}일 ${hour}시 ${minute}분`;
-  }
-
-  //태그ID를 태그 이름으로 변환
-  //TODO: 공용 변수로 빼기??
-  function getTagName(tagId: number) {
-    const tag = [
-      { tagId: 0, tagName: "전체" },
-      { tagId: 1, tagName: "양주" },
-      { tagId: 2, tagName: "전통주" },
-      { tagId: 3, tagName: "전체" },
-      { tagId: 4, tagName: "사케" },
-      { tagId: 5, tagName: "와인" },
-      { tagId: 6, tagName: "수제맥주" },
-      { tagId: 7, tagName: "소주/맥주" },
-    ];
-    return tag[tagId].tagName;
-  }
-
   //필터용 함수
   //카테고리로 필터링
-  const categoryFiltering = (data: Meetings) => {
+  const categoryFiltering = (data: Meeting) => {
     if (selectedCategory === 0) {
       return true;
     }
     return data.tagId === selectedCategory;
   };
   //시도 정보로 필터링
-  const sidoFiltering = (data: Meetings) => {
+  const sidoFiltering = (data: Meeting) => {
     if (sido === "") return true;
     return data.sido === sido;
   };
   //구군 정보로 필터링
-  const gugunFiltering = (data: Meetings) => {
+  const gugunFiltering = (data: Meeting) => {
     if (gugun === "") return true;
     return data.gugun === gugun;
   };
   //동 정보로 필터링
-  const dongFiltering = (data: Meetings) => {
+  const dongFiltering = (data: Meeting) => {
     if (dong === "") return true;
     return data.dong === dong;
   };
   //날짜 정보로 필터링
-  const dateFiltering = (data: Meetings) => {
+  const dateFiltering = (data: Meeting) => {
     if (startDate === "" && endDate === "") return true;
     return data.meetDate > startDate && data.meetDate < endDate;
   };
   //모임 이름으로 필터링
-  const titleFiltering = (data: Meetings) => {
+  const titleFiltering = (data: Meeting) => {
     if (inputText === "") return true;
     return data.meetName === inputText;
   };
   //술의 이름으로 필터링
-  const drinkNameFiltering = (data: Meetings) => {
+  const drinkNameFiltering = (data: Meeting) => {
     if (inputText === "") return true;
-    return data.drink.drinkName === inputText;
+    console.log("주류 이름:", data.drink.name);
+    return data.drink.name === inputText;
   };
 
   //전체 필터
@@ -263,44 +227,7 @@ const meetingFind = () => {
             </FilterDiv>
           )}
         </div>
-        {meetData.map((meeting: Meetings) => {
-          const meetId = meeting.meetId;
-          const hasAgeLimit =
-            (meeting.minAge ?? 0) > 0 || (meeting.maxAge ?? 0) > 0
-              ? true
-              : false;
-          const position = `${meeting.sido} ${meeting.gugun} ${meeting.dong}`;
-          const formattedDate = formateDate(meeting.meetDate);
-          const tagName = getTagName(meeting.tagId);
-          return (
-            <ListInfoItem
-              key={meetId}
-              title={meeting.meetName}
-              imgSrc="../src/assets/tempgif.gif"
-              tag={tagName}
-              content={
-                <MeetingDetail
-                  position={position}
-                  time={formattedDate}
-                  hostId={meeting.hostId}
-                  liverLimit={(meeting.minLiverPoint ?? 0) > 0 ? true : false}
-                  ageLimit={hasAgeLimit}
-                />
-              }
-              numberInfo={
-                <PeopleNumInfo
-                  now={meeting.nowParticipants}
-                  max={meeting.maxParticipants}
-                  color={"var(--c-black)"}
-                  size={11}
-                />
-              }
-              isWaiting={false}
-              outLine={false}
-              routingFunc={() => GotoMeetDetailHandler(meetId)}
-            ></ListInfoItem>
-          );
-        })}
+        <MeetingListItem data={meetData} />
       </SearchResultDiv>
     </div>
   );

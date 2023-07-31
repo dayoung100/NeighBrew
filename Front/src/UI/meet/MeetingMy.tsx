@@ -9,8 +9,9 @@ import styled from "styled-components";
 import ListInfoItem from "../components/ListInfoItem";
 import MeetingDetail from "./MeetingDetailSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
+import MeetingListItem from "./MeetingListItem";
 import { callApi } from "../../utils/api";
-import { Meetings } from "../../Type/types";
+import { Meeting } from "../../Type/types";
 
 const MeetingDiv = styled.div`
   margin-bottom: 2rem;
@@ -30,113 +31,47 @@ const meetingMy = () => {
     navigate(`/meet/${meetId}`);
   };
   //현재 유저의 userId
-  const [userId, setUserId] = useState();
-  //로컬 스토리지에서 userId 가져오기
+  const [userId, setUserId] = useState(1);
+  //TODO: 로컬 스토리지에서 userId 가져오기
 
   //불러온 모임 데이터
   const [meetData, setMeetData] = useState({
-    CREATE: [],
+    HOST: [],
     APPLY: [],
-    ATTEND: [],
+    GUEST: [],
   }); //userId의 모임 전체
-  const [createMeet, setCreateMeet] = useState([]); //userId가 만든 모임
+  const [hostMeet, setHostMeet] = useState([]); //userId가 만든 모임
   const [applyMeet, setApplyMeet] = useState([]); //userId가 지원한 모임
-  const [attendMeet, setAttendMeet] = useState([]); //userId가 참여한 모임
+  const [guestMeet, setGuestMeet] = useState([]); //userId가 참여한 모임
 
   //api 호출
   useEffect(() => {
     const promise = callApi("get", `api/meet/mymeet/${userId}`);
     promise.then((res) => {
+      console.dir(res.data);
       setMeetData(res.data); //받아온 데이터로 meetData 세팅
     });
   }, []);
   //create, apply, attend 모임 갱신
   useEffect(() => {
-    setCreateMeet(meetData.CREATE);
+    setHostMeet(meetData.HOST);
     setApplyMeet(meetData.APPLY);
-    setAttendMeet(meetData.ATTEND);
+    setGuestMeet(meetData.GUEST);
   }, [meetData]);
 
   return (
     <div style={{ background: "var(--c-lightgray)", padding: "1rem" }}>
       <MeetingDiv>
         <MeetTitle>내가 주최 중인 모임</MeetTitle>
-        <ListInfoItem
-          title="내가 주최 중인 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-          tag="소주/맥주"
-          content={
-            <MeetingDetail
-              position=""
-              time=""
-              hostId={1}
-              liverLimit={true}
-              ageLimit={true}
-            />
-          }
-          numberInfo={
-            <PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />
-          }
-          isWaiting={false}
-          outLine={false}
-          routingFunc={() => GotoMeetDetailHandler(1)}
-        ></ListInfoItem>
+        <MeetingListItem data={hostMeet} />
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>내가 참여 중인 모임</MeetTitle>
-        <ListInfoItem
-          title="내가 참여 중인 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-          tag="소주/맥주"
-          content={
-            <MeetingDetail
-              position=""
-              time=""
-              hostId={1}
-              liverLimit={true}
-              ageLimit={true}
-            />
-          }
-          numberInfo={
-            <PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />
-          }
-          isWaiting={false}
-          outLine={false}
-          routingFunc={() => GotoMeetDetailHandler(1)}
-        ></ListInfoItem>
+        <MeetingListItem data={guestMeet} />
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>내가 신청한 모임</MeetTitle>
-        <ListInfoItem
-          title="내가 신청한 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-          tag="소주/맥주"
-          content={
-            <MeetingDetail
-              position=""
-              time=""
-              hostId={1}
-              liverLimit={true}
-              ageLimit={true}
-            />
-          }
-          numberInfo={
-            <PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />
-          }
-          isWaiting={true}
-          outLine={false}
-          routingFunc={() => GotoMeetDetailHandler(1)}
-        ></ListInfoItem>
-        <ListInfoItem
-          title="내가 신청한 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-          tag="소주/맥주"
-          content="주류 정보는 이렇게 다른 요소는 비워두고 쓰면 될 것 같다"
-          numberInfo={null}
-          isWaiting={false}
-          outLine={false}
-          routingFunc={() => GotoMeetDetailHandler(1)}
-        ></ListInfoItem>
+        <MeetingListItem data={applyMeet} />
       </MeetingDiv>
     </div>
   );
