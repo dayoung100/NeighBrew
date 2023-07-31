@@ -90,7 +90,7 @@ public class MeetController {
     }
 
     //모임 수정
-    @PutMapping("/{userId}")
+    @PutMapping("/modify")
     public ResponseEntity<?> updateMeet(@PathVariable Long userId,
                                         MeetDto meetDto,
                                         Long drinkId,
@@ -120,9 +120,8 @@ public class MeetController {
         }
     }
 
-
     //모임 삭제하기
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteMeet(@RequestBody Map<String, Long> requestBody) {
         Long userId = requestBody.get("userId");
         Long meetId = requestBody.get("meetId");
