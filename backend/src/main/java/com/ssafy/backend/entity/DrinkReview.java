@@ -35,6 +35,10 @@ public class DrinkReview {
         this.content = content;
     }
 
+    @PrePersist
+    public void prePersist() {
+        this.img = "no image";
+    }
 
     public void setContent(String content) {
         this.content = content;
