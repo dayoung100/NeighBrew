@@ -5,7 +5,7 @@
 모임 위치, 시간, 주최자, 간수치제한, 인원 제한 정보를 담고 있음
 */
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
 import PeopleNumInfo from "./PeopleNumInfo";
@@ -94,10 +94,10 @@ type MeetDetail = {
 };
 
 const MeetingDetail = () => {
-  const [meetId, setMeetId] = useState(0); //모임 아이디
-  const [meetDetailData, setMeetDetailData] = useState<MeetDetail>(); //모임 데이터
   const ArrowLeftIcon = arrowLeftIcon("white");
-  const [memberList, setMemberList] = useState([]); //참여자 리스트
+  const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
+  const [meetDetailData, setMeetDetailData] = useState<MeetDetail>(); //모임 데이터
+  const [memberList, setMemberList] = useState<User[]>([]); //참여자 리스트
 
   //네비게이터 : 모임 관리 페이지로 이동, 뒤로가기 기능
   const navigate = useNavigate();
@@ -109,19 +109,49 @@ const MeetingDetail = () => {
     navigate(`/meet/${meetId}/manage`);
   };
 
-  //users에서 apply인 유저 제외하고 memberList에 넣기
-
   //api 호출
   useEffect(() => {
     const promise = callApi("get", `api/meet/${meetId}`);
     promise.then((res) => {
+      console.dir(res.data);
       setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
     });
-  }, []);
+  }, [meetId]);
 
+  //users에서 apply인 유저 제외하고 memberList에 넣기
   useEffect(() => {
-    setMemberList(meetDetailData.users);
+    if (meetDetailData !== undefined) {
+      let members = meetDetailData.users.filter(
+        (user, index) => meetDetailData.statuses[index] !== "APPLY"
+      );
+      setMemberList(members);
+    }
   }, [meetDetailData]);
+
+  //태그ID를 태그 이름으로 변환
+  //TODO: 공용 변수로 빼기??
+  function getTagName(tagId: number) {
+    const tag = [
+      { tagId: 0, tagName: "전체" },
+      { tagId: 1, tagName: "양주" },
+      { tagId: 2, tagName: "전통주" },
+      { tagId: 3, tagName: "전체" },
+      { tagId: 4, tagName: "사케" },
+      { tagId: 5, tagName: "와인" },
+      { tagId: 6, tagName: "수제맥주" },
+      { tagId: 7, tagName: "소주/맥주" },
+    ];
+    return tag[tagId].tagName;
+  }
+  function hasAgeLimit() {
+    if (meetDetailData === undefined) return false;
+    const res =
+      (meetDetailData.meetDto.minAge ?? 0) > 0 ||
+      (meetDetailData.meetDto.maxAge ?? 0) > 0
+        ? true
+        : false;
+    return res;
+  }
 
   return (
     <div style={{ color: "var(--c-black)" }}>
@@ -139,7 +169,7 @@ const MeetingDetail = () => {
           >
             {ArrowLeftIcon}
           </div>
-          <Tag>소주/맥주</Tag>
+          <Tag>{getTagName(meetDetailData.meetDto.tagId)}</Tag>
         </div>
         <div style={{ textAlign: "center", padding: "2rem 0 7rem 0" }}>
           <div
@@ -149,7 +179,7 @@ const MeetingDetail = () => {
               marginBottom: "0.5rem",
             }}
           >
-            모임의 제목이 들어갑니다
+            {meetDetailData.meetDto.meetName}
           </div>
           <div
             style={{
@@ -160,18 +190,23 @@ const MeetingDetail = () => {
               fontSize: "15px",
             }}
           >
+            <div>주최자: </div>
             <div style={{ display: "flex", alignItems: "center" }}>
               <img
                 src="../src/assets/tempgif.gif"
                 width="20rem"
                 style={{ borderRadius: "100px" }}
               />
-              <div>주최자 이름</div>
+              <div>{memberList[0].name}</div>
             </div>
-            <div>이 들어갑니다</div>
           </div>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <PeopleNumInfo now={4} max={4} color="white" size={11} />
+            <PeopleNumInfo
+              now={meetDetailData.meetDto.nowParticipants}
+              max={meetDetailData.meetDto.maxParticipants}
+              color="white"
+              size={11}
+            />
           </div>
         </div>
       </MeetThumbnail>
@@ -184,22 +219,27 @@ const MeetingDetail = () => {
             fontFamily: "Noto Sans KR",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <img
-              src="/src/assets/liver.svg"
-              width="20rem"
-              style={{ marginRight: "3px" }}
-            />
-            간수치 제한
-          </div>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <img
-              src="/src/assets/age.svg"
-              width="20rem"
-              style={{ marginRight: "3px" }}
-            />
-            나이 제한
-          </div>
+          {meetDetailData.meetDto.minLiverPoint > 0 && (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <img
+                src="/src/assets/liver.svg"
+                width="20rem"
+                style={{ marginRight: "3px" }}
+              />
+              <div>{meetDetailData.meetDto.minLiverPoint}</div>
+              IU/L
+            </div>
+          )}
+          {hasAgeLimit && (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <img
+                src="/src/assets/age.svg"
+                width="20rem"
+                style={{ marginRight: "3px" }}
+              />
+              나이 제한
+            </div>
+          )}
         </div>
         <MeetTitle>우리가 마실 것은</MeetTitle>
         <ListInfoItem
@@ -245,9 +285,10 @@ const MeetingDetail = () => {
           {memberList.map((member, index) => {
             return (
               <UserInfoItem
-                userId={1}
-                name={member}
-                intro="한 마디는 이렇게 저렇게 작성하기 한 마디는 이렇게 저렇게 작성하기"
+                key={index}
+                userId={member.userId}
+                name={member.nickname}
+                intro={member.intro}
                 imgSrc="../src/assets/tempgif.gif"
                 isMaster={index === 0}
                 width={15}
@@ -271,7 +312,7 @@ const MeetingDetail = () => {
       <footer>
         <FooterBigBtn
           content="모임 관리"
-          reqFunc={() => GotoMeetManageHandler(meetId)}
+          reqFunc={() => GotoMeetManageHandler(parseInt(meetId))}
           color="var(--c-yellow)"
           bgColor="var(--c-lightgray)"
         />
