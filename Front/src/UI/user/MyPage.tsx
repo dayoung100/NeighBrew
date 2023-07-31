@@ -10,9 +10,261 @@ import siren from "../../assets/siren.png";
 import Navbar from "../navbar/Navbar";
 import MeetingMy from "./MeetingMyUseInUser";
 import Footer from "../footer/Footer";
-import axios from "axios";
+import Modal from "react-modal";
 import { User } from "../../Type/types";
 import { callApi } from "../../utils/api";
+import DrinkpostMain from "./DrinkPostUseInUser";
+import DrinkCategory from "../drinkCategory/DrinkCategory";
+
+const MyPage = () => {
+  const [userData, setUserData] = useState<User>({
+    birth: "생년월일",
+    email: "이메일",
+    follower: 0,
+    following: 0,
+    liverPoint: 0,
+    name: "이름",
+    profile: "한줄설명",
+    userId: 0,
+    nickname: "닉네임",
+  }); // 유저 정보
+  const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
+  const [following, setFollowing] = useState(0); // 팔로잉,팔로워 목록
+  const { userid } = useParams();
+  const [tags, setTags] = useState(["태그1", "태그2", "태그3"]);
+  const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
+  const Brewery = brewery(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
+  const [deleteModalOn, setDeleteModalOn] = useState(false);
+  const navigate = useNavigate();
+  const followHandler = async () => {
+    const api = await callApi("post", `api/follow/guard/${userid}`)
+      .then(res => {
+        followers();
+      })
+      .catch(err => console.log(err));
+  };
+  // 팔로우가 되어있는지 확인 (팔로우 버튼 색깔 변경)
+  const followers = async () => {
+    const api = callApi("get", `api/follow/${userid}`).then(res => {
+      if (res.data.length == 0) {
+        setUserData(userData => ({ ...userData, follower: res.data.length }));
+        setFollowing(0);
+        return;
+      }
+      setUserData(userData => ({ ...userData, follower: res.data.length }));
+      console.log(res.data);
+      res.data.map((item, i) => {
+        if (item.follower.userId == parseInt(localStorage.getItem("myId"))) {
+          setFollowing(1);
+          return;
+        } else if (i == res.data.length - 1) {
+          setFollowing(0);
+        }
+      });
+    });
+  };
+  const reportHandler = () => {
+    alert("신고되었습니다.");
+  };
+  const goFollowerPage = () => {
+    navigate("/myPage/follower/" + userid);
+  };
+  const goFollowPage = () => {
+    navigate("/myPage/follow/" + userid);
+  };
+  const userInfo = async () => {
+    const api = callApi("get", `api/user/guard/userinfo/${userid}`)
+      .then(res => {
+        setUserData(res.data);
+        console.log(res.data);
+      })
+      .catch(err => console.log(err));
+  };
+  const refresh = () => {
+    if (localStorage.getItem("token") != null) {
+      callApi("post", "api/user/refresh-token", {
+        refreshToken: localStorage.getItem("refreshToken"),
+      }).then(res => {
+        localStorage.setItem("token", res.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.refreshToken);
+      });
+    }
+  };
+  const [selectedCategory, setSelectedCategory] = useState(0);
+  const getDrinkCategory = (tagId: number) => {
+    setSelectedCategory(tagId);
+    console.log(tagId);
+  };
+  useEffect(() => {
+    refresh();
+    userInfo();
+    followers();
+  }, []);
+  return (
+    <>
+      <header>
+        <Navbar />
+      </header>
+      <div
+        style={{
+          minHeight: "200px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
+        <UserDiv>
+          <button
+            onClick={() => {
+              setDeleteModalOn(true);
+            }}
+          >
+            프로필 수정
+          </button>
+          <ImgDiv>
+            <Img src={temgif}></Img>
+          </ImgDiv>
+          <ColumnDiv>
+            <p>{userData!.liverPoint} IU/L</p>
+            <LiverDiv liverpoint={userData!.liverPoint}>
+              <img style={{ width: "38px", height: "38px" }} src={liver} alt="" />
+            </LiverDiv>
+            <p>간수치</p>
+          </ColumnDiv>
+          <ColumnDiv>
+            <p>4병</p>
+            <img style={{ width: "16.107px", height: "38.071px" }} src={bottle} alt="" />
+            <p>술병수</p>
+          </ColumnDiv>
+          <GripDiv>
+            <ColumnDiv
+              style={{
+                gridColumn: "1/3",
+                gridRow: "1/3",
+                cursor: "pointer",
+              }}
+              onClick={goFollowPage}
+            >
+              <p>{userData.following ?? 0}</p>
+              <p>팔로우</p>
+            </ColumnDiv>
+            <ColumnDiv
+              style={{
+                gridColumn: "3/5",
+                gridRow: "1/3",
+                cursor: "pointer",
+              }}
+              onClick={goFollowerPage}
+            >
+              <p>{userData.follower ?? 0}</p>
+              <p>팔로워</p>
+            </ColumnDiv>
+            <button
+              style={{
+                gridColumn: "1/4",
+                gridRow: "3/3",
+                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+                border: "none",
+                borderRadius: "16px",
+                fontFamily: "JejuGothic",
+                cursor: "pointer",
+              }}
+              onClick={followHandler}
+            >
+              {following === 0 ? "팔로우" : "언팔로우"}
+            </button>
+
+            <img
+              src={siren}
+              style={{ gridColumn: "4/5", gridRow: "3/3", cursor: "pointer" }}
+              onClick={reportHandler}
+            />
+          </GripDiv>
+        </UserDiv>
+
+        <UserInfoDiv>
+          <p style={{ marginLeft: "3rem", marginRight: "4rem" }}>{userData!.nickname}</p>
+          <TagDiv>와인</TagDiv>
+        </UserInfoDiv>
+        <div
+          style={{
+            fontSize: "14px",
+            fontFamily: "JejuGothic",
+            textAlign: "left",
+            margin: "0 1rem",
+          }}
+        >
+          <p>{userData.intro ? userData.intro : <p> 임시 한줄 설명 </p>}</p>
+        </div>
+      </div>
+      <div>
+        <Button
+          onClick={() => {
+            setChooseChat(0);
+          }}
+          style={{
+            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+          }}
+        >
+          {MeetingIcon}
+          <p style={{ color: chooseChat === 0 ? "var(--c-black)" : "var(--c-lightgray)" }}>모임</p>
+        </Button>
+        <Button
+          onClick={() => {
+            setChooseChat(1);
+          }}
+          style={{ borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)" }}
+        >
+          {Brewery}
+          <p style={{ color: chooseChat === 0 ? "var(--c-lightgray)" : "var(--c-black)" }}>술장</p>
+        </Button>
+      </div>
+      {chooseChat === 0 ? (
+        <MeetingMy userId={parseInt(userid)}></MeetingMy>
+      ) : (
+        <DrinkpostMain></DrinkpostMain>
+      )}
+
+      <div style={{ height: "80px" }}></div>
+      <Modal
+        isOpen={deleteModalOn}
+        onRequestClose={() => setDeleteModalOn(false)}
+        style={WhiteModal}
+      >
+        <CateDiv>
+          <DrinkCategory getFunc={getDrinkCategory} />
+        </CateDiv>
+        <FlexDiv>
+          <label htmlFor="nickname">닉네임</label>
+          <input type="text" id="nickname" />
+        </FlexDiv>
+        <FlexDiv>
+          <label htmlFor="intro">한줄 설명</label>
+          <input type="text" id="intro" />
+        </FlexDiv>
+      </Modal>
+      <footer>
+        <Footer />
+      </footer>
+    </>
+  );
+};
+
+export default MyPage;
+
+const CateDiv = styled.div`
+  height: 10rem;
+  margin-top: 1rem;
+  div {
+    margin: 0;
+  }
+  .first,
+  .second {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 0.5rem;
+  }
+`;
 const Button = styled.button`
   width: 40%;
   display: inline-block;
@@ -86,6 +338,7 @@ const TagDiv = styled.div`
   margin: auto 0.5rem;
   padding: 0.3rem;
   font-size: 12px;
+  width: 4rem;
 `;
 const LiverDiv = styled.div<{ liverpoint: number }>`
   position: relative;
@@ -103,183 +356,28 @@ const LiverDiv = styled.div<{ liverpoint: number }>`
     }
   }
 `;
-const MyPage = () => {
-  const [userData, setUserData] = useState<User>({
-    birth: "생년월일",
-    email: "이메일",
-    follower: 0,
-    following: 0,
-    liverPoint: 0,
-    name: "이름",
-    profile: "한줄설명",
-    userId: 0,
-    nickname: "닉네임",
-  }); // 유저 정보
-  const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
-  const [following, setFollowing] = useState(0); // 팔로잉,팔로워 목록
-  const { userid } = useParams();
-  const [tags, setTags] = useState(["태그1", "태그2", "태그3"]);
-  const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
-  const Brewery = brewery(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
-  const navigate = useNavigate();
-  const followHandler = async () => {
-    const api = await callApi("post", `api/follow/guard/${userid}`)
-      .then(res => {
-        followers();
-      })
-      .catch(err => console.log(err));
-  };
-  // 팔로우가 되어있는지 확인 (팔로우 버튼 색깔 변경)
-  const followers = async () => {
-    const api = await callApi("get", `api/follow/${userid}`).then(res => {
-      setUserData(userData => ({ ...userData, follower: res.data.length }));
-    });
-  };
-  const reportHandler = () => {
-    alert("신고되었습니다.");
-  };
-  const goFollowerPage = () => {
-    navigate("/myPage/follower/" + userid);
-  };
-  const goFollowPage = () => {
-    navigate("/myPage/follow/" + userid);
-  };
-  const userInfo = async () => {
-    const api = callApi("get", `api/user/guard/userinfo/${userid}`)
-      .then(res => {
-        setUserData(res.data);
-        console.log(res.data);
-      })
-      .catch(err => console.log(err));
-  };
-
-  useEffect(() => {
-    userInfo();
-    followers();
-  }, []);
-  return (
-    <>
-      <header>
-        <Navbar />
-      </header>
-      <button onClick={followers}>awdadwwa</button>
-      <div
-        style={{
-          minHeight: "200px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-        }}
-      >
-        <UserDiv>
-          <ImgDiv>
-            <Img src={temgif}></Img>
-          </ImgDiv>
-          <ColumnDiv>
-            <p>{userData!.liverPoint} IU/L</p>
-            <LiverDiv liverpoint={userData!.liverPoint}>
-              <img style={{ width: "38px", height: "38px" }} src={liver} alt="" />
-            </LiverDiv>
-            <p>간수치</p>
-          </ColumnDiv>
-          <ColumnDiv>
-            <p>4병</p>
-            <img style={{ width: "16.107px", height: "38.071px" }} src={bottle} alt="" />
-            <p>술병수</p>
-          </ColumnDiv>
-          <GripDiv>
-            <ColumnDiv
-              style={{
-                gridColumn: "1/3",
-                gridRow: "1/3",
-                cursor: "pointer",
-              }}
-              onClick={goFollowPage}
-            >
-              <p>{userData.following ?? 0}</p>
-              <p>팔로우</p>
-            </ColumnDiv>
-            <ColumnDiv
-              style={{
-                gridColumn: "3/5",
-                gridRow: "1/3",
-                cursor: "pointer",
-              }}
-              onClick={goFollowerPage}
-            >
-              <p>{userData.follower ?? 0}</p>
-              <p>팔로워</p>
-            </ColumnDiv>
-            <button
-              style={{
-                gridColumn: "1/4",
-                gridRow: "3/3",
-                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
-                border: "none",
-                borderRadius: "16px",
-                fontFamily: "JejuGothic",
-                cursor: "pointer",
-              }}
-              onClick={followHandler}
-            >
-              {following === 0 ? "팔로우" : "언팔로우"}
-            </button>
-
-            <img
-              src={siren}
-              style={{ gridColumn: "4/5", gridRow: "3/3", cursor: "pointer" }}
-              onClick={reportHandler}
-            />
-          </GripDiv>
-        </UserDiv>
-
-        <UserInfoDiv>
-          <p style={{ marginLeft: "3rem", marginRight: "4rem" }}>{userData!.nickname}</p>
-          {tags.map((tag, i) => {
-            return <TagDiv key={i}>{tag}</TagDiv>;
-          })}
-        </UserInfoDiv>
-        <div
-          style={{
-            fontSize: "14px",
-            fontFamily: "JejuGothic",
-            textAlign: "left",
-            margin: "0 1rem",
-          }}
-        >
-          <p>{userData.intro ? userData.intro : <p> 임시 한줄 설명 </p>}</p>
-        </div>
-      </div>
-      <div>
-        <Button
-          onClick={() => {
-            setChooseChat(0);
-          }}
-          style={{
-            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
-          }}
-        >
-          {MeetingIcon}
-          <p style={{ color: chooseChat === 0 ? "var(--c-black)" : "var(--c-lightgray)" }}>모임</p>
-        </Button>
-        <Button
-          onClick={() => {
-            setChooseChat(1);
-          }}
-          style={{ borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)" }}
-        >
-          {Brewery}
-          <p style={{ color: chooseChat === 0 ? "var(--c-lightgray)" : "var(--c-black)" }}>술장</p>
-        </Button>
-      </div>
-      {chooseChat === 0 ? <MeetingMy userId={parseInt(userid)}></MeetingMy> : <p>임시 술장</p>}
-
-      <div style={{ height: "80px" }}></div>
-      <footer>
-        <Footer />
-      </footer>
-    </>
-  );
+const WhiteModal = {
+  content: {
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    height: "80%",
+    padding: "0.5rem 1rem",
+    borderRadius: "15px",
+    background: "white",
+    textAlign: "center",
+    fontFamily: "SeoulNamsan",
+  },
+  overlay: {
+    background: "rgba(0, 0, 0, 0.5)",
+    zIndex: "11",
+  },
 };
 
-export default MyPage;
+const FlexDiv = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin: 1rem auto;
+`;

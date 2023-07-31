@@ -11,7 +11,6 @@ import { callApi } from "../../utils/api";
 
 const MeetingDiv = styled.div`
   margin-bottom: 2rem;
-  min-height: 250px;
 `;
 
 const MeetTitle = styled.div`
@@ -57,7 +56,7 @@ const meetingMy = (props: { userId: number }) => {
   }, [meetData]);
 
   return (
-    <div style={{ background: "var(--c-lightgray)", padding: "1rem" }}>
+    <div style={{ background: "var(--c-lightgray)", padding: "1rem", minHeight: "800px" }}>
       <MeetingDiv>
         <MeetTitle>내가 주최 중인 모임</MeetTitle>
         <MeetingListItem data={hostMeet} />
