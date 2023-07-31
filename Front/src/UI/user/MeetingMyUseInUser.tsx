@@ -6,12 +6,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import ListInfoItem from "../components/ListInfoItem";
-import MeetingDetail from "./../meet/MeetingDetailSimple";
-import PeopleNumInfo from "./../meet/PeopleNumInfo";
+import MeetingListItem from "./../meet/MeetingListItem";
+import { callApi } from "../../utils/api";
 
 const MeetingDiv = styled.div`
   margin-bottom: 2rem;
+  min-height: 250px;
 `;
 
 const MeetTitle = styled.div`
@@ -20,70 +20,51 @@ const MeetTitle = styled.div`
   text-align: left;
 `;
 
-const meetingMy = () => {
-  const navigate = useNavigate();
+const meetingMy = (props: { userId: number }) => {
+  //현재 유저의 userId
+  const [userId, setUserId] = useState(0);
 
-  const GotoMeetDetailHandler = (meetId: number) => {
-    console.log("goto detail page, meetId is: ", meetId, "[my]");
-    navigate(`/meet/${meetId}`);
-  };
+  //불러온 모임 데이터
+  const [meetData, setMeetData] = useState({
+    HOST: [],
+    APPLY: [],
+    GUEST: [],
+  }); //userId의 모임 전체
+  const [hostMeet, setHostMeet] = useState([]); //userId가 만든 모임
+  const [applyMeet, setApplyMeet] = useState([]); //userId가 지원한 모임
+  const [guestMeet, setGuestMeet] = useState([]); //userId가 참여한 모임
+
+  useEffect(() => {
+    setUserId(props.userId);
+  });
+
+  //api 호출
+  useEffect(() => {
+    if (userId !== 0) {
+      const promise = callApi("get", `api/meet/mymeet/${userId}`);
+      promise.then(res => {
+        console.dir(res.data);
+        setMeetData(res.data); //받아온 데이터로 meetData 세팅
+      });
+    }
+  }, [userId]);
+
+  //create, apply, attend 모임 갱신
+  useEffect(() => {
+    setHostMeet(meetData.HOST);
+    setApplyMeet(meetData.APPLY);
+    setGuestMeet(meetData.GUEST);
+  }, [meetData]);
 
   return (
     <div style={{ background: "var(--c-lightgray)", padding: "1rem" }}>
       <MeetingDiv>
         <MeetTitle>내가 주최 중인 모임</MeetTitle>
-        <ListInfoItem
-          title="내가 주최 중인 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-          tag="소주/맥주"
-          content={
-            <MeetingDetail position="" time="" hostId={1} liverLimit={true} ageLimit={true} />
-          }
-          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
-          isWaiting={false}
-          outLine={false}
-          routingFunc={() => GotoMeetDetailHandler(1)}
-        ></ListInfoItem>
+        <MeetingListItem data={hostMeet} />
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>내가 참여 중인 모임</MeetTitle>
-        <ListInfoItem
-          title="내가 참여 중인 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-          tag="소주/맥주"
-          content={
-            <MeetingDetail position="" time="" hostId={1} liverLimit={true} ageLimit={true} />
-          }
-          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
-          isWaiting={false}
-          outLine={false}
-          routingFunc={() => GotoMeetDetailHandler(1)}
-        ></ListInfoItem>
-      </MeetingDiv>
-      <MeetingDiv>
-        <MeetTitle>내가 신청한 모임</MeetTitle>
-        <ListInfoItem
-          title="내가 신청한 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-          tag="소주/맥주"
-          content={
-            <MeetingDetail position="" time="" hostId={1} liverLimit={true} ageLimit={true} />
-          }
-          numberInfo={<PeopleNumInfo now={1} max={1} color="var(--c-black)" size={11} />}
-          isWaiting={true}
-          outLine={false}
-          routingFunc={() => GotoMeetDetailHandler(1)}
-        ></ListInfoItem>
-        <ListInfoItem
-          title="내가 신청한 모임의 이름"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-          tag="소주/맥주"
-          content="주류 정보는 이렇게 다른 요소는 비워두고 쓰면 될 것 같다"
-          numberInfo={null}
-          isWaiting={false}
-          outLine={false}
-          routingFunc={() => GotoMeetDetailHandler(1)}
-        ></ListInfoItem>
+        <MeetingListItem data={guestMeet} />
       </MeetingDiv>
     </div>
   );

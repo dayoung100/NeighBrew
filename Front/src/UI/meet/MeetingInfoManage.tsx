@@ -13,7 +13,6 @@ import OneLineListItem from "../components/OneLineListItem";
 import ListInfoItem from "../components/ListInfoItem";
 import ImageInput from "../components/ImageInput";
 import autoAnimate from "@formkit/auto-animate";
-import { Meetings } from "../../Type/types";
 
 const Title = styled.div`
   font-family: "JejuGothic";
