@@ -8,8 +8,7 @@ const KakaoLogin = () => {
   const KakaologinHandler = async () => {
     const code = location.search.split("=")[1];
     axios
-      .post("http://34.64.126.58:9999/api/auth/kakao", {
-        // .post("http://192.168.31.71:8080/api/auth/kakao", {
+      .post("/api/auth/kakao", {
         authorizationCode: code,
       })
       .then(res => {
@@ -20,6 +19,7 @@ const KakaoLogin = () => {
         await callApi("get", "api/user/guard/myinfo")
           .then(res => {
             localStorage.setItem("myId", JSON.stringify(res.data.userId));
+            console.log(res.data);
           })
           .catch(err => console.log(err));
         await navigate("/meet");

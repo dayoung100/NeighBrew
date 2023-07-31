@@ -8,10 +8,8 @@ const GoogleLogin = () => {
   const GoogleloginHandler = async () => {
     const temcode = location.search.split("=")[1];
     const code = temcode.split("&")[0];
-    console.log(code);
-    //34.64.126.58
     axios
-      .post("http://34.64.126.58:9999/api/auth/google", {
+      .post("/api/auth/google", {
         code: code,
       })
       .then(res => {
@@ -22,7 +20,6 @@ const GoogleLogin = () => {
         await callApi("get", "api/user/guard/myinfo")
           .then(res => {
             localStorage.setItem("myId", JSON.stringify(res.data.userId));
-            // console.log(res.data);
           })
           .catch(err => console.log(err));
         await navigate("/meet");
