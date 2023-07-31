@@ -145,7 +145,8 @@ public class GoogleApiClient implements OAuthApiClient {
     @Override
     public String authApiUrl(OAuthLoginParams params) {
         log.info("authApiUrl :" + params);
-        String redirectUri = "https://i9b310.p.ssafy.io//google/callback";
+//        String redirectUri = "https://i9b310.p.ssafy.io//google/callback";
+        String redirectUri = "http://localhost:5173/google/callback";
         String responseType = "code";
         String url = authUrl + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType +"&scope=email profile";
         return url;
