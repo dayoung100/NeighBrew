@@ -80,7 +80,7 @@ public class MeetController {
             for (Follow fw : followers) {
                                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append(hostUser.getName()).append("님께서 회원님께서 모임(").append(createdMeet.getMeetName()).append(")을 생성했습니다.");
-                pushService.send(fw.getFollower(), PushType.CREATEMEET, pushMessage.toString(), "이동할 url");
+                pushService.send(hostUser, fw.getFollower(), PushType.CREATEMEET, pushMessage.toString(), "이동할 url");
             }
 
             return ResponseEntity.ok(createdMeet);
@@ -99,10 +99,9 @@ public class MeetController {
         if (userId != meetDto.getHostId())
             return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임 정보를 수정할 수 없습니다.");
 
-
         try {
             Meet updateMeet = meetService.updateMeet(meetDto.getMeetId(), meetDto);
-
+            User host = userService.findByUserId(userId);
             //모임이 수정되면 모임에 참여한 사람들에게 Push 알림을 보낸다.
             MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetDto.getMeetId());
             log.info("유저 리스트 길이? {}", meetUser.getUsers().size());
@@ -111,7 +110,7 @@ public class MeetController {
                 log.info("수정 알림 보낼 유저 정보 출력 : {}", user.getUserId());
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append("모임( ").append(meetDto.getMeetName()).append(")의 내용이 수정되었습니다. 확인해 주세요.");
-                pushService.send(user, PushType.MODIFIDEMEET, pushMessage.toString(), "이동할 URL 입력");
+                pushService.send(host, user, PushType.MODIFIDEMEET, pushMessage.toString(), "이동할 url");
             }
 
             return ResponseEntity.ok(updateMeet);
@@ -141,7 +140,7 @@ public class MeetController {
                 log.info("삭제 알림 보낼 유저 정보 출력 : {}", user);
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append(hostUser.getName() + "님 께서 생성한 모임").append("(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
-                pushService.send(user, PushType.DELETEMEET, pushMessage.toString(), "이동할 URL 입력");
+                pushService.send(hostUser, user, PushType.DELETEMEET, pushMessage.toString(), "이동할 URL 입력");
             }
 
             //MeetUser 정보를 삭제한다.
@@ -190,7 +189,7 @@ public class MeetController {
             StringBuilder sb = new StringBuilder();
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append(attendUser.getName() + "님께서 " + meetUser.getMeetDto().getMeetName() + "모임에 참여하고 싶어 합니다.");
-            pushService.send(hostUser, PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
+            pushService.send(attendUser, hostUser, PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
 
             return ResponseEntity.ok(meetId + "모임에 신청 완료");
         } catch (IllegalArgumentException e) {
