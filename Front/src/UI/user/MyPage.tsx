@@ -106,15 +106,15 @@ const LiverDiv = styled.div<{ liverPoint: number }>`
 `;
 const MyPage = () => {
   const [userData, setUserData] = useState<User>({
-    birth: "awd",
-    email: "awd",
+    birth: "생년월일",
+    email: "이메일",
     follower: 0,
-    following: 9,
-    liverPoint: 9,
-    name: "s",
-    profile: "wd",
-    userId: 1,
-    nickname: "awd",
+    following: 0,
+    liverPoint: 0,
+    name: "이름",
+    profile: "한줄설명",
+    userId: 0,
+    nickname: "닉네임",
   }); // 유저 정보
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const [following, setFollowing] = useState(0); // 팔로잉,팔로워 목록
@@ -127,19 +127,14 @@ const MyPage = () => {
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/guard/${userid}`)
       .then(res => {
-        followers();
+        userInfo();
       })
       .catch(err => console.log(err));
-    await userInfo();
   };
   // 팔로우가 되어있는지 확인 (팔로우 버튼 색깔 변경)
   const followers = async () => {
-    const api = await callApi("get", "api/follow/guard/followers").then(res => {
-      res.data.follower.map(user => {
-        if (user.userId === localStorage.getItem("userId")) {
-          setFollowing(1);
-        }
-      });
+    const api = await callApi("get", `api/follow/${userid}`).then(res => {
+      userData.follower = res.data.follower;
     });
   };
   const reportHandler = () => {
@@ -152,7 +147,7 @@ const MyPage = () => {
     navigate("/myPage/follow/" + userid);
   };
   const userInfo = async () => {
-    const api = callApi("get", "api/user/guard/myinfo")
+    const api = callApi("get", `api/user/guard/userinfo/${userid}`)
       .then(res => {
         setUserData(res.data);
         console.log(res.data);
@@ -169,6 +164,7 @@ const MyPage = () => {
       <header>
         <Navbar />
       </header>
+      <button onClick={followers}>awdadwwa</button>
       <div
         style={{
           minHeight: "200px",
