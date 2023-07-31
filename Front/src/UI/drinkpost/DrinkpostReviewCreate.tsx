@@ -8,6 +8,7 @@ import { callApi } from "../../utils/api";
 import { User, Drink } from "../../Type/types";
 import detail from "./DrinkpostDetail";
 import { useParams, useNavigate } from "react-router-dom";
+import ImageInput from "../components/ImageInput";
 
 const Navdiv = styled.div`
   display: flex;
@@ -93,7 +94,7 @@ const DrinkpostReviewCreate = () => {
         <div style={{ marginLeft: "10px" }}>
           <img src={backIcon} alt="" />
         </div>
-        <h2>{drink?.name}</h2>
+        <h2 onClick={() => navigate(`/drinkpost/${drinkId}`)}>{drink?.name}</h2>
         <div style={{ visibility: "hidden" }}>A</div>
       </Navdiv>
       <CreateBody>
@@ -110,17 +111,10 @@ const DrinkpostReviewCreate = () => {
             autoFocus
           ></Input>
         </InputDiv>
-        <ImageDiv>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <span>이미지 등록</span>
-            <span>
-              <img src={imageButton} alt="" />
-            </span>
-          </div>
-          <div>
-            <img src={defaultImage} alt="" />
-          </div>
-        </ImageDiv>
+        <div style={{ marginLeft: "36px" }}>
+          <ImageInput></ImageInput>
+        </div>
+
         <div onClick={reviewSubmit} style={{ marginTop: "80%" }}>
           <img src={createButton} alt="" />
         </div>
