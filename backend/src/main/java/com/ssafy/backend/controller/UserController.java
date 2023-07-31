@@ -34,6 +34,7 @@ public class UserController {
     @GetMapping("/guard/myinfo")
     public ResponseEntity<?> getMyInfo(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
+
         User user = userService.findByUserId(Long.valueOf(userId));
         UserDto userDto = new UserDto(user);
         userDto.setFollower(userService.getFollowerCount(Long.valueOf(userId)));
