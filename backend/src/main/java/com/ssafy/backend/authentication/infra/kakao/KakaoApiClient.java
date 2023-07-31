@@ -86,8 +86,9 @@ public class KakaoApiClient implements OAuthApiClient {
 
     @Override
     public String authApiUrl(OAuthLoginParams params) {
-        String redirectUri = "http://i9b310.p.ssafy.io/kakao/callback";
+//        String redirectUri = "http://i9b310.p.ssafy.io/kakao/callback";
         String responseType = "code";
+        String redirectUri = "http://localhost:5173/kakao/callback";
         return authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
     }
 
