@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 import dns from "dns";
 
+// const url = import.meta.env.VITE_API_BASE_URL;
+
 dns.setDefaultResultOrder("verbatim");
 
 // https://vitejs.dev/config/

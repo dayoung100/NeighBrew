@@ -14,10 +14,15 @@ const GoogleLogin = () => {
       .post("http://34.64.126.58:9999/api/auth/google", {
         code: code,
       })
+      .then(res => {
+        localStorage.setItem("token", res.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.refreshToken);
+      })
       .then(async () => {
         await callApi("get", "api/user/guard/myinfo")
           .then(res => {
             localStorage.setItem("myId", JSON.stringify(res.data.userId));
+            // console.log(res.data);
           })
           .catch(err => console.log(err));
         await navigate("/meet");
