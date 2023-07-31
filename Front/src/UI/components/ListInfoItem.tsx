@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const ItemDiv = styled.div<{ outLine: boolean }>`
+const ItemDiv = styled.div<{ outline: boolean }>`
   position: relative;
   display: flex;
   justify-content: space-between;
@@ -11,7 +11,7 @@ const ItemDiv = styled.div<{ outLine: boolean }>`
   margin: 1rem auto 0 auto;
   border-radius: 20px;
   padding: 0.5rem 0.5rem;
-  border: ${(props) => (props.outLine ? "1px solid var(--c-gray)" : "none")};
+  border: ${(props) => (props.outline ? "1px solid var(--c-gray)" : "none")};
 `;
 
 const ImageArea = styled.div<{ src: string }>`
@@ -123,7 +123,7 @@ const ListInfoItem = (props: ListInfoItemProps) => {
       style={{ display: "flex", justifyContent: "center" }}
       onClick={() => props.routingFunc()}
     >
-      <ItemDiv outLine={props.outLine ? props.outLine : false}>
+      <ItemDiv outline={props.outLine ? props.outLine : undefined}>
         <ImageArea src={props.imgSrc} />
         <InfoArea>
           <InfoTitle>{props.title}</InfoTitle>
