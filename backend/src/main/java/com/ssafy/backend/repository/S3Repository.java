@@ -5,5 +5,7 @@ import com.ssafy.backend.entity.S3File;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface S3Repository extends JpaRepository<S3File, Long> {
-    public void deleteByUploadFilePathAndUploadFileName(String uploadFilePath, String uploadFileName);
+    void deleteByUploadFilePathAndUploadFileName(String uploadFilePath, String uploadFileName);
+
+    void deleteByUploadFileUrl(String imgSrc);
 }

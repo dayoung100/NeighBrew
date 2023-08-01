@@ -2,22 +2,28 @@ package com.ssafy.backend.service;
 
 import com.ssafy.backend.dto.DrinkUpdateDto;
 import com.ssafy.backend.entity.Drink;
+import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.repository.DrinkRepository;
+import com.ssafy.backend.repository.DrinkReviewRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 @Slf4j
 public class DrinkService {
     private final DrinkRepository drinkRepository;
+    private final DrinkReviewRepository drinkReviewRepository;
 
-    public DrinkService(DrinkRepository drinkRepository) {
-        this.drinkRepository = drinkRepository;
-    }
 
     // 모든 술 조회
     public Page<Drink> findAll(Pageable pageable) {
@@ -60,5 +66,13 @@ public class DrinkService {
         } else {
             return drinkRepository.findByNameContainsAndTagId(name, tagId, pageable).orElse(null);
         }
+    }
+
+    public List<Drink> getDrinksReviewedByUser(Long userId) {
+        List<DrinkReview> reviews = drinkReviewRepository.findByUser_UserId(userId);
+        return reviews.stream()
+                .map(DrinkReview::getDrink)
+                .distinct()
+                .collect(Collectors.toList());
     }
 }

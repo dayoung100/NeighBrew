@@ -13,5 +13,9 @@ import java.util.List;
 @Repository
 public interface DrinkReviewRepository extends JpaRepository<DrinkReview, Long> {
     Page<DrinkReview> findByDrink(Drink drink, Pageable pageable);
-    List<DrinkReview> findAllByUserAndDrink(User user, Drink drink);}
+
+    List<DrinkReview> findAllByUserAndDrink(User user, Drink drink);
+
+    List<DrinkReview> findByUser_UserId(Long userId);
+}
 

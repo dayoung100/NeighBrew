@@ -1,13 +1,15 @@
 package com.ssafy.backend.dto;
 
 import com.ssafy.backend.entity.Drink;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@ToString
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DrinkDto {
     private String name;
     private String image;
