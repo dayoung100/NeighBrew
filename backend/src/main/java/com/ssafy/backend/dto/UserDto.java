@@ -2,13 +2,16 @@ package com.ssafy.backend.dto;
 
 import com.ssafy.backend.entity.User;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-@Getter
-@Setter
+
+@Data
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
     private Long userId;

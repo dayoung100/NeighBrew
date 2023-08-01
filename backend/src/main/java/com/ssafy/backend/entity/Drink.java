@@ -4,11 +4,11 @@ import com.ssafy.backend.dto.DrinkUpdateDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class Drink {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,5 +61,18 @@ public class Drink {
         if (drinkUpdateDto.getTagId() != null) {
             this.tagId = drinkUpdateDto.getTagId();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Drink drink = (Drink) o;
+        return Objects.equals(drinkId, drink.drinkId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(drinkId);
     }
 }
