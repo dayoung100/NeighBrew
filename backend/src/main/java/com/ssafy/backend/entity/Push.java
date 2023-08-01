@@ -36,30 +36,37 @@ public class Push{
     private boolean isRead = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "receiver_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
+    private User receiver;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id")
+    private User sender;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
+    public Push() {
+    }
+
     @Builder
-    public Push(User user, PushType pushType, String content, String url, boolean isRead){
-        this.user = user;
+    public Push(Long id, PushType pushType, String content, String url, boolean isRead, User receiver, User sender, LocalDateTime createdAt) {
+        this.id = id;
         this.pushType = pushType;
         this.content = content;
         this.url = url;
-        this.isRead =isRead;
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public Push() {
+        this.isRead = isRead;
+        this.receiver = receiver;
+        this.sender = sender;
+        this.createdAt = createdAt;
     }
 
     public PushDto toDto(){
         return PushDto.builder()
-                .userId(this.user.getUserId())
-                .userName(this.user.getName())
+                .pushId(this.id)
+                .sender_id(this.sender.getUserId())
+                .receiver_id(this.receiver.getUserId())
                 .pushType(this.pushType)
                 .content(this.content)
                 .url(this.url)
