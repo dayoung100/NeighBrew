@@ -58,4 +58,12 @@ public class FollowService {
             return following.getNickname() + "님을 팔로우하였습니다.";
         });
     }
+
+    public List<Follow> getFollowing(Long userId) {
+userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 userId입니다:" + userId));
+
+        return followRepository.findByFollower_UserId(userId).orElseThrow(() -> new IllegalArgumentException("팔로잉 정보를 찾을 수 없습니다."));
+
+    }
 }
