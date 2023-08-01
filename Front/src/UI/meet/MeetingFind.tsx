@@ -20,7 +20,7 @@ const meetingFind = () => {
   const [meetData, setMeetData] = useState<Meeting[]>([]);
 
   useEffect(() => {
-    setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
+    setMeetData(meetAllData.map(item => item)); //필터 적용을 위해 복사한 리스트 만들어두기
   }, [meetAllData]);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const meetingFind = () => {
   //api 호출
   useEffect(() => {
     const promise = callApi("get", "api/meet");
-    promise.then((res) => {
+    promise.then(res => {
       setMeetAllData(res.data); //받아온 데이터로 meetAllData 세팅
     });
   }, []);
@@ -39,7 +39,7 @@ const meetingFind = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
-    console.log(tagId);
+    // console.log(tagId);
   };
 
   //필터 애니메이션 관련
@@ -51,14 +51,7 @@ const meetingFind = () => {
 
   //필터 지역 검색용
   const [sidoList, setSiList] = useState(["서울", "경기", "대전", "시도"]);
-  const [gugunList, setGuList] = useState([
-    "동구",
-    "중구",
-    "서구",
-    "유성구",
-    "대덕구",
-    "구군",
-  ]);
+  const [gugunList, setGuList] = useState(["동구", "중구", "서구", "유성구", "대덕구", "구군"]);
   const [dongList, setDongList] = useState([
     "봉명동",
     "중앙동",
@@ -180,7 +173,7 @@ const meetingFind = () => {
                 <FilterElement>
                   <div>
                     <DropdownInput onChange={sidoSetter} value={sido}>
-                      {sidoList.map((siItem) => {
+                      {sidoList.map(siItem => {
                         return (
                           <option value={siItem} key={siItem}>
                             {siItem}
@@ -192,7 +185,7 @@ const meetingFind = () => {
                   </div>
                   <div>
                     <DropdownInput onChange={gugunSetter} value={gugun}>
-                      {gugunList.map((guItem) => {
+                      {gugunList.map(guItem => {
                         return (
                           <option value={guItem} key={guItem}>
                             {guItem}
@@ -204,7 +197,7 @@ const meetingFind = () => {
                   </div>
                   <div>
                     <DropdownInput onChange={dongSetter} value={dong}>
-                      {dongList.map((dongItem) => {
+                      {dongList.map(dongItem => {
                         return (
                           <option value={dongItem} key={dongItem}>
                             {dongItem}

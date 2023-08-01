@@ -96,6 +96,7 @@ const Login = () => {
         console.log(err);
       });
   };
+  console.log(import.meta.env.VITE_API_BASE_URL);
   return (
     <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
       <h2>로그인</h2>
