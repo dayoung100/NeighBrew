@@ -3,13 +3,15 @@
 모임 관리 메인 페이지
 모임 정보 관리, 참여자 관리 버튼이 있음
 */
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Modal from "react-modal";
 import NavbarSimple from "../navbar/NavbarSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
 import Footer from "../footer/Footer";
+import { callApi } from "../../utils/api";
+import { Meeting } from "../../Type/types";
 
 const BigBtn = styled.div`
   border-radius: 30px;
@@ -38,10 +40,26 @@ const WhiteModal = {
   },
 };
 
+const initialData: Meeting = {
+  meetId: 0,
+  meetName: "",
+  description: "",
+  hostId: 0,
+  nowParticipants: 0,
+  maxParticipants: 8,
+  meetDate: "0000-01-01T00:00:00",
+  tagId: 0,
+  sido: "-",
+  gugun: "-",
+  dong: "-",
+  imgSrc: "",
+};
+
 const MeetingManageMain = () => {
   const navigate = useNavigate();
-  const [isOwner, setIsOwner] = useState(true); //모임 주최자인가?
+  const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
   const [deleteModalOn, setDeleteModalOn] = useState(false);
+  const [meetData, setMeetData] = useState<Meeting>(initialData);
 
   const GotoMeetInfoManage = (meetId: number) => {
     console.log("goto manage page, meetId is: ", meetId, "[info]");
@@ -53,16 +71,34 @@ const MeetingManageMain = () => {
     navigate(`/meet/${meetId}/manage/member`);
   };
 
+  //api 호출, 모임 이름 세팅
+  useEffect(() => {
+    callApi("get", `api/meet/${meetId}`).then((res) =>
+      setMeetData(res.data.meetDto)
+    );
+  }, [meetId]);
+
   return (
     <div style={{ fontFamily: "JejuGothic" }}>
       <header>
         <NavbarSimple title="모임 관리" />
       </header>
-      <div style={{ fontSize: "32px", marginTop: "1rem" }}>
-        모임의 제목이 들어갑니다
+      <div
+        style={{
+          fontSize: "32px",
+          margin: "1rem auto 0.5rem auto",
+          width: "20rem",
+        }}
+      >
+        {meetData.meetName}
       </div>
       <div style={{ margin: "0 10.5rem" }}>
-        <PeopleNumInfo now={1} max={4} color="var(--c-black)" size={15} />
+        <PeopleNumInfo
+          now={meetData.nowParticipants}
+          max={meetData.maxParticipants}
+          color="var(--c-black)"
+          size={15}
+        />
       </div>
       <BigBtn onClick={() => GotoMeetInfoManage(1)}>모임 정보 관리</BigBtn>
       <BigBtn onClick={() => GotoMemberManage(1)}>참여자 관리</BigBtn>
