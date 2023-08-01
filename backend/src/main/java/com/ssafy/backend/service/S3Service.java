@@ -69,20 +69,21 @@ public class S3Service {
         return amazonS3Client.getUrl(bucket, upload).toString();
     }
 
-    public void deleteImg(UploadType uploadType, String fileName){
+    public void deleteImg(String imgSrc){
         try {
             //S3에서 제거
-            String uploadFilePath = uploadType.name() + "/" + fileName; //업로드 폴더명/ UUID값
-            log.info(uploadFilePath);
+            //String uploadFilePath = uploadType.name() + "/" + fileName; //업로드 폴더명/ UUID값
+            //log.info(uploadFilePath);
 
             //실제 파일이 존재하는지 체크
-            boolean isObjectExist = amazonS3Client.doesObjectExist(bucket, uploadFilePath);
+            boolean isObjectExist = amazonS3Client.doesObjectExist(bucket, imgSrc);
             if (isObjectExist) {
-                amazonS3Client.deleteObject(bucket, uploadFilePath);
+                amazonS3Client.deleteObject(bucket, imgSrc);
             }
 
             //DB에서 제거
-            s3Repository.deleteByUploadFilePathAndUploadFileName(uploadType.name(), fileName);
+            s3Repository.deleteByUploadFileUrl(imgSrc);
+            //s3Repository.deleteByUploadFilePathAndUploadFileName(uploadType.name(), fileName);
         } catch (Exception e) {
             log.debug("Delete File failed", e);
         }
