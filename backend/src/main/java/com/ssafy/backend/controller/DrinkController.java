@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -49,6 +51,13 @@ public class DrinkController {
     @GetMapping("/{drinkId}")
     public ResponseEntity<?> findDrinkById(@PathVariable Long drinkId) {
         return ResponseEntity.ok(drinkService.findById(drinkId));
+    }
+
+    //    유저가 리뷰를 작성한 술 정보 조회
+    @GetMapping("/user/{userId}/review-drink")
+    public ResponseEntity<List<Drink>> getDrinkReviewedByUser(@PathVariable Long userId) {
+        List<Drink> drinks = drinkService.getDrinksReviewedByUser(userId);
+        return ResponseEntity.ok(drinks);
     }
 
 
