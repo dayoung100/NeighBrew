@@ -163,16 +163,33 @@ const MeetingDetail = () => {
     }
   }, [meetDetailData]);
 
-  //TODO: 참여 신청하기
+  //참여 신청하기
   function applyMeet() {
-    setUserStatus("APPLY");
+    const promise = callApi("post", `api/meet/apply`, {
+      userId: userId,
+      meetId: meetId,
+    });
+    promise
+      .then((res) => {
+        console.log(res.data);
+        setUserStatus("APPLY");
+      })
+      .catch((err) => console.log(err));
+
     console.log("참여 신청했어요");
   }
 
   //TODO: 신청 취소하기
+  //api적용 없이 신청 취소 후 다시 신청하면 에러 있을듯
   function cancelApply() {
     setUserStatus("NONE");
     console.log("신청을 취소했어요");
+  }
+
+  //TODO: 모임 나가기
+  function getOutMeet() {
+    setUserStatus("NONE");
+    console.log("모임을 나갔어요");
   }
 
   //태그ID를 태그 이름으로 변환
@@ -394,9 +411,9 @@ const MeetingDetail = () => {
         )}
         {userStatus === "GUEST" && (
           <FooterBigBtn
-            content="참여중"
-            reqFunc={() => {}} //작동x
-            color="var(--c-gray)"
+            content="모임 나가기"
+            reqFunc={() => getOutMeet()} //모임 나가기
+            color="#F28F79"
             bgColor="var(--c-lightgray)"
           />
         )}
