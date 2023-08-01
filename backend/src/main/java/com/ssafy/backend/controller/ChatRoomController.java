@@ -27,7 +27,6 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin("*")
 @RequestMapping("/api/chat")
 public class ChatRoomController {
     private final ChatRoomRepository chatRoomRepository;
@@ -38,8 +37,8 @@ public class ChatRoomController {
 
 
     // 채팅방 생성
-    @PostMapping("/room")
     @Transactional
+    @PostMapping("/room")
     public ResponseEntity<ChatRoom> createChatRoom(@RequestBody Map<String, Object> map) {
         ChatRoom room = ChatRoom.builder()
                 .chatRoomName((String) map.get("name"))

@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Controller
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
@@ -73,7 +72,9 @@ public class ChatController {
         chatMessageRepository.save(chatMessage);
         log.info("room id : " + roomId);
         log.info("chatMessage: {}", new ObjectMapper().writeValueAsString(chatMessageDto));
-        messagingTemplate.convertAndSend("/pub/messages", new ObjectMapper().writeValueAsString(chatMessageDto));
+//        messagingTemplate.convertAndSend("/pub/messages", new ObjectMapper().writeValueAsString(chatMessageDto));
+        log.info("data: {}", data);
+        log.info("room id : " + roomId);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, data);
     }
 }
