@@ -104,18 +104,17 @@ public class MeetService {
         return meetRepository.save(meet);
     }
 
-    public Meet updateMeet(Long meetId, MeetDto meetDto) {
+    public void updateMeet(Long meetId, MeetDto meetDto, Long drinkId) {
         log.info("meetId : {}인 모임 정보 업데이트 : {} ", meetId, meetDto);
 
-        Meet meet = meetDto.toEntity();
         Meet findMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
+        findMeet.update(meetDto.toEntity());
+        findMeet.setTag(tagRepository.findById(meetDto.getTagId()).orElseThrow(()-> new IllegalArgumentException("잘못된 태그 정보 입니다.")));
+        findMeet.setDrink(drinkRepository.findById(drinkId).orElseThrow(()-> new IllegalArgumentException("잘못된 주종 정보 입니다.")));
+        log.info("findMeet 업데이트 했당: {} ", findMeet);
 
-        log.info("업데이트할 meet : {} ", findMeet);
-        findMeet.update(meet);
-        log.info("업데이트 후 meet : {} ", findMeet);
-        log.info("\n >>>>> 현재시간 : {} ", LocalDateTime.now());
 
-        return meetRepository.save(findMeet);
+        meetRepository.save(findMeet);
     }
 
     public void deleteMeet(Long meetId) {

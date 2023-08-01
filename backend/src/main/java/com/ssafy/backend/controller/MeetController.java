@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -78,9 +79,9 @@ public class MeetController {
             List<Follow> followers = followService.findByFollower(userId);
             log.info("방장");
             for (Follow fw : followers) {
-                                StringBuilder pushMessage = new StringBuilder();
+                StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append(hostUser.getName()).append("님께서 회원님께서 모임(").append(createdMeet.getMeetName()).append(")을 생성했습니다.");
-                pushService.send(fw.getFollower(), PushType.CREATEMEET, pushMessage.toString(), "이동할 url");
+                pushService.send(hostUser, fw.getFollower(), PushType.CREATEMEET, pushMessage.toString(), "이동할 url");
             }
 
             return ResponseEntity.ok(createdMeet);
@@ -90,41 +91,61 @@ public class MeetController {
     }
 
     //모임 수정
-    @PutMapping("/modify")
-    public ResponseEntity<?> updateMeet(@PathVariable Long userId,
+    @PutMapping("/modify/{userId}/{meetId}")
+    public ResponseEntity<?> updateMeet(@PathVariable("userId") Long userId,
+                                        @PathVariable("meetId") Long meetId,
                                         MeetDto meetDto,
                                         Long drinkId,
                                         @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) {
-        log.info("\n수정하는 유저 :{} \n 수정할 미팅 정보 : {}", meetDto);
-        if (userId != meetDto.getHostId())
-            return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임 정보를 수정할 수 없습니다.");
-
+        log.info("\n수정하는 유저 :{} \n 수정할 미팅 정보 : {}",userId, meetDto);
 
         try {
-            Meet updateMeet = meetService.updateMeet(meetDto.getMeetId(), meetDto);
+            if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
+            if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
+            if (userId != meetDto.getHostId()) return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임 정보를 수정할 수 없습니다.");
+
+            //기존 Meet가져온다
+            Meet prevMeet = meetService.findByMeetId(meetId);
+            log.info("바꿔야할 미팅 {} ", prevMeet);
+            User host = userService.findByUserId(userId);
+
+            //이미지 파일이 업로드 되면 s3에 파일 제거, 새로운 이미지 업로드
+            if(multipartFile.isPresent()) {
+                log.info("왜 일로와ㅏ@@@@@@@@@@@@@@@@@@@@");
+                String deleteFileName = prevMeet.getImgSrc().split("/")[4]; //url에서 파일 이름을 파싱한다.
+                log.info("{}, {} ",prevMeet.getImgSrc(), deleteFileName);
+                s3Service.deleteImg(UploadType.MEET, deleteFileName);
+                meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
+            }
+            else meetDto.setImgSrc(prevMeet.getImgSrc());
+
+            //변경된 데이터를 기반으로 meet를 업데이트한다.
+            meetService.updateMeet(meetId, meetDto, drinkId);
 
             //모임이 수정되면 모임에 참여한 사람들에게 Push 알림을 보낸다.
-            MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetDto.getMeetId());
+            MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetId);
             log.info("유저 리스트 길이? {}", meetUser.getUsers().size());
 
             for (User user : meetUser.getUsers()) {
+                if(user.getUserId() == meetDto.getHostId()) continue; //방장에게는 알림을 전송하지 않는다.
+
                 log.info("수정 알림 보낼 유저 정보 출력 : {}", user.getUserId());
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append("모임( ").append(meetDto.getMeetName()).append(")의 내용이 수정되었습니다. 확인해 주세요.");
-                pushService.send(user, PushType.MODIFIDEMEET, pushMessage.toString(), "이동할 URL 입력");
+                pushService.send(host, user, PushType.MODIFIDEMEET, pushMessage.toString(), "https://i9b310.p.ssafy.io");
             }
 
-            return ResponseEntity.ok(updateMeet);
-        } catch (IllegalArgumentException e) {
+            return ResponseEntity.ok("모임정보 변경 완료");
+        } catch (IllegalArgumentException | IOException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     //모임 삭제하기
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteMeet(@RequestBody Map<String, Long> requestBody) {
+    @DeleteMapping("/delete/{meetId}")
+    public ResponseEntity<?> deleteMeet(@PathVariable Long meetId,
+                                        @RequestBody Map<String, Long> requestBody) {
         Long userId = requestBody.get("userId");
-        Long meetId = requestBody.get("meetId");
 
         log.info("삭제할 미팅ID : {}", meetId);
         try {
@@ -141,7 +162,7 @@ public class MeetController {
                 log.info("삭제 알림 보낼 유저 정보 출력 : {}", user);
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append(hostUser.getName() + "님 께서 생성한 모임").append("(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
-                pushService.send(user, PushType.DELETEMEET, pushMessage.toString(), "이동할 URL 입력");
+                pushService.send(hostUser, user, PushType.DELETEMEET, pushMessage.toString(), "");
             }
 
             //MeetUser 정보를 삭제한다.
@@ -151,8 +172,8 @@ public class MeetController {
             meetService.deleteMeet(meetId);
 
             //meet 이미지를 지운다
-            String fileName = deleteMeet.getImgSrc().split("/")[4]; //url에서 파일 이름을 파싱한다.
-            s3Service.deleteImg(UploadType.MEET, fileName);
+            String deleteFileName = deleteMeet.getImgSrc().split("/")[4]; //url에서 파일 이름을 파싱한다.
+            s3Service.deleteImg(UploadType.MEET, deleteFileName);
 
             return ResponseEntity.ok("미팅 : " + meetId + " 삭제완료");
         } catch (IllegalArgumentException e) {
@@ -190,7 +211,7 @@ public class MeetController {
             StringBuilder sb = new StringBuilder();
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append(attendUser.getName() + "님께서 " + meetUser.getMeetDto().getMeetName() + "모임에 참여하고 싶어 합니다.");
-            pushService.send(hostUser, PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
+            pushService.send(attendUser, hostUser, PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
 
             return ResponseEntity.ok(meetId + "모임에 신청 완료");
         } catch (IllegalArgumentException e) {

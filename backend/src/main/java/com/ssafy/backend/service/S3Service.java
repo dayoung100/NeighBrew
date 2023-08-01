@@ -70,20 +70,22 @@ public class S3Service {
     }
 
     public void deleteImg(UploadType uploadType, String fileName){
-        //S3에서 제거
         try {
+            //S3에서 제거
             String uploadFilePath = uploadType.name() + "/" + fileName; //업로드 폴더명/ UUID값
+            log.info(uploadFilePath);
 
             //실제 파일이 존재하는지 체크
-            boolean isObjectExist = amazonS3Client.doesObjectExist(fileName, uploadFilePath);
+            boolean isObjectExist = amazonS3Client.doesObjectExist(bucket, uploadFilePath);
             if (isObjectExist) {
                 amazonS3Client.deleteObject(bucket, uploadFilePath);
             }
+
+            //DB에서 제거
+            s3Repository.deleteByUploadFilePathAndUploadFileName(uploadType.name(), fileName);
         } catch (Exception e) {
             log.debug("Delete File failed", e);
         }
-        //DB에서 제거
-        s3Repository.deleteByUploadFilePathAndUploadFileName(uploadType.name(), fileName);
     }
 
     public String getUUIDFileName(String fileName) {
