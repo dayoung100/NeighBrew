@@ -125,6 +125,8 @@ const MeetingDetail = () => {
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
   const [meetDetailData, setMeetDetailData] = useState<MeetDetail>(initialData); //모임 데이터
   const [memberList, setMemberList] = useState<User[]>([]); //참여자 리스트
+  const [userId, setUserId] = useState(0); //현재 유저의 userId
+  const [userStatus, setUserStatus] = useState("");
 
   //네비게이터 : 모임 관리 페이지로 이동, 뒤로가기 기능
   const navigate = useNavigate();
@@ -142,17 +144,36 @@ const MeetingDetail = () => {
     promise.then((res) => {
       setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
     });
+    //로컬 스토리지에서 userId 가져오기
+    setUserId(parseInt(localStorage.getItem("myId")));
   }, [meetId]);
 
-  //users에서 apply인 유저 제외하고 memberList에 넣기
   useEffect(() => {
     if (meetDetailData !== undefined) {
+      //users에서 apply인 유저 제외하고 memberList에 넣기
       let members = meetDetailData.users.filter(
         (user, index) => meetDetailData.statuses[index] !== "APPLY"
       );
       setMemberList(members);
+      //유저 상태를 관리(HOST/GUEST/APPLY/NONE)
+      let index: number | undefined = meetDetailData.users.findIndex(
+        (user) => user.userId === userId
+      );
+      setUserStatus(index === -1 ? "NONE" : meetDetailData.statuses[index]);
     }
   }, [meetDetailData]);
+
+  //TODO: 참여 신청하기
+  function applyMeet() {
+    setUserStatus("APPLY");
+    console.log("참여 신청했어요");
+  }
+
+  //TODO: 신청 취소하기
+  function cancelApply() {
+    setUserStatus("NONE");
+    console.log("신청을 취소했어요");
+  }
 
   //태그ID를 태그 이름으로 변환
   //TODO: 공용 변수로 빼기??
@@ -362,12 +383,39 @@ const MeetingDetail = () => {
         </div>
       </MeetPosDateDiv>
       <footer>
-        <FooterBigBtn
-          content="모임 관리"
-          reqFunc={() => GotoMeetManageHandler(parseInt(meetId))}
-          color="var(--c-yellow)"
-          bgColor="var(--c-lightgray)"
-        />
+        {userStatus === "HOST" && (
+          //user 상태에 따라 버튼 변경
+          <FooterBigBtn
+            content="모임 관리"
+            reqFunc={() => GotoMeetManageHandler(parseInt(meetId))}
+            color="var(--c-yellow)"
+            bgColor="var(--c-lightgray)"
+          />
+        )}
+        {userStatus === "GUEST" && (
+          <FooterBigBtn
+            content="참여중"
+            reqFunc={() => {}} //작동x
+            color="var(--c-gray)"
+            bgColor="var(--c-lightgray)"
+          />
+        )}
+        {userStatus === "APPLY" && (
+          <FooterBigBtn
+            content="승인 대기 중"
+            reqFunc={() => cancelApply()} //참여신청 취소하기
+            color="var(--c-gray)"
+            bgColor="var(--c-lightgray)"
+          />
+        )}
+        {userStatus === "NONE" && (
+          <FooterBigBtn
+            content="참여 신청하기"
+            reqFunc={() => applyMeet()} //참여신청하기
+            color="var(--c-yellow)"
+            bgColor="var(--c-lightgray)"
+          />
+        )}
       </footer>
     </div>
   );
