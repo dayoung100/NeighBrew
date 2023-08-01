@@ -33,7 +33,6 @@ public class UserService {
 
     public Long getFollowingCount(Long userId) {
         Optional<List<Follow>> aa = followRepository.findByFollowing_UserId(userId);
-        System.out.println("aa.toString() = " + aa.toString());
       Long folloingCount = followRepository.findByFollowing_UserId(userId).stream().count();
       return  folloingCount;
     }
