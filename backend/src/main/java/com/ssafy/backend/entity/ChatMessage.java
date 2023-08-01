@@ -1,5 +1,6 @@
 package com.ssafy.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ public class ChatMessage {
 
     @ManyToOne
     @JoinColumn(name = "chatRoomId")
+    @JsonManagedReference
     private ChatRoom chatRoom;
 
     private Long userId;

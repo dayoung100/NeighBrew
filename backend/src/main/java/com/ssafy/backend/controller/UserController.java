@@ -38,15 +38,14 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/guard/userinfo/{userId}")
-    public ResponseEntity<?> getUserInfo(@PathVariable String userId) {
-        User user = userService.findByUserId(Long.valueOf(userId));
-        if (user != null) {
-            return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    // userId로 유저 검색
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> findByUserId(@PathVariable Long userId) {
+        User user = userService.findByUserId(userId);
+        UserDto userDto = new UserDto(user);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
+
 
 
     // refresh token을 이용한 access token 재발급

@@ -1,5 +1,6 @@
 package com.ssafy.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +20,11 @@ public class ChatRoom {
     private String chatRoomName;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<ChatMessage> messages;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<ChatRoomUser> users;
 
     @Builder
