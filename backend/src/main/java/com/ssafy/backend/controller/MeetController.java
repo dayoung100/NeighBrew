@@ -217,6 +217,14 @@ public class MeetController {
         }
     }
     // 유저 : 모임 신청 취소
+    @PutMapping("/apply-cancle")
+    public ResponseEntity<?> applyCancelMeet(@RequestBody Map<String, Long> requestBody) {
+        //유저 아이디
+        //미팅
+        //유혀성 검사(미팅 존재하는지 등)
+        //meetUser삭제
+        return ResponseEntity.badRequest().body("모임 신청을 취소합니다.");
+    }
 
     // 모임, 채팅 나가면 모임 나가기
 
