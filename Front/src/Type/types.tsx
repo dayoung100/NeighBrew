@@ -34,7 +34,7 @@ export interface Meeting {
   minAge?: number;
   maxAge?: number;
   minLiverPoint?: number;
-  drink: Drink;
+  drink?: Drink;
   imgSrc: string;
 }
 

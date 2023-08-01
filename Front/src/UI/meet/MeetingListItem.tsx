@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Meeting } from "../../Type/types";
 import ListInfoItem from "../components/ListInfoItem";
-import MeetingDetail from "./MeetingDetailSimple";
+import MeetingDetailSimple from "./MeetingDetailSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
 
 type MeetingListItemProps = {
@@ -65,7 +65,7 @@ const MeetingListItem = ({ data, isWaiting = false }: MeetingListItemProps) => {
             imgSrc="../src/assets/tempgif.gif"
             tag={tagName}
             content={
-              <MeetingDetail
+              <MeetingDetailSimple
                 position={position}
                 time={formattedDate}
                 hostId={meeting.hostId}

@@ -18,15 +18,18 @@ const TopMenu = styled.div`
   border-bottom: 1px solid var(--c-gray);
 `;
 
-const TopMenuDetail = styled.button<{ isFocused: boolean }>`
-  color: var(--${props => (props.isFocused ? "c-black" : "c-gray")});
+const TopMenuDetail = styled.button<{ isfocused: string }>`
+  color: var(
+    --${(props) => (props.isfocused === "true" ? "c-black" : "c-gray")}
+  );
   font-family: "JejuGothic";
   font-size: 20px;
   line-height: 150%;
   padding: 0 1rem;
   outline: none;
   border: none;
-  border-bottom: ${props => (props.isFocused ? "2px solid var(--c-black);" : "none;")};
+  border-bottom: ${(props) =>
+    props.isfocused === "true" ? "2px solid var(--c-black);" : "none;"};
   background: white;
 `;
 
@@ -63,10 +66,16 @@ const meetingMain = () => {
         <NavbarWithoutSearch />
       </header>
       <TopMenu>
-        <TopMenuDetail isFocused={selectedMenu === "find"} onClick={() => setSelectedMenu("find")}>
+        <TopMenuDetail
+          isfocused={selectedMenu === "find" ? "true" : "false"}
+          onClick={() => setSelectedMenu("find")}
+        >
           모임찾기
         </TopMenuDetail>
-        <TopMenuDetail isFocused={selectedMenu === "my"} onClick={() => setSelectedMenu("my")}>
+        <TopMenuDetail
+          isfocused={selectedMenu === "my" ? "true" : "false"}
+          onClick={() => setSelectedMenu("my")}
+        >
           내모임
         </TopMenuDetail>
       </TopMenu>

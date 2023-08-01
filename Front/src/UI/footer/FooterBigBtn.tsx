@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-const Footer = styled.footer<{ bgColor: string }>`
-  background: ${(props) => props.bgColor};
+const Footer = styled.footer<{ bgcolor: string }>`
+  background: ${(props) => props.bgcolor};
 `;
 
 const Button = styled.button<{ btncolor: string }>`
@@ -35,7 +35,7 @@ type BigBtnProps = {
 const FooterBigBtn = (props: BigBtnProps) => {
   return (
     <Footer
-      bgColor={props.bgColor ? props.bgColor : "white"}
+      bgcolor={props.bgColor ? props.bgColor : "white"}
       className="footer"
     >
       <Button onClick={() => props.reqFunc()} btncolor={props.color}>
