@@ -93,10 +93,37 @@ type MeetDetail = {
   statuses: [];
 };
 
+const initialData: MeetDetail = {
+  meetDto: {
+    meetId: 0,
+    meetName: "",
+    description: "",
+    hostId: 0,
+    nowParticipants: 0,
+    maxParticipants: 0,
+    meetDate: "0000-01-01T00:00:00",
+    tagId: 0,
+    sido: "-",
+    gugun: "-",
+    dong: "-",
+    drink: {
+      degree: 0,
+      description: "",
+      drinkId: 0,
+      image: "",
+      name: "",
+      tagId: 0,
+    },
+    imgSrc: "",
+  },
+  users: [],
+  statuses: [],
+};
+
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
-  const [meetDetailData, setMeetDetailData] = useState<MeetDetail>(); //모임 데이터
+  const [meetDetailData, setMeetDetailData] = useState<MeetDetail>(initialData); //모임 데이터
   const [memberList, setMemberList] = useState<User[]>([]); //참여자 리스트
 
   //네비게이터 : 모임 관리 페이지로 이동, 뒤로가기 기능
@@ -113,7 +140,6 @@ const MeetingDetail = () => {
   useEffect(() => {
     const promise = callApi("get", `api/meet/${meetId}`);
     promise.then((res) => {
-      console.dir(res.data);
       setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
     });
   }, [meetId]);
@@ -143,6 +169,7 @@ const MeetingDetail = () => {
     ];
     return tag[tagId].tagName;
   }
+
   function hasAgeLimit() {
     if (meetDetailData === undefined) return false;
     const res =
@@ -151,6 +178,24 @@ const MeetingDetail = () => {
         ? true
         : false;
     return res;
+  }
+
+  //날짜와 변환 함수
+  function formateDate(dateData: string) {
+    const date = new Date(dateData);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    return `${month}월 ${day}일`;
+  }
+
+  //시간 변환 함수
+  function formateTime(dateData: string) {
+    const date = new Date(dateData);
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+
+    return `${hour}시 ${minute}분`;
   }
 
   return (
@@ -176,7 +221,8 @@ const MeetingDetail = () => {
             style={{
               fontFamily: "JejuGothic",
               fontSize: "32px",
-              marginBottom: "0.5rem",
+              margin: "0 auto 0.5rem auto",
+              width: "20rem",
             }}
           >
             {meetDetailData.meetDto.meetName}
@@ -191,14 +237,16 @@ const MeetingDetail = () => {
             }}
           >
             <div>주최자: </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <img
-                src="../src/assets/tempgif.gif"
-                width="20rem"
-                style={{ borderRadius: "100px" }}
-              />
-              <div>{memberList[0].name}</div>
-            </div>
+            {memberList[0] && (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src="../src/assets/tempgif.gif"
+                  width="20rem"
+                  style={{ borderRadius: "100px" }}
+                />
+                <div>{memberList[0].nickname}</div>
+              </div>
+            )}
           </div>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <PeopleNumInfo
@@ -219,7 +267,7 @@ const MeetingDetail = () => {
             fontFamily: "Noto Sans KR",
           }}
         >
-          {meetDetailData.meetDto.minLiverPoint > 0 && (
+          {(meetDetailData.meetDto.minLiverPoint ?? 0) > 0 && (
             <div style={{ display: "flex", alignItems: "center" }}>
               <img
                 src="/src/assets/liver.svg"
@@ -230,25 +278,29 @@ const MeetingDetail = () => {
               IU/L
             </div>
           )}
-          {hasAgeLimit && (
+          {hasAgeLimit() && (
             <div style={{ display: "flex", alignItems: "center" }}>
               <img
                 src="/src/assets/age.svg"
                 width="20rem"
                 style={{ marginRight: "3px" }}
               />
-              나이 제한
+              {meetDetailData.meetDto.minAge > 0 && (
+                <div>{meetDetailData.meetDto.minAge}세 이상</div>
+              )}
+              {meetDetailData.meetDto.maxAge > 0 && (
+                <div>~{meetDetailData.meetDto.maxAge}세 미만</div>
+              )}
             </div>
           )}
         </div>
         <MeetTitle>우리가 마실 것은</MeetTitle>
         <ListInfoItem
-          title="주류의 이름이 들어갑니다"
-          imgSrc="../src/assets/ForTest/backgroundImg.jpg"
-          tag="주종"
-          content="주류에 대한 간략한 정보가 여기에"
+          title={meetDetailData.meetDto.drink.name}
+          imgSrc="../src/assets/star.svg"
+          tag={getTagName(meetDetailData.meetDto.drink.tagId)}
+          content={meetDetailData.meetDto.drink.description}
           numberInfo={"후기 수 " + 3}
-          isWaiting={false}
           outLine={false}
           routingFunc={GoBackHandler}
         />
@@ -260,15 +312,10 @@ const MeetingDetail = () => {
             fontSize: "15px",
             textAlign: "left",
             marginTop: "0.5rem",
+            marginBottom: "2rem",
           }}
         >
-          아침이 겨울이 마디씩 위에 이름과, 쓸쓸함과 오는 했던 하나에 봅니다. 내
-          내린 쉬이 아름다운 오는 걱정도 사람들의 까닭입니다. 이름과, 가을로 별
-          언덕 이제 있습니다. 나의 나의 봄이 까닭이요, 별 듯합니다.쉬이 위에
-          내일 나의 까닭입니다. 가득 아스라히 이름과, 많은 못 하나에 이네들은
-          까닭입니다.무엇인지 노루, 언덕 이름자 있습니다. 것은 하나의 하나에
-          겨울이 버리었습니다. 이름과, 밤이 이름과, 릴케 별들을 오면 지나고
-          하나에 있습니다.
+          {meetDetailData.meetDto.description}
         </div>
         <div style={{ display: "flex" }}>
           <MeetTitle>참여 인원</MeetTitle>
@@ -278,7 +325,12 @@ const MeetingDetail = () => {
               marginLeft: "0.5rem",
             }}
           >
-            <PeopleNumInfo now={4} max={4} color="var(--c-black)" size={13} />
+            <PeopleNumInfo
+              now={meetDetailData.meetDto.nowParticipants}
+              max={meetDetailData.meetDto.maxParticipants}
+              color="var(--c-black)"
+              size={13}
+            />
           </div>
         </div>
         <div style={{ margin: "0 0.5rem" }}>
@@ -300,13 +352,13 @@ const MeetingDetail = () => {
       <MeetPosDateDiv>
         <div>
           <img src="/src/assets/mapPinColor.svg" width="20rem" />
-          <div>모임 예정 시, 구</div>
-          <div>상세 위치</div>
+          <div>{`${meetDetailData.meetDto.sido}시`}</div>
+          <div>{`${meetDetailData.meetDto.gugun}  ${meetDetailData.meetDto.dong}`}</div>
         </div>
         <div>
           <img src="/src/assets/calendarColor.svg" width="20rem" />
-          <div>모임 날짜</div>
-          <div>시간 상세</div>
+          <div>{formateDate(meetDetailData.meetDto.meetDate)}</div>
+          <div>{formateTime(meetDetailData.meetDto.meetDate)}</div>
         </div>
       </MeetPosDateDiv>
       <footer>

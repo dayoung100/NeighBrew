@@ -50,6 +50,13 @@ const InfoContent = styled.div`
   font-family: "SeoulNamsan";
   font-size: 10px;
   color: var(--c-gray);
+  width: 12rem;
+  // 4줄 넘어가면 말줄임
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 `;
 
 const Tag = styled.div`
