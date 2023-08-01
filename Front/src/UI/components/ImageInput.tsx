@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useState, useRef } from "react";
+import axios from "axios";
 
 const QuestionDiv = styled.div`
   margin-top: 1.5rem;
@@ -51,6 +52,29 @@ const ImageInput = () => {
         setImgFile(reader.result);
       }
     };
+  };
+
+  const uploadImageToServer = async imgFile => {
+    try {
+      const formData = new FormData();
+      formData.append("image", imgFile);
+
+      const response = await axios.post("http://i9b310.p.ssafy.io/api/img/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data; boundary=<calculated when request is sent>",
+          "Content-Length": "<calculated when request is sent>",
+          Host: "<calculated when request is sent>",
+          "User-Agent": "PostmanRuntime/7.32.3",
+          Accept: "*/*",
+          "Accept-Encoding": "gzip, deflate, br",
+          Connection: "keep-alive",
+        },
+      });
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   };
 
   return (

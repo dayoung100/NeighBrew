@@ -87,7 +87,6 @@ const DrinkpostReviewCreate = () => {
         console.log("안댐");
       });
   };
-
   return (
     <>
       <Navdiv>

@@ -13,8 +13,7 @@ import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
 
 const ShowcaseBody = styled.div`
-  background-color: var(--c-black);
-  color: white;
+  font-size: 14px;
 `;
 
 // export type DrinkType = {
@@ -64,7 +63,9 @@ const drinkpost = () => {
     <>
       <Navbar></Navbar>
       <ShowcaseBody>
-        <h1 style={{ margin: "0px" }}>술장</h1>
+        <div style={{ textAlign: "start" }}>
+          <h2 style={{ margin: "0px 0px 0px 10px" }}>네이브루의 술장</h2>
+        </div>
 
         <div className="whole" style={{ display: "flex", flexWrap: "wrap", paddingBottom: "60px" }}>
           {drinkList.map(drink => {

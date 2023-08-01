@@ -8,8 +8,8 @@ import reviewIcon from "../../assets/reviewIcon.svg";
 import backIcon from "../../assets/backIcon.svg";
 import sirenIcon from "../../assets/sirenIcon.svg";
 import { callApi } from "../../utils/api";
-import { useState, useEffect, useRef } from "react";
-import { Drink, Review, User } from "../../Type/types";
+import { useState, useEffect } from "react";
+import { Drink, Review } from "../../Type/types";
 
 const CreateReviewDiv = styled.div`
   display: flex;
@@ -87,12 +87,6 @@ const MoreButton = styled.button`
 `;
 
 const DrinkpostDetail = () => {
-  const contentRef = useRef(null);
-  const moreBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
-    contentRef.current.classList.add("show");
-    e.currentTarget.classList.add("hide");
-  };
-
   const { drinkId } = useParams();
   const navigate = useNavigate();
   const [showMore, setShowMore] = useState(false);
