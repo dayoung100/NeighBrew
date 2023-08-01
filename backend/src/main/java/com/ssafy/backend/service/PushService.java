@@ -20,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PushService {
     //타임아웃 설정 - 10분으로 연결 설정한다.
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 10;
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60 * 24;
     private final EmitterRepositoryImpl emitterRepository = new EmitterRepositoryImpl();
 
     private final PushRepository pushRepository;
