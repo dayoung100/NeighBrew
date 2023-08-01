@@ -8,6 +8,7 @@ import com.ssafy.backend.entity.ChatMessage;
 import com.ssafy.backend.entity.ChatRoom;
 import com.ssafy.backend.repository.ChatMessageRepository;
 import com.ssafy.backend.repository.ChatRoomRepository;
+import com.ssafy.backend.repository.ChatRoomUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -27,6 +28,7 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomUserRepository chatRoomUserRepository;
 
     // 연결
     @MessageMapping("/messages")
@@ -44,6 +46,12 @@ public class ChatController {
         log.info("mapper: {}", mapper);
         JsonNode jsonNode = mapper.readTree(data);
         log.info("jsonNode: {}", jsonNode);
+
+        // 현재방에 유저가 참여했는지 판단
+        if (chatRoomUserRepository.findByChatRoomAndUser_UserId(chatRoom, jsonNode.get("userId").asLong()).isEmpty()) {
+            throw new IllegalArgumentException("채팅방에 참여하지 않은 유저가 메시지를 보냈습니다.");
+        }
+
 
         ChatMessageDto chatMessageDto = ChatMessageDto
                 .builder()
