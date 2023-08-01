@@ -37,7 +37,11 @@ const Img = styled.img`
   object-fit: cover;
 `;
 
-const Chat = (props: { chooseChat: number; chatRoomId: number }) => {
+const Chat = (props: {
+  chooseChat: number;
+  chatRoomId: number;
+  chatRoomName: string;
+}) => {
   const navigate = useNavigate();
 
   const moveToChatRoomHandler = () => {
@@ -57,11 +61,18 @@ const Chat = (props: { chooseChat: number; chatRoomId: number }) => {
               fontFamily: "JejuGothic",
             }}
           >
-            채팅방 제목: 집에 가고 싶다
+            채팅방 제목: {props.chatRoomName}
           </span>
-          <span style={{ color: "var(--c-gray", fontSize: "12px" }}>4</span> <span></span>
+          <span style={{ color: "var(--c-gray", fontSize: "12px" }}>4</span>{" "}
+          <span></span>
         </div>
-        <p style={{ fontSize: "12px", fontFamily: "SeoulNamsan", marginTop: "6px" }}>
+        <p
+          style={{
+            fontSize: "12px",
+            fontFamily: "SeoulNamsan",
+            marginTop: "6px",
+          }}
+        >
           채팅방 설명 몇 자까지 가능 한가요 너무 많으면 이상해 집니다
         </p>
       </div>
