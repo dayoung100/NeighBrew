@@ -1,16 +1,13 @@
 package com.ssafy.backend.service;
 
-import com.ssafy.backend.dto.PushDto;
 import com.ssafy.backend.entity.Push;
 import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.entity.User;
-import com.ssafy.backend.repository.EmitterRepository;
 import com.ssafy.backend.repository.EmitterRepositoryImpl;
 import com.ssafy.backend.repository.PushRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -80,10 +77,10 @@ public class PushService {
     }
 
     //알림을 생성하고 지정된 수신자에게 알림을 전송하는 기능 수행
-    public void send(User receiver, PushType pushType, String content, String url) {
+    public void send(User sender, User receiver, PushType pushType, String content, String url) {
         //Push 객체를 생성 및 저장
         try{
-            Push push = pushRepository.save(createPush(receiver, pushType, content, url));
+            Push push = pushRepository.save(createPush(sender, receiver, pushType, content, url));
             Long receiverId = receiver.getUserId();
             String eventId = makeTimeIncludeId(receiverId);
 
@@ -103,9 +100,10 @@ public class PushService {
 
     }
 
-    private Push createPush(User receiver, PushType pushType, String content, String url) {
+    private Push createPush(User receiver, User sender, PushType pushType, String content, String url) {
         return Push.builder()
-                .user(receiver)
+                .receiver(receiver)
+                .sender(sender)
                 .pushType(pushType)
                 .content(content)
                 .url(url)//url에 대한 컨벤션 정의가 필요할 듯 -> 클릭시 컨트롤러로 이동해야하니까
