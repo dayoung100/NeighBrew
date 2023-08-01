@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class S3File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long s3FileId;
 
     @Lob
     private String originalFileName;
