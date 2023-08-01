@@ -14,8 +14,8 @@ public interface PushRepository extends JpaRepository<Push, Long> {
     List<Push> findByReceiverUserId(Long receiverId);
     //findAllByReceiver : 모든 알림 목록을 조회할 때 사용한다. 아마 안쓸듯
 
-    void deleteByPushTypeAndReceiverUserIdAndSenderUserId(PushType pushType, Long receiverId, Long senderId);
+//    void deleteByPushTypeAndReceiverUserIdAndSenderUserId(PushType pushType, Long receiverId, Long senderId);
 
-    void deleteByUser_Receiver(Long receiver_userId);
+
 
 }

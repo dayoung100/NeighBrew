@@ -3,10 +3,7 @@ package com.ssafy.backend.entity;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -18,9 +15,13 @@ public class S3File {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
     private String originalFileName;
+    @Lob
     private String uploadFileName;
+    @Lob
     private String uploadFilePath;
+    @Lob
     private String uploadFileUrl;
 
     @Builder
