@@ -23,6 +23,7 @@ import DrinkpostDetail from "./UI/drinkpost/DrinkpostDetail";
 import DrinkpostCreate from "./UI/drinkpost/DrinkpostCreate";
 import DrinkpostSearch from "./UI/drinkpost/DrinkpostSearch";
 import DrinkpostReviewCreate from "./UI/drinkpost/DrinkpostReviewCreate";
+import Test from "./Test";
 
 function App() {
   const navigate = useNavigate();
@@ -73,6 +74,8 @@ function App() {
           path="/drinkpost/:drinkId/review/create"
           element={<DrinkpostReviewCreate></DrinkpostReviewCreate>}
         ></Route>
+
+        <Route path="/test" element={<Test></Test>}></Route>
       </Routes>
     </>
   );

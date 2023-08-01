@@ -18,6 +18,12 @@ export default ({ mode }) => {
           secure: false,
           // rewrite: path => path.replace(/^\/api/, ""),
         },
+        "/ws": {
+          target: env.VITE_API_BASE_URL,
+          ws: true,
+          changeOrigin: true,
+          secure: false,
+        },
       },
     },
     define: {

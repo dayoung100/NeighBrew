@@ -31,11 +31,15 @@ const MyPage = () => {
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const [following, setFollowing] = useState(0); // 팔로잉,팔로워 목록
   const { userid } = useParams();
-  const [tags, setTags] = useState(["태그1", "태그2", "태그3"]);
   const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
   const Brewery = brewery(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
   const [deleteModalOn, setDeleteModalOn] = useState(false);
+  const [nickname, setNickname] = useState("");
+  const [profile, setProfile] = useState("");
+  const [intro, setIntro] = useState("");
+  const [birth, setBirth] = useState("");
   const navigate = useNavigate();
+  // 팔로우 하기
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/guard/${userid}`)
       .then(res => {
@@ -43,16 +47,15 @@ const MyPage = () => {
       })
       .catch(err => console.log(err));
   };
-  // 팔로우가 되어있는지 확인 (팔로우 버튼 색깔 변경)
+  // 팔로워, 팔로잉 인원 수 세기 (팔로우 버튼 색깔 변경)
   const followers = async () => {
-    const api = callApi("get", `api/follow/${userid}`).then(res => {
+    callApi("get", `api/follow/follower/${userid}`).then(res => {
       if (res.data.length == 0) {
         setUserData(userData => ({ ...userData, follower: res.data.length }));
         setFollowing(0);
         return;
       }
       setUserData(userData => ({ ...userData, follower: res.data.length }));
-      console.log(res.data);
       res.data.map((item, i) => {
         if (item.follower.userId == parseInt(localStorage.getItem("myId"))) {
           setFollowing(1);
@@ -61,6 +64,9 @@ const MyPage = () => {
           setFollowing(0);
         }
       });
+    });
+    callApi("get", `api/follow/following/${userid}`).then(res => {
+      setUserData(userData => ({ ...userData, following: res.data.length }));
     });
   };
   const reportHandler = () => {
@@ -72,8 +78,8 @@ const MyPage = () => {
   const goFollowPage = () => {
     navigate("/myPage/follow/" + userid);
   };
-  const userInfo = async () => {
-    const api = callApi("get", `api/user/guard/userinfo/${userid}`)
+  const userInfo = () => {
+    callApi("get", `api/user/guard/userinfo/${userid}`)
       .then(res => {
         setUserData(res.data);
         console.log(res.data);
@@ -93,7 +99,33 @@ const MyPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
-    console.log(tagId);
+  };
+  const changeUserInfo = () => {
+    callApi("put", `api/user/guard`, {
+      nickname: nickname,
+      intro: intro,
+      profile: profile,
+    })
+      .then(res => {
+        setUserData(res.data);
+      })
+      .then(() => {
+        followers();
+      });
+  };
+  useEffect(() => {
+    setNickname(userData.nickname);
+    setProfile(userData.profile);
+    setIntro(userData.intro);
+    setBirth(userData.birth);
+  }, [userData]);
+  const nicknameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setNickname(e.target.value);
+  };
+  const introHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setIntro(e.target.value);
   };
   useEffect(() => {
     refresh();
@@ -114,13 +146,6 @@ const MyPage = () => {
         }}
       >
         <UserDiv>
-          <button
-            onClick={() => {
-              setDeleteModalOn(true);
-            }}
-          >
-            프로필 수정
-          </button>
           <ImgDiv>
             <Img src={temgif}></Img>
           </ImgDiv>
@@ -184,7 +209,6 @@ const MyPage = () => {
 
         <UserInfoDiv>
           <p style={{ marginLeft: "3rem", marginRight: "4rem" }}>{userData!.nickname}</p>
-          <TagDiv>와인</TagDiv>
         </UserInfoDiv>
         <div
           style={{
@@ -192,9 +216,17 @@ const MyPage = () => {
             fontFamily: "JejuGothic",
             textAlign: "left",
             margin: "0 1rem",
+            display: "flex",
           }}
         >
-          <p>{userData.intro ? userData.intro : <p> 임시 한줄 설명 </p>}</p>
+          <p>{userData.intro ?? "한 줄 소개를 설정해 주세요"}</p>
+          <button
+            onClick={() => {
+              setDeleteModalOn(true);
+            }}
+          >
+            프로필 수정
+          </button>
         </div>
       </div>
       <div>
@@ -230,18 +262,27 @@ const MyPage = () => {
         isOpen={deleteModalOn}
         onRequestClose={() => setDeleteModalOn(false)}
         style={WhiteModal}
+        ariaHideApp={false}
       >
         <CateDiv>
           <DrinkCategory getFunc={getDrinkCategory} />
         </CateDiv>
         <FlexDiv>
           <label htmlFor="nickname">닉네임</label>
-          <input type="text" id="nickname" />
+          <input type="text" id="nickname" value={nickname} onInput={nicknameHandler} />
         </FlexDiv>
         <FlexDiv>
           <label htmlFor="intro">한줄 설명</label>
-          <input type="text" id="intro" />
+          <input type="text" id="intro" value={intro} onInput={introHandler} />
         </FlexDiv>
+        <button
+          onClick={() => {
+            changeUserInfo();
+            setDeleteModalOn(false);
+          }}
+        >
+          유저 정보 변경
+        </button>
       </Modal>
       <footer>
         <Footer />
