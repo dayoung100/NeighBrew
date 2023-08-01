@@ -35,8 +35,7 @@ public class UserController {
     public ResponseEntity<?> getMyInfo(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
         User user = userService.findByUserId(Long.valueOf(userId));
-        UserDto userDto = new UserDto(user);
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/guard/userinfo/{userId}")
