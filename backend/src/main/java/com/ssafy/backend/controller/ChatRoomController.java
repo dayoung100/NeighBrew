@@ -23,6 +23,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -66,6 +67,7 @@ public class ChatRoomController {
                 .build());
         return ResponseEntity.ok(room);
     }
+
 
 
     // 채팅방 입장 (채팅방에 유저 추가)
