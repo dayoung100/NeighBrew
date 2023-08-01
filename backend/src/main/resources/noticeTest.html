@@ -20,9 +20,6 @@
       <h3>이벤트 결과 출력</h3>
     </div>
     <script>
-      let userId = 1; //유저 아이디에 해당하는 것 넣으면 알림 이벤트와 연결시킴
-      //아아디 타입은 Long이니 전송할 때 닉네임 말고 PK값으로 전송해주시면 될 듯 합니다.
-
       function myClear(){
           document.getElementById("pushList").innerText= ""
       }
@@ -40,11 +37,6 @@
             console.log(event.lastEventId)
             showResult(event.data);
         })
-        // eventSource.onmessage = function (event) {
-        //   console.log(JSON.parse(event))
-        //   showResult(event.data);
-        //   //showNotification(event.data);
-        // };
       }
 
       function showNotification(data) {
@@ -85,3 +77,11 @@
     </script>
   </body>
 </html>
+
+
+
+
+
+
+
+

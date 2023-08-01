@@ -112,9 +112,7 @@ public class MeetController {
             //이미지 파일이 업로드 되면 s3에 파일 제거, 새로운 이미지 업로드
             if(multipartFile.isPresent()) {
                 log.info("왜 일로와ㅏ@@@@@@@@@@@@@@@@@@@@");
-                String deleteFileName = prevMeet.getImgSrc().split("/")[4]; //url에서 파일 이름을 파싱한다.
-                log.info("{}, {} ",prevMeet.getImgSrc(), deleteFileName);
-                s3Service.deleteImg(UploadType.MEET, deleteFileName);
+                s3Service.deleteImg(prevMeet.getImgSrc());
                 meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
             }
             else meetDto.setImgSrc(prevMeet.getImgSrc());
@@ -173,7 +171,7 @@ public class MeetController {
 
             //meet 이미지를 지운다
             String deleteFileName = deleteMeet.getImgSrc().split("/")[4]; //url에서 파일 이름을 파싱한다.
-            s3Service.deleteImg(UploadType.MEET, deleteFileName);
+            s3Service.deleteImg(deleteMeet.getImgSrc());
 
             return ResponseEntity.ok("미팅 : " + meetId + " 삭제완료");
         } catch (IllegalArgumentException e) {
@@ -218,6 +216,9 @@ public class MeetController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    // 유저 : 모임 신청 취소
+
+    // 모임, 채팅 나가면 모임 나가기
 
     // 방장 : 모임 신청 관리
     @PostMapping("/manage")
