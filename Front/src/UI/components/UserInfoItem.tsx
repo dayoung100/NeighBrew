@@ -48,7 +48,9 @@ const UserInfoItem = (props: UserInfoItemProps) => {
             alignItems: "center",
           }}
         >
-          <div style={{ fontFamily: "JejuGothic", fontSize: "15px" }}>{props.name}</div>
+          <div style={{ fontFamily: "JejuGothic", fontSize: "15px" }}>
+            {props.name}
+          </div>
           {props.isMaster && <img src="/src/assets/star.svg" />}
         </div>
         <div
@@ -60,6 +62,7 @@ const UserInfoItem = (props: UserInfoItemProps) => {
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
+            textAlign: "left",
           }}
         >
           {props.intro}

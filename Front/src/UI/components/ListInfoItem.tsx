@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const ItemDiv = styled.div<{ outLine: boolean }>`
+const ItemDiv = styled.div<{ outline: boolean }>`
   position: relative;
   display: flex;
   justify-content: space-between;
@@ -11,11 +11,11 @@ const ItemDiv = styled.div<{ outLine: boolean }>`
   margin: 1rem auto 0 auto;
   border-radius: 20px;
   padding: 0.5rem 0.5rem;
-  border: ${props => (props.outLine ? "1px solid var(--c-gray)" : "none")};
+  border: ${(props) => (props.outline ? "1px solid var(--c-gray)" : "none")};
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   display: flex;
   justify-content: center;
@@ -50,6 +50,13 @@ const InfoContent = styled.div`
   font-family: "SeoulNamsan";
   font-size: 10px;
   color: var(--c-gray);
+  width: 12rem;
+  // 4줄 넘어가면 말줄임
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 `;
 
 const Tag = styled.div`
@@ -118,9 +125,13 @@ type ListInfoItemProps = {
  * @property {any} routingFunc 라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
  */
 const ListInfoItem = (props: ListInfoItemProps) => {
+  //TODO: props를 object로 받도록 수정?
   return (
-    <div style={{ display: "flex", justifyContent: "center" }} onClick={() => props.routingFunc()}>
-      <ItemDiv outLine={props.outLine ? props.outLine : false}>
+    <div
+      style={{ display: "flex", justifyContent: "center" }}
+      onClick={() => props.routingFunc()}
+    >
+      <ItemDiv outline={props.outLine ? props.outLine : undefined}>
         <ImageArea src={props.imgSrc} />
         <InfoArea>
           <InfoTitle>{props.title}</InfoTitle>

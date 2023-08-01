@@ -21,7 +21,7 @@ export default ({ mode }) => {
       },
     },
     define: {
-      global: {},
+      _global: {},
     },
     optimizeDeps: {
       esbuildOptions: {
