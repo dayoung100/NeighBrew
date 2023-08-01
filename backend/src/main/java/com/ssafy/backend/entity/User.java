@@ -100,4 +100,6 @@ public class User {
     }
 
 
+    public void setLiverPoint(float v) {
+    }
 }
