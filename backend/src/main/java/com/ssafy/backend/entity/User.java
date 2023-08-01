@@ -99,7 +99,9 @@ public class User {
         }
     }
 
-
-    public void setLiverPoint(float v) {
+    public void updateLiverPoint(Float newLiverPoint) {
+        this.liverPoint = newLiverPoint;
     }
+
+
 }
