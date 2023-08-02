@@ -74,45 +74,12 @@ public class MeetController {
                                         MeetDto meetDto,
                                         Long drinkId,
                                         @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) {
-        log.info("\n수정하는 유저 :{} \n 수정할 미팅 정보 : {}", userId, meetDto);
-        boolean imgExist = !multipartFile.get().getOriginalFilename().equals("");
-        log.info("파일 업로드함 ? {}", imgExist);
+        if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
+        if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
+        if (userId != meetDto.getHostId())
+            return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임 정보를 수정할 수 없습니다.");
 
-        try {
-            if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
-            if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
-            if (userId != meetDto.getHostId())
-                return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임 정보를 수정할 수 없습니다.");
-
-            //기존 Meet가져온다
-            Meet prevMeet = meetService.findByMeetId(meetId);
-            User host = userService.findByUserId(userId);
-
-            //이미지 파일이 업로드 되면 s3에 파일 제거, 새로운 이미지 업로드
-            if (imgExist) {
-                s3Service.deleteImg(prevMeet.getImgSrc());
-                meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
-            } else meetDto.setImgSrc(prevMeet.getImgSrc());
-
-            //변경된 데이터를 기반으로 meet를 업데이트한다.
-            meetService.updateMeet(meetId, meetDto, drinkId);
-
-            //모임이 수정되면 모임에 참여한 사람들에게 Push 알림을 보낸다.
-            MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetId);
-
-            for (User user : meetUser.getUsers()) {
-                if (user.getUserId() == meetDto.getHostId()) continue; //방장에게는 알림을 전송하지 않는다.
-
-                log.info("수정 알림 보낼 유저 정보 출력 : {}", user.getUserId());
-                StringBuilder pushMessage = new StringBuilder();
-                pushMessage.append("모임( ").append(meetDto.getMeetName()).append(")의 내용이 수정되었습니다. 확인해 주세요.");
-                pushService.send(host, user, PushType.MODIFIDEMEET, pushMessage.toString(), "https://i9b310.p.ssafy.io");
-            }
-
-            return ResponseEntity.ok("모임정보 변경 완료");
-        } catch (IllegalArgumentException | IOException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get()));
     }
 
     //모임 삭제하기

@@ -32,6 +32,7 @@ public class MeetService {
     private final UserRepository userRepository;
 
     private final S3Service s3Service;
+    private final UserService userService;
     private final MeetUserService meetUserService;
     private final PushService pushService;
     private final FollowService followService;
@@ -138,17 +139,44 @@ public class MeetService {
         }
     }
 
-    public void updateMeet(Long meetId, MeetDto meetDto, Long drinkId) {
+    public String updateMeet(MeetDto meetDto, Long userId,  Long meetId, Long drinkId, MultipartFile multipartFile) {
         log.info("meetId : {}인 모임 정보 업데이트 : {} ", meetId, meetDto);
 
-        Meet findMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
-        findMeet.update(meetDto.toEntity());
-        findMeet.setTag(tagRepository.findById(meetDto.getTagId()).orElseThrow(() -> new IllegalArgumentException("잘못된 태그 정보 입니다.")));
-        findMeet.setDrink(drinkRepository.findById(drinkId).orElseThrow(() -> new IllegalArgumentException("잘못된 주종 정보 입니다.")));
-        log.info("findMeet 업데이트 했당: {} ", findMeet);
+        //기존 Meet를 가져온다
+        String prevMeetImgSrc = meetRepository.findImgSrcByMeetId(meetId);
+        User host = userService.findByUserId(userId);
 
+        try{
+            boolean imgExist = !multipartFile.getOriginalFilename().equals("");
 
-        meetRepository.save(findMeet);
+            if (imgExist) { //업로드할 파일이 있으면 DB와 S3에 존재하는 이미지를 제거한다/
+                s3Service.deleteImg(prevMeetImgSrc);
+                meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+            } else meetDto.setImgSrc(prevMeetImgSrc);
+
+            //기존 데이터를 가져온 뒤 업데이트 한다.
+            Meet updateMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
+            updateMeet.update(meetDto.toEntity()); //업데이트한다.
+            updateMeet.setTag(tagRepository.findById(meetDto.getTagId()).orElseThrow(() -> new IllegalArgumentException("잘못된 태그 정보 입니다.")));
+            updateMeet.setDrink(drinkRepository.findById(drinkId).orElseThrow(() -> new IllegalArgumentException("잘못된 주종 정보 입니다.")));
+
+            meetRepository.save(updateMeet);
+
+            //모임이 수정되면 모임에 참여한 사람들에게 Push 알림을 보낸다.
+            MeetUserDto meetUser = findMeetUserByMeetId(meetId);
+
+            for (User user : meetUser.getUsers()) {
+                if (user.getUserId() == meetDto.getHostId()) continue; //방장에게는 알림을 전송하지 않는다.
+
+                StringBuilder pushMessage = new StringBuilder();
+                pushMessage.append("모임( ").append(meetDto.getMeetName()).append(")의 내용이 수정되었습니다. 확인해 주세요.");
+                pushService.send(host, user, PushType.MODIFIDEMEET, pushMessage.toString(), "https://i9b310.p.ssafy.io");
+            }
+
+            return meetId + "모임이 수정 되었습니다.";
+        }catch (IOException e){
+            return meetId + "모임이 수정 중 문제가 발생했습니다.";
+        }
     }
 
     public void deleteMeet(Long meetId) {
@@ -163,4 +191,5 @@ public class MeetService {
 
         meetRepository.save(findMeet);
     }
+
 }
