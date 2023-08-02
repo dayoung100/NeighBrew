@@ -35,7 +35,7 @@ const ChatList = () => {
     chooseChat === 0 ? "#AAAAAA" : "var(--c-black)"
   );
 
-  const userId = 1;
+  const userId = localStorage.getItem("myId");
   useEffect(() => {
     callApi("GET", `api/chat/${userId}/getChatRoom`)
       .then((res) => {

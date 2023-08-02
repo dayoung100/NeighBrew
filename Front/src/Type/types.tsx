@@ -14,10 +14,18 @@ export interface User {
   oauthProvider?: string;
 }
 export interface Chat {
-  message: string;
-  userid: number;
+  chatMessageId?: number;
+  message?: string;
+  user?: User;
+  timestamp?: string;
+  chatRoom?: ChatRoom;
+  userid?: number;
 }
 
+export interface ChatRoom {
+  chatRoomId?: number;
+  chatRoomName?: string;
+}
 //모임 인터페이스
 export interface Meeting {
   meetId: number;

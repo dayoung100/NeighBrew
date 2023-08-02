@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useRouteError } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
@@ -144,9 +144,13 @@ const BackDrop = styled.div<{ isModal: boolean }>`
 
 const ChatRoom = () => {
   const { id } = useParams();
+  const [sockjs, setSockjs] = useState();
+  // const [client, setClient] = useState<any>(null);
+  const client = useRef<CompatClient>();
   const [messages, setMessages] = useState<Chat[]>([]);
   const [isModal, setIsModal] = useState(false);
   const [chatRoomName, setChatRoomName] = useState();
+  const userId = localStorage.getItem("myId");
   const [users, setUsers] = useState([
     "현욱",
     "현빈",
@@ -159,21 +163,50 @@ const ChatRoom = () => {
   const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
+  // 웹소켓 연결 및 이벤트 핸들러 설정
+  const connectToWebSocket = () => {
+    client.current = Stomp.over(() => {
+      const ws = new SockJS("/ws");
+      return ws;
+    });
+
+    client.current.connect({}, () => {
+      console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
+
+      // 웹소켓 이벤트 핸들러 설정
+      client.current!.subscribe(`/pub/chat/${id}/sendMessage`, (res) => {
+        console.log("New message", res);
+        const receivedMessage = JSON.parse(res.body);
+        setMessages((prevMessages: any) => [
+          ...prevMessages,
+          { message: receivedMessage.message, userid: receivedMessage.userId },
+        ]);
+      });
+    });
+  };
+
+  useEffect(() => {
+    connectToWebSocket();
+  }, []);
   // 엔터 누르면 메세지 전송
   const sendMessageHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Enter" || e.keyCode === 13) {
       if (message === "") return;
+      // 백엔드에 메시지 전송
+      console.log(client);
+      client.current.send(
+        `/sub/chat/${id}/sendMessage`,
+        {},
+        JSON.stringify({ message: message, userId })
+      );
       setMessages((prev) => [...prev, { message: message, userid: 1 }]);
       setMessage("");
       scroll();
     }
   };
-  const client = useRef<CompatClient>();
 
   const navigate = useNavigate();
   const rapperDiv = useRef<HTMLInputElement>(null);
-
-
 
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
