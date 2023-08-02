@@ -8,7 +8,7 @@ import Chat from "./Chat";
 import { meetingicon, directMessage } from "../../assets/AllIcon";
 import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
-import ChatRoom from "./ChatRoom";
+import { useNavigate } from "react-router-dom";
 
 const Button = styled.button`
   width: 40%;
@@ -21,22 +21,30 @@ const Button = styled.button`
 
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);
-  const [directChatList, setdirectChatList] = useState([]);
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const MeetingIcon = meetingicon(
     chooseChat === 0 ? "var(--c-black)" : "#AAAAAA"
   );
+  const navigate = useNavigate();
+
+  const chatRoomDetail = (roomId: number) => {
+    console.log(roomId);
+    navigate(`/chatList/${roomId}`);
+  };
   const directMessageIcon = directMessage(
     chooseChat === 0 ? "#AAAAAA" : "var(--c-black)"
   );
 
   const userId = 1;
   useEffect(() => {
-    const getChatList = async () => {
-      const response = await callApi("GET", `api/chat/${userId}/getChatRoom`);
-      setChatList(response.data);
-    };
-    getChatList();
+    callApi("GET", `api/chat/${userId}/getChatRoom`)
+      .then((res) => {
+        console.log(res.data);
+        setChatList(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, []);
   return (
     <>
@@ -71,6 +79,8 @@ const ChatList = () => {
               key={chatRoom.chatRoomId}
               chooseChat={chooseChat}
               chatRoomName={chatRoom.chatRoomName}
+              chatRoomId={chatRoom.chatRoomId}
+              chatRoomDetail={chatRoomDetail}
             />
           );
         })}
