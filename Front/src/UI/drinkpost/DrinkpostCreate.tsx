@@ -136,7 +136,7 @@ const DrinkpostCreate = () => {
     setDrinkDescription(e.target.value);
   };
 
-  const [imgFile, setImgFile] = useState("");
+  const [imgFile, setImgFile] = useState(null);
   const imgRef = useRef<HTMLInputElement>(null);
 
   //이미지 파일 업로드 시 미리보기
@@ -150,6 +150,7 @@ const DrinkpostCreate = () => {
       }
     };
   };
+
   const uploadImageToServer = async imgFile => {
     const file = imgRef.current.files[0];
     try {
@@ -178,13 +179,20 @@ const DrinkpostCreate = () => {
   };
 
   const submitHandler = async (e: React.MouseEvent<HTMLDivElement>) => {
-    const imageUrl = await uploadImageToServer(imgFile);
+    let imageUrl: string;
+    if (imgFile !== null) {
+      imageUrl = await uploadImageToServer(imgFile);
+    } else {
+      imageUrl = null;
+    }
+    console.log(imageUrl);
     try {
       callApi("post", "api/drink", {
         name: drinkName,
         image: imageUrl,
         description: drinkDescription,
         degree: drinkAlcohol,
+        tagId: selectedCategory,
       })
         .then(res => {
           console.log(res.data);

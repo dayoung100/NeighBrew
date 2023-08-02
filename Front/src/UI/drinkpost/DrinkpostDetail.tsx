@@ -115,7 +115,7 @@ const DrinkpostDetail = () => {
         setReviewList(prev => [...prev, ...res.data.content]);
         console.log(res.data.content);
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
   }, []);
 
   return (
@@ -130,7 +130,7 @@ const DrinkpostDetail = () => {
           <img src={sirenIcon} alt="" />
         </NavbarSirenIcon>
       </DrinkpostDetailNavbar>
-      <img src={whiskeyImage} alt="" style={{ width: "80px", height: "300px", margin: "30px" }} />
+      <img src={detail?.image} alt="" style={{ width: "80px", height: "300px", margin: "30px" }} />
       <div className="description" style={{ textAlign: "start", margin: "30px" }}>
         <p>
           <b>종류</b> : 종류를 받는 부분

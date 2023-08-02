@@ -90,7 +90,7 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
       <TopTag>
         <Tag>{tagHandler(drink.tagId)}</Tag>
       </TopTag>
-      <CardImage src={whiskeyImage}></CardImage>
+      <CardImage src={drink.image ? drink.image : whiskeyImage}></CardImage>
       <NameCard>
         {drink.name.length < limit
           ? toggleEllipsis(drink.name, limit).string

@@ -37,9 +37,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
     props.getFunc(chooseCategoryDiv);
   }, [chooseCategoryDiv]);
 
-  const totalDrink = TotalDrink(
-    chooseCategoryDiv === 0 ? "#f2bc79" : "#F0E5DC"
-  );
+  const totalDrink = TotalDrink(chooseCategoryDiv === 0 ? "#f2bc79" : "#F0E5DC");
   const whiskey = Whiskey(chooseCategoryDiv === 1 ? "#F2BC79" : "#F0E5DC");
   const tradition = Tradition(chooseCategoryDiv === 2 ? "#F2BC79" : "#F0E5DC");
   const cocktail = Cocktail(chooseCategoryDiv === 3 ? "#F2BC79" : "#F0E5DC");
