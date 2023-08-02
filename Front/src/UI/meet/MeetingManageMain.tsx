@@ -100,8 +100,12 @@ const MeetingManageMain = () => {
           size={15}
         />
       </div>
-      <BigBtn onClick={() => GotoMeetInfoManage(1)}>모임 정보 관리</BigBtn>
-      <BigBtn onClick={() => GotoMemberManage(1)}>참여자 관리</BigBtn>
+      <BigBtn onClick={() => GotoMeetInfoManage(parseInt(meetId))}>
+        모임 정보 관리
+      </BigBtn>
+      <BigBtn onClick={() => GotoMemberManage(parseInt(meetId))}>
+        참여자 관리
+      </BigBtn>
       <BigBtn
         style={{ background: "#F28F79" }}
         onClick={() => setDeleteModalOn(true)}

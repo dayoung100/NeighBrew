@@ -14,7 +14,7 @@ import UserInfoItem from "../components/UserInfoItem";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import backgroundImg from "../../assets/ForTest/backgroundImg.jpg";
 import { callApi } from "../../utils/api";
-import { Meeting, User } from "../../Type/types";
+import { MeetDetail, User } from "../../Type/types";
 
 const MeetThumbnail = styled.div`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -86,12 +86,6 @@ const MeetTitle = styled.div`
   text-align: left;
   margin-top: 1.5rem;
 `;
-
-type MeetDetail = {
-  meetDto: Meeting;
-  users: User[];
-  statuses: [];
-};
 
 const initialData: MeetDetail = {
   meetDto: {
@@ -187,7 +181,7 @@ const MeetingDetail = () => {
   }
 
   //TODO: 모임 나가기
-  function getOutMeet() {
+  function exitMeet() {
     setUserStatus("NONE");
     console.log("모임을 나갔어요");
   }
@@ -412,7 +406,7 @@ const MeetingDetail = () => {
         {userStatus === "GUEST" && (
           <FooterBigBtn
             content="모임 나가기"
-            reqFunc={() => getOutMeet()} //모임 나가기
+            reqFunc={() => exitMeet()} //모임 나가기
             color="#F28F79"
             bgColor="var(--c-lightgray)"
           />
