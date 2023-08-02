@@ -61,6 +61,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public User updateUserImg(Long userId, String url) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
+        user.updateImg(url);
+        return userRepository.save(user);
+    }
+
+
     public List<User> findAll() {
         return userRepository.findAll();
     }

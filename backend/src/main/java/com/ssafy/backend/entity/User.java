@@ -105,6 +105,10 @@ public class User {
         }
     }
 
+    public void updateImg(String url) {
+            this.profile = url;
+    }
+
     public void updateLiverPoint(Float newLiverPoint) {
         this.liverPoint = newLiverPoint;
     }

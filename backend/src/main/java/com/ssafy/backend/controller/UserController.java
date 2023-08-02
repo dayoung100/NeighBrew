@@ -1,9 +1,11 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.Enum.UploadType;
 import com.ssafy.backend.authentication.application.LoginResponse;
 import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.dto.UserUpdateDto;
 import com.ssafy.backend.entity.User;
+import com.ssafy.backend.service.S3Service;
 import com.ssafy.backend.service.UserService;
 import com.ssafy.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -12,8 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,7 @@ import java.util.Date;
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
+    private final S3Service s3Service;
 
     //전체 유저 검색
     @GetMapping()
@@ -95,6 +100,15 @@ public class UserController {
         log.info(String.valueOf(userUpdateDto.getBirth()));
         User updatedUser = userService.updateUser(Long.valueOf(userId), userUpdateDto);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @PutMapping("/guard/img")
+    public ResponseEntity<?> updataUserImg(@RequestParam("profile") MultipartFile profile, HttpServletRequest request ) throws IOException {
+        String url = s3Service.upload(UploadType.USERPROFILE ,profile);
+        String userId = (String) request.getAttribute("userId");
+        userService.updateUserImg(Long.valueOf(userId),url);
+
+        return ResponseEntity.ok(url);
     }
 
 
