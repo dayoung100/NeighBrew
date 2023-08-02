@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -33,8 +34,8 @@ public class User {
     private String name;
 
 
-    @Temporal(TemporalType.DATE)
-    private Date birth;
+
+    private LocalDate birth;
 
 
     @Lob
@@ -72,7 +73,7 @@ public class User {
 
     @Builder
     public User(Long userId, String email, String nickname, OAuthProvider oAuthProvider, String name,
-                Date birth, String intro, Float liverPoint, String profile) {
+                LocalDate birth, String intro, Float liverPoint, String profile) {
         this.userId = userId;
         this.email = email;
         this.nickname = nickname;
@@ -91,12 +92,21 @@ public class User {
         if (updateDto.getIntro() != null) {
             this.intro = updateDto.getIntro();
         }
+
+        if (updateDto.getBirth() != null) {
+            this.birth = updateDto.getBirth();
+        }
+
         if (updateDto.getProfile() != null) {
             this.profile = updateDto.getProfile();
         }
         if (updateDto.getLiverPoint() != null) {
             this.liverPoint = updateDto.getLiverPoint();
         }
+    }
+
+    public void updateImg(String url) {
+            this.profile = url;
     }
 
     public void updateLiverPoint(Float newLiverPoint) {
