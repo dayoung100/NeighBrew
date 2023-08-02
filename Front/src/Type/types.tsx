@@ -46,6 +46,13 @@ export interface Meeting {
   imgSrc: string;
 }
 
+//미팅 상세 정보 type
+export type MeetDetail = {
+  meetDto: Meeting;
+  users: User[];
+  statuses: [];
+};
+
 export interface Drink {
   degree: number;
   description: string;
