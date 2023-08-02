@@ -54,7 +54,7 @@ public class MeetController {
     }
 
     //모임 수정
-    @PutMapping("/modify/{meetId}")
+    @PutMapping("/modify/{userId}/{meetId}")
     public ResponseEntity<?> updateMeet(@PathVariable("userId") Long userId,
                                         @PathVariable("meetId") Long meetId,
                                         MeetDto meetDto,
