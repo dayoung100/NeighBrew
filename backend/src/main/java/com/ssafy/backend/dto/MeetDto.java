@@ -55,7 +55,6 @@ public class MeetDto {
 
     public Meet toEntity(){
         return Meet.builder()
-                .meetId(this.meetId)
                 .meetName(this.meetName)
                 .description(this.description)
                 .hostId(this.hostId)
