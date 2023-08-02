@@ -19,15 +19,12 @@ public interface PushRepository extends JpaRepository<Push, Long> {
 
     @Modifying
     @Query("DELETE FROM Push p WHERE p.pushType = :pushType AND p.receiver.userId = :receiverId AND p.sender.userId = :senderId")
-    void deleteByPushTypeAndReceiver_UserIdAndSender_UserId(@Param("pushType") PushType pushType,
-                                                            @Param("receiverId") Long receiverId,
-                                                            @Param("senderId") Long senderId);
+    void deleteByPushTypeAndSender_UserIdAndReceiver_UserId(@Param("pushType") PushType pushType,
+                                                            @Param("senderId") Long senderId,
+                                                            @Param("receiverId") Long receiverId);
 
-    @Modifying
-    @Query("DELETE FROM Push p WHERE p.pushType = :pushType AND p.receiver = :receiver AND p.sender = :sender")
-    void test(@Param("pushType") PushType pushType,
-              @Param("receiver") User receiver,
-              @Param("sender") User sender);
+
+
 
     //void deleteByPushTypeAndReceiver_UserIdAndSender_UserId(PushType pushType, Long receiverId, Long senderId);
 }
