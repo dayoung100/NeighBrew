@@ -1,14 +1,13 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Navbar from "../navbar/Navbar";
 import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
 import { useNavigate } from "react-router-dom";
 import temgif from "../../assets/temgif.gif";
 import SockJS from "sockjs-client";
-import axios from "axios";
-import { CompatClient, Stomp, Client } from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import { Chat } from "../../Type/types";
+import { callApi } from "../../utils/api";
 
 const MyChat = styled.div`
   position: relative;
@@ -72,7 +71,8 @@ const ChatNav = styled.div`
 `;
 
 const RightModal = styled.div<{ isModal: boolean }>`
-  transform: ${props => (props.isModal ? "translateX(6%)" : "translateX(100%)")};
+  transform: ${(props) =>
+    props.isModal ? "translateX(6%)" : "translateX(100%)"};
   position: fixed;
   width: 95%;
   overflow-x: scroll;
@@ -132,7 +132,7 @@ const Input = styled.input`
 `;
 
 const BackDrop = styled.div<{ isModal: boolean }>`
-  display: ${props => (props.isModal ? "block" : "none")};
+  display: ${(props) => (props.isModal ? "block" : "none")};
   transition: all 1s;
   width: 100%;
   max-width: 430px;
@@ -146,7 +146,14 @@ const ChatRoom = () => {
   const { id } = useParams();
   const [messages, setMessages] = useState<Chat[]>([]);
   const [isModal, setIsModal] = useState(false);
-  const [users, setUsers] = useState(["현욱", "현빈", "준서", "다영", "영교", "동혁"]);
+  const [users, setUsers] = useState([
+    "현욱",
+    "현빈",
+    "준서",
+    "다영",
+    "영교",
+    "동혁",
+  ]);
   const [message, setMessage] = useState("");
   const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
@@ -155,7 +162,7 @@ const ChatRoom = () => {
   const sendMessageHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Enter" || e.keyCode === 13) {
       if (message === "") return;
-      setMessages(prev => [...prev, { message: message, userid: 1 }]);
+      setMessages((prev) => [...prev, { message: message, userid: 1 }]);
       setMessage("");
       scroll();
     }
@@ -163,20 +170,19 @@ const ChatRoom = () => {
   const navigate = useNavigate();
   const rapperDiv = useRef<HTMLInputElement>(null);
   // 테스트를 위한 더비 데이터 생성
-  const makedummy = () => {
-    return new Promise((resolve, reject) => {
-      for (let i = 0; i < 6; i++) {
-        setMessages(prev => {
-          return [
-            ...prev,
-            { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 1 },
-            { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 0 },
-          ];
-        });
-      }
-      resolve("ok");
-    });
-  };
+
+  // 채팅방 입장시 채팅 메시지 가져오기
+  useEffect(() => {
+    callApi("GET", `api/chatMessage/${id}/messages`)
+      .then((res) => {
+        console.log(res.data);
+        setMessages(res.data);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }, []);
+
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
   useEffect(() => {
     scroll();
@@ -187,25 +193,20 @@ const ChatRoom = () => {
       // setTimeout(() => {
       //   window.scrollTo({ top: rapperDiv.current!.scrollHeight, behavior: "smooth" });
       // }, 10);
-      window.scrollTo({ top: rapperDiv.current!.scrollHeight, behavior: "smooth" });
+      window.scrollTo({
+        top: rapperDiv.current!.scrollHeight,
+        behavior: "smooth",
+      });
     }
   };
+
   useEffect(() => {
     const foo = async () => {
-      await makedummy();
       await scroll();
     };
     foo();
   }, []);
-  const dummyAdd = () => {
-    setMessages(prev => {
-      return [
-        ...prev,
-        { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 1 },
-        { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 0 },
-      ];
-    });
-  };
+
   const ArrowLeftIcon = arrowLeftIcon("black");
   const OutRoom = outRoom();
 
@@ -371,7 +372,13 @@ const ChatRoom = () => {
           >
             {ArrowLeftIcon}
           </div>
-          <span style={{ marginRight: "0rem", fontFamily: "JejuGothic", fontSize: "20px" }}>
+          <span
+            style={{
+              marginRight: "0rem",
+              fontFamily: "JejuGothic",
+              fontSize: "20px",
+            }}
+          >
             이런저런 ㅇㅇㅇㅇ방 이름
             <>
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
@@ -390,8 +397,12 @@ const ChatRoom = () => {
       <BackDrop isModal={isModal} onClick={chaterInfoHandler}></BackDrop>
       <RightModal isModal={isModal}>
         <h2 style={{ fontFamily: "JejuGothic" }}>모임의 이름이 들어갑니다</h2>
-        <p style={{ fontFamily: "SeoulNamsan", marginBottom: "5px" }}>대전 서구 둔산동 연남</p>
-        <p style={{ marginBottom: "10px", fontFamily: "SeoulNamsan" }}>2023.01.17 PM 8:00</p>
+        <p style={{ fontFamily: "SeoulNamsan", marginBottom: "5px" }}>
+          대전 서구 둔산동 연남
+        </p>
+        <p style={{ marginBottom: "10px", fontFamily: "SeoulNamsan" }}>
+          2023.01.17 PM 8:00
+        </p>
         <div style={{ border: "1px solid var(--c-lightgray)" }}></div>
         <br />
         <h3 style={{ fontFamily: "JejuGothic" }}>참여자 목록</h3>
@@ -427,7 +438,15 @@ const ChatRoom = () => {
                 flexDirection: "column",
               }}
             >
-              <p style={{ fontFamily: "JejuGothic", fontSize: "12px", margin: "0 1rem" }}>나</p>
+              <p
+                style={{
+                  fontFamily: "JejuGothic",
+                  fontSize: "12px",
+                  margin: "0 1rem",
+                }}
+              >
+                나
+              </p>
               {message.userid === 0 ? (
                 <MyChat>{message.message}</MyChat>
               ) : (
@@ -444,8 +463,20 @@ const ChatRoom = () => {
       </div>
       <footer>
         <InputDiv>
-          <p style={{ fontFamily: "JejuGothic", fontSize: "20px", fontWeight: "400" }}>+</p>
-          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
+          <p
+            style={{
+              fontFamily: "JejuGothic",
+              fontSize: "20px",
+              fontWeight: "400",
+            }}
+          >
+            +
+          </p>
+          <Input
+            value={message}
+            onChange={messageHandler}
+            onKeyUp={sendMessageHandler}
+          ></Input>
         </InputDiv>
       </footer>
     </div>

@@ -41,6 +41,7 @@ const Chat = (props: {
   chooseChat: number;
   chatRoomId: number;
   chatRoomName: string;
+  chatRoomDetail(roomId: number): void;
 }) => {
   const navigate = useNavigate();
 
@@ -48,7 +49,7 @@ const Chat = (props: {
     navigate(`/chatList/${props.chatRoomId}`);
   };
   return (
-    <ChatDiv onClick={moveToChatRoomHandler}>
+    <ChatDiv onClick={() => props.chatRoomDetail(props.chatRoomId)}>
       <ImgDiv>
         <Img src={props.chooseChat == 0 ? tempimg : temimg}></Img>
       </ImgDiv>

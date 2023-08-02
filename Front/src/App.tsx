@@ -62,7 +62,7 @@ function App() {
         <Route path="/myPage/follower/:userid" element={<Follower></Follower>}></Route>
         <Route path="/myPage/follow/:userid" element={<Follow></Follow>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
-        <Route path="/chatList/:roomId" element={<ChatRoom></ChatRoom>} />
+        <Route path="/chatList/:id" element={<ChatRoom></ChatRoom>} />
         <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
         <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
         <Route path="/google/:str" element={<GoogleLogin></GoogleLogin>}></Route>
