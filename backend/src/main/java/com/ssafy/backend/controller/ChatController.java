@@ -9,6 +9,7 @@ import com.ssafy.backend.entity.ChatRoom;
 import com.ssafy.backend.repository.ChatMessageRepository;
 import com.ssafy.backend.repository.ChatRoomRepository;
 import com.ssafy.backend.repository.ChatRoomUserRepository;
+import com.ssafy.backend.repository.UserRepository;
 import com.ssafy.backend.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class ChatController {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final ChatRoomService chatRoomService;
+    private final UserRepository userRepository;
 
     // 연결
     @MessageMapping("/messages")
@@ -65,8 +67,8 @@ public class ChatController {
 
         ChatMessageDto chatMessageDto = ChatMessageDto
                 .builder()
-                .userId(jsonNode.get("userId").asLong())
                 .message(jsonNode.get("message").asText())
+                .user(userRepository.findById(jsonNode.get("userId").asLong()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다.")))
                 .build();
 
 
@@ -76,7 +78,7 @@ public class ChatController {
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .message(chatMessageDto.getMessage())
-                .userId(chatMessageDto.getUserId())
+                .user(chatMessageDto.getUser())
                 .timestamp(LocalDateTime.now())
                 .build();
 

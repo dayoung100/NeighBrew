@@ -63,13 +63,12 @@ public class ChatRoomController {
         chatRoomRepository.save(room);
         chatMessageRepository.save(ChatMessage.builder()
                 .chatRoom(room)
-                .userId(null)
+                .user(null)
                 .message("채팅방이 생성되었습니다.")
                 .timestamp(LocalDateTime.now())
                 .build());
         return ResponseEntity.ok(room);
     }
-
 
 
     // 채팅방 입장 (채팅방에 유저 추가)
@@ -114,7 +113,7 @@ public class ChatRoomController {
         ChatMessage message = ChatMessage.builder()
                 .message(user.getName() + "님이 퇴장하셨습니다.")
                 .timestamp(LocalDateTime.now())
-                .userId(user.getUserId())
+                .user(user)
                 .build();
         chatMessageRepository.save(message);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, message);
