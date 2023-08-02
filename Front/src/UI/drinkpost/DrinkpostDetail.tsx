@@ -10,6 +10,47 @@ import sirenIcon from "../../assets/sirenIcon.svg";
 import { callApi } from "../../utils/api";
 import { useState, useEffect } from "react";
 import { Drink, Review } from "../../Type/types";
+import backgroundImg from "../../assets/mdsimg.png";
+
+const InfoDiv = styled.div`
+  border-radius: 30px 30px 0px 0px;
+  background-color: white;
+`;
+
+const DrinkThumbnail = styled.div`
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(${backgroundImg}) no-repeat center;
+  background-size: cover;
+  width: 100%;
+  height: 30vh;
+  color: white;
+`;
+
+const Tag = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--c-yellow);
+  padding: 1.5% 2%;
+  font-family: "SeoulNamsan";
+  font-size: 7px;
+  border-radius: 10px;
+  color: var(--c-black);
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: white;
+    margin-right: 2px;
+  }
+  span {
+    display: flex;
+    justify-content: center;
+    min-width: 30px;
+  }
+`;
 
 const CreateReviewDiv = styled.div`
   display: flex;
@@ -101,8 +142,6 @@ const DrinkpostDetail = () => {
     callApi("get", `api/drink/${drinkId}`)
       .then(res => {
         setDetail(res.data);
-        console.log(1);
-        console.log(res);
       })
       .catch(err => console.log(err));
     // callApi("get", reviewUrl)
@@ -112,11 +151,21 @@ const DrinkpostDetail = () => {
   useEffect(() => {
     callApi("get", `api/drinkreview/${drinkId}`)
       .then(res => {
+        console.log(res.data);
         setReviewList(prev => [...prev, ...res.data.content]);
-        console.log(res.data.content);
       })
       .catch(err => console.error(err));
   }, []);
+
+  const transImage = (img: string) => {
+    if (img === "no image") {
+      return whiskeyImage;
+    } else if (img === "asd") {
+      return whiskeyImage;
+    } else {
+      return detail?.image;
+    }
+  };
 
   return (
     <>
@@ -130,7 +179,11 @@ const DrinkpostDetail = () => {
           <img src={sirenIcon} alt="" />
         </NavbarSirenIcon>
       </DrinkpostDetailNavbar>
-      <img src={detail?.image} alt="" style={{ width: "80px", height: "300px", margin: "30px" }} />
+      <img
+        src={transImage(detail?.image)}
+        alt=""
+        style={{ width: "80px", height: "300px", margin: "30px" }}
+      />
       <div className="description" style={{ textAlign: "start", margin: "30px" }}>
         <p>
           <b>종류</b> : 종류를 받는 부분
@@ -158,7 +211,15 @@ const DrinkpostDetail = () => {
             <span style={{ padding: "10px 0px 10px" }}>후기 작성하기</span>
           </CreateReviewButton>
         </CreateReviewDiv>
-        <div className="reviewList">
+        <div
+          className="reviewList"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            margin: "0px 30px 0px 30px",
+            justifyContent: "space-between",
+          }}
+        >
           {reviewList.map(review => {
             return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
           })}
