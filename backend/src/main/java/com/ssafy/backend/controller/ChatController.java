@@ -14,13 +14,10 @@ import com.ssafy.backend.repository.UserRepository;
 import com.ssafy.backend.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,11 +45,6 @@ public class ChatController {
         messagingTemplate.convertAndSend("/pub/messages", chatMessage);
     }
 
-    // 유저 아이디로 채팅방 조회
-    @GetMapping("/{userId}/getChatRoom")
-    public ResponseEntity<?> getUserChatRooms(@PathVariable Long userId) {
-        return ResponseEntity.ok(chatRoomService.findUserChatRooms(userId));
-    }
 
     @MessageMapping("/chat/{roomId}/sendMessage")
     public void sendMessage(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {

@@ -8,13 +8,11 @@ import com.ssafy.backend.repository.ChatMessageRepository;
 import com.ssafy.backend.repository.ChatRoomRepository;
 import com.ssafy.backend.repository.ChatRoomUserRepository;
 import com.ssafy.backend.repository.UserRepository;
+import com.ssafy.backend.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -30,6 +28,7 @@ public class ChatRoomController {
     private final UserRepository userRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final ChatRoomService chatRoomService;
 
 
     // 채팅방 생성
@@ -61,5 +60,11 @@ public class ChatRoomController {
                 .timestamp(LocalDateTime.now())
                 .build());
         return ResponseEntity.ok(room);
+    }
+
+    // 유저 아이디로 채팅방 조회
+    @GetMapping("/{userId}/getChatRoom")
+    public ResponseEntity<?> getUserChatRooms(@PathVariable Long userId) {
+        return ResponseEntity.ok(chatRoomService.findUserChatRooms(userId));
     }
 }
