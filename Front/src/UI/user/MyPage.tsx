@@ -1,5 +1,5 @@
 // 마이 페이지
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { meetingicon, brewery } from "../../assets/AllIcon";
@@ -14,7 +14,8 @@ import Modal from "react-modal";
 import { User } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import DrinkpostMain from "./DrinkPostUseInUser";
-import DrinkCategory from "../drinkCategory/DrinkCategory";
+import ImageInput from "../components/ImageInput";
+import axios from "axios";
 
 const MyPage = () => {
   const [userData, setUserData] = useState<User>({
@@ -37,7 +38,7 @@ const MyPage = () => {
   const [nickname, setNickname] = useState("");
   const [profile, setProfile] = useState("");
   const [intro, setIntro] = useState("");
-  const [birth, setBirth] = useState("");
+  const [birth, setBirth] = useState("2100-01-01");
   const navigate = useNavigate();
   // 팔로우 하기
   const followHandler = async () => {
@@ -79,7 +80,7 @@ const MyPage = () => {
     navigate("/myPage/follow/" + userid);
   };
   const userInfo = () => {
-    callApi("get", `api/user/guard/userinfo/${userid}`)
+    callApi("get", `api/user/${userid}`)
       .then(res => {
         setUserData(res.data);
         console.log(res.data);
@@ -96,23 +97,7 @@ const MyPage = () => {
       });
     }
   };
-  const [selectedCategory, setSelectedCategory] = useState(0);
-  const getDrinkCategory = (tagId: number) => {
-    setSelectedCategory(tagId);
-  };
-  const changeUserInfo = () => {
-    callApi("put", `api/user/guard`, {
-      nickname: nickname,
-      intro: intro,
-      profile: profile,
-    })
-      .then(res => {
-        setUserData(res.data);
-      })
-      .then(() => {
-        followers();
-      });
-  };
+
   useEffect(() => {
     setNickname(userData.nickname);
     setProfile(userData.profile);
@@ -132,6 +117,29 @@ const MyPage = () => {
     userInfo();
     followers();
   }, []);
+
+  const imgRef = useRef<HTMLInputElement>(null);
+
+  const changeUserInfo = () => {
+    const file = imgRef.current.files[0];
+    const formData = new FormData();
+    formData.append("profile", file);
+    console.log(file);
+    // axios
+    //   .put("/api/user/guard/img", formData, {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //       Authorization: "Bearer " + localStorage.getItem("token"),
+    //     },
+    //   })
+    //   .then(res => {
+    //     userInfo();
+    //   })
+    //   .then(() => {
+    //     followers();
+    //   })
+    //   .catch(err => console.log(err));
+  };
   return (
     <>
       <header>
@@ -147,7 +155,7 @@ const MyPage = () => {
       >
         <UserDiv>
           <ImgDiv>
-            <Img src={temgif}></Img>
+            <Img src={userData.profile == "no image" ? temgif : userData.profile}></Img>
           </ImgDiv>
           <ColumnDiv>
             <p>{userData!.liverPoint} IU/L</p>
@@ -264,9 +272,6 @@ const MyPage = () => {
         style={WhiteModal}
         ariaHideApp={false}
       >
-        <CateDiv>
-          <DrinkCategory getFunc={getDrinkCategory} />
-        </CateDiv>
         <FlexDiv>
           <label htmlFor="nickname">닉네임</label>
           <input type="text" id="nickname" value={nickname} onInput={nicknameHandler} />
@@ -283,6 +288,7 @@ const MyPage = () => {
         >
           유저 정보 변경
         </button>
+        <input type="file" ref={imgRef} />
       </Modal>
       <footer>
         <Footer />

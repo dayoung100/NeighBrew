@@ -162,12 +162,6 @@ const DrinkpostCreate = () => {
       const response = await axios.post("http://i9b310.p.ssafy.io/api/img/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          // "Content-Length": "<calculated when request is sent>",
-          // Host: "<calculated when request is sent>",
-          // "User-Agent": "PostmanRuntime/7.32.3",
-          // Accept: "*/*",
-          // "Accept-Encoding": "gzip, deflate, br",
-          // Connection: "keep-alive",
         },
       });
       console.log(response.data);
