@@ -27,6 +27,11 @@ public class ChatRoom {
     @JsonBackReference
     private List<ChatRoomUser> users;
 
+    // 채팅과 모임 간의 양방향 일대일 연관관계
+    @OneToOne
+    @JoinColumn(name = "meet_id")
+    private Meet meet;
+
     @Builder
     public ChatRoom(String chatRoomName) {
         this.chatRoomName = chatRoomName;

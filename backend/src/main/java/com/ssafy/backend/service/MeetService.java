@@ -139,7 +139,6 @@ public class MeetService {
 
     public ResponseEntity<?> updateMeet(MeetDto meetDto, Long userId,  Long meetId, Long drinkId, MultipartFile multipartFile) {
         log.info("meetId : {}인 모임 정보 업데이트 : {} ", meetId, meetDto);
-
         //기존 Meet를 가져온다
         String prevMeetImgSrc = meetRepository.findImgSrcByMeetId(meetId);
         User host = userService.findByUserId(userId);
@@ -155,6 +154,7 @@ public class MeetService {
             //기존 데이터를 가져온 뒤 업데이트 한다.
             Meet updateMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
             updateMeet.update(meetDto.toEntity()); //업데이트한다.
+            updateMeet.setMeetId(meetId);
             updateMeet.setTag(tagService.findById(meetDto.getTagId()));
             updateMeet.setDrink(drinkService.findById(drinkId));
 
