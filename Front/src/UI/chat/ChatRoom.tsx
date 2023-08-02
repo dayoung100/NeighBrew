@@ -174,7 +174,7 @@ const ChatRoom = () => {
       console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
 
       // 웹소켓 이벤트 핸들러 설정
-      client.current!.subscribe(`/pub/chat/${id}/sendMessage`, (res) => {
+      client.current!.subscribe(`/pub/room/${id}`, (res) => {
         console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
         setMessages((prevMessages: any) => [
@@ -199,7 +199,6 @@ const ChatRoom = () => {
         {},
         JSON.stringify({ message: message, userId })
       );
-      setMessages((prev) => [...prev, { message: message, userid: userId }]);
       setMessage("");
       scroll();
     }
