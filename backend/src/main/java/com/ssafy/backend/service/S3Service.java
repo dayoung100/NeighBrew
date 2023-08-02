@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -68,22 +69,21 @@ public class S3Service {
         //업로드된url을 가져옴
         return amazonS3Client.getUrl(bucket, upload).toString();
     }
-
+    @Transactional
     public void deleteImg(String imgSrc){
         try {
             //S3에서 제거
-            //String uploadFilePath = uploadType.name() + "/" + fileName; //업로드 폴더명/ UUID값
-            //log.info(uploadFilePath);
-
             //실제 파일이 존재하는지 체크
-            boolean isObjectExist = amazonS3Client.doesObjectExist(bucket, imgSrc);
+            String[] urlParse = imgSrc.split("/");
+            String deleteFile = urlParse[3] + "/" + urlParse[4];
+            boolean isObjectExist = amazonS3Client.doesObjectExist(bucket, deleteFile);
+            log.info("{}가 존재하나요? : {}", deleteFile, isObjectExist);
             if (isObjectExist) {
-                amazonS3Client.deleteObject(bucket, imgSrc);
+                amazonS3Client.deleteObject(bucket, deleteFile);
+                //DB에서 제거
+                s3Repository.deleteByUploadFileUrl(imgSrc);
             }
 
-            //DB에서 제거
-            s3Repository.deleteByUploadFileUrl(imgSrc);
-            //s3Repository.deleteByUploadFilePathAndUploadFileName(uploadType.name(), fileName);
         } catch (Exception e) {
             log.debug("Delete File failed", e);
         }
