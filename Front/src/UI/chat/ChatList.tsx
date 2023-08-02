@@ -84,21 +84,6 @@ const ChatList = () => {
             />
           );
         })}
-        {/* {chooseChat === 0
-          ? chatList.map((chat, i) => {
-              return (
-                <Chat key={i} chooseChat={chooseChat} chatRoomId={chat}></Chat>
-              );
-            })
-          : directChatList.map((chat, i) => {
-              return (
-                <Chat
-                  key={i}
-                  choose_chat={chooseChat}
-                  chat_room_id={chat}
-                ></Chat>
-              );
-            })} */}
       </div>
       <div style={{ height: "80px" }}></div>
       <footer>

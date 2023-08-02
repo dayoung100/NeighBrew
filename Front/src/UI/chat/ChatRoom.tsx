@@ -5,7 +5,7 @@ import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
 import { useNavigate } from "react-router-dom";
 import temgif from "../../assets/temgif.gif";
 import SockJS from "sockjs-client";
-import { Client } from "@stomp/stompjs";
+import { CompatClient, Stomp } from "@stomp/stompjs";
 import { Chat } from "../../Type/types";
 import { callApi } from "../../utils/api";
 
@@ -146,6 +146,7 @@ const ChatRoom = () => {
   const { id } = useParams();
   const [messages, setMessages] = useState<Chat[]>([]);
   const [isModal, setIsModal] = useState(false);
+  const [chatRoomName, setChatRoomName] = useState();
   const [users, setUsers] = useState([
     "현욱",
     "현빈",
@@ -167,15 +168,19 @@ const ChatRoom = () => {
       scroll();
     }
   };
+  const client = useRef<CompatClient>();
+
   const navigate = useNavigate();
   const rapperDiv = useRef<HTMLInputElement>(null);
-  // 테스트를 위한 더비 데이터 생성
+
+
 
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
     callApi("GET", `api/chatMessage/${id}/messages`)
       .then((res) => {
         console.log(res.data);
+        setChatRoomName(res.data[0].chatRoom.chatRoomName);
         setMessages(res.data);
       })
       .catch((e) => {
@@ -190,9 +195,6 @@ const ChatRoom = () => {
   // 스크롤 로직
   const scroll = () => {
     if (rapperDiv.current) {
-      // setTimeout(() => {
-      //   window.scrollTo({ top: rapperDiv.current!.scrollHeight, behavior: "smooth" });
-      // }, 10);
       window.scrollTo({
         top: rapperDiv.current!.scrollHeight,
         behavior: "smooth",
@@ -217,46 +219,8 @@ const ChatRoom = () => {
     isModal ? setIsModal(false) : setIsModal(true);
   };
 
-  const client = new Client({
-    webSocketFactory: () => new SockJS("http://192.168.137.1:8080/ws"),
-    debug: function (str: string) {
-      console.log(str);
-    },
-  });
-
-  client.activate();
-
-  const onClick = (message: String) => {
-    console.log(client.connected);
-    if (!client.connected) return;
-
-    client.publish({
-      destination: "/sub/chat/1/sendMessage",
-      body: JSON.stringify({
-        message: message,
-      }),
-    });
-  };
-
-  const wsSubscribe = () => {
-    client.onConnect = () => {
-      client.subscribe(
-        "/sub/messages",
-        (msg: any) => {
-          const newMessage = JSON.parse(msg.body).message;
-        },
-        { id: "user" }
-      );
-    };
-  };
-
-  const wsDisconnect = () => {
-    client.deactivate();
-  };
   return (
     <div ref={rapperDiv}>
-      <button onClick={wsSubscribe}>연결</button>
-      {/* <button onClick={joinChatRoom}>메세지 보내기</button> */}
       <header>
         {/* <Navbar /> */}
         <ChatNav>
@@ -278,8 +242,8 @@ const ChatRoom = () => {
               fontSize: "20px",
             }}
           >
-            이런저런 ㅇㅇㅇㅇ방 이름
             <>
+              {chatRoomName}
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
                 &nbsp;&nbsp;&nbsp;&nbsp;4
               </span>
@@ -351,9 +315,6 @@ const ChatRoom = () => {
               ) : (
                 <OtherChat>{message.message}</OtherChat>
               )}
-              {/* <MessageBox messageId={message[1]} key={i}>
-                <p style={{ fontFamily: "JejuGothic", fontSize: "14px" }}>{message[0]}</p>
-              </MessageBox> */}
             </div>
           );
         })}
