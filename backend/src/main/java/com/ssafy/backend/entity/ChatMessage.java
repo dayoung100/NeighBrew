@@ -19,7 +19,9 @@ public class ChatMessage {
     @JsonManagedReference
     private ChatRoom chatRoom;
 
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
 
     @Lob
     @Column(nullable = false)
@@ -30,10 +32,10 @@ public class ChatMessage {
     private LocalDateTime timestamp;
 
     @Builder
-    public ChatMessage(ChatRoom chatRoom, String message, Long userId, LocalDateTime timestamp) {
+    public ChatMessage(ChatRoom chatRoom, String message, User user, LocalDateTime timestamp) {
         this.chatRoom = chatRoom;
         this.message = message;
-        this.userId = userId;
         this.timestamp = timestamp;
+        this.user = user;
     }
 }
