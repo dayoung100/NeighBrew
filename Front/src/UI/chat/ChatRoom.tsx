@@ -173,7 +173,8 @@ const ChatRoom = () => {
           ...prevMessages,
           {
             message: receivedMessage.message,
-            userid: receivedMessage.userId,
+            userId: receivedMessage.userId,
+            user: { userId: receivedMessage.userId },
           },
         ]);
       });
@@ -320,7 +321,7 @@ const ChatRoom = () => {
             <div
               style={{
                 display: "flex",
-                alignItems: message.user?.userId !== userId ? "flex-start" : "flex-end",
+                alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
                 flexDirection: "column",
               }}
             >
@@ -333,10 +334,10 @@ const ChatRoom = () => {
               >
                 {message.user?.userId === userId ? "나" : message.user?.name}
               </p>
-              {message.user?.userId !== userId ? (
-                <MyChat>{message.message}</MyChat>
-              ) : (
+              {message.user?.userId == userId ? (
                 <OtherChat>{message.message}</OtherChat>
+              ) : (
+                <MyChat>{message.message}</MyChat>
               )}
             </div>
           );
