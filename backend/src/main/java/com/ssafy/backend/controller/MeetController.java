@@ -148,7 +148,7 @@ public class MeetController {
         log.info("삭제할 미팅ID : {}", meetId);
         try {
             Meet deleteMeet = meetService.findByMeetId(meetId);
-            User hostUser = userService.findByUserId(userId);
+            User host = userService.findByUserId(userId);
 
             if (deleteMeet.getHostId() != userId)
                 return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임을 삭제 할 수 없습니다.");
@@ -159,8 +159,8 @@ public class MeetController {
             for (User user : meetUser.getUsers()) {
                 log.info("삭제 알림 보낼 유저 정보 출력 : {}", user);
                 StringBuilder pushMessage = new StringBuilder();
-                pushMessage.append(hostUser.getName() + "님 께서 생성한 모임").append("(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
-                pushService.send(hostUser, user, PushType.DELETEMEET, pushMessage.toString(), "");
+                pushMessage.append(host.getName() + "님 께서 생성한 모임").append("(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
+                pushService.send(host, user, PushType.DELETEMEET, pushMessage.toString(), "");
             }
 
             //MeetUser 정보를 삭제한다.
@@ -191,7 +191,7 @@ public class MeetController {
             Long hostId = meetUser.getMeetDto().getHostId();
 
             User attendUser = userService.findByUserId(userId);
-            User hostUser = userService.findByUserId(hostId);
+            User host = userService.findByUserId(hostId);
 
             //모임의 인원수 체크
             if (meetUser.getMeetDto().getNowParticipants() >= meetUser.getMeetDto().getMaxParticipants())
@@ -205,11 +205,14 @@ public class MeetController {
             //참가자의 모임 상태 추가 -> 데이터를 추가해야한다.
             meetUserService.saveMeetUser(meetUser.getMeetDto().toEntity(), attendUser, Status.APPLY);
 
+//            //모임 참여했으니 모임 인원수를 증가시킨다
+//            meetService.updateParticipants(meetId);
+
             //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
             StringBuilder sb = new StringBuilder();
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append(attendUser.getName() + "님께서 " + meetUser.getMeetDto().getMeetName() + "모임에 참여하고 싶어 합니다.");
-            pushService.send(attendUser, hostUser, PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
+            pushService.send(attendUser, host, PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
 
             return ResponseEntity.ok(meetId + "모임에 신청 완료");
         } catch (IllegalArgumentException e) {
@@ -217,18 +220,69 @@ public class MeetController {
         }
     }
     // 유저 : 모임 신청 취소
+    @PutMapping("/exit")
+    public ResponseEntity<?> exitMeet(@RequestBody Map<String, Long> requestBody) {
 
-    // 모임, 채팅 나가면 모임 나가기
+        try{
+            Long userId = requestBody.get("userId");
+            Long meetId = requestBody.get("meetId");
+            log.info("{}유저 {}모임 신청 취소 ",userId, meetId);
+            Meet meet = meetService.findByMeetId(meetId);
 
+            //모임-유저테이블에서 해당 정보 삭제
+            meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
+            //푸시알림 로그 삭제
+            pushService.deletePushLog(PushType.MEETACCESS, userId, meet.getHostId());
+            return ResponseEntity.ok("모임 신청 취소가 완료됐습니다.");
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("모임 신청 취소에 문제가 발생했습니다." + e.getMessage());
+        }
+
+    }
     // 방장 : 모임 신청 관리
-    @PostMapping("/manage")
+    @PostMapping("/manage-user")
     public ResponseEntity<?> manageMeetApply(@RequestBody Map<String, Object> requestBody) {
         try {
-            return ResponseEntity.ok("");
-        } catch (IllegalArgumentException e) {
+            Long userId = ((Number) requestBody.get("userId")).longValue();
+            Long meetId = ((Number) requestBody.get("meetId")).longValue();
+            boolean applyResult = (boolean) requestBody.get("applyResult");
+
+            log.info("{}유저 {}모임 신청 관리 : 결과 {}",userId, meetId, applyResult);
+
+            Meet manageMentMeet = meetService.findByMeetId(meetId);
+
+            //Host유저와 관리할유저 리스트 반환(1개의 쿼리를 사용 하기 위함) 0번 : 호스트, 1번 : 관리할 유저
+            List<User> users = userService.findByUserIdIn(manageMentMeet.getHostId(), userId);
+
+            if(applyResult){//신청 결과가 true
+                //모임 상태를 변경 시킨다.
+                meetUserService.updateMeetStatus(userId, meetId, Status.GUEST);
+                //모임 참여 인원수 1증가 시킨다.
+                meetService.updateParticipants(meetId);
+
+                StringBuilder pushMessage = new StringBuilder();
+                pushMessage.append("회원님께서 모임(").append(manageMentMeet.getMeetName()).append(")참여 되셨습니다.\n 즐거운 시간 되세요.");
+                pushService.send(users.get(0), users.get(1), PushType.MEETACCESS, pushMessage.toString(), "http://i9b310.p.ssafy.");
+                return ResponseEntity.ok(userId + "유저 " + meetId +"모임 신청 승인" );
+            }else{//신청 결과가 false
+                //모임-유저 테이블에 해당 유저 데이터 삭제
+                meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
+                //유저에게 push 알림 전송
+
+                StringBuilder pushMessage = new StringBuilder();
+                pushMessage.append("회원님께서 모임(").append(manageMentMeet.getMeetName()).append(")참여에 거절당했습니다.");
+                pushService.send(users.get(0), users.get(1), PushType.MEETREJECT, pushMessage.toString(), "");
+                return ResponseEntity.ok(userId + "유저 " + meetId +"모임 신청 거절" );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
+    // 모임, 채팅 나가면 모임 나가기
 
 }
 

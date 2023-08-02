@@ -122,4 +122,11 @@ public class MeetService {
 
         meetRepository.findById(meetId).ifPresent(meet -> meetRepository.delete(meet));
     }
+
+    public void updateParticipants(Long meetId) {
+        Meet findMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
+        findMeet.setNowParticipants(findMeet.getNowParticipants()+1);
+
+        meetRepository.save(findMeet);
+    }
 }
