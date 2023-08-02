@@ -86,40 +86,9 @@ public class MeetController {
     @DeleteMapping("/delete/{meetId}")
     public ResponseEntity<?> deleteMeet(@PathVariable Long meetId,
                                         @RequestBody Map<String, Long> requestBody) {
-        Long userId = requestBody.get("userId");
+        Long hostId = requestBody.get("userId");
 
-        log.info("삭제할 미팅ID : {}", meetId);
-        try {
-            Meet deleteMeet = meetService.findByMeetId(meetId);
-            User host = userService.findByUserId(userId);
-
-            if (deleteMeet.getHostId() != userId)
-                return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임을 삭제 할 수 없습니다.");
-
-            MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetId);
-
-            //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
-            for (User user : meetUser.getUsers()) {
-                log.info("삭제 알림 보낼 유저 정보 출력 : {}", user);
-                StringBuilder pushMessage = new StringBuilder();
-                pushMessage.append(host.getName() + "님 께서 생성한 모임").append("(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
-                pushService.send(host, user, PushType.DELETEMEET, pushMessage.toString(), "");
-            }
-
-            //MeetUser 정보를 삭제한다.
-            meetUserService.deleteMeetUser(deleteMeet);
-
-            //meet 정보를 삭제한다.
-            meetService.deleteMeet(meetId);
-
-            //meet 이미지를 지운다
-            String deleteFileName = deleteMeet.getImgSrc().split("/")[4]; //url에서 파일 이름을 파싱한다.
-            s3Service.deleteImg(deleteMeet.getImgSrc());
-
-            return ResponseEntity.ok("미팅 : " + meetId + " 삭제완료");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(meetService.deleteMeet(hostId, meetId));
     }
 
     // 참가자 : 모임 신청

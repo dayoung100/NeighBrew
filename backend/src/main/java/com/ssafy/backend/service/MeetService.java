@@ -13,6 +13,7 @@ import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -179,10 +180,37 @@ public class MeetService {
         }
     }
 
-    public void deleteMeet(Long meetId) {
+    public String deleteMeet(Long hostId, Long meetId) {
         log.info("meetId : {}인 모임 삭제", meetId);
 
+        Meet deleteMeet = findByMeetId(meetId);
+        User host = userService.findByUserId(hostId);
+
+        //유효성 검사
+        if (deleteMeet.getHostId() != hostId) return "모임장이 아니신 경우 모임을 삭제 할 수 없습니다.";
+
+        MeetUserDto meetUser = findMeetUserByMeetId(meetId);
+
+        //MeetUser 정보를 삭제한다.
+        meetUserService.deleteMeetUser(deleteMeet);
+
+        //meet 이미지를 지운다
+        String deleteFileName = deleteMeet.getImgSrc().split("/")[4]; //url에서 파일 이름을 파싱한다.
+        s3Service.deleteImg(deleteMeet.getImgSrc());
+
+        //마지막에 모임 정보를 제거한다.
         meetRepository.findById(meetId).ifPresent(meet -> meetRepository.delete(meet));
+
+        //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
+        for (User user : meetUser.getUsers()) {
+            if (user.getUserId() == hostId) continue; //방장에게는 알림을 전송하지 않는다.
+
+            StringBuilder pushMessage = new StringBuilder();
+            pushMessage.append(host.getName() + "님 께서 생성한 모임").append("(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
+            pushService.send(host, user, PushType.DELETEMEET, pushMessage.toString(), "");
+        }
+
+        return deleteMeet.getMeetName() + "모임이 삭제 되었습니다.";
     }
 
     public void updateParticipants(Long meetId) {
