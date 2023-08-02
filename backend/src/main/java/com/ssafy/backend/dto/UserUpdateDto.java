@@ -1,8 +1,10 @@
 package com.ssafy.backend.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -14,6 +16,6 @@ public class UserUpdateDto {
     private String nickname;
     private String intro;
     private String profile;
-    private Date birth;
+    private LocalDate birth;
     private Float liverPoint;
 }

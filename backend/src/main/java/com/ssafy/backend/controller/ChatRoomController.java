@@ -70,44 +70,22 @@ public class ChatRoomController {
         return ResponseEntity.ok(room);
     }
 
-
-    // 채팅방 입장 (채팅방에 유저 추가)
-    @MessageMapping("/room/{roomId}/join")
-    public void joinChatRoom(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
-        Long userId = Long.valueOf(new ObjectMapper().readTree(data).get("userId").asText());
-
-        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-
-        chatRoomUserRepository.findByUser_UserIdAndChatRoom_ChatRoomId(user.getUserId(), room.getChatRoomId()).ifPresent(
-                chatRoomUser -> {
-                    throw new IllegalArgumentException("이미 채팅방에 참여한 유저입니다.");
-                }
-        );
-
-        ChatRoomUser chatRoomUser = ChatRoomUser
-                .builder()
-                .chatRoom(room)
-                .user(user)
-                .build();
-        log.info("chatRoomUser: {}", chatRoomUser);
-
-        chatRoomUserRepository.save(chatRoomUser);
-    }
-
     // 채팅방 퇴장
+    @Transactional
     @MessageMapping("/room/{roomId}/leave")
     public void leaveChatRoom(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다.")); // 채팅방 조회
         Long userId = Long.valueOf(new ObjectMapper().readTree(data).get("userId").asText());
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다.")); // 유저 조회
 
-        room.getUsers().removeIf(chatRoomUser -> chatRoomUser.getUser().equals(user)); // 해당 유저 삭제
+        // ChatRoomUser 삭제
+        chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, roomId);
+        chatRoomUserRepository.flush();
 
-        if (room.getUsers().isEmpty()) {//|| room.getUsers().size() == 1) { // 채팅방에 유저가 0명이거나 1명이면 채팅방 삭제
+
+        // 빈방 삭제
+        if (room.getUsers().isEmpty()) {
             chatRoomRepository.delete(room);
-        } else {
-            chatRoomRepository.save(room);
         }
 
         ChatMessage message = ChatMessage.builder()
