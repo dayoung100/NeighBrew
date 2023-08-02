@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -100,7 +101,7 @@ public class PushService {
 
     }
 
-    private Push createPush(User receiver, User sender, PushType pushType, String content, String url) {
+    private Push createPush(User sender, User receiver, PushType pushType, String content, String url) {
         return Push.builder()
                 .receiver(receiver)
                 .sender(sender)
@@ -116,5 +117,8 @@ public class PushService {
         return memberId + "_" + System.currentTimeMillis();
     }
 
-
+    @Transactional
+    public void deletePushLog(PushType pushType, Long senderId, Long receiverId){
+        pushRepository.deleteByPushTypeAndSender_UserIdAndReceiver_UserId(pushType, senderId, receiverId);
+    }
 }

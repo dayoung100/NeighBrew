@@ -60,4 +60,7 @@ public class UserService {
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
+    public List<User> findByUserIdIn(Long... userIds) { return userRepository.findByUserIdIn(userIds);
+    }
 }

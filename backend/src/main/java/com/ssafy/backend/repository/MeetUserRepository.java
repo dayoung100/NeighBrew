@@ -1,5 +1,6 @@
 package com.ssafy.backend.repository;
 
+import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.entity.MeetUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -16,5 +17,8 @@ public interface MeetUserRepository extends JpaRepository<MeetUser, Long> {
     Optional<List<MeetUser>> findByMeet_MeetIdOrderByStatusDesc(Long meetId);
 
     Optional<MeetUser> findByUser_UserIdAndMeet_MeetId(Long userId, Long meetId);
+
+    @Transactional
+    void deleteByUser_UserIdAndMeet_MeetIdAndStatus(Long userId, Long meetId, Status status);
 }
 

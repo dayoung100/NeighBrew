@@ -43,7 +43,7 @@ public class FollowService {
             //팔로우 정보 삭제
             followRepository.delete(existingFollow);
             //알림 정보 제거
-            pushRepository.deleteByPushTypeAndReceiver_UserIdAndSender_UserId(PushType.FOLLOW,userId, followingId);
+            pushRepository.deleteByPushTypeAndSender_UserIdAndReceiver_UserId(PushType.FOLLOW, userId, followingId);
             return following.getNickname() + "님을 팔로우 취소하였습니다.";
         }).orElseGet(() -> {
             Follow follow = Follow.builder()
