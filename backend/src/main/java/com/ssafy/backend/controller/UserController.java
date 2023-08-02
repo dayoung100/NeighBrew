@@ -3,6 +3,7 @@ package com.ssafy.backend.controller;
 import com.ssafy.backend.Enum.UploadType;
 import com.ssafy.backend.authentication.application.LoginResponse;
 import com.ssafy.backend.dto.UserDto;
+import com.ssafy.backend.dto.UserSearchDto;
 import com.ssafy.backend.dto.UserUpdateDto;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.service.S3Service;
@@ -109,6 +110,12 @@ public class UserController {
         userService.updateUserImg(Long.valueOf(userId),url);
 
         return ResponseEntity.ok(url);
+    }
+
+    @PostMapping("/guard/search")
+    public ResponseEntity<?> searchUsers(@RequestBody UserSearchDto userSearchDto, HttpServletRequest request){
+        String nickname = userSearchDto.getNickName();
+       return ResponseEntity.ok(userService.searchUsers(nickname));
     }
 
 

@@ -1,7 +1,6 @@
 package com.ssafy.backend.service;
 
 import com.ssafy.backend.dto.UserUpdateDto;
-import com.ssafy.backend.entity.Follow;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.UserRepository;
@@ -28,16 +27,6 @@ public class UserService {
     private String authUrl;
 
 
-    public Long getFollowerCount(Long userId) {
-        Long followerCount = (long) followRepository.findFollowsByFollowing_UserId(userId).size();
-        return followerCount;
-    }
-
-    public Long getFollowingCount(Long userId) {
-        Optional<List<Follow>> aa = followRepository.findByFollowing_UserId(userId);
-      Long folloingCount = followRepository.findByFollowing_UserId(userId).stream().count();
-      return  folloingCount;
-    }
 
     public String redirectApiUrl() {
         String redirectUri = "http://localhost:8080/kakao/callback";
@@ -70,10 +59,21 @@ public class UserService {
     }
 
 
+
+
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public List<User> findByUserIdIn(Long... userIds) { return userRepository.findByUserIdIn(userIds);
-    }
+
+    public List<User> findByUserIdIn(Long... userIds) { return userRepository.findByUserIdIn(userIds);}
+
+    public List<Optional<User>>searchUsers(String nickName){
+            log.info(nickName);
+            // 해당 이름을 가지고있는 데이터를 가져옴
+            return userRepository.findByNicknameContaining(nickName);
+        }
+
+
+
 }
