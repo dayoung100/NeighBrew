@@ -88,4 +88,8 @@ public class DrinkReviewService {
         updatedDrinkReview.setContent(request.getContent());
         return drinkReviewRepository.save(updatedDrinkReview);
     }
+
+    public List<DrinkReview> getReviewsOrderByLikes(Pageable pageable) {
+        return drinkReviewRepository.findAllByOrderByLikeCountDesc(pageable);
+    }
 }
