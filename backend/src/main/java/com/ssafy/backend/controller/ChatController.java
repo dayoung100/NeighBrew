@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -77,7 +78,6 @@ public class ChatController {
                 .build();
 
 
-
         // 채팅 메시지를 받아서 해당 채팅방의 유저들에게 전송
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
@@ -88,5 +88,32 @@ public class ChatController {
 
         chatMessageRepository.save(chatMessage);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, mapper.writeValueAsString(map));
+    }
+
+    // 채팅방 퇴장
+    @Transactional
+    @MessageMapping("/room/{roomId}/leave")
+    public void leaveChatRoom(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
+        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다.")); // 채팅방 조회
+        Long userId = Long.valueOf(new ObjectMapper().readTree(data).get("userId").asText());
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다.")); // 유저 조회
+
+        // ChatRoomUser 삭제
+        chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, roomId);
+        chatRoomUserRepository.flush();
+
+
+        // 빈방 삭제
+        if (room.getUsers().isEmpty()) {
+            chatRoomRepository.delete(room);
+        }
+
+        ChatMessage message = ChatMessage.builder()
+                .message(user.getName() + "님이 퇴장하셨습니다.")
+                .timestamp(LocalDateTime.now())
+                .user(user)
+                .build();
+        chatMessageRepository.save(message);
+        messagingTemplate.convertAndSend("/pub/room/" + roomId, message);
     }
 }
