@@ -35,7 +35,7 @@ const ChatList = () => {
     chooseChat === 0 ? "#AAAAAA" : "var(--c-black)"
   );
 
-  const userId = 1;
+  const userId = localStorage.getItem("myId");
   useEffect(() => {
     callApi("GET", `api/chat/${userId}/getChatRoom`)
       .then((res) => {
@@ -84,21 +84,6 @@ const ChatList = () => {
             />
           );
         })}
-        {/* {chooseChat === 0
-          ? chatList.map((chat, i) => {
-              return (
-                <Chat key={i} chooseChat={chooseChat} chatRoomId={chat}></Chat>
-              );
-            })
-          : directChatList.map((chat, i) => {
-              return (
-                <Chat
-                  key={i}
-                  choose_chat={chooseChat}
-                  chat_room_id={chat}
-                ></Chat>
-              );
-            })} */}
       </div>
       <div style={{ height: "80px" }}></div>
       <footer>
