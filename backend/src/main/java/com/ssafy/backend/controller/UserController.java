@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Slf4j
 @RestController
@@ -88,7 +90,14 @@ public class UserController {
     @PutMapping("/guard")
     public ResponseEntity<?> updateUserInfo(@RequestBody UserUpdateDto userUpdateDto, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
+        log.info(userId);
+        log.info(userUpdateDto.toString());
+        log.info(String.valueOf(userUpdateDto.getBirth()));
         User updatedUser = userService.updateUser(Long.valueOf(userId), userUpdateDto);
         return ResponseEntity.ok(updatedUser);
     }
+
+
+
+
 }
