@@ -150,7 +150,7 @@ const ChatRoom = () => {
   const [messages, setMessages] = useState<Chat[]>([]);
   const [isModal, setIsModal] = useState(false);
   const [chatRoomName, setChatRoomName] = useState();
-  const userId = localStorage.getItem("myId");
+  const userId = parseInt(localStorage.getItem("myId"));
   const [users, setUsers] = useState([
     "현욱",
     "현빈",
@@ -199,7 +199,7 @@ const ChatRoom = () => {
         {},
         JSON.stringify({ message: message, userId })
       );
-      setMessages((prev) => [...prev, { message: message, userid: 1 }]);
+      setMessages((prev) => [...prev, { message: message, userid: userId }]);
       setMessage("");
       scroll();
     }
