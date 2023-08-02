@@ -28,8 +28,7 @@ public class ChatRoom {
     private List<ChatRoomUser> users;
 
     // 채팅과 모임 간의 양방향 일대일 연관관계
-    @OneToOne
-    @JoinColumn(name = "meet_id")
+    @OneToOne(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
     private Meet meet;
 
     @Builder
