@@ -33,6 +33,7 @@ public class MeetService {
     private final FollowService followService;
     private final TagService tagService;
     private final DrinkService drinkService;
+    private final ChatRoomService chatRoomService;
 
 
     public List<MeetDto> findAll() {
@@ -115,12 +116,18 @@ public class MeetService {
             meet.setTag(tagService.findById(meetDto.getTagId()));
             meet.setDrink(drinkService.findById(drinkId));
 
-
             Meet createdMeet = meetRepository.save(meet);
             User hostUser = userService.findByUserId(meetDto.getHostId());
 
             //MeetUser 정보를 추가한다.
             meetUserService.saveMeetUser(createdMeet, hostUser, Status.HOST);
+
+            //모임과 관련된 채팅방을 생성한다.
+            ChatRoom createChatRoom = ChatRoom.builder()
+                    .chatRoomName(createdMeet.getMeetName() + "모임의 채팅방")
+                    .meet(createdMeet)
+                    .build();
+            chatRoomService.save(createChatRoom);
 
             //팔로워에게 메세지를 보낸다
             List<Follow> followers = followService.findByFollower(userId);

@@ -33,7 +33,8 @@ public class ChatRoom {
     private Meet meet;
 
     @Builder
-    public ChatRoom(String chatRoomName) {
+    public ChatRoom(String chatRoomName, Meet meet) {
         this.chatRoomName = chatRoomName;
+        this.meet = meet;
     }
 }
