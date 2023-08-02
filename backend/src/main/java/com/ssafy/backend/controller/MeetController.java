@@ -264,6 +264,7 @@ public class MeetController {
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append("회원님께서 모임(").append(manageMentMeet.getMeetName()).append(")참여 되셨습니다.\n 즐거운 시간 되세요.");
                 pushService.send(users.get(0), users.get(1), PushType.MEETACCESS, pushMessage.toString(), "http://i9b310.p.ssafy.");
+                return ResponseEntity.ok(userId + "유저 " + meetId +"모임 신청 승인" );
             }else{//신청 결과가 false
                 //모임-유저 테이블에 해당 유저 데이터 삭제
                 meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
@@ -272,9 +273,8 @@ public class MeetController {
                 StringBuilder pushMessage = new StringBuilder();
                 pushMessage.append("회원님께서 모임(").append(manageMentMeet.getMeetName()).append(")참여에 거절당했습니다.");
                 pushService.send(users.get(0), users.get(1), PushType.MEETREJECT, pushMessage.toString(), "");
+                return ResponseEntity.ok(userId + "유저 " + meetId +"모임 신청 거절" );
             }
-
-            return ResponseEntity.ok("");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(e.getMessage());
