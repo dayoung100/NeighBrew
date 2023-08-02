@@ -61,12 +61,14 @@ public class MeetController {
                                       Long drinkId,
                                       @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException {
         log.info("유저{}가 모임 생성 : {}", userId, meetDto);
-        multipartFile.ifPresent(file -> log.info("파일 이름 : {} ", file.getOriginalFilename()));
+        //파일 이름이 없다 -> 파일 업로드를 하지 않았음. ->
+        boolean imgExist = !multipartFile.get().getOriginalFilename().equals("");
+        log.info("파일 업로드함 ? {}", imgExist);
 
         try {
             if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
             if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
-            if (multipartFile.isPresent()) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
+            if (imgExist) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
 
             meetDto.setHostId(userId);
             Meet createdMeet = meetService.saveMeet(meetDto, drinkId);
@@ -98,6 +100,8 @@ public class MeetController {
                                         Long drinkId,
                                         @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) {
         log.info("\n수정하는 유저 :{} \n 수정할 미팅 정보 : {}",userId, meetDto);
+        boolean imgExist = !multipartFile.get().getOriginalFilename().equals("");
+        log.info("파일 업로드함 ? {}", imgExist);
 
         try {
             if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
@@ -106,12 +110,10 @@ public class MeetController {
 
             //기존 Meet가져온다
             Meet prevMeet = meetService.findByMeetId(meetId);
-            log.info("바꿔야할 미팅 {} ", prevMeet);
             User host = userService.findByUserId(userId);
 
             //이미지 파일이 업로드 되면 s3에 파일 제거, 새로운 이미지 업로드
-            if(multipartFile.isPresent()) {
-                log.info("왜 일로와ㅏ@@@@@@@@@@@@@@@@@@@@");
+            if(imgExist) {
                 s3Service.deleteImg(prevMeet.getImgSrc());
                 meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile.get()));
             }
@@ -122,7 +124,6 @@ public class MeetController {
 
             //모임이 수정되면 모임에 참여한 사람들에게 Push 알림을 보낸다.
             MeetUserDto meetUser = meetService.findMeetUserByMeetId(meetId);
-            log.info("유저 리스트 길이? {}", meetUser.getUsers().size());
 
             for (User user : meetUser.getUsers()) {
                 if(user.getUserId() == meetDto.getHostId()) continue; //방장에게는 알림을 전송하지 않는다.
