@@ -71,8 +71,7 @@ const ChatNav = styled.div`
 `;
 
 const RightModal = styled.div<{ isModal: boolean }>`
-  transform: ${(props) =>
-    props.isModal ? "translateX(6%)" : "translateX(100%)"};
+  transform: ${props => (props.isModal ? "translateX(6%)" : "translateX(100%)")};
   position: fixed;
   width: 95%;
   overflow-x: scroll;
@@ -132,7 +131,7 @@ const Input = styled.input`
 `;
 
 const BackDrop = styled.div<{ isModal: boolean }>`
-  display: ${(props) => (props.isModal ? "block" : "none")};
+  display: ${props => (props.isModal ? "block" : "none")};
   transition: all 1s;
   width: 100%;
   max-width: 430px;
@@ -151,14 +150,7 @@ const ChatRoom = () => {
   const [isModal, setIsModal] = useState(false);
   const [chatRoomName, setChatRoomName] = useState();
   const userId = parseInt(localStorage.getItem("myId"));
-  const [users, setUsers] = useState([
-    "현욱",
-    "현빈",
-    "준서",
-    "다영",
-    "영교",
-    "동혁",
-  ]);
+  const [users, setUsers] = useState(["현욱", "현빈", "준서", "다영", "영교", "동혁"]);
   const [message, setMessage] = useState("");
   const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
@@ -174,12 +166,16 @@ const ChatRoom = () => {
       console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
 
       // 웹소켓 이벤트 핸들러 설정
-      client.current!.subscribe(`/pub/room/${id}`, (res) => {
+      client.current!.subscribe(`/pub/room/${id}`, res => {
         console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
         setMessages((prevMessages: any) => [
           ...prevMessages,
-          { message: receivedMessage.message, userid: receivedMessage.userId },
+          {
+            message: receivedMessage.message,
+            userId: receivedMessage.userId,
+            user: { userId: receivedMessage.userId },
+          },
         ]);
       });
     });
@@ -197,7 +193,7 @@ const ChatRoom = () => {
       client.current.send(
         `/sub/chat/${id}/sendMessage`,
         {},
-        JSON.stringify({ message: message, userId })
+        JSON.stringify({ message: message, userId, user: { userId: userId } })
       );
       setMessage("");
       scroll();
@@ -210,12 +206,12 @@ const ChatRoom = () => {
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
     callApi("GET", `api/chatMessage/${id}/messages`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
         setChatRoomName(res.data[0].chatRoom.chatRoomName);
         setMessages(res.data);
       })
-      .catch((e) => {
+      .catch(e => {
         console.error(e);
       });
   }, []);
@@ -292,12 +288,8 @@ const ChatRoom = () => {
       <BackDrop isModal={isModal} onClick={chaterInfoHandler}></BackDrop>
       <RightModal isModal={isModal}>
         <h2 style={{ fontFamily: "JejuGothic" }}>모임의 이름이 들어갑니다</h2>
-        <p style={{ fontFamily: "SeoulNamsan", marginBottom: "5px" }}>
-          대전 서구 둔산동 연남
-        </p>
-        <p style={{ marginBottom: "10px", fontFamily: "SeoulNamsan" }}>
-          2023.01.17 PM 8:00
-        </p>
+        <p style={{ fontFamily: "SeoulNamsan", marginBottom: "5px" }}>대전 서구 둔산동 연남</p>
+        <p style={{ marginBottom: "10px", fontFamily: "SeoulNamsan" }}>2023.01.17 PM 8:00</p>
         <div style={{ border: "1px solid var(--c-lightgray)" }}></div>
         <br />
         <h3 style={{ fontFamily: "JejuGothic" }}>참여자 목록</h3>
@@ -329,7 +321,7 @@ const ChatRoom = () => {
             <div
               style={{
                 display: "flex",
-                alignItems: message.userid === 0 ? "flex-start" : "flex-end",
+                alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
                 flexDirection: "column",
               }}
             >
@@ -340,12 +332,12 @@ const ChatRoom = () => {
                   margin: "0 1rem",
                 }}
               >
-                나
+                {message.user?.userId === userId ? "나" : message.user?.name}
               </p>
-              {message.userid === 0 ? (
-                <MyChat>{message.message}</MyChat>
-              ) : (
+              {message.user?.userId == userId ? (
                 <OtherChat>{message.message}</OtherChat>
+              ) : (
+                <MyChat>{message.message}</MyChat>
               )}
             </div>
           );
@@ -364,11 +356,7 @@ const ChatRoom = () => {
           >
             +
           </p>
-          <Input
-            value={message}
-            onChange={messageHandler}
-            onKeyUp={sendMessageHandler}
-          ></Input>
+          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
         </InputDiv>
       </footer>
     </div>
