@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -22,7 +23,7 @@ public class UserDto {
 
     private String name;
 
-    private Date birth;
+    private LocalDate birth;
 
     private String intro;
 
@@ -30,9 +31,7 @@ public class UserDto {
 
     private String profile;
 
-    private Long follower;
 
-    private Long following;
 
     public UserDto(User user) {
         this.userId = user.getUserId();
@@ -43,7 +42,6 @@ public class UserDto {
         this.intro = user.getIntro();
         this.liverPoint = user.getLiverPoint();
         this.profile = user.getProfile();
-        this.follower = follower;
-        this.following = following;
+
     }
 }

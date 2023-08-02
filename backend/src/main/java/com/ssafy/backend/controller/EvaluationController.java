@@ -25,7 +25,7 @@ public class EvaluationController {
 
     @GetMapping("/guard/{meetId}/mid/{userId}")
     public ResponseEntity<?> middleEvaluation(@PathVariable Long meetId,@PathVariable Long userId){
-    return (ResponseEntity<?>) ResponseEntity.ok();
+        return ResponseEntity.ok(evaluationService.calculateScoreByMeetId(meetId, userId, "mid"));
     }
 
     @GetMapping("/guard/{meetId}/bad/{userId}")

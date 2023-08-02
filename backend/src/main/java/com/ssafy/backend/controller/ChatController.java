@@ -8,25 +8,34 @@ import com.ssafy.backend.entity.ChatMessage;
 import com.ssafy.backend.entity.ChatRoom;
 import com.ssafy.backend.repository.ChatMessageRepository;
 import com.ssafy.backend.repository.ChatRoomRepository;
+import com.ssafy.backend.repository.ChatRoomUserRepository;
+import com.ssafy.backend.repository.UserRepository;
+import com.ssafy.backend.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
 @Slf4j
-@Controller
-@CrossOrigin("*")
+@RestController
+@RequestMapping("/api/chat")
 @RequiredArgsConstructor
 public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomUserRepository chatRoomUserRepository;
+    private final ChatRoomService chatRoomService;
+    private final UserRepository userRepository;
 
     // 연결
     @MessageMapping("/messages")
@@ -36,6 +45,11 @@ public class ChatController {
         messagingTemplate.convertAndSend("/pub/messages", chatMessage);
     }
 
+    // 유저 아이디로 채팅방 조회
+    @GetMapping("/{userId}/getChatRoom")
+    public ResponseEntity<?> getUserChatRooms(@PathVariable Long userId) {
+        return ResponseEntity.ok(chatRoomService.findUserChatRooms(userId));
+    }
 
     @MessageMapping("/chat/{roomId}/sendMessage")
     public void sendMessage(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
@@ -45,10 +59,16 @@ public class ChatController {
         JsonNode jsonNode = mapper.readTree(data);
         log.info("jsonNode: {}", jsonNode);
 
+        // 현재방에 유저가 참여했는지 판단
+        if (chatRoomUserRepository.findByChatRoomAndUser_UserId(chatRoom, jsonNode.get("userId").asLong()).isEmpty()) {
+            throw new IllegalArgumentException("채팅방에 참여하지 않은 유저가 메시지를 보냈습니다.");
+        }
+
+
         ChatMessageDto chatMessageDto = ChatMessageDto
                 .builder()
-                .userId(jsonNode.get("userId").asLong())
                 .message(jsonNode.get("message").asText())
+                .user(userRepository.findById(jsonNode.get("userId").asLong()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다.")))
                 .build();
 
 
@@ -58,14 +78,14 @@ public class ChatController {
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .message(chatMessageDto.getMessage())
-                .userId(chatMessageDto.getUserId())
+                .user(chatMessageDto.getUser())
                 .timestamp(LocalDateTime.now())
                 .build();
 
         chatMessageRepository.save(chatMessage);
         log.info("room id : " + roomId);
-        log.info("chatMessage: {}", new ObjectMapper().writeValueAsString(chatMessageDto));
-        messagingTemplate.convertAndSend("/pub/messages", new ObjectMapper().writeValueAsString(chatMessageDto));
+        log.info("data: {}", data);
+        log.info("room id : " + roomId);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, data);
     }
 }

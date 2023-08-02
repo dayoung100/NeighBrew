@@ -1,14 +1,13 @@
-import { useParams } from "react-router-dom";
+import { useParams, useRouteError } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Navbar from "../navbar/Navbar";
 import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
 import { useNavigate } from "react-router-dom";
 import temgif from "../../assets/temgif.gif";
 import SockJS from "sockjs-client";
-import axios from "axios";
-import { CompatClient, Stomp, Client } from "@stomp/stompjs";
+import { CompatClient, Stomp } from "@stomp/stompjs";
 import { Chat } from "../../Type/types";
+import { callApi } from "../../utils/api";
 
 const MyChat = styled.div`
   position: relative;
@@ -72,7 +71,8 @@ const ChatNav = styled.div`
 `;
 
 const RightModal = styled.div<{ isModal: boolean }>`
-  transform: ${props => (props.isModal ? "translateX(6%)" : "translateX(100%)")};
+  transform: ${(props) =>
+    props.isModal ? "translateX(6%)" : "translateX(100%)"};
   position: fixed;
   width: 95%;
   overflow-x: scroll;
@@ -132,7 +132,7 @@ const Input = styled.input`
 `;
 
 const BackDrop = styled.div<{ isModal: boolean }>`
-  display: ${props => (props.isModal ? "block" : "none")};
+  display: ${(props) => (props.isModal ? "block" : "none")};
   transition: all 1s;
   width: 100%;
   max-width: 430px;
@@ -144,39 +144,82 @@ const BackDrop = styled.div<{ isModal: boolean }>`
 
 const ChatRoom = () => {
   const { id } = useParams();
+  const [sockjs, setSockjs] = useState();
+  // const [client, setClient] = useState<any>(null);
+  const client = useRef<CompatClient>();
   const [messages, setMessages] = useState<Chat[]>([]);
   const [isModal, setIsModal] = useState(false);
-  const [users, setUsers] = useState(["현욱", "현빈", "준서", "다영", "영교", "동혁"]);
+  const [chatRoomName, setChatRoomName] = useState();
+  const userId = parseInt(localStorage.getItem("myId"));
+  const [users, setUsers] = useState([
+    "현욱",
+    "현빈",
+    "준서",
+    "다영",
+    "영교",
+    "동혁",
+  ]);
   const [message, setMessage] = useState("");
   const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
+  // 웹소켓 연결 및 이벤트 핸들러 설정
+  const connectToWebSocket = () => {
+    client.current = Stomp.over(() => {
+      const ws = new SockJS("/ws");
+      return ws;
+    });
+
+    client.current.connect({}, () => {
+      console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
+
+      // 웹소켓 이벤트 핸들러 설정
+      client.current!.subscribe(`/pub/room/${id}`, (res) => {
+        console.log("New message", res);
+        const receivedMessage = JSON.parse(res.body);
+        setMessages((prevMessages: any) => [
+          ...prevMessages,
+          { message: receivedMessage.message, userid: receivedMessage.userId },
+        ]);
+      });
+    });
+  };
+
+  useEffect(() => {
+    connectToWebSocket();
+  }, []);
   // 엔터 누르면 메세지 전송
   const sendMessageHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Enter" || e.keyCode === 13) {
       if (message === "") return;
-      setMessages(prev => [...prev, { message: message, userid: 1 }]);
+      // 백엔드에 메시지 전송
+      console.log(client);
+      client.current.send(
+        `/sub/chat/${id}/sendMessage`,
+        {},
+        JSON.stringify({ message: message, userId })
+      );
       setMessage("");
       scroll();
     }
   };
+
   const navigate = useNavigate();
   const rapperDiv = useRef<HTMLInputElement>(null);
-  // 테스트를 위한 더비 데이터 생성
-  const makedummy = () => {
-    return new Promise((resolve, reject) => {
-      for (let i = 0; i < 6; i++) {
-        setMessages(prev => {
-          return [
-            ...prev,
-            { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 1 },
-            { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 0 },
-          ];
-        });
-      }
-      resolve("ok");
-    });
-  };
+
+  // 채팅방 입장시 채팅 메시지 가져오기
+  useEffect(() => {
+    callApi("GET", `api/chatMessage/${id}/messages`)
+      .then((res) => {
+        console.log(res.data);
+        setChatRoomName(res.data[0].chatRoom.chatRoomName);
+        setMessages(res.data);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }, []);
+
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
   useEffect(() => {
     scroll();
@@ -184,28 +227,20 @@ const ChatRoom = () => {
   // 스크롤 로직
   const scroll = () => {
     if (rapperDiv.current) {
-      // setTimeout(() => {
-      //   window.scrollTo({ top: rapperDiv.current!.scrollHeight, behavior: "smooth" });
-      // }, 10);
-      window.scrollTo({ top: rapperDiv.current!.scrollHeight, behavior: "smooth" });
+      window.scrollTo({
+        top: rapperDiv.current!.scrollHeight,
+        behavior: "smooth",
+      });
     }
   };
+
   useEffect(() => {
     const foo = async () => {
-      await makedummy();
       await scroll();
     };
     foo();
   }, []);
-  const dummyAdd = () => {
-    setMessages(prev => {
-      return [
-        ...prev,
-        { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 1 },
-        { message: "메세awdawdkhjabkfhjbaskdbfk지", userid: 0 },
-      ];
-    });
-  };
+
   const ArrowLeftIcon = arrowLeftIcon("black");
   const OutRoom = outRoom();
 
@@ -215,148 +250,9 @@ const ChatRoom = () => {
   const chaterInfoHandler = () => {
     isModal ? setIsModal(false) : setIsModal(true);
   };
-  // var stompClient: any = null;
-  // const connectHandler = () => {
-  //   var socket = new SockJS("http://192.168.137.1:8080/ws"); // 서버의 WebSocket endpoint 경로를 지정
-  //   console.log(socket);
-  //   stompClient = Stomp.over(socket);
-  //   stompClient.connect({}, function (frame: any) {
-  //     console.log("Connected: " + frame);
-  //     stompClient.subscribe("/sub/messages", function (chatMessage: any) {
-  //       console.log(chatMessage);
-  //     });
-  //   });
-  // };
-  // const client = useRef<CompatClient>();
 
-  // const connectHandler = () => {
-  //   // client.current = Stomp.over(() => {
-  //   //   const sock = new SockJS("http://192.168.137.1:8080/ws");
-  //   //   console.log(sock);
-  //   //   return sock;
-  //   // });
-  //   client.current = Stomp.client("ws://192.168.137.1:8080/ws");
-  //   client.current.connect({}, () => {
-  //     // callback 함수 설정, 대부분 여기에 sub 함수 씀
-  //     client.current!.subscribe(`/sub/messages`, message => {
-  //       setMessage(JSON.parse(message.body));
-  //     });
-  //   });
-  // };
-  // const connectHandler = () => {
-  //   client.current = Stomp.over({
-  //     webSocketFactory: () => new SockJS("http://192.168.137.1:8080/ws"),
-  //     debug: function (str: any) {
-  //       console.log(str);
-  //     },
-  //     reconnectDelay: 5000,
-  //     heartbeatIncoming: 4000,
-  //     heartbeatOutgoing: 4000,
-  //     onConnect: () => {
-  //       subscribe();
-  //     },
-  //     onStompError: (frame: any) => {
-  //       console.error(frame);
-  //     },
-  //   });
-
-  //   client.current.activate();
-  // };
-  // const subscribe = () => {
-  //   client.current!.subscribe(`/sub/messages`, message => {
-  //     setMessage(JSON.parse(message.body));
-  //   });
-  // };
-  // let stompClient: any = null;
-  // const connect = () => {
-  //   var socket = new SockJS("http://192.168.137.1:8080/ws"); // 서버의 WebSocket endpoint 경로를 지정
-  //   console.log(socket);
-  //   console.log(client);
-  //   stompClient = Stomp.over(socket);
-  //   stompClient.connect({}, function (frame: any) {
-  //     console.log("Connected: " + frame);
-  //     stompClient.subscribe("/sub/messages", function (chatMessage: any) {
-  //       console.log(chatMessage);
-  //     });
-  //   });
-  // };
-  // useEffect(() => {
-  //   connect();
-  // }, []);
-  // function disconnect() {
-  //   if (stompClient !== null) {
-  //     stompClient.disconnect();
-  //   }
-  //   console.log("Disconnected");
-  // }
-
-  // function joinChatRoom() {
-  //   stompClient.send(
-  //     "/sub/chat/1/sendMessage",
-  //     {},
-  //     JSON.stringify({
-  //       message: "Whoosp!!!!!!!!",
-  //       userId: 1,
-  //     })
-  //   );
-  // }
-
-  // function joinChatRoom() {
-  //     var messageInput = document.getElementById('message');
-  //     var message = messageInput.value;
-  //     stompClient.send("/sub/room/1/join", {}, JSON.stringify({ 'userId': 1 }));
-  // }
-
-  // const sendHandler = () => {
-  //   client.current!.send(
-  //     "/messages",
-  //     { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  //     JSON.stringify({
-  //       chatmessage: "a",
-  //     })
-  //   );
-  // };
-  const client = new Client({
-    // brokerURL: "ws://192.168.137.1:8080/ws",
-    webSocketFactory: () => new SockJS("http://192.168.137.1:8080/ws"),
-    debug: function (str: string) {
-      console.log(str);
-    },
-  });
-
-  client.activate();
-
-  const onClick = (message: String) => {
-    console.log(client.connected);
-    if (!client.connected) return;
-
-    client.publish({
-      destination: "/sub/chat/1/sendMessage",
-      body: JSON.stringify({
-        message: message,
-      }),
-    });
-  };
-
-  const wsSubscribe = () => {
-    client.onConnect = () => {
-      client.subscribe(
-        "/sub/messages",
-        (msg: any) => {
-          const newMessage = JSON.parse(msg.body).message;
-        },
-        { id: "user" }
-      );
-    };
-  };
-
-  const wsDisconnect = () => {
-    client.deactivate();
-  };
   return (
     <div ref={rapperDiv}>
-      <button onClick={wsSubscribe}>연결</button>
-      {/* <button onClick={joinChatRoom}>메세지 보내기</button> */}
       <header>
         {/* <Navbar /> */}
         <ChatNav>
@@ -371,9 +267,15 @@ const ChatRoom = () => {
           >
             {ArrowLeftIcon}
           </div>
-          <span style={{ marginRight: "0rem", fontFamily: "JejuGothic", fontSize: "20px" }}>
-            이런저런 ㅇㅇㅇㅇ방 이름
+          <span
+            style={{
+              marginRight: "0rem",
+              fontFamily: "JejuGothic",
+              fontSize: "20px",
+            }}
+          >
             <>
+              {chatRoomName}
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
                 &nbsp;&nbsp;&nbsp;&nbsp;4
               </span>
@@ -390,8 +292,12 @@ const ChatRoom = () => {
       <BackDrop isModal={isModal} onClick={chaterInfoHandler}></BackDrop>
       <RightModal isModal={isModal}>
         <h2 style={{ fontFamily: "JejuGothic" }}>모임의 이름이 들어갑니다</h2>
-        <p style={{ fontFamily: "SeoulNamsan", marginBottom: "5px" }}>대전 서구 둔산동 연남</p>
-        <p style={{ marginBottom: "10px", fontFamily: "SeoulNamsan" }}>2023.01.17 PM 8:00</p>
+        <p style={{ fontFamily: "SeoulNamsan", marginBottom: "5px" }}>
+          대전 서구 둔산동 연남
+        </p>
+        <p style={{ marginBottom: "10px", fontFamily: "SeoulNamsan" }}>
+          2023.01.17 PM 8:00
+        </p>
         <div style={{ border: "1px solid var(--c-lightgray)" }}></div>
         <br />
         <h3 style={{ fontFamily: "JejuGothic" }}>참여자 목록</h3>
@@ -427,15 +333,20 @@ const ChatRoom = () => {
                 flexDirection: "column",
               }}
             >
-              <p style={{ fontFamily: "JejuGothic", fontSize: "12px", margin: "0 1rem" }}>나</p>
+              <p
+                style={{
+                  fontFamily: "JejuGothic",
+                  fontSize: "12px",
+                  margin: "0 1rem",
+                }}
+              >
+                나
+              </p>
               {message.userid === 0 ? (
                 <MyChat>{message.message}</MyChat>
               ) : (
                 <OtherChat>{message.message}</OtherChat>
               )}
-              {/* <MessageBox messageId={message[1]} key={i}>
-                <p style={{ fontFamily: "JejuGothic", fontSize: "14px" }}>{message[0]}</p>
-              </MessageBox> */}
             </div>
           );
         })}
@@ -444,8 +355,20 @@ const ChatRoom = () => {
       </div>
       <footer>
         <InputDiv>
-          <p style={{ fontFamily: "JejuGothic", fontSize: "20px", fontWeight: "400" }}>+</p>
-          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
+          <p
+            style={{
+              fontFamily: "JejuGothic",
+              fontSize: "20px",
+              fontWeight: "400",
+            }}
+          >
+            +
+          </p>
+          <Input
+            value={message}
+            onChange={messageHandler}
+            onKeyUp={sendMessageHandler}
+          ></Input>
         </InputDiv>
       </footer>
     </div>

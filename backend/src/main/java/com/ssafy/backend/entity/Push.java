@@ -19,8 +19,7 @@ public class Push{
     //알림 : "누구 : ~에 대한 알림이 도착했습니다.", 클릭하면 해당 페이지로 이동하도록.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "push_id")
-    private Long id;
+    private Long pushId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -37,7 +36,6 @@ public class Push{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private User receiver;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,20 +49,20 @@ public class Push{
     }
 
     @Builder
-    public Push(Long id, PushType pushType, String content, String url, boolean isRead, User receiver, User sender, LocalDateTime createdAt) {
-        this.id = id;
+    public Push(Long pushId, PushType pushType, String content, String url, boolean isRead, User receiver, User sender, LocalDateTime createdAt) {
+        this.pushId = pushId;
         this.pushType = pushType;
         this.content = content;
         this.url = url;
         this.isRead = isRead;
         this.receiver = receiver;
         this.sender = sender;
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now();
     }
 
     public PushDto toDto(){
         return PushDto.builder()
-                .pushId(this.id)
+                .pushId(this.pushId)
                 .sender_id(this.sender.getUserId())
                 .receiver_id(this.receiver.getUserId())
                 .pushType(this.pushType)

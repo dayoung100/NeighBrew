@@ -3,12 +3,14 @@
 
 import DrinkCategory from "../drinkCategory/DrinkCategory";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import createButton from "../../assets/createButton.svg";
 import imageButton from "../../assets/imageButton.svg";
 import defaultImage from "../../assets/defaultImage.svg";
 import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
+import ImageInput from "../components/ImageInput";
+import axios from "axios";
 
 // 여기부터 지정한 부분까지 style 부분입니다.
 // GuideText는 h3 tag가 상하 margin을 너무 많이 잡아서 새로 만든 겁니다.
@@ -72,7 +74,44 @@ const InputAlcohol = styled.input`
   }
 `;
 
+const QuestionDiv = styled.div`
+  margin-top: 1.5rem;
+`;
+
+const Title = styled.div`
+  font-family: "JejuGothic";
+  font-size: 20px;
+  text-align: left;
+  margin-bottom: 0.5rem;
+`;
+
+const ImgInput = styled.div`
+  // label로 대신하고 input은 숨기기 위한 css
+  input[type="file"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+`;
+
+const ImageArea = styled.div<{ src: string }>`
+  background: url(${props => props.src}) no-repeat center;
+  background-size: cover;
+  border-radius: 15px;
+  position: relative;
+  width: 30%;
+  padding-bottom: 30%;
+  overflow: hidden;
+`;
+
 //여기까지 style 부분입니다.
+
+// 서버로부터 받은 이미지 URL이나 정보를 리턴하거나 활용할 수 있습니다.
 
 const DrinkpostCreate = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
@@ -97,19 +136,66 @@ const DrinkpostCreate = () => {
     setDrinkDescription(e.target.value);
   };
 
-  const submitHandler = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    callApi("post", "api/drink", {
-      name: drinkName,
-      image: null,
-      description: drinkDescription,
-      degree: drinkAlcohol,
-    })
-      .then(res => {
-        console.log(res.data);
-        navigate(`/drinkpost/${res.data.drinkId}`);
+  const [imgFile, setImgFile] = useState(null);
+  const imgRef = useRef<HTMLInputElement>(null);
+
+  //이미지 파일 업로드 시 미리보기
+  const saveImgFile = () => {
+    const file = imgRef.current.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        setImgFile(reader.result);
+      }
+    };
+  };
+
+  const uploadImageToServer = async imgFile => {
+    const file = imgRef.current.files[0];
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      console.log(file);
+      console.log(formData);
+      // console.log(imgFile);
+      const response = await axios.post("http://i9b310.p.ssafy.io/api/img/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const submitHandler = async (e: React.MouseEvent<HTMLDivElement>) => {
+    let imageUrl: string;
+    if (imgFile !== null) {
+      imageUrl = await uploadImageToServer(imgFile);
+    } else {
+      imageUrl = null;
+    }
+    console.log(imageUrl);
+    try {
+      callApi("post", "api/drink", {
+        name: drinkName,
+        image: imageUrl,
+        description: drinkDescription,
+        degree: drinkAlcohol,
+        tagId: selectedCategory,
       })
-      .catch(err => console.log(err));
+        .then(res => {
+          console.log(res.data);
+          navigate(`/drinkpost/${res.data.drinkId}`);
+        })
+        .catch(err => console.log(err));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -142,8 +228,25 @@ const DrinkpostCreate = () => {
           <InputAlcohol value={drinkAlcohol} onChange={drinkAlcoholHandler}></InputAlcohol>
           <p>%</p>
         </InputDivAlcohol>
-
-        <div style={{ marginTop: "20px", display: "flex", alignItems: "flex-end" }}>
+        <QuestionDiv style={{ textAlign: "left" }}>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Title style={{ margin: "0" }}>대표 이미지</Title>
+            <ImgInput>
+              <label htmlFor="img_file">
+                <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
+              </label>
+              <input
+                type="file"
+                id="img_file"
+                accept="image/jpg, image/png, image/jpeg"
+                onChange={saveImgFile}
+                ref={imgRef}
+              />
+            </ImgInput>
+          </div>
+          {imgFile && <ImageArea src={imgFile}></ImageArea>}
+        </QuestionDiv>
+        {/* <div style={{ marginTop: "20px", display: "flex", alignItems: "flex-end" }}>
           <span>
             <b>대표 이미지</b>
           </span>
@@ -153,7 +256,7 @@ const DrinkpostCreate = () => {
           <span style={{ marginLeft: "15px" }}>
             <img src={defaultImage} alt="uploadedPicture" />
           </span>
-        </div>
+        </div> */}
       </div>
       <div onClick={submitHandler}>
         <img src={createButton} alt="등록" />

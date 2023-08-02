@@ -6,6 +6,7 @@ import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
@@ -51,13 +53,27 @@ public class UserService {
 
     @Transactional
     public User updateUser(Long userId, UserUpdateDto updateDto) {
+        log.info(String.valueOf(updateDto.getBirth()));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
         user.updateFromDto(updateDto);
+
         return userRepository.save(user);
     }
 
+    @Transactional
+    public User updateUserImg(Long userId, String url) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
+        user.updateImg(url);
+        return userRepository.save(user);
+    }
+
+
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    public List<User> findByUserIdIn(Long... userIds) { return userRepository.findByUserIdIn(userIds);
     }
 }

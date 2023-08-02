@@ -23,6 +23,7 @@ import DrinkpostDetail from "./UI/drinkpost/DrinkpostDetail";
 import DrinkpostCreate from "./UI/drinkpost/DrinkpostCreate";
 import DrinkpostSearch from "./UI/drinkpost/DrinkpostSearch";
 import DrinkpostReviewCreate from "./UI/drinkpost/DrinkpostReviewCreate";
+import Test from "./Test";
 
 function App() {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ function App() {
         <Route path="/myPage/follower/:userid" element={<Follower></Follower>}></Route>
         <Route path="/myPage/follow/:userid" element={<Follow></Follow>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
-        <Route path="/chatList/:roomId" element={<ChatRoom></ChatRoom>} />
+        <Route path="/chatList/:id" element={<ChatRoom></ChatRoom>} />
         <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
         <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
         <Route path="/google/:str" element={<GoogleLogin></GoogleLogin>}></Route>
@@ -73,6 +74,8 @@ function App() {
           path="/drinkpost/:drinkId/review/create"
           element={<DrinkpostReviewCreate></DrinkpostReviewCreate>}
         ></Route>
+
+        <Route path="/test" element={<Test></Test>}></Route>
       </Routes>
     </>
   );

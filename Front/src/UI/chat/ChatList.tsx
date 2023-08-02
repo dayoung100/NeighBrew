@@ -7,6 +7,8 @@ import styled from "styled-components";
 import Chat from "./Chat";
 import { meetingicon, directMessage } from "../../assets/AllIcon";
 import Footer from "../footer/Footer";
+import { callApi } from "../../utils/api";
+import { useNavigate } from "react-router-dom";
 
 const Button = styled.button`
   width: 40%;
@@ -18,11 +20,32 @@ const Button = styled.button`
 `;
 
 const ChatList = () => {
-  const [chatList, setChatList] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  const [directChatList, setdirectChatList] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  const [chatList, setChatList] = useState([]);
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
-  const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
-  const directMessageIcon = directMessage(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
+  const MeetingIcon = meetingicon(
+    chooseChat === 0 ? "var(--c-black)" : "#AAAAAA"
+  );
+  const navigate = useNavigate();
+
+  const chatRoomDetail = (roomId: number) => {
+    console.log(roomId);
+    navigate(`/chatList/${roomId}`);
+  };
+  const directMessageIcon = directMessage(
+    chooseChat === 0 ? "#AAAAAA" : "var(--c-black)"
+  );
+
+  const userId = localStorage.getItem("myId");
+  useEffect(() => {
+    callApi("GET", `api/chat/${userId}/getChatRoom`)
+      .then((res) => {
+        console.log(res.data);
+        setChatList(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
   return (
     <>
       <div>
@@ -31,7 +54,8 @@ const ChatList = () => {
             setChooseChat(0);
           }}
           style={{
-            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+            borderBottom:
+              chooseChat === 0 ? "2px solid var(--c-black)" : "none",
           }}
         >
           {MeetingIcon}
@@ -40,19 +64,26 @@ const ChatList = () => {
           onClick={() => {
             setChooseChat(1);
           }}
-          style={{ borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)" }}
+          style={{
+            borderBottom:
+              chooseChat === 0 ? "none" : "2px solid var(--c-black)",
+          }}
         >
           {directMessageIcon}
         </Button>
       </div>
       <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)" }}>
-        {chooseChat === 0
-          ? chatList.map((chat, i) => {
-              return <Chat key={i} chooseChat={chooseChat} chatRoomId={chat}></Chat>;
-            })
-          : directChatList.map((chat, i) => {
-              return <Chat key={i} chooseChat={chooseChat} chatRoomId={chat}></Chat>;
-            })}
+        {chatList.map((chatRoom) => {
+          return (
+            <Chat
+              key={chatRoom.chatRoomId}
+              chooseChat={chooseChat}
+              chatRoomName={chatRoom.chatRoomName}
+              chatRoomId={chatRoom.chatRoomId}
+              chatRoomDetail={chatRoomDetail}
+            />
+          );
+        })}
       </div>
       <div style={{ height: "80px" }}></div>
       <footer>

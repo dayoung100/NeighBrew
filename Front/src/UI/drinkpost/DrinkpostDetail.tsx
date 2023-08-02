@@ -8,8 +8,8 @@ import reviewIcon from "../../assets/reviewIcon.svg";
 import backIcon from "../../assets/backIcon.svg";
 import sirenIcon from "../../assets/sirenIcon.svg";
 import { callApi } from "../../utils/api";
-import { useState, useEffect, useRef } from "react";
-import { Drink, Review, User } from "../../Type/types";
+import { useState, useEffect } from "react";
+import { Drink, Review } from "../../Type/types";
 
 const CreateReviewDiv = styled.div`
   display: flex;
@@ -87,12 +87,6 @@ const MoreButton = styled.button`
 `;
 
 const DrinkpostDetail = () => {
-  const contentRef = useRef(null);
-  const moreBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
-    contentRef.current.classList.add("show");
-    e.currentTarget.classList.add("hide");
-  };
-
   const { drinkId } = useParams();
   const navigate = useNavigate();
   const [showMore, setShowMore] = useState(false);
@@ -121,7 +115,7 @@ const DrinkpostDetail = () => {
         setReviewList(prev => [...prev, ...res.data.content]);
         console.log(res.data.content);
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
   }, []);
 
   return (
@@ -136,7 +130,7 @@ const DrinkpostDetail = () => {
           <img src={sirenIcon} alt="" />
         </NavbarSirenIcon>
       </DrinkpostDetailNavbar>
-      <img src={whiskeyImage} alt="" style={{ width: "80px", height: "300px", margin: "30px" }} />
+      <img src={detail?.image} alt="" style={{ width: "80px", height: "300px", margin: "30px" }} />
       <div className="description" style={{ textAlign: "start", margin: "30px" }}>
         <p>
           <b>종류</b> : 종류를 받는 부분
