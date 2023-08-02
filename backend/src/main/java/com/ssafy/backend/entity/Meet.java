@@ -68,6 +68,9 @@ public class Meet {
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
 
+    // 모임과 채팅 간의 양방향 일대일 연관관계
+    @OneToOne(mappedBy = "meet", cascade = CascadeType.ALL)
+    private ChatRoom chatRoom;
 
     @Builder
     public Meet(Long meetId, String meetName, String description, Long hostId,
