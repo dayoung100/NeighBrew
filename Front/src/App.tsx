@@ -6,7 +6,7 @@ import Login from "./UI/user/Login";
 import Main from "./UI/home/Main";
 import ChatList from "./UI/chat/ChatList";
 import ChatRoom from "./UI/chat/ChatRoom";
-import Drinkpost from "./UI/drinkpost/DrinkpostMain";
+import DrinkpostTotal from "./UI/drinkpost/DrinkpostTotal";
 import MeetingMain from "./UI/meet/MeetingMain";
 import MeetingDetail from "./UI/meet/MeetingDetail";
 import MeetingCreate from "./UI/meet/MeetingCreate";
@@ -24,6 +24,7 @@ import DrinkpostCreate from "./UI/drinkpost/DrinkpostCreate";
 import DrinkpostSearch from "./UI/drinkpost/DrinkpostSearch";
 import DrinkpostReviewCreate from "./UI/drinkpost/DrinkpostReviewCreate";
 import Test from "./Test";
+import DrinkpostMain from "./UI/drinkpost/DrinkpostMain";
 
 function App() {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ function App() {
         />
         {/* <Route path="/" element={<MeetingMain></MeetingMain>}></Route> */}
         <Route path="/home" element={<Main />} />
-        <Route path="/drinkpost" element={<Drinkpost />} />
+        <Route path="/drinkpost" element={<DrinkpostMain />} />
         <Route path="/meet" element={<MeetingMain />}></Route>
         <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>
         <Route path="/meet/create" element={<MeetingCreate />}></Route>
@@ -74,7 +75,7 @@ function App() {
           path="/drinkpost/:drinkId/review/create"
           element={<DrinkpostReviewCreate></DrinkpostReviewCreate>}
         ></Route>
-
+        <Route path="/drinkpost/total" element={<DrinkpostTotal></DrinkpostTotal>}></Route>
         <Route path="/test" element={<Test></Test>}></Route>
       </Routes>
     </>

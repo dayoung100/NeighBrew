@@ -81,6 +81,16 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
     }
   };
 
+  const transImage = (img: string) => {
+    if (img === "no image") {
+      return whiskeyImage;
+    } else if (img === "asd") {
+      return whiskeyImage;
+    } else {
+      return drink.image;
+    }
+  };
+
   const [limit, setLimit] = useState(10);
   const moveToDrinkDetailHandler = () => {
     navigate(`/drinkpost/${drink.drinkId}`);
@@ -90,7 +100,7 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
       <TopTag>
         <Tag>{tagHandler(drink.tagId)}</Tag>
       </TopTag>
-      <CardImage src={drink.image ? drink.image : whiskeyImage}></CardImage>
+      <CardImage src={transImage(drink.image)}></CardImage>
       <NameCard>
         {drink.name.length < limit
           ? toggleEllipsis(drink.name, limit).string

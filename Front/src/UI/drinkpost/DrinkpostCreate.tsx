@@ -11,6 +11,7 @@ import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import ImageInput from "../components/ImageInput";
 import axios from "axios";
+import whiskeyImage from "../../assets/whiskeyImage.png";
 
 // 여기부터 지정한 부분까지 style 부분입니다.
 // GuideText는 h3 tag가 상하 margin을 너무 많이 잡아서 새로 만든 겁니다.
@@ -156,18 +157,16 @@ const DrinkpostCreate = () => {
     try {
       const formData = new FormData();
       formData.append("image", file);
-      console.log(file);
-      console.log(formData);
       // console.log(imgFile);
       const response = await axios.post("http://i9b310.p.ssafy.io/api/img/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(response.data);
+
       return response.data;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   };
