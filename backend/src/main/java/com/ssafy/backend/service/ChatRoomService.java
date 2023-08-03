@@ -109,11 +109,6 @@ public class ChatRoomService {
         return new ObjectMapper().writeValueAsString(message);
     }
 
-    public ChatRoom save(ChatRoom chatRoom) {
-        return chatRoomRepository.save(chatRoom);
-    }
-
-
     public List<User> getUsersInChatRoom(Long chatRoomId) {
         return chatRoomRepository
                 .findById(chatRoomId)
@@ -123,5 +118,27 @@ public class ChatRoomService {
                 .stream()
                 .map(ChatRoomUser::getUser)
                 .collect(Collectors.toList());
+    }
+
+
+    public ChatRoom save(ChatRoom chatRoom) {
+        return chatRoomRepository.save(chatRoom);
+    }
+
+    public void deleteExistUser(ChatRoom chatRoom, Long userId) {
+        chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, chatRoom.getChatRoomId());
+        chatRoomUserRepository.flush();
+
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        if (chatRoom.getUsers().isEmpty())
+            chatRoomRepository.delete(chatRoom);
+
+        ChatMessage message = ChatMessage.builder()
+                .message(findUser.getNickname() + "님이 채팅방을 나갔습니다.")
+                .timestamp(LocalDateTime.now())
+                .user(findUser)
+                .build();
+        chatMessageRepository.save(message);
     }
 }

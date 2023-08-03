@@ -65,9 +65,6 @@ public class UserService {
         return userRepository.findAll();
     }
 
-
-    public List<User> findByUserIdIn(Long... userIds) { return userRepository.findByUserIdIn(userIds);}
-
     public List<Optional<User>>searchUsers(String nickName){
             log.info(nickName);
             // 해당 이름을 가지고있는 데이터를 가져옴
