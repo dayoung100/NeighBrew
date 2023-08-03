@@ -64,8 +64,7 @@ const Chat = (props: {
           >
             채팅방 제목: {props.chatRoomName}
           </span>
-          <span style={{ color: "var(--c-gray", fontSize: "12px" }}>4</span>{" "}
-          <span></span>
+          <span style={{ color: "var(--c-gray", fontSize: "12px" }}>4</span> <span></span>
         </div>
         <p
           style={{
@@ -74,7 +73,7 @@ const Chat = (props: {
             marginTop: "6px",
           }}
         >
-          채팅방 설명 몇 자까지 가능 한가요 너무 많으면 이상해 집니다
+          10조 채팅방 입니다.
         </p>
       </div>
     </ChatDiv>

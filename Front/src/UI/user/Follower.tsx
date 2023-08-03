@@ -7,6 +7,7 @@ import Footer from "../footer/Footer";
 import autoAnimate from "@formkit/auto-animate";
 import { User as userType } from "../../Type/types";
 import { callApi } from "../../utils/api";
+import tempgif from "../../assets/tempgif.gif";
 
 const Follower = () => {
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ const Follower = () => {
               style={{ cursor: "pointer" }}
             >
               <ImgDiv>
-                <Img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg" />
+                <Img src={user.profile == "no image" ? tempgif : user.profile} />
               </ImgDiv>
               <div style={{ textAlign: "left" }}>
                 <p

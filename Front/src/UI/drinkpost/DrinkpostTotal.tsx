@@ -3,17 +3,18 @@ import { styled } from "styled-components";
 import DrinkCard from "./DrinkCard";
 // import singleShowcase from "./singleShowcase";
 import { useState, useEffect } from "react";
-import Navbar from "../navbar/Navbar";
+import Navbar from "../navbar/NavbarForDrinkpost";
 import Footer from "../footer/Footer";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 import DrinkpostCreateButton from "./DrinkpostCreateButton";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import axios from "axios";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
 
 const ShowcaseBody = styled.div`
   font-size: 14px;
+  margin-left: 1vw;
 `;
 
 // export type DrinkType = {
@@ -30,7 +31,7 @@ const ShowcaseBody = styled.div`
 const drinkpostTotal = () => {
   const [page, setPage] = useState(0);
   const [drinkList, setDrinkList] = useState<Drink[]>([]);
-
+  const navigate = useNavigate();
   // const navigate = useNavigate();
 
   const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
@@ -58,10 +59,12 @@ const drinkpostTotal = () => {
   const { setTarget } = useIntersectionObserver({ onIntersect });
   // 위의 두 변수로 검사할 요소를 observer로 설정
   // 여기에는 axios 요청 들어갈 예정
-
+  const toDrinkSearch = () => {
+    navigate("/drinkpost/search");
+  };
   return (
     <>
-      <Navbar></Navbar>
+      <Navbar toDrinkSearch={toDrinkSearch}></Navbar>
       <ShowcaseBody>
         <div style={{ textAlign: "start" }}>
           <h2 style={{ margin: "0px 0px 0px 10px" }}>네이브루의 술장</h2>

@@ -12,6 +12,7 @@ export interface User {
   createdAt?: string;
   updatedAt?: string;
   oauthProvider?: string;
+  drinkcount?: number;
 }
 export interface Chat {
   chatMessageId?: number;

@@ -7,6 +7,7 @@ import Footer from "../footer/Footer";
 import autoAnimate from "@formkit/auto-animate";
 import { User as userType } from "../../Type/types";
 import { callApi } from "../../utils/api";
+import temgif from "../../assets/temgif.gif";
 
 const Follow = () => {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const Follow = () => {
       res.data.map(tem => {
         setUsers(users => [...users, tem.following]);
       });
+      console.log(res.data);
     });
   };
   useEffect(() => {
@@ -63,15 +65,13 @@ const Follow = () => {
                 navigate("/myPage/" + user.userId);
               }}
               style={{ cursor: "pointer" }}
+              key={idx}
             >
               <ImgDiv>
-                <Img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg" />
+                <Img src={user.profile == "no image" ? temgif : user.profile} />
               </ImgDiv>
               <div style={{ textAlign: "left" }}>
-                <p
-                  style={{ fontFamily: "JejuGothic", fontSize: "16px", marginBottom: "0.5rem" }}
-                  key={idx}
-                >
+                <p style={{ fontFamily: "JejuGothic", fontSize: "16px", marginBottom: "0.5rem" }}>
                   {user.nickname}
                 </p>
                 <p style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>{user.intro}</p>
