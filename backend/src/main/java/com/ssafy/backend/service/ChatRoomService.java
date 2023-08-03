@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.entity.ChatMessage;
 import com.ssafy.backend.entity.ChatRoom;
 import com.ssafy.backend.entity.ChatRoomUser;
+
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.ChatMessageRepository;
+
 import com.ssafy.backend.repository.ChatRoomRepository;
 import com.ssafy.backend.repository.ChatRoomUserRepository;
 import com.ssafy.backend.repository.UserRepository;
@@ -23,18 +25,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatRoomService {
     private final ChatMessageRepository chatMessageRepository;
+
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final UserRepository userRepository;
     private final ObjectMapper mapper = new ObjectMapper();
-
     public List<ChatRoom> findUserChatRooms(Long userId) {
         return chatRoomUserRepository.findByUser_UserId(userId)
                 .stream()
                 .map(ChatRoomUser::getChatRoom)
                 .collect(Collectors.toList());
     }
-
     public ChatRoom createChatRoom(Map<String, Object> map) {
         ChatRoom room = ChatRoom.builder()
                 .chatRoomName((String) map.get("name"))
@@ -103,5 +104,9 @@ public class ChatRoomService {
                 .build();
         chatMessageRepository.save(message);
         return new ObjectMapper().writeValueAsString(message);
+    }
+
+    public ChatRoom save(ChatRoom chatRoom) {
+        return chatRoomRepository.save(chatRoom);
     }
 }
