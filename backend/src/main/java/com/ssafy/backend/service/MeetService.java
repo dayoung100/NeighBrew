@@ -297,7 +297,8 @@ public class MeetService {
         Meet manageMentMeet = findByMeetId(meetId);
 
         //Host유저와 관리할유저 리스트 반환(1개의 쿼리를 사용 하기 위함) 0번 : 호스트, 1번 : 관리할 유저
-        List<User> users = userService.findByUserIdIn(manageMentMeet.getHostId(), userId);
+        User host = userService.findByUserId(manageMentMeet.getHostId());
+        User manageUser= userService.findByUserId(userId);
 
         if (applyResult) {//신청 결과가 true
             //모임 상태를 변경 시킨다.
@@ -307,20 +308,20 @@ public class MeetService {
 
             //채팅방에 참여 시킨다
             chatRoomUserService.save(ChatRoomUser.builder()
-                            .user(users.get(1))
+                            .user(manageUser)
                             .chatRoom(manageMentMeet.getChatRoom())
                     .build());
 
             chatMessageService.save(ChatMessage.builder()
                     .chatRoom(manageMentMeet.getChatRoom())
                     .user(null)
-                    .message(users.get(1).getName() + "님이 모임에 참여하셨습니다.")
+                    .message(manageUser.getName() + "님이 모임에 참여하셨습니다.")
                     .timestamp(LocalDateTime.now())
                     .build());
 
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append("회원님께서 모임(").append(manageMentMeet.getMeetName()).append(")참여 되셨습니다.\n 즐거운 시간 되세요.");
-            pushService.send(users.get(0), users.get(1), PushType.MEETACCESS, pushMessage.toString(), "http://i9b310.p.ssafy.");
+            pushService.send(host, manageUser, PushType.MEETACCESS, pushMessage.toString(), "http://i9b310.p.ssafy.");
 
             return userId + "유저 " + meetId + "모임 신청 승인";
         } else {//신청 결과가 false
@@ -330,7 +331,7 @@ public class MeetService {
 
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append("회원님께서 모임(").append(manageMentMeet.getMeetName()).append(")참여에 거절당했습니다.");
-            pushService.send(users.get(0), users.get(1), PushType.MEETREJECT, pushMessage.toString(), "");
+            pushService.send(host, manageUser, PushType.MEETREJECT, pushMessage.toString(), "");
 
             return userId + "유저 " + meetId + "모임 신청 거절";
         }

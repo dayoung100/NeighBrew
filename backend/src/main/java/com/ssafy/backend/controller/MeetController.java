@@ -79,6 +79,13 @@ public class MeetController {
                                         MeetDto meetDto,
                                         Long drinkId,
                                         @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) {
+        //모임이름, 날짜, 시간, 최대인원
+        if (meetDto.getMeetName().isEmpty()) return ResponseEntity.badRequest().body("모임 이름이 등록되지 않았습니다.");
+        if (meetDto.getMeetDate() == null) return ResponseEntity.badRequest().body("모임 날짜 정보가 누락되었습니다.");
+        if (meetDto.getMeetDate().toLocalDate() == null) return ResponseEntity.badRequest().body("모임 날짜가 입력되지 않았습니다.");
+        if (meetDto.getMeetDate().toLocalDate() == null) return ResponseEntity.badRequest().body("모임 시간이 입력되지 않았습니다.");
+        if (meetDto.getMaxParticipants() == null) return ResponseEntity.badRequest().body("모임 최대 인원 수용 정보가 입력되지 않았습니다.");
+        if (meetDto.getMaxParticipants() > 8) return ResponseEntity.badRequest().body("모임 최대 인원 수용치를 초과했습니다.");
         if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
 
