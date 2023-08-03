@@ -1,11 +1,9 @@
 package com.ssafy.backend.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @Builder
