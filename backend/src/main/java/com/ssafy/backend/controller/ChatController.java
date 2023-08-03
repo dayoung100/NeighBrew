@@ -1,6 +1,7 @@
 package com.ssafy.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.service.ChatDMService;
 import com.ssafy.backend.service.ChatRoomService;
@@ -11,14 +12,12 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.transaction.Transactional;
 import java.util.Map;
 
 @Slf4j
 @Controller
-@RequestMapping("/api/chat")
 @RequiredArgsConstructor
 public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
@@ -40,12 +39,12 @@ public class ChatController {
         messagingTemplate.convertAndSend("/pub/room/" + roomId, res);
     }
 
-    // 1대1 채팅방 생성
-    // 메시지를 보내면 채팅방이 생성되고 메시지 전송
-    @Transactional
-    @MessageMapping("/chat/{senderId}/{receiverId}/create")
-    public void createChatRoom(@DestinationVariable Long senderId, @DestinationVariable Long receiverId, @Payload String data) throws JsonProcessingException {
-//        Map<String, Object> chatRoom = chatDMService.sendChatMessageOneToOne(senderId, receiverId, data);
-//        messagingTemplate.convertAndSend("/pub/room/" + chatRoom.get("roomId"), mapper.writeValueAsString(chatRoom));
+    @MessageMapping("/chat/{senderId}/{receiverId}/")
+    public void createChatOrSend(@DestinationVariable Long senderId, @DestinationVariable Long receiverId, @Payload String data) throws JsonProcessingException {
+        Map<String, String> map = mapper.readValue(data, new TypeReference<>() {
+        });
+        String message = map.get("message");
+        String res = chatDMService.createChatOrSend(senderId, receiverId, message);
+        messagingTemplate.convertAndSend("/pub/chat/" + senderId + "/" + receiverId, res);
     }
 }

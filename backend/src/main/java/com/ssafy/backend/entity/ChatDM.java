@@ -1,6 +1,7 @@
 package com.ssafy.backend.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatDM {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatDMId;
 
     @ManyToOne
@@ -25,4 +27,10 @@ public class ChatDM {
 
     @OneToMany(mappedBy = "chatDM", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatDMMessage> chatDMMessages = new ArrayList<>();
+
+    @Builder
+    public ChatDM(User user1, User user2) {
+        this.user1 = user1;
+        this.user2 = user2;
+    }
 }
