@@ -135,7 +135,7 @@ const MeetingDetail = () => {
   //api 호출
   useEffect(() => {
     const promise = callApi("get", `api/meet/${meetId}`);
-    promise.then(res => {
+    promise.then((res) => {
       setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
     });
     //로컬 스토리지에서 userId 가져오기
@@ -151,7 +151,7 @@ const MeetingDetail = () => {
       setMemberList(members);
       //유저 상태를 관리(HOST/GUEST/APPLY/NONE)
       let index: number | undefined = meetDetailData.users.findIndex(
-        user => user.userId === userId
+        (user) => user.userId === userId
       );
       setUserStatus(index === -1 ? "NONE" : meetDetailData.statuses[index]);
     }
@@ -164,11 +164,11 @@ const MeetingDetail = () => {
       meetId: meetId,
     });
     promise
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         setUserStatus("APPLY");
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
 
     console.log("참여 신청했어요");
   }
@@ -205,7 +205,8 @@ const MeetingDetail = () => {
   function hasAgeLimit() {
     if (meetDetailData === undefined) return false;
     const res =
-      (meetDetailData.meetDto.minAge ?? 0) > 0 || (meetDetailData.meetDto.maxAge ?? 0) > 0
+      (meetDetailData.meetDto.minAge ?? 0) > 0 ||
+      (meetDetailData.meetDto.maxAge ?? 0) > 0
         ? true
         : false;
     return res;
@@ -239,7 +240,10 @@ const MeetingDetail = () => {
             padding: "1rem",
           }}
         >
-          <div style={{ cursor: "pointer", marginRight: "1rem" }} onClick={GoBackHandler}>
+          <div
+            style={{ cursor: "pointer", marginRight: "1rem" }}
+            onClick={GoBackHandler}
+          >
             {ArrowLeftIcon}
           </div>
           <Tag>{getTagName(meetDetailData.meetDto.tagId)}</Tag>
@@ -297,14 +301,22 @@ const MeetingDetail = () => {
         >
           {(meetDetailData.meetDto.minLiverPoint ?? 0) > 0 && (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <img src="/src/assets/liver.svg" width="20rem" style={{ marginRight: "3px" }} />
+              <img
+                src="/src/assets/liverIcon.svg"
+                width="20rem"
+                style={{ marginRight: "3px" }}
+              />
               <div>{meetDetailData.meetDto.minLiverPoint}</div>
               IU/L
             </div>
           )}
           {hasAgeLimit() && (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <img src="/src/assets/age.svg" width="20rem" style={{ marginRight: "3px" }} />
+              <img
+                src="/src/assets/age.svg"
+                width="20rem"
+                style={{ marginRight: "3px" }}
+              />
               {meetDetailData.meetDto.minAge > 0 && (
                 <div>{meetDetailData.meetDto.minAge}세 이상</div>
               )}

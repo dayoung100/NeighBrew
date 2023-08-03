@@ -106,7 +106,7 @@ type ListInfoItemProps = {
   imgSrc: string; //이미지 경로
   tag: string; //주종 태그
   content: any; //내용, 컴포넌트를 넣어도 됨
-  numberInfo: any; //인원정보 또는 후기 수, 컴포넌트를 넣어도 됨
+  numberInfo?: any; //인원정보, 컴포넌트를 넣어도 됨
   isWaiting?: boolean; //신청대기중인 모임인지(아니라면 false)
   outLine?: boolean; //외곽선을 그릴 것인지 아닌지
   routingFunc: any; //라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
@@ -140,7 +140,7 @@ const ListInfoItem = (props: ListInfoItemProps) => {
         <InfoTag>
           <span>{props.tag}</span>
         </InfoTag>
-        <InfoNumber>{props.numberInfo}</InfoNumber>
+        {props.numberInfo && <InfoNumber>{props.numberInfo}</InfoNumber>}
         {props.isWaiting ? (
           <WaitingTag>
             <span>승인대기</span>
