@@ -34,11 +34,7 @@ const ChatList = () => {
   const userId = localStorage.getItem("myId");
   useEffect(() => {
     callApi("GET", `api/chatroom/${userId}/getChatRoom`)
-<<<<<<< Updated upstream
-      .then((res) => {
-=======
       .then(res => {
->>>>>>> Stashed changes
         console.log(res.data);
         setChatList(res.data);
       })
