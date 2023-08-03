@@ -144,7 +144,7 @@ public class MeetService {
                 .chatRoom(createChatRoom)
                 .user(null)
                 .message("채팅방이 생성되었습니다.")
-                .timestamp(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .build());
 
         //팔로워에게 메세지를 보낸다
@@ -316,7 +316,7 @@ public class MeetService {
                     .chatRoom(manageMentMeet.getChatRoom())
                     .user(null)
                     .message(manageUser.getName() + "님이 모임에 참여하셨습니다.")
-                    .timestamp(LocalDateTime.now())
+                    .createdAt(LocalDateTime.now())
                     .build());
 
             StringBuilder pushMessage = new StringBuilder();
