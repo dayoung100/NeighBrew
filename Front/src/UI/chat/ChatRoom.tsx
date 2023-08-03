@@ -70,8 +70,8 @@ const ChatNav = styled.div`
   justify-content: space-between;
 `;
 
-const RightModal = styled.div<{ isModal: boolean }>`
-  transform: ${props => (props.isModal ? "translateX(6%)" : "translateX(100%)")};
+const RightModal = styled.div<{ ismodal: boolean }>`
+  transform: ${props => (props.ismodal ? "translateX(6%)" : "translateX(100%)")};
   position: fixed;
   width: 95%;
   overflow-x: scroll;
@@ -130,8 +130,8 @@ const Input = styled.input`
   }
 `;
 
-const BackDrop = styled.div<{ isModal: boolean }>`
-  display: ${props => (props.isModal ? "block" : "none")};
+const BackDrop = styled.div<{ ismodal: boolean }>`
+  display: ${props => (props.ismodal ? "block" : "none")};
   transition: all 1s;
   width: 100%;
   max-width: 430px;
@@ -147,7 +147,7 @@ const ChatRoom = () => {
   // const [client, setClient] = useState<any>(null);
   const client = useRef<CompatClient>();
   const [messages, setMessages] = useState<Chat[]>([]);
-  const [isModal, setIsModal] = useState(false);
+  const [ismodal, setIsmodal] = useState(false);
   const [chatRoomName, setChatRoomName] = useState();
   const userId = parseInt(localStorage.getItem("myId"));
   const [users, setUsers] = useState(["현욱", "현빈", "준서", "다영", "영교", "동혁"]);
@@ -169,12 +169,13 @@ const ChatRoom = () => {
       client.current!.subscribe(`/pub/room/${id}`, res => {
         console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
+        console.log(receivedMessage);
         setMessages((prevMessages: any) => [
           ...prevMessages,
           {
             message: receivedMessage.message,
             userId: receivedMessage.userId,
-            user: { userId: receivedMessage.userId },
+            user: { userId: receivedMessage.userId, nickname: receivedMessage.userNickname },
           },
         ]);
       });
@@ -185,11 +186,10 @@ const ChatRoom = () => {
     connectToWebSocket();
   }, []);
   // 엔터 누르면 메세지 전송
-  const sendMessageHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === "Enter" || e.keyCode === 13) {
-      if (message === "") return;
-      // 백엔드에 메시지 전송
-      console.log(client);
+  const sendMessageHandler = (
+    e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>
+  ) => {
+    if (e.type == "click") {
       client.current.send(
         `/sub/chat/${id}/sendMessage`,
         {},
@@ -197,6 +197,19 @@ const ChatRoom = () => {
       );
       setMessage("");
       scroll();
+    } else {
+      if (e.code === "Enter" || e.keyCode === 13) {
+        if (message === "") return;
+        // 백엔드에 메시지 전송
+        console.log(client);
+        client.current.send(
+          `/sub/chat/${id}/sendMessage`,
+          {},
+          JSON.stringify({ message: message, userId, user: { userId: userId } })
+        );
+        setMessage("");
+        scroll();
+      }
     }
   };
 
@@ -244,7 +257,7 @@ const ChatRoom = () => {
     navigate("/chatList");
   };
   const chaterInfoHandler = () => {
-    isModal ? setIsModal(false) : setIsModal(true);
+    ismodal ? setIsmodal(false) : setIsmodal(true);
   };
 
   return (
@@ -285,8 +298,8 @@ const ChatRoom = () => {
           </div>
         </ChatNav>
       </header>
-      <BackDrop isModal={isModal} onClick={chaterInfoHandler}></BackDrop>
-      <RightModal isModal={isModal}>
+      <BackDrop ismodal={ismodal} onClick={chaterInfoHandler}></BackDrop>
+      <RightModal ismodal={ismodal}>
         <h2 style={{ fontFamily: "JejuGothic" }}>모임의 이름이 들어갑니다</h2>
         <p style={{ fontFamily: "SeoulNamsan", marginBottom: "5px" }}>대전 서구 둔산동 연남</p>
         <p style={{ marginBottom: "10px", fontFamily: "SeoulNamsan" }}>2023.01.17 PM 8:00</p>
@@ -310,7 +323,7 @@ const ChatRoom = () => {
       <div
         // ref={rapperDiv}
         style={{
-          backgroundColor: isModal ? "#757575" : "var(--c-lightgray)",
+          backgroundColor: ismodal ? "#757575" : "var(--c-lightgray)",
           height: "100%",
           width: "100%",
           // maxWidth: "450px",
@@ -324,6 +337,7 @@ const ChatRoom = () => {
                 alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
                 flexDirection: "column",
               }}
+              key={i}
             >
               <p
                 style={{
@@ -332,7 +346,7 @@ const ChatRoom = () => {
                   margin: "0 1rem",
                 }}
               >
-                {message.user?.userId === userId ? "나" : message.user?.name}
+                {message.user?.userId === userId ? "나" : message.user?.nickname}
               </p>
               {message.user?.userId == userId ? (
                 <OtherChat>{message.message}</OtherChat>
@@ -342,21 +356,17 @@ const ChatRoom = () => {
             </div>
           );
         })}
-        {/* </div> */}
-        {/* <div style={{ height: "5rem" }}></div> */}
       </div>
       <footer>
         <InputDiv>
-          <p
-            style={{
-              fontFamily: "JejuGothic",
-              fontSize: "20px",
-              fontWeight: "400",
-            }}
-          >
-            +
-          </p>
           <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
+          {message.length > 0 ? (
+            <div onClick={sendMessageHandler}>
+              <SendIcon></SendIcon>
+            </div>
+          ) : (
+            <></>
+          )}
         </InputDiv>
       </footer>
     </div>
@@ -364,3 +374,16 @@ const ChatRoom = () => {
 };
 
 export default ChatRoom;
+
+const SendIcon = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="25" viewBox="0 0 30 27" fill="none">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M4.61325 12.302H13.1325C13.5468 12.302 13.8825 12.6378 13.8825 13.052C13.8825 13.4662 13.5467 13.802 13.1325 13.802H4.63339L-9.26055e-06 26.1577L29.4275 13.0789L-9.26055e-06 -2.1257e-05L4.61325 12.302Z"
+        fill="var(--c-yellow)"
+      />
+    </svg>
+  );
+};

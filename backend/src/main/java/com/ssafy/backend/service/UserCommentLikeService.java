@@ -9,6 +9,7 @@ import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -18,6 +19,7 @@ public class UserCommentLikeService {
     private final UserRepository userRepository;
     private final DrinkReviewRepository drinkReviewRepository;
 
+    @Transactional
     public boolean toggleUserLike(Long userId, Long reviewId) {
         User user = userRepository.findById(userId).orElse(null);
         DrinkReview drinkReview = drinkReviewRepository.findById(reviewId).orElse(null);
@@ -29,12 +31,16 @@ public class UserCommentLikeService {
         Optional<UserCommentLike> existingLike = userCommentLikeRepository.findByUser_UserIdAndDrinkReview_DrinkReviewId(userId, reviewId);
 
         if (existingLike.isPresent()) {
-            // 좋아요 취소
+            // 좋아요 취소, drinkReview의 likeCount 감소
             userCommentLikeRepository.delete(existingLike.get());
+            drinkReview.decreaseLikeCount();
+            drinkReviewRepository.save(drinkReview);
             return false;
         } else {
-            // 좋아요 등록
+            // 좋아요 등록, drinkReview의 likeCount 증가
             userCommentLikeRepository.save(UserCommentLike.builder().user(user).drinkReview(drinkReview).build());
+            drinkReview.increaseLikeCount();
+            drinkReviewRepository.save(drinkReview);
             return true;
         }
     }

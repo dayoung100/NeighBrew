@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { meetingicon, brewery } from "../../assets/AllIcon";
 import temgif from "../../assets/tempgif.gif";
 import bottle from "../../assets/bottle.png";
-import liver from "../../assets/liver.png";
+import liver from "../../assets/liver.svg";
 import siren from "../../assets/siren.png";
 import Navbar from "../navbar/Navbar";
 import MeetingMy from "./MeetingMyUseInUser";
@@ -38,7 +38,7 @@ const MyPage = () => {
   const [nickname, setNickname] = useState("");
   const [profile, setProfile] = useState("");
   const [intro, setIntro] = useState("");
-  const [birth, setBirth] = useState("2100-01-01");
+  const [birth, setBirth] = useState("");
   const navigate = useNavigate();
   // 팔로우 하기
   const followHandler = async () => {
@@ -70,6 +70,7 @@ const MyPage = () => {
       setUserData(userData => ({ ...userData, following: res.data.length }));
     });
   };
+
   const reportHandler = () => {
     alert("신고되었습니다.");
   };
@@ -84,6 +85,9 @@ const MyPage = () => {
       .then(res => {
         setUserData(res.data);
         console.log(res.data);
+      })
+      .then(() => {
+        setBirth(userData.birth == null ? "2003-01-01" : userData.birth);
       })
       .catch(err => console.log(err));
   };
@@ -102,7 +106,7 @@ const MyPage = () => {
     setNickname(userData.nickname);
     setProfile(userData.profile);
     setIntro(userData.intro);
-    setBirth(userData.birth);
+    setBirth(userData.birth ? userData.birth : birth);
   }, [userData]);
   const nicknameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -111,6 +115,10 @@ const MyPage = () => {
   const introHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setIntro(e.target.value);
+  };
+  const birthHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setBirth(e.target.value);
   };
   useEffect(() => {
     refresh();
@@ -124,22 +132,37 @@ const MyPage = () => {
     const file = imgRef.current.files[0];
     const formData = new FormData();
     formData.append("profile", file);
-    console.log(file);
-    // axios
-    //   .put("/api/user/guard/img", formData, {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //       Authorization: "Bearer " + localStorage.getItem("token"),
-    //     },
-    //   })
-    //   .then(res => {
-    //     userInfo();
-    //   })
-    //   .then(() => {
-    //     followers();
-    //   })
-    //   .catch(err => console.log(err));
+    if (file !== undefined) {
+      axios
+        .put("/api/user/guard/img", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then(res => {
+          userInfo();
+        })
+        .then(() => {
+          followers();
+        })
+        .catch(err => console.log(err));
+    }
+    if (userData.nickname == nickname && userData.intro == intro && userData.birth == birth) return;
+    callApi("put", "api/user/guard", {
+      nickname: nickname,
+      intro: intro,
+      birth: birth,
+    })
+      .then(res => {
+        userInfo();
+      })
+      .then(() => {
+        followers();
+      })
+      .catch(err => console.log(err));
   };
+
   return (
     <>
       <header>
@@ -160,7 +183,7 @@ const MyPage = () => {
           <ColumnDiv>
             <p>{userData!.liverPoint} IU/L</p>
             <LiverDiv liverpoint={userData!.liverPoint}>
-              <img style={{ width: "38px", height: "38px" }} src={liver} alt="" />
+              <img src={liver} alt="" />
             </LiverDiv>
             <p>간수치</p>
           </ColumnDiv>
@@ -279,6 +302,10 @@ const MyPage = () => {
         <FlexDiv>
           <label htmlFor="intro">한줄 설명</label>
           <input type="text" id="intro" value={intro} onInput={introHandler} />
+        </FlexDiv>
+        <FlexDiv>
+          <label htmlFor="date">생년월일</label>
+          <input type="date" id="date" value={birth} onInput={birthHandler} max="2005-01-01" />
         </FlexDiv>
         <button
           onClick={() => {
