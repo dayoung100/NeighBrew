@@ -27,6 +27,12 @@ public class DrinkReviewController {
         return ResponseEntity.ok(drinkReviewService.getReviewsByUserIdAndDrinkId(userId, drinkId));
     }
 
+    // 좋아요 많은 순으로 리뷰 가져오기
+    @GetMapping("/likes")
+    public ResponseEntity<?> getReviewsOrderByLikes(Pageable pageable) {
+        return ResponseEntity.ok(drinkReviewService.getReviewsOrderByLikes(pageable));
+    }
+
     @PostMapping("/guard")
     public ResponseEntity<?> createDrinkReview(HttpServletRequest request, @RequestBody DrinkReviewDto drinkReviewDto) {
         String userId = (String) request.getAttribute("userId");

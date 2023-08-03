@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface UserCommentLikeRepository extends JpaRepository<UserCommentLike, Long> {
     Optional<UserCommentLike> findByUser_UserIdAndDrinkReview_DrinkReviewId(Long userId, Long drinkReviewId);
-    Optional<UserCommentLike>findByDrinkReview_DrinkReviewId(Long drinkReviewId);
 }
