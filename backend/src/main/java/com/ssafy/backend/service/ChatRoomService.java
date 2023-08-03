@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -110,5 +111,17 @@ public class ChatRoomService {
 
     public ChatRoom save(ChatRoom chatRoom) {
         return chatRoomRepository.save(chatRoom);
+    }
+
+
+    public List<User> getUsersInChatRoom(Long chatRoomId) {
+        return chatRoomRepository
+                .findById(chatRoomId)
+                .orElseThrow(()
+                        -> new IllegalArgumentException("존재하지 않는 채팅방입니다."))
+                .getUsers()
+                .stream()
+                .map(ChatRoomUser::getUser)
+                .collect(Collectors.toList());
     }
 }
