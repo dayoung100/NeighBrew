@@ -180,10 +180,16 @@ const MeetingDetail = () => {
     console.log("참여 신청했어요");
   }
 
-  //TODO: 신청 취소하기
-  //api적용 없이 신청 취소 후 다시 신청하면 에러 있을듯
+  //신청 취소하기
   function cancelApply() {
-    setUserStatus("NONE");
+    const promise = callApi("put", `api/meet/apply-cancel`, {
+      userId: userId,
+      meetId: meetId,
+    });
+    promise.then((res) => {
+      console.log(res.data);
+      setUserStatus("NONE");
+    });
     console.log("신청을 취소했어요");
   }
 
