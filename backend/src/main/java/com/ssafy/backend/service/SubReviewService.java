@@ -21,6 +21,9 @@ public class SubReviewService {
 
     // 리뷰의 댓글을 조회하는 API
     public List<SubReview> getSubReviewList(Long reviewId) {
+        if (!drinkReviewRepository.existsById(reviewId)) {
+            throw new IllegalArgumentException("해당 리뷰가 존재하지 않습니다.");
+        }
         return subReviewRepository.findAllByDrinkReview_DrinkReviewId(reviewId);
     }
 
