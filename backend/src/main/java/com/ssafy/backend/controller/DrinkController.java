@@ -41,10 +41,6 @@ public class DrinkController {
         Page<Drink> drinkPage = drinkService.findDrinkByName(name, tagId, pageRequest);
 
 
-        if (drinkPage.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
         return new ResponseEntity<>(drinkPage, HttpStatus.OK);
     }
 

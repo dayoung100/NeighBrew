@@ -45,12 +45,18 @@ public class MeetUserService {
 
         //상태를 변경한다.
         findMeetUser.setStatus(status);
-
-        //
         meetUserRepository.save(findMeetUser);
     }
 
     public void deleteExitUser(Long userId, Long meetId, Status status) {
         meetUserRepository.deleteByUser_UserIdAndMeet_MeetIdAndStatus(userId, meetId, status);
+    }
+
+    public Status findStatusByUserIdAndMeetId(Long userId, Long meetId) {
+        return null;
+    }
+
+    public Status findUserStatus(Long userId, Long meetId) {
+        return meetUserRepository.findStatusByUserIdAndMeetId(userId, meetId);
     }
 }

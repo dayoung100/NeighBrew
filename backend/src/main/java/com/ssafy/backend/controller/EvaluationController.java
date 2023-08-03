@@ -1,11 +1,13 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.dto.EvaluationDto;
 import com.ssafy.backend.service.EvaluationService;
-import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,22 +19,11 @@ public class EvaluationController {
     // 보내는 측이 유저 1이니까 사실상 유저 2만 있으면 되는거 아님?
 
     //
-    @GetMapping("/guard/{meetId}/good/{userId}")
-    public ResponseEntity<?> goodEvaluation(@PathVariable Long meetId, @PathVariable Long userId) {
-        return ResponseEntity.ok(evaluationService.calculateScoreByMeetId(meetId, userId, "good"));
+    @PostMapping("/guard")
+    public ResponseEntity<?> goodEvaluation(@RequestBody EvaluationDto evaluationDto,  HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        return ResponseEntity.ok(evaluationService.calculateScoreByMeetId(evaluationDto, Long.valueOf(userId)));
     }
-
-
-    @GetMapping("/guard/{meetId}/mid/{userId}")
-    public ResponseEntity<?> middleEvaluation(@PathVariable Long meetId,@PathVariable Long userId){
-        return ResponseEntity.ok(evaluationService.calculateScoreByMeetId(meetId, userId, "mid"));
-    }
-
-    @GetMapping("/guard/{meetId}/bad/{userId}")
-    public ResponseEntity<?> badEvaluation(@PathVariable Long meetId, @PathVariable Long userId) {
-        return ResponseEntity.ok(evaluationService.calculateScoreByMeetId(meetId, userId, "bad"));
-    }
-
 
 
 }
