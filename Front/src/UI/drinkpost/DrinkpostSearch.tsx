@@ -6,11 +6,12 @@ import ListInfoItem from "../components/ListInfoItem";
 import { callApi } from "../../utils/api";
 import { searchNavIcon } from "../../assets/AllIcon";
 import { Drink } from "../../Type/types";
+import DrinkCard from "./DrinkCard";
 
 import React, { useEffect, useState } from "react";
 
 const Body = styled.div`
-  background-color: var(--c-lightgray);
+  background-color: white;
   height: 800px;
 `;
 
@@ -44,6 +45,13 @@ const SearchBtn = styled.button`
   border: none;
 `;
 
+const ShowcaseBody = styled.div`
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  margin-left: 3vw;
+`;
+
 const DrinkpostSearch = () => {
   const searchButton = searchNavIcon();
   const navigate = useNavigate();
@@ -64,7 +72,7 @@ const DrinkpostSearch = () => {
       if (e.keyCode == 229) return;
       // setSendSearch(prev => !prev);
       let data: Drink[] = [];
-      await callApi("get", `api/drink/search?name=${searchWord}&size=2`).then(res => {
+      await callApi("get", `api/drink/search?name=${searchWord}&size=10`).then(res => {
         data = res.data.content;
       });
       await console.log(data);
@@ -79,13 +87,27 @@ const DrinkpostSearch = () => {
     if (searchWord === "") return;
 
     let data: Drink[] = [];
-    await callApi("get", `api/drink/search?name=${searchWord}&size=2`).then(res => {
+    await callApi("get", `api/drink/search?name=${searchWord}&size=10`).then(res => {
       data = res.data.content;
     });
     await console.log(data);
     await setSearchResult(prev => [...prev, ...data]);
     console.log(searchResult);
   };
+
+  function getTagName(tagId: number) {
+    const tag = [
+      { tagId: 0, tagName: "전체" },
+      { tagId: 1, tagName: "양주" },
+      { tagId: 2, tagName: "전통주" },
+      { tagId: 3, tagName: "전체" },
+      { tagId: 4, tagName: "사케" },
+      { tagId: 5, tagName: "와인" },
+      { tagId: 6, tagName: "수제맥주" },
+      { tagId: 7, tagName: "소주/맥주" },
+    ];
+    return tag[tagId].tagName;
+  }
 
   return (
     <>
@@ -113,9 +135,25 @@ const DrinkpostSearch = () => {
           </SearchDiv>
         </div>
       </div>
-      <h4 style={{ display: "flex", justifyContent: "start" }}>검색결과</h4>
+      <h3 style={{ display: "flex", justifyContent: "start", margin: "20px 0px 0px 20px" }}>
+        검색결과
+      </h3>
       <Body className="searchList">
-        <SearchList>
+        <ShowcaseBody>
+          <div
+            className="whole"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              paddingBottom: "60px",
+            }}
+          >
+            {searchResult.map(drink => {
+              return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
+            })}
+          </div>
+        </ShowcaseBody>
+        {/* <SearchList>
           {searchResult.map(drink => {
             return (
               <div onClick={() => navigate(`/drinkpost/${drink.drinkId}`)}>
@@ -123,7 +161,7 @@ const DrinkpostSearch = () => {
                   key={drink.drinkId}
                   title={drink.name}
                   imgSrc={drink.image}
-                  tag={""}
+                  tag={getTagName(drink.tagId)}
                   content={`${drink.degree}도`}
                   numberInfo={"후기 수 " + 3}
                   isWaiting={false}
@@ -133,7 +171,7 @@ const DrinkpostSearch = () => {
               </div>
             );
           })}
-        </SearchList>
+        </SearchList> */}
       </Body>
     </>
   );

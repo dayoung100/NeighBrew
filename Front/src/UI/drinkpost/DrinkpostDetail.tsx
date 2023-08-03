@@ -8,7 +8,7 @@ import reviewIcon from "../../assets/reviewIcon.svg";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import sirenIcon from "../../assets/sirenIcon.svg";
 import { callApi } from "../../utils/api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Drink, Review } from "../../Type/types";
 import backgroundImg from "../../assets/mdsimg.png";
 
@@ -46,7 +46,7 @@ const SimpleInfo = styled.div`
 const ImageInfo = styled.div`
   width: 40vh;
   position: relative;
-  bottom: 70px;
+  bottom: 15vh;
 `;
 
 const CreateReviewDiv = styled.div`
@@ -121,6 +121,20 @@ const DrinkpostDetail = () => {
   const [showMore, setShowMore] = useState(false);
   const [detail, setDetail] = useState<Drink>();
   const [reviewList, setReviewList] = useState<Review[]>([]);
+
+  // const getTagName = (tagId: number) => {
+  //   const tag = [
+  //     { tagId: 0, tagName: "전체" },
+  //     { tagId: 1, tagName: "양주" },
+  //     { tagId: 2, tagName: "전통주" },
+  //     { tagId: 3, tagName: "전체" },
+  //     { tagId: 4, tagName: "사케" },
+  //     { tagId: 5, tagName: "와인" },
+  //     { tagId: 6, tagName: "수제맥주" },
+  //     { tagId: 7, tagName: "소주/맥주" },
+  //   ];
+  //   return tag[tagId].tagName;
+  // };
   const toggleShowMore = () => {
     setShowMore(!showMore);
   };
@@ -159,6 +173,25 @@ const DrinkpostDetail = () => {
     }
   };
 
+  const getTagNameMk2 = (tagId: number) => {
+    if (tagId === 0) {
+      return "전체";
+    } else if (tagId === 1) {
+      return "양주";
+    } else if (tagId === 2) {
+      return "전통주";
+    } else if (tagId === 3) {
+      return "칵테일";
+    } else if (tagId === 4) {
+      return "사케";
+    } else if (tagId === 5) {
+      return "와인";
+    } else if (tagId === 6) {
+      return "수제맥주";
+    } else if (tagId === 7) {
+      return "소주/맥주";
+    }
+  };
   return (
     <>
       <DrinkThumbnail>
@@ -167,13 +200,15 @@ const DrinkpostDetail = () => {
       <WholeDiv>
         <InfoDiv>
           <SimpleInfo>
-            <h3 style={{ margin: "20px 0px 20px 0px" }}>{detail?.name}</h3>
-            <div style={{ textAlign: "start", paddingLeft: "12vw" }}>
-              <div>
-                <b style={{ paddingRight: "2vw" }}>주종</b> {detail?.tagId}
+            <h3 style={{ margin: "20px 0px 20px 20px" }}>{detail?.name}</h3>
+            <div style={{ textAlign: "center", marginLeft: "10vw" }}>
+              <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                <b style={{ marginRight: "2vw" }}>주종</b>
+                {getTagNameMk2(detail?.tagId)}
               </div>
-              <div style={{ paddingTop: "1vh" }}>
-                <b style={{ paddingRight: "2vw" }}>도수</b> {detail?.degree}%
+              <div style={{ paddingTop: "1vh", display: "flex", justifyContent: "flex-start" }}>
+                <b style={{ marginRight: "2vw" }}>도수 </b>
+                {detail?.degree}%
               </div>
             </div>
             <div
@@ -202,7 +237,7 @@ const DrinkpostDetail = () => {
           </ImageInfo>
         </InfoDiv>
 
-        <div style={{ position: "relative", bottom: "80px" }}>
+        <div style={{ position: "relative", bottom: "10vh" }}>
           <DescriptionP className={showMore ? "show" : ""}>
             <hr />
             {detail?.description}
@@ -218,8 +253,9 @@ const DrinkpostDetail = () => {
           )}
         </div>
 
-        <div className="reviewBox" style={{ position: "relative", bottom: "80px" }}>
+        <div className="reviewBox" style={{ position: "relative", bottom: "8vh" }}>
           <h1 style={{ textAlign: "start", marginBottom: "10px" }}>후기</h1>
+          {detail?.description.split("\n").length}
           <div
             className="reviewList"
             style={{

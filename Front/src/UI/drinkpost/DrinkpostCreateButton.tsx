@@ -7,7 +7,7 @@ const CreateButton = styled.div`
   justify-content: end;
   position: fixed;
   bottom: 100px;
-  left: 345px;
+  left: 76vw;
 `;
 
 const DrinkpostButton = () => {
