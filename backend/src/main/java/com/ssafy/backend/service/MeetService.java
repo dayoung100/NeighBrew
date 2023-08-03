@@ -1,6 +1,7 @@
 package com.ssafy.backend.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.Enum.UploadType;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.tree.ExpandVetoException;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -227,10 +230,12 @@ public class MeetService {
 
     }
 
+    @Transactional
     public void applyMeet(Long userId, Long meetId) throws NoSuchFieldException {
         log.info("모임 신청할 정보를 출력한다. : {}, {}", userId, meetId);
 
         MeetUserDto meetUser = findMeetUserByMeetId(meetId);
+        Meet attendMeet = meetRepository.findById(meetId).orElseThrow(()-> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
         Long hostId = meetUser.getMeetDto().getHostId();
 
         User attendUser = userService.findByUserId(userId);
@@ -246,33 +251,44 @@ public class MeetService {
         }
 
         //참가자의 모임 상태 추가 -> 데이터를 추가해야한다.
-        meetUserService.saveMeetUser(meetUser.getMeetDto().toEntity(), attendUser, Status.APPLY);
+        meetUserService.saveMeetUser(attendMeet, attendUser, Status.APPLY);
 
         //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
         StringBuilder pushMessage = new StringBuilder();
         pushMessage.append(attendUser.getName() + "님께서 " + meetUser.getMeetDto().getMeetName() + "모임에 참여하고 싶어 합니다.");
         pushService.send(attendUser, host, PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
-
     }
 
-    public void applyCancelMeet(Long userId, Long meetId) {
+    public void applyCancelMeet(Long userId, Long meetId) throws Exception {
         log.info("{}유저 {}모임 신청 취소 ", userId, meetId);
 
         Meet meet = findByMeetId(meetId);
 
-        //Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
+        Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
+        log.info("현재 {}유저의 {}모임 신청 상태 : {}", userId, meetId, applyUserStatus);
+
+        if(applyUserStatus != Status.APPLY) throw new IllegalArgumentException("가입신청중인 유저만 모임 신청을 취소할 수 있습니다.");
 
         //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
         //푸시알림 로그 삭제
         pushService.deletePushLog(PushType.MEETACCESS, userId, meet.getHostId());
+
     }
 
     public void exitMeet(Long userId, Long meetId) {
         log.info("유저 {}가 모임({})에서 나간다.", userId, meetId);
-        //모임에서 나간다
-        //chat_room_user도 사라진다.
 
+        //모임에서 나간다
+        Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
+        if(applyUserStatus != Status.HOST) throw new IllegalArgumentException("죄송합니다.. 방장님은 나가실 수 없으십니다. 모임 삭제를 요청하세요.");
+
+        //모임-유저테이블에서 해당 정보 삭제
+        meetUserService.deleteExitUser(userId, meetId, Status.GUEST);
+
+        //chat_room_user도 사라진다.
+        Meet nowMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 모임 정보입니다."));
+        chatRoomService.deleteExistUser(nowMeet.getChatRoom(), userId);
     }
 
     public String manageMeet(Long userId, Long meetId, boolean applyResult) {
@@ -289,12 +305,24 @@ public class MeetService {
             //모임 참여 인원수 1증가 시킨다.
             updateParticipants(meetId);
 
+            //채팅방에 참여 시킨다
+            chatRoomUserService.save(ChatRoomUser.builder()
+                            .user(users.get(1))
+                            .chatRoom(manageMentMeet.getChatRoom())
+                    .build());
+
+            chatMessageService.save(ChatMessage.builder()
+                    .chatRoom(manageMentMeet.getChatRoom())
+                    .user(null)
+                    .message(users.get(1).getName() + "님이 모임에 참여하셨습니다.")
+                    .timestamp(LocalDateTime.now())
+                    .build());
+
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append("회원님께서 모임(").append(manageMentMeet.getMeetName()).append(")참여 되셨습니다.\n 즐거운 시간 되세요.");
             pushService.send(users.get(0), users.get(1), PushType.MEETACCESS, pushMessage.toString(), "http://i9b310.p.ssafy.");
 
             return userId + "유저 " + meetId + "모임 신청 승인";
-
         } else {//신청 결과가 false
             //모임-유저 테이블에 해당 유저 데이터 삭제
             meetUserService.deleteExitUser(userId, meetId, Status.APPLY);

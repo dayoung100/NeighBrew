@@ -3,6 +3,8 @@ package com.ssafy.backend.repository;
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.entity.MeetUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -20,5 +22,9 @@ public interface MeetUserRepository extends JpaRepository<MeetUser, Long> {
 
     @Transactional
     void deleteByUser_UserIdAndMeet_MeetIdAndStatus(Long userId, Long meetId, Status status);
+
+    @Query("select mu.status from MeetUser mu where mu.user.userId = :userId and mu.meet.meetId = :meetId")
+    Status findStatusByUserIdAndMeetId(@Param("userId")Long userId,
+                                       @Param("meetId")Long meetId);
 }
 

@@ -131,7 +131,6 @@ public class MeetController {
             meetService.applyCancelMeet(userId, meetId);
             return ResponseEntity.ok("모임 신청 취소가 완료됐습니다.");
         }catch(Exception e){
-            e.printStackTrace();
             return ResponseEntity.badRequest().body("모임 신청 취소에 문제가 발생했습니다.\n" + e.getMessage());
         }
     }
