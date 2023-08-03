@@ -53,4 +53,8 @@ public class MeetUserService {
     public void deleteExitUser(Long userId, Long meetId, Status status) {
         meetUserRepository.deleteByUser_UserIdAndMeet_MeetIdAndStatus(userId, meetId, status);
     }
+
+    public Status findStatusByUserIdAndMeetId(Long userId, Long meetId) {
+        return null;
+    }
 }
