@@ -28,8 +28,8 @@ public class SubReviewService {
     }
 
     // 리뷰의 댓글을 작성하는 API
-    public SubReview writeSubReview(Long reviewId, SubReviewDto subReviewDto, Long userId) {
-        DrinkReview drinkReview = drinkReviewRepository.findById(reviewId).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+    public SubReview writeSubReview(SubReviewDto subReviewDto, Long userId) {
+        DrinkReview drinkReview = drinkReviewRepository.findById(subReviewDto.getSubReviewId()).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
         // content가 비어있는지 확인
@@ -57,8 +57,8 @@ public class SubReviewService {
         subReviewRepository.delete(subReview);
     }
 
-    public SubReview updateSubReview(Long subReviewId, SubReviewDto subReviewDto, Long userId) {
-        SubReview subReview = subReviewRepository.findById(subReviewId).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
+    public SubReview updateSubReview(SubReviewDto subReviewDto, Long userId) {
+        SubReview subReview = subReviewRepository.findById(subReviewDto.getDrinkReviewId()).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
         // 댓글 작성자와 수정 요청자가 같은지 확인
