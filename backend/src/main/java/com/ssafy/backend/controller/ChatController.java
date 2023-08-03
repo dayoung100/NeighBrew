@@ -1,12 +1,13 @@
 package com.ssafy.backend.controller;
 
+import aj.org.objectweb.asm.TypeReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.service.ChatDMService;
+import com.ssafy.backend.service.ChatDmRoomService;
 import com.ssafy.backend.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.sql.OracleJoinFragment;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -22,7 +23,7 @@ import java.util.Map;
 public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatRoomService chatRoomService;
-    private final ChatDMService chatDMService;
+    private final ChatDmRoomService chatDmRoomService;
     private final ObjectMapper mapper = new ObjectMapper();
 
     @MessageMapping("/chat/{roomId}/sendMessage")
@@ -39,12 +40,15 @@ public class ChatController {
         messagingTemplate.convertAndSend("/pub/room/" + roomId, res);
     }
 
-//    @MessageMapping("/chat/{senderId}/{receiverId}/")
-//    public void createChatOrSend(@DestinationVariable Long senderId, @DestinationVariable Long receiverId, @Payload String data) throws JsonProcessingException {
-//        Map<String, String> map = mapper.readValue(data, new TypeReference<>() {
-//        });
-//        String message = map.get("message");
-//        String res = chatDMService.createChatOrSend(senderId, receiverId, message);
-//        messagingTemplate.convertAndSend("/pub/chat/" + senderId + "/" + receiverId, res);
-//    }
+    @MessageMapping("/dm/{senderId}/{receiverId}/")
+    public void createChatOrSend(@DestinationVariable Long senderId,
+                                 @DestinationVariable Long receiverId,
+                                 @Payload Map<String, Object> payLoad){
+        String message = (String) payLoad.get("message");
+        Long userId = (Long) payLoad.get("userId");
+        String userNickName = (String) payLoad.get("userNickName");
+        log.info("{}, {}, {}", message, userNickName, userId);
+        //String res = chatDmRoomService.createChatOrSend(senderId, receiverId, message);
+        //messagingTemplate.convertAndSend("/pub/chat/" + senderId + "/" + receiverId, res);
+    }
 }
