@@ -16,28 +16,43 @@ import { Sake } from "../../assets/AllDrinkCategories/Sake";
 import { CraftBeer } from "../../assets/AllDrinkCategories/CraftBeer";
 import { SojuBeer } from "../../assets/AllDrinkCategories/SojuBeer";
 
-const CategoryDiv = styled.div`
+const CategoryDiv = styled.div<{ $canClick: boolean }>`
   display: inline-block;
   border: none;
   margin: 6px;
+  pointer-events: ${(props) => (props.$canClick ? "auto" : "none")};
 `;
 
 type DrinkCategoryProps = {
-  getFunc: any;
+  getFunc: (tagId: number) => void;
+  selectedId?: number;
+  isSearch?: boolean;
 };
 
 /**
  * 주종 카테고리 선택 컴포넌트
- * @property {any} getFunc 태그 아이디 넘겨주는 함수
+ * @property {function} getFunc 태그 아이디 넘겨주는 함수
+ * @property {number} selectedId 선택된 카테고리 아이디
+ * @property {boolean} isSearch 검색용인지 입력폼인지
  */
 const DrinkCategory = (props: DrinkCategoryProps) => {
-  const [chooseCategoryDiv, setChooseCategoryDiv] = useState(0);
+  const [chooseCategoryDiv, setChooseCategoryDiv] = useState(
+    props.selectedId ?? 0
+  );
   //선택한 태그의 아이디를 부모로 넘김
   useEffect(() => {
     props.getFunc(chooseCategoryDiv);
   }, [chooseCategoryDiv]);
 
-  const totalDrink = TotalDrink(chooseCategoryDiv === 0 ? "#f2bc79" : "#F0E5DC");
+  //선택할 수 없으면 회색으로
+  const bgColorSelector = () => {
+    if (chooseCategoryDiv === 0) return "#f2bc79";
+    else if (props.isSearch ?? false) {
+      return "#F0E5DC";
+    } else return "#ECECEC";
+  };
+
+  const totalDrink = TotalDrink(bgColorSelector());
   const whiskey = Whiskey(chooseCategoryDiv === 1 ? "#F2BC79" : "#F0E5DC");
   const tradition = Tradition(chooseCategoryDiv === 2 ? "#F2BC79" : "#F0E5DC");
   const cocktail = Cocktail(chooseCategoryDiv === 3 ? "#F2BC79" : "#F0E5DC");
@@ -53,6 +68,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
           onClick={() => {
             setChooseCategoryDiv(0);
           }}
+          $canClick={props.isSearch ?? false ? true : false}
           autoFocus
         >
           {totalDrink}
@@ -62,6 +78,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
           onClick={() => {
             setChooseCategoryDiv(1);
           }}
+          $canClick={true}
         >
           {whiskey}
         </CategoryDiv>
@@ -69,6 +86,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
           onClick={() => {
             setChooseCategoryDiv(2);
           }}
+          $canClick={true}
         >
           {tradition}
         </CategoryDiv>
@@ -76,6 +94,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
           onClick={() => {
             setChooseCategoryDiv(3);
           }}
+          $canClick={true}
         >
           {cocktail}
         </CategoryDiv>
@@ -85,6 +104,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
           onClick={() => {
             setChooseCategoryDiv(4);
           }}
+          $canClick={true}
         >
           {sake}
         </CategoryDiv>
@@ -92,6 +112,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
           onClick={() => {
             setChooseCategoryDiv(5);
           }}
+          $canClick={true}
         >
           {wine}
         </CategoryDiv>
@@ -99,6 +120,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
           onClick={() => {
             setChooseCategoryDiv(6);
           }}
+          $canClick={true}
         >
           {craftBeer}
         </CategoryDiv>
@@ -106,6 +128,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
           onClick={() => {
             setChooseCategoryDiv(7);
           }}
+          $canClick={true}
         >
           {sojuAndBeer}
         </CategoryDiv>
