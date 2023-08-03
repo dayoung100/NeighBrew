@@ -9,24 +9,25 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Entity
+@Entity(name = "chat_dm_message")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatDMMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "chat_dm_message_id")
     private Long chatDMMessageId;
 
     @ManyToOne
-    @JoinColumn(name = "chatDMId")
+    @JoinColumn(name = "chat_dm_Id")
     private ChatDM chatDM;
 
     @ManyToOne
-    @JoinColumn(name = "senderId")
+    @JoinColumn(name = "sender_id")
     private User sender;
 
     @ManyToOne
-    @JoinColumn(name = "receiverId")
+    @JoinColumn(name = "receiver_id")
     private User receiver;
 
     @Lob

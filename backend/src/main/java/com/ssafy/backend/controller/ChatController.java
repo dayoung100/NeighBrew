@@ -39,12 +39,12 @@ public class ChatController {
         messagingTemplate.convertAndSend("/pub/room/" + roomId, res);
     }
 
-    @MessageMapping("/chat/{senderId}/{receiverId}/")
-    public void createChatOrSend(@DestinationVariable Long senderId, @DestinationVariable Long receiverId, @Payload String data) throws JsonProcessingException {
-        Map<String, String> map = mapper.readValue(data, new TypeReference<>() {
-        });
-        String message = map.get("message");
-        String res = chatDMService.createChatOrSend(senderId, receiverId, message);
-        messagingTemplate.convertAndSend("/pub/chat/" + senderId + "/" + receiverId, res);
-    }
+//    @MessageMapping("/chat/{senderId}/{receiverId}/")
+//    public void createChatOrSend(@DestinationVariable Long senderId, @DestinationVariable Long receiverId, @Payload String data) throws JsonProcessingException {
+//        Map<String, String> map = mapper.readValue(data, new TypeReference<>() {
+//        });
+//        String message = map.get("message");
+//        String res = chatDMService.createChatOrSend(senderId, receiverId, message);
+//        messagingTemplate.convertAndSend("/pub/chat/" + senderId + "/" + receiverId, res);
+//    }
 }

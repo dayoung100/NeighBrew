@@ -9,28 +9,29 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name = "chat_dm")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatDM {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name ="chat_dm_id")
     private Long chatDMId;
 
     @ManyToOne
-    @JoinColumn(name = "user1Id")
-    private User user1;
+    @JoinColumn(name = "sender_Id")
+    private User sender;
 
     @ManyToOne
-    @JoinColumn(name = "user2Id")
-    private User user2;
+    @JoinColumn(name = "receiver_Id")
+    private User receiver;
 
     @OneToMany(mappedBy = "chatDM", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatDMMessage> chatDMMessages = new ArrayList<>();
 
     @Builder
-    public ChatDM(User user1, User user2) {
-        this.user1 = user1;
-        this.user2 = user2;
+    public ChatDM(User sender, User receiver) {
+        this.sender = sender;
+        this.receiver = receiver;
     }
 }

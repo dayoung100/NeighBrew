@@ -11,6 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface ChatDMRepository extends JpaRepository<ChatDM, Long> {
-    @Query("SELECT c FROM ChatDM c WHERE (c.user1 = :user1 AND c.user2 = :user2) OR (c.user1 = :user2 AND c.user2 = :user1)")
-    Optional<ChatDM> findChatRoomByUsers(User user1, User user2);
+//    @Query("SELECT c FROM ChatDM c WHERE (c.user1 = :user1 AND c.user2 = :user2) OR (c.user1 = :user2 AND c.user2 = :user1)")
+//    Optional<ChatDM> findChatRoomByUsers(User user1, User user2);
 }
