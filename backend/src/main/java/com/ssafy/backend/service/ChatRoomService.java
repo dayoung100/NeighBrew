@@ -30,9 +30,6 @@ public class ChatRoomService {
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final UserRepository userRepository;
     private final ObjectMapper mapper = new ObjectMapper();
-
-
-
     public List<ChatRoom> findUserChatRooms(Long userId) {
         return chatRoomUserRepository.findByUser_UserId(userId)
                 .stream()
