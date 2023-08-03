@@ -5,51 +5,48 @@ import whiskeyImage from "../../assets/whiskeyImage.png";
 import ReviewItem from "../components/ReviewItem";
 import styled from "styled-components";
 import reviewIcon from "../../assets/reviewIcon.svg";
-import backIcon from "../../assets/backIcon.svg";
+import { arrowLeftIcon } from "../../assets/AllIcon";
 import sirenIcon from "../../assets/sirenIcon.svg";
 import { callApi } from "../../utils/api";
 import { useState, useEffect } from "react";
 import { Drink, Review } from "../../Type/types";
 import backgroundImg from "../../assets/mdsimg.png";
 
-const InfoDiv = styled.div`
+const WholeDiv = styled.div`
   border-radius: 30px 30px 0px 0px;
   background-color: white;
+  min-height: 70vh;
+  position: relative;
+  z-index: 1;
+  top: -2rem;
+  padding: 1.5rem 2rem;
 `;
 
 const DrinkThumbnail = styled.div`
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(${backgroundImg}) no-repeat center;
+  background-image: url(${backgroundImg});
   background-size: cover;
+  background-repeat: no-repeat;
   width: 100%;
   height: 30vh;
   color: white;
+  display: flex;
+  text-align: left;
 `;
 
-const Tag = styled.div`
+const InfoDiv = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--c-yellow);
-  padding: 1.5% 2%;
-  font-family: "SeoulNamsan";
-  font-size: 7px;
-  border-radius: 10px;
-  color: var(--c-black);
-  &::before {
-    content: "";
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: white;
-    margin-right: 2px;
-  }
-  span {
-    display: flex;
-    justify-content: center;
-    min-width: 30px;
-  }
+`;
+
+const SimpleInfo = styled.div`
+  text-align: center;
+  width: 50vw;
+  word-wrap: break-word;
+`;
+
+const ImageInfo = styled.div`
+  width: 40vh;
+  position: relative;
+  bottom: 70px;
 `;
 
 const CreateReviewDiv = styled.div`
@@ -61,18 +58,8 @@ const CreateReviewDiv = styled.div`
 `;
 
 const NavbarBackIcon = styled.div`
-  margin-left: 10px;
-  margin-top: 12px;
-`;
-
-const NavbarSirenIcon = styled.div`
-  margin-right: 10px;
-  margin-top: 6px;
-`;
-
-const DrinkpostDetailNavbar = styled.div`
-  display: flex;
-  justify-content: space-between;
+  margin-left: 1rem;
+  margin-top: 1rem;
 `;
 
 const CreateReviewButton = styled.div`
@@ -110,7 +97,7 @@ const DescriptionP = styled.p`
   }
 `;
 
-const MoreButton = styled.button`
+const MoreButton = styled.div`
   max-height: 2rem;
   line-height: 2rem;
   border: none;
@@ -130,17 +117,22 @@ const MoreButton = styled.button`
 const DrinkpostDetail = () => {
   const { drinkId } = useParams();
   const navigate = useNavigate();
+  const ArrowLeftIcon = arrowLeftIcon("white");
   const [showMore, setShowMore] = useState(false);
   const [detail, setDetail] = useState<Drink>();
   const [reviewList, setReviewList] = useState<Review[]>([]);
   const toggleShowMore = () => {
     setShowMore(!showMore);
   };
+  const toReviewCreate = () => {
+    navigate(`/drinkpost/${detail.drinkId}/review/create`);
+  };
   // const drinkUrl = `http://34.64.126.58:5173/drink/${drinkId}`;
   // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
       .then(res => {
+        console.log(res.data);
         setDetail(res.data);
       })
       .catch(err => console.log(err));
@@ -169,62 +161,80 @@ const DrinkpostDetail = () => {
 
   return (
     <>
-      <Navbar></Navbar>
-      <DrinkpostDetailNavbar>
-        <NavbarBackIcon onClick={() => navigate("/drinkpost/")}>
-          <img src={backIcon} alt="" />
-        </NavbarBackIcon>
-        <h2 style={{ margin: "12px 0px 8px 23px" }}>{detail?.name}</h2>
-        <NavbarSirenIcon>
-          <img src={sirenIcon} alt="" />
-        </NavbarSirenIcon>
-      </DrinkpostDetailNavbar>
-      <img
-        src={transImage(detail?.image)}
-        alt=""
-        style={{ width: "80px", height: "300px", margin: "30px" }}
-      />
-      <div className="description" style={{ textAlign: "start", margin: "30px" }}>
-        <p>
-          <b>종류</b> : 종류를 받는 부분
-        </p>
-        <p>
-          <b>도수</b> : {detail?.degree}도
-        </p>
-        <DescriptionP className={showMore ? "show" : ""}>
-          <b>설명</b> : {detail?.description}
-        </DescriptionP>
-        {detail?.description.split("\n").length > 4 && (
-          <MoreButton onClick={toggleShowMore} className={showMore ? "hide" : ""}>
-            ...더보기
-          </MoreButton>
-        )}
-      </div>
-      <div className="reviewBox">
-        <CreateReviewDiv>
-          <IconAndTextDiv>
-            <img src={reviewIcon} alt="reviewIcon" />
-            <p>후기 </p>
-            <p>{reviewList.length}</p>
-          </IconAndTextDiv>
-          <CreateReviewButton onClick={() => navigate(`/drinkpost/${drinkId}/review/create`)}>
-            <span style={{ padding: "10px 0px 10px" }}>후기 작성하기</span>
-          </CreateReviewButton>
-        </CreateReviewDiv>
-        <div
-          className="reviewList"
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            margin: "0px 30px 0px 30px",
-            justifyContent: "space-between",
-          }}
-        >
-          {reviewList.map(review => {
-            return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
-          })}
+      <DrinkThumbnail>
+        <NavbarBackIcon onClick={() => navigate("/drinkpost/")}>{ArrowLeftIcon}</NavbarBackIcon>
+      </DrinkThumbnail>
+      <WholeDiv>
+        <InfoDiv>
+          <SimpleInfo>
+            <h3 style={{ margin: "20px 0px 20px 0px" }}>{detail?.name}</h3>
+            <div style={{ textAlign: "start", paddingLeft: "12vw" }}>
+              <div>
+                <b style={{ paddingRight: "2vw" }}>주종</b> {detail?.tagId}
+              </div>
+              <div style={{ paddingTop: "1vh" }}>
+                <b style={{ paddingRight: "2vw" }}>도수</b> {detail?.degree}%
+              </div>
+            </div>
+            <div
+              onClick={toReviewCreate}
+              style={{
+                width: "24vw",
+                height: "8vh",
+                backgroundColor: "var(--c-yellow)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "20px",
+                marginTop: "2vh",
+                marginLeft: "8vw",
+                cursor: "pointer",
+              }}
+            >
+              <b>후기 {reviewList.length}</b>
+              <div style={{ marginLeft: "6%", marginTop: "4%" }}>
+                <img src={reviewIcon} alt="" />
+              </div>
+            </div>
+          </SimpleInfo>
+          <ImageInfo>
+            <img src={transImage(detail?.image)} alt="" style={{ width: "15vh" }} />
+          </ImageInfo>
+        </InfoDiv>
+
+        <div style={{ position: "relative", bottom: "80px" }}>
+          <DescriptionP className={showMore ? "show" : ""}>
+            <hr />
+            {detail?.description}
+          </DescriptionP>
+          {detail?.description.split("\n").length > 4 && (
+            <MoreButton
+              onClick={toggleShowMore}
+              className={showMore ? "hide" : ""}
+              style={{ textAlign: "start" }}
+            >
+              ...더보기
+            </MoreButton>
+          )}
         </div>
-      </div>
+
+        <div className="reviewBox" style={{ position: "relative", bottom: "80px" }}>
+          <h1 style={{ textAlign: "start", marginBottom: "10px" }}>후기</h1>
+          <div
+            className="reviewList"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+
+              justifyContent: "space-between",
+            }}
+          >
+            {reviewList.map(review => {
+              return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
+            })}
+          </div>
+        </div>
+      </WholeDiv>
       {/* <Footer></Footer> */}
     </>
   );

@@ -37,7 +37,7 @@ const drinkpostTotal = () => {
     console.log(`감지결과 : ${isIntersecting}`);
     // isIntersecting이 true면 감지했다는 뜻임
     if (isIntersecting) {
-      if (page < 7) {
+      if (page < 10) {
         setTimeout(() => {
           callApi("get", `api/drink?page=${page}&size=12`)
             .then(res => {
