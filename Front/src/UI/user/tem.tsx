@@ -5,9 +5,9 @@ import styled from "styled-components";
 import { meetingicon, brewery } from "../../assets/AllIcon";
 import temgif from "../../assets/tempgif.gif";
 import bottle from "../../assets/bottle.png";
-import liver from "../../assets/liver.png";
+import liver from "../../assets/liver.svg";
 import siren from "../../assets/siren.png";
-import Navbar from "./Navbar";
+import Navbar from "../navbar/Navbar";
 import MeetingMy from "./MeetingMyUseInUser";
 import Footer from "../footer/Footer";
 import Modal from "react-modal";
@@ -28,7 +28,6 @@ const MyPage = () => {
     profile: "한줄설명",
     userId: 0,
     nickname: "닉네임",
-    drinkcount: 0,
   }); // 유저 정보
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const [following, setFollowing] = useState(0); // 팔로잉,팔로워 목록
@@ -71,11 +70,7 @@ const MyPage = () => {
       setUserData(userData => ({ ...userData, following: res.data.length }));
     });
   };
-  const myDrinks = () => {
-    callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
-      setUserData(userData => ({ ...userData, drinkcount: res.data.length }));
-    });
-  };
+
   const reportHandler = () => {
     alert("신고되었습니다.");
   };
@@ -125,30 +120,13 @@ const MyPage = () => {
     e.preventDefault();
     setBirth(e.target.value);
   };
-  const modalHandler = () => {
-    setDeleteModalOn(true);
-  };
   useEffect(() => {
     refresh();
     userInfo();
     followers();
-    myDrinks();
   }, []);
 
-  const [imgFile, setImgFile] = useState(null);
   const imgRef = useRef<HTMLInputElement>(null);
-
-  //이미지 파일 업로드 시 미리보기
-  const saveImgFile = () => {
-    const file = imgRef.current.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        setImgFile(reader.result);
-      }
-    };
-  };
 
   const changeUserInfo = () => {
     const file = imgRef.current.files[0];
@@ -171,7 +149,6 @@ const MyPage = () => {
         .catch(err => console.log(err));
     }
     if (userData.nickname == nickname && userData.intro == intro && userData.birth == birth) return;
-    console.log(nickname, intro, birth);
     callApi("put", "api/user/guard", {
       nickname: nickname,
       intro: intro,
@@ -183,112 +160,105 @@ const MyPage = () => {
       .then(() => {
         followers();
       })
-      .catch(err => {
-        // console.log(err);
-        userInfo();
-        if (err.response.data == "중복") {
-          alert("중복된 닉네임입니다. 다시 입력해주세요.");
-        }
-      });
+      .catch(err => console.log(err));
   };
 
   return (
     <>
       <header>
-        <Navbar modalHandler={modalHandler} />
+        <Navbar />
       </header>
       <div
         style={{
           minHeight: "200px",
           display: "flex",
           flexDirection: "column",
+          justifyContent: "center",
         }}
       >
         <UserDiv>
-          <FlexDivRow>
-            <ImgDiv>
-              <Img src={userData.profile == "no image" ? temgif : userData.profile}></Img>
-            </ImgDiv>
-            <UserImgDiv>
-              <p style={{ marginBottom: "0.5rem" }}>{userData!.liverPoint} IU/L</p>
-              <LiverDiv liverpoint={userData!.liverPoint ?? 40}>
-                <Img src={liver} alt="" />
-              </LiverDiv>
-              <p style={{ marginTop: "0.2rem" }}>간수치</p>
-            </UserImgDiv>
-            <UserImgDiv>
-              <p style={{ marginBottom: "0.5rem" }}>{userData.drinkcount}병</p>
-              <BottleDiv>
-                <Img src={bottle} alt="" />
-              </BottleDiv>
-              <p style={{ marginTop: "0.2rem" }}>술병</p>
-            </UserImgDiv>
-          </FlexDivRow>
+          <ImgDiv>
+            <Img src={userData.profile == "no image" ? temgif : userData.profile}></Img>
+          </ImgDiv>
+          <ColumnDiv>
+            <p>{userData!.liverPoint} IU/L</p>
+            <LiverDiv liverpoint={userData!.liverPoint}>
+              <img src={liver} alt="" />
+            </LiverDiv>
+            <p>간수치</p>
+          </ColumnDiv>
+          <ColumnDiv>
+            <p>4병</p>
+            <img style={{ width: "16.107px", height: "38.071px" }} src={bottle} alt="" />
+            <p>술병수</p>
+          </ColumnDiv>
+          <GripDiv>
+            <ColumnDiv
+              style={{
+                gridColumn: "1/3",
+                gridRow: "1/3",
+                cursor: "pointer",
+              }}
+              onClick={goFollowPage}
+            >
+              <p>{userData.following ?? 0}</p>
+              <p>팔로우</p>
+            </ColumnDiv>
+            <ColumnDiv
+              style={{
+                gridColumn: "3/5",
+                gridRow: "1/3",
+                cursor: "pointer",
+              }}
+              onClick={goFollowerPage}
+            >
+              <p>{userData.follower ?? 0}</p>
+              <p>팔로워</p>
+            </ColumnDiv>
+            <button
+              style={{
+                gridColumn: "1/4",
+                gridRow: "3/3",
+                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+                border: "none",
+                borderRadius: "16px",
+                fontFamily: "JejuGothic",
+                cursor: "pointer",
+              }}
+              onClick={followHandler}
+            >
+              {following === 0 ? "팔로우" : "언팔로우"}
+            </button>
+
+            <img
+              src={siren}
+              style={{ gridColumn: "4/5", gridRow: "3/3", cursor: "pointer" }}
+              onClick={reportHandler}
+            />
+          </GripDiv>
         </UserDiv>
-        <p
-          style={{
-            textAlign: "left",
-            marginLeft: "2rem",
-            fontFamily: "SeoulNamsan",
-            fontWeight: "800",
-            fontSize: "1.3rem",
-          }}
-        >
-          {userData.nickname}
-        </p>
+
+        <UserInfoDiv>
+          <p style={{ marginLeft: "3rem", marginRight: "4rem" }}>{userData!.nickname}</p>
+        </UserInfoDiv>
         <div
           style={{
+            fontSize: "14px",
+            fontFamily: "JejuGothic",
             textAlign: "left",
-            marginLeft: "2rem",
-            fontSize: "0.8rem",
-            fontFamily: "Jejugothic",
-            marginBottom: "0.5rem",
+            margin: "0 1rem",
+            display: "flex",
           }}
         >
-          <span onClick={goFollowPage}>팔로잉 {userData.following} &nbsp;&nbsp; </span>{" "}
-          <span onClick={goFollowerPage}>팔로워 {userData.follower}</span>
-        </div>
-        <div
-          style={{
-            textAlign: "left",
-            marginLeft: "2rem",
-            fontSize: "0.8rem",
-            marginBottom: "1rem",
-          }}
-        >
-          <p>{userData.intro}</p>
-        </div>
-        <FollowDiv>
+          <p>{userData.intro ?? "한 줄 소개를 설정해 주세요"}</p>
           <button
-            style={{
-              backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
-              border: "none",
-              borderRadius: "8px",
-              fontFamily: "JejuGothic",
-              cursor: "pointer",
-              width: "40%",
-              margin: "0 1rem",
+            onClick={() => {
+              setDeleteModalOn(true);
             }}
-            onClick={followHandler}
           >
-            {following === 0 ? "팔로우" : "언팔로우"}
+            프로필 수정
           </button>
-          <button
-            style={{
-              border: "none",
-              borderRadius: "8px",
-              fontFamily: "JejuGothic",
-              cursor: "pointer",
-              width: "40%",
-            }}
-            onClick={followHandler}
-          >
-            메세지
-          </button>
-          <button style={{ margin: "0 1rem", width: "10%" }}>
-            {/* <img src={siren} alt="" /> */}
-          </button>
-        </FollowDiv>
+        </div>
       </div>
       <div>
         <Button
@@ -337,37 +307,15 @@ const MyPage = () => {
           <label htmlFor="date">생년월일</label>
           <input type="date" id="date" value={birth} onInput={birthHandler} max="2005-01-01" />
         </FlexDiv>
-        <QuestionDiv style={{ textAlign: "left", marginBottom: "2rem" }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Title style={{ margin: "0" }}>대표 이미지</Title>
-            <ImgInput>
-              <label htmlFor="img_file">
-                <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
-              </label>
-              <input
-                type="file"
-                id="img_file"
-                accept="image/jpg, image/png, image/jpeg"
-                onChange={saveImgFile}
-                ref={imgRef}
-              />
-            </ImgInput>
-          </div>
-          {imgFile && <ImageArea src={imgFile}></ImageArea>}
-        </QuestionDiv>
-        <Button
+        <button
           onClick={() => {
             changeUserInfo();
             setDeleteModalOn(false);
           }}
-          style={{
-            backgroundColor: "var(--c-yellow)",
-            color: "var(--c-black)",
-            borderRadius: "8px",
-          }}
         >
           유저 정보 변경
-        </Button>
+        </button>
+        <input type="file" ref={imgRef} />
       </Modal>
       <footer>
         <Footer />
@@ -377,74 +325,20 @@ const MyPage = () => {
 };
 
 export default MyPage;
-const QuestionDiv = styled.div`
-  margin-top: 1.5rem;
-`;
 
-const Title = styled.div`
-  font-family: "JejuGothic";
-  font-size: 20px;
-  text-align: left;
-  margin-bottom: 0.5rem;
-`;
-
-const ImgInput = styled.div`
-  // label로 대신하고 input은 숨기기 위한 css
-  input[type="file"] {
-    position: absolute;
-    width: 0;
-    height: 0;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
+const CateDiv = styled.div`
+  height: 10rem;
+  margin-top: 1rem;
+  div {
+    margin: 0;
+  }
+  .first,
+  .second {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 0.5rem;
   }
 `;
-
-const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
-  background-size: cover;
-  border-radius: 50%;
-  position: relative;
-  width: 30%;
-  padding-bottom: 30%;
-  overflow: hidden;
-`;
-// user 이미지, 간수치, 술장이 들어갈 div
-const FlexDivRow = styled.div`
-  /* width: 100%; */
-  display: flex;
-  padding: 0.5rem;
-  align-items: center;
-`;
-
-const FollowDiv = styled.div`
-  display: flex;
-  width: 100%;
-  height: 1.5rem;
-  margin-bottom: 1rem;
-  /* min-height: 1rem; */
-`;
-// 간수치, 주종이 들어갈 imgdiv
-const UserImgDiv = styled.div`
-  width: 25%;
-  height: 100%;
-  min-height: 5rem;
-  max-height: 6rem;
-  min-width: 3rem;
-  object-fit: cover;
-  max-width: 4rem;
-  overflow: hidden;
-  padding: 0.5rem;
-  margin: 0 0.5rem;
-  background-color: var(--c-lightgray);
-  border-radius: 1rem;
-  font-size: 12px;
-  font-family: "JejuGothic";
-  font-weight: 500;
-`;
-
 const Button = styled.button`
   width: 40%;
   display: inline-block;
@@ -456,16 +350,20 @@ const Button = styled.button`
   /* margin: 1rem auto; */
 `;
 
+const Div = styled.div`
+  width: 100%;
+  background-color: var(--c-lightgray);
+  min-height: 800px;
+`;
+
 const ImgDiv = styled.div`
-  width: 30%;
+  width: 20%;
   height: 50%;
   overflow: hidden;
-  min-width: 8rem;
   aspect-ratio: 1/1;
   border-radius: 50%;
   float: left;
-  margin-right: 3rem;
-  /* margin: 0 1rem; */
+  margin-right: 1rem;
 `;
 
 const Img = styled.img`
@@ -480,15 +378,46 @@ const UserDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 `;
 
 // 간수치, 술병 등의 div
+const ColumnDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  font-size: 14px;
+  align-items: center;
+  font-size: 14px;
+  font-family: "JejuGothic";
+`;
+const GripDiv = styled.div`
+  display: grid;
+  /* grid-template-columns: 1fr 1fr; */
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 2fr 1fr;
+  font-size: 14px;
+  font-family: "JejuGothic";
+`;
+const UserInfoDiv = styled.div`
+  display: flex;
+  font-size: 14px;
+  font-family: "JejuGothic";
+  margin-bottom: 1rem;
+  align-items: center;
+`;
+const TagDiv = styled.div`
+  border-radius: 16px;
+  background-color: var(--c-yellow);
+  margin: auto 0.5rem;
+  padding: 0.3rem;
+  font-size: 12px;
+  width: 4rem;
+`;
 const LiverDiv = styled.div<{ liverpoint: number }>`
-  /* position: relative; */
-  /* height: 100%; */
-  overflow: hidden;
-  background-image: linear-gradient(to top, #e591a1 50%, #ececec 50%);
+  position: relative;
+  height: 100%;
+  background-image: linear-gradient(to top, #e24965 50%, #fff 50%);
   background-size: ${props => "50% " + (props.liverpoint + 80) + "%"};
   /* background-size: 50% 150%; */
   animation: fillAnimation 5s forwards;
@@ -500,33 +429,6 @@ const LiverDiv = styled.div<{ liverpoint: number }>`
       background-position: 0 100%;
     }
   }
-
-  aspect-ratio: 1.2/1; /* Added to set the aspect ratio to 1:1 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-const BottleDiv = styled.div<{}>`
-  /* position: relative; */
-  /* height: 100%; */
-  overflow: hidden;
-  background-image: linear-gradient(to top, #d5a002 50%, #ececec 50%);
-  /* background-size: ${props => "50% " + (props.liverpoint + 80) + "%"}; */
-  background-size: 20% 80%;
-  animation: fillAnimation 5s forwards;
-  @keyframes fillAnimation {
-    0% {
-      background-position: 0 0;
-    }
-    100% {
-      background-position: 0 100%;
-    }
-  }
-
-  aspect-ratio: 1.2/1; /* Added to set the aspect ratio to 1:1 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 const WhiteModal = {
   content: {
