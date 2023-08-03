@@ -17,6 +17,7 @@ import { MeetDetail } from "../../Type/types";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
+import Modal from "react-modal";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -148,6 +149,28 @@ const InfoTextArea = styled.textarea`
   resize: none;
 `;
 
+//TODO: 모달 디자인이니까 공통 변수로 빼는게 나을 듯??
+const WhiteModal = {
+  content: {
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "15rem",
+    height: "6rem",
+    padding: "0.5rem 1rem",
+    borderRadius: "15px",
+    background: "white",
+    textAlign: "center",
+    fontFamily: "SeoulNamsan",
+    display: "flex",
+    alignItems: "center",
+  },
+  overlay: {
+    background: "rgba(0, 0, 0, 0.5)",
+    zIndex: "11",
+  },
+};
+
 //TODO: 초기값을 context api로 만들던가 해서 공유하기
 const initialData: MeetDetail = {
   meetDto: {
@@ -191,6 +214,9 @@ const MeetingInfoManage = () => {
   const GoMeetDetailHandler = () => {
     navigate(`/meet/${meetId}`);
   };
+  //모달 관련
+  const [isModalOn, setIsModalOn] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(""); //모달에 띄울 에러메시지
 
   //미팅 기존 정보
   const [meetData, setMeetData] = useState<MeetDetail>(initialData);
@@ -288,13 +314,49 @@ const MeetingInfoManage = () => {
   //각종 글자수 제한
   //나이, 간수치 등의 최대 최소 제한 확인
 
+  //필수 입력값 검증
+  //TODO: try-catch로 일단 해결
+  // const checkRequiredValue = () => {
+  //   let isValid: boolean = true;
+  //   //필수 입력값 관리용 리스트
+  //   const required = [
+  //     meetTitle,
+  //     maxParticipants,
+  //     date,
+  //     time,
+  //     selectedCategory,
+  //     sido,
+  //     gugun,
+  //     dong,
+  //     selectedDrink.drinkId,
+  //   ];
+  //   //필수 입력값이 전부 있는가?
+  //   required.forEach((value) => {
+  //     if (value == null) isValid = false;
+  //     if (typeof value === "number" && value === 0) isValid = false;
+  //     if (typeof value === "string" && value === "") isValid = false;
+  //   });
+  //   return isValid;
+  // };
+
+  //필수가 아닌 입력값 검증
+  const checkNonRequiredValue = (value: string | number) => {
+    //숫자 값이 없는지 -> 있어야만 폼데이터에 넣음
+    let res = value !== 0 && value != null && !Number.isNaN(value);
+    return res;
+  };
+
   //수정 완료 버튼 클릭 api
   //TODO: 필수 입력값은 입력했는지 체크
-  //TODO: 필수 입력값이 아닌 것들은 값이 없으면 null로 변경
   const updateMeeting = async () => {
+    // //필수 입력값이 다 들어 있는지 확인
+    // if (!checkRequiredValue()) {
+    //   alert("입력값을 다 넣어주세요");
+    //   return;
+    // }
     let f = new FormData();
+
     //필수 입력o
-    //입력 체크 필요
     f.append("meetName", meetTitle);
     f.append("maxParticipants", maxParticipants.toString());
     f.append("meetDate", `${date}T${time}:00`);
@@ -302,25 +364,34 @@ const MeetingInfoManage = () => {
     f.append("sido", sido);
     f.append("gugun", gugun);
     f.append("dong", dong);
-    f.append("drinkId", selectedDrink.drinkId.toString());
+    f.append(
+      "drinkId",
+      selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
+    );
     //필수 입력x
-    if (liverLimit !== 0 && liverLimit != null && !Number.isNaN(liverLimit)) {
+    if (checkNonRequiredValue(liverLimit)) {
       f.append("minLiverPoint", liverLimit.toString());
     }
-    if (minAge !== 0 && minAge != null && !Number.isNaN(minAge)) {
+    if (checkNonRequiredValue(minAge)) {
       f.append("minAge", minAge.toString());
     }
-    if (maxAge !== 0 && maxAge != null && !Number.isNaN(maxAge)) {
+    if (checkNonRequiredValue(maxAge)) {
       f.append("maxAge", maxAge.toString());
     }
     f.append("description", meetDesc);
     f.append("image", file);
 
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
-    promise.then((res) => {
-      console.dir(res.data);
-      GoMeetDetailHandler(); //모임 상세 페이지로 이동
-    });
+    promise
+      .then((res) => {
+        console.dir(res.data);
+        GoMeetDetailHandler(); //모임 상세 페이지로 이동
+      })
+      .catch((error) => {
+        console.dir(error);
+        setErrorMsg(error.response.data);
+        setIsModalOn(true);
+      });
   };
 
   //검색 결과 창 애니메이션 용
@@ -618,6 +689,13 @@ const MeetingInfoManage = () => {
           }}
         />
       </footer>
+      <Modal
+        isOpen={isModalOn}
+        onRequestClose={() => setIsModalOn(false)}
+        style={WhiteModal}
+      >
+        <div>{errorMsg}</div>
+      </Modal>
     </div>
   );
 };
