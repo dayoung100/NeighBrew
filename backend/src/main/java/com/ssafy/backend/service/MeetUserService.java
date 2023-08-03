@@ -45,8 +45,6 @@ public class MeetUserService {
 
         //상태를 변경한다.
         findMeetUser.setStatus(status);
-
-        //
         meetUserRepository.save(findMeetUser);
     }
 
@@ -56,5 +54,9 @@ public class MeetUserService {
 
     public Status findStatusByUserIdAndMeetId(Long userId, Long meetId) {
         return null;
+    }
+
+    public Status findUserStatus(Long userId, Long meetId) {
+        return meetUserRepository.findStatusByUserIdAndMeetId(userId, meetId);
     }
 }
