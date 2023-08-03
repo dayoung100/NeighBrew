@@ -12,7 +12,7 @@ import { useState } from "react";
 const Card = styled.div`
   flex-direction: column;
   display: flex;
-  width: 30%;
+  width: 30vw;
   height: 230px;
   margin: 10px 3px 10px 3px;
   border-radius: 14px;
@@ -62,24 +62,19 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
       string: str.slice(0, limit),
     };
   };
-  const tagHandler = tagId => {
-    if (tagId === 1) {
-      return "양주";
-    } else if (tagId === 2) {
-      return "전통주";
-    } else if (tagId === 3) {
-      return "칵테일";
-    } else if (tagId === 4) {
-      return "사케";
-    } else if (tagId === 5) {
-      return "와인";
-    } else if (tagId === 6) {
-      return "수제맥주";
-    } else if (tagId === 7) {
-      return "소주/맥주";
-    } else if (tagId === 8) {
-    }
-  };
+  function getTagName(tagId: number) {
+    const tag = [
+      { tagId: 0, tagName: "전체" },
+      { tagId: 1, tagName: "양주" },
+      { tagId: 2, tagName: "전통주" },
+      { tagId: 3, tagName: "전체" },
+      { tagId: 4, tagName: "사케" },
+      { tagId: 5, tagName: "와인" },
+      { tagId: 6, tagName: "수제맥주" },
+      { tagId: 7, tagName: "소주/맥주" },
+    ];
+    return tag[tagId].tagName;
+  }
 
   const transImage = (img: string) => {
     if (img === "no image") {
@@ -98,7 +93,7 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
   return (
     <Card onClick={() => moveToDrinkDetailHandler()}>
       <TopTag>
-        <Tag>{tagHandler(drink.tagId)}</Tag>
+        <Tag>{getTagName(drink.tagId)}</Tag>
       </TopTag>
       <CardImage src={transImage(drink.image)}></CardImage>
       <NameCard>

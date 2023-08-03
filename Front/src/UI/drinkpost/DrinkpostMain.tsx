@@ -3,23 +3,23 @@ import mdsPick from "../../assets/mdsimg.png";
 import totaldrink from "../../assets/totaldrink.png";
 import { useNavigate } from "react-router-dom";
 import darkwood from "../../assets/darkwood.jpg";
-import Navbar from "../navbar/Navbar";
+import Navbar from "../navbar/NavbarForDrinkpost";
 import Footer from "../footer/Footer";
 
 const MdsDiv = styled.div`
-  width: 100%;
+  width: 96%;
   height: 192px;
   border-radius: 20px 20px 0px 0px;
   background-image: url(${mdsPick});
   /* background-size: cover; */
   background-repeat: no-repeat;
   background-position: center;
-  margin: 0px 10px 0px 10px;
+  margin: 0px 2vw 0px 2vw;
   text-align: start;
 `;
 
 const DarkWood = styled.div`
-  width: 105%;
+  width: 100%;
   background-image: url(${darkwood});
   background-repeat: no-repeat;
   background-position: center;
@@ -27,7 +27,7 @@ const DarkWood = styled.div`
 `;
 
 const Total = styled.div`
-  max-width: 100%;
+  max-width: 100vw;
   height: 120px;
   margin: 0px 10px 0px 10px;
   background-image: url(${totaldrink});
@@ -43,11 +43,14 @@ const drinkpostMain = () => {
   const clickTotalDrink = () => {
     navigate("/drinkpost/total");
   };
+  const toDrinkSearch = () => {
+    navigate("/drinkpost/search");
+  };
 
   return (
     <>
       <div>
-        <Navbar></Navbar>
+        <Navbar toDrinkSearch={toDrinkSearch}></Navbar>
         <MdsDiv>
           <h3 style={{ margin: "0px 0px 0px 10px", padding: "10px", color: "white" }}>MD's Pick</h3>
         </MdsDiv>
