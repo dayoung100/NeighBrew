@@ -36,6 +36,8 @@ public class ChatRoomService {
                 .map(ChatRoomUser::getChatRoom)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
     public ChatRoom createChatRoom(Map<String, Object> map) {
         ChatRoom room = ChatRoom.builder()
                 .chatRoomName((String) map.get("name"))
