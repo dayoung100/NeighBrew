@@ -17,7 +17,9 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatRoomId;
 
-    @Column(nullable = false, length = 100)
+
+    @Lob
+    @Column(nullable = false)
     private String chatRoomName;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
