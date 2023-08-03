@@ -4,6 +4,7 @@ import com.ssafy.backend.entity.ChatRoom;
 import com.ssafy.backend.entity.ChatRoomUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,4 +16,5 @@ public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, Long
     List<ChatRoomUser> findByUser_UserId(Long userId);
 
     void deleteByUser_UserIdAndChatRoom_ChatRoomId(Long userId, Long roomId);
+
 }

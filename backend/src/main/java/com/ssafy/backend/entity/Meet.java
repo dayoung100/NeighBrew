@@ -99,12 +99,9 @@ public class Meet {
     }
 
     public void update(Meet meet) {
-        this.meetId = meet.getMeetId();
         this.meetName = meet.getMeetName();
         this.description = meet.getDescription();
-        this.nowParticipants = meet.getNowParticipants();
         this.maxParticipants = meet.getMaxParticipants();
-        this.hostId = meet.getHostId();
         this.meetDate = meet.getMeetDate();
         this.tag = meet.getTag();
         this.sido = meet.getSido();
