@@ -28,4 +28,11 @@ public class ChatRoomController {
     public ResponseEntity<?> getUserChatRooms(@PathVariable Long userId) {
         return ResponseEntity.ok(chatRoomService.findUserChatRooms(userId));
     }
+
+    // 채팅방 유저 조회
+    @GetMapping("/{chatRoomId}/users")
+    public ResponseEntity<?> getChatRoomUsers(@PathVariable Long chatRoomId) {
+        return ResponseEntity.ok(chatRoomService.getUsersInChatRoom(chatRoomId));
+    }
+
 }
