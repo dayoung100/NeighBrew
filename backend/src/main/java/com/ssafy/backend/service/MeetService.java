@@ -112,8 +112,10 @@ public class MeetService {
         log.info("모임 생성 : {} ", meetDto);
 
         try {
-            boolean imgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
-            if (imgExist) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+            if(multipartFile != null){
+                boolean imgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
+                if (imgExist) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+            }
 
             ChatRoom createChatRoom = chatRoomService.save(ChatRoom.builder()
                     .chatRoomName(meetDto.getMeetName() + "모임의 채팅방")
@@ -168,12 +170,15 @@ public class MeetService {
         User host = userService.findByUserId(userId);
 
         try{
-            boolean imgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
+            if(multipartFile != null){
+                boolean imgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
 
-            if (imgExist) { //업로드할 파일이 있으면 DB와 S3에 존재하는 이미지를 제거한다/
-                s3Service.deleteImg(prevMeetImgSrc);
-                meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-            } else meetDto.setImgSrc(prevMeetImgSrc);
+                if (imgExist) { //업로드할 파일이 있으면 DB와 S3에 존재하는 이미지를 제거한다/
+                    s3Service.deleteImg(prevMeetImgSrc);
+                    meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+                } else meetDto.setImgSrc(prevMeetImgSrc);
+            }else meetDto.setImgSrc(prevMeetImgSrc);
+
 
             //기존 데이터를 가져온 뒤 업데이트 한다.
             Meet updateMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
@@ -220,6 +225,7 @@ public class MeetService {
 
             //마지막에 모임 정보를 제거한다.
             meetRepository.findById(meetId).ifPresent(meetRepository::delete);
+
 
             //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
             for (User user : meetUser.getUsers()) {
