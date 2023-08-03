@@ -323,7 +323,8 @@ const MeetingInfoManage = () => {
     //날짜와 시간-둘은 합쳐져서 try-catch로 잡지 못함
     if (date === "") {
       ++hasError;
-      errMsg += `날짜를 입력해주세요.\n`;
+      errMsg += `날짜를 입력해주세요.
+      `;
     }
     if (time === "") {
       ++hasError;
@@ -346,7 +347,6 @@ const MeetingInfoManage = () => {
   };
 
   //수정 완료 버튼 클릭 api
-  //TODO: 필수 입력값은 입력했는지 체크
   const updateMeeting = async () => {
     //api 요청 전에 확인
     if (!checkRequiredValue()) {
@@ -455,15 +455,13 @@ const MeetingInfoManage = () => {
           <Title>우리가 마실 것은</Title>
           <SubTitle>카테고리를 선택해주세요</SubTitle>
           <CateDiv>
-            {selectedCategory !== 0 && (
-              <DrinkCategory
-                getFunc={getDrinkCategory}
-                selectedId={selectedCategory}
-                isSearch={false}
-              />
-            )}
+            <DrinkCategory
+              key={selectedCategory}
+              getFunc={getDrinkCategory}
+              selectedId={selectedCategory}
+              isSearch={false}
+            />
           </CateDiv>
-
           <div ref={parent}>
             {selectedDrink.drinkId === 0 && (
               <div>
@@ -488,16 +486,26 @@ const MeetingInfoManage = () => {
                         flexGrow: "1",
                       }}
                     >
-                      {searchResultList.map((res) => {
-                        return (
+                      {searchResultList.length === 0 ? (
+                        <div
+                          style={{
+                            textAlign: "center",
+                            paddingTop: "2rem",
+                            fontFamily: "SeoulNamsan",
+                          }}
+                        >
+                          검색 결과가 없습니다.
+                        </div>
+                      ) : (
+                        searchResultList.map((res) => (
                           <div onClick={() => getDrink(res)} key={res.drinkId}>
                             <OneLineListItem
                               content={res.name}
                               tag={getTagName(res.tagId)}
                             ></OneLineListItem>
                           </div>
-                        );
-                      })}
+                        ))
+                      )}
                     </div>
                     <div
                       style={{
@@ -692,7 +700,7 @@ const MeetingInfoManage = () => {
         onRequestClose={() => setIsModalOn(false)}
         style={WhiteModal}
       >
-        <div>{errorMsg}</div>
+        <div style={{ whiteSpace: "pre-line" }}>{errorMsg}</div>
       </Modal>
     </div>
   );

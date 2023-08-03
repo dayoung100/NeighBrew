@@ -33,7 +33,7 @@ type DrinkCategoryProps = {
  * 주종 카테고리 선택 컴포넌트
  * @property {function} getFunc 태그 아이디 넘겨주는 함수
  * @property {number} selectedId 선택된 카테고리 아이디
- * @property {boolean} isSearch 검색용인지 입력폼인지
+ * @property {boolean} isSearch 검색용인지 입력폼인지.디폴트는 true
  */
 const DrinkCategory = (props: DrinkCategoryProps) => {
   const [chooseCategoryDiv, setChooseCategoryDiv] = useState(
@@ -47,7 +47,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
   //선택할 수 없으면 회색으로
   const bgColorSelector = () => {
     if (chooseCategoryDiv === 0) return "#f2bc79";
-    else if (props.isSearch ?? false) {
+    else if (props.isSearch ?? true) {
       return "#F0E5DC";
     } else return "#ECECEC";
   };
@@ -68,7 +68,7 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
           onClick={() => {
             setChooseCategoryDiv(0);
           }}
-          $canClick={props.isSearch ?? false ? true : false}
+          $canClick={props.isSearch ?? true ? true : false}
           autoFocus
         >
           {totalDrink}
