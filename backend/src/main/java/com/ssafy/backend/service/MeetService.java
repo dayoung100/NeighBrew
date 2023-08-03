@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -34,6 +35,9 @@ public class MeetService {
     private final TagService tagService;
     private final DrinkService drinkService;
 
+    private final ChatRoomService chatRoomService;
+    private final ChatRoomUserService chatRoomUserService;
+    private final ChatMessageService chatMessageService;
 
     public List<MeetDto> findAll() {
         List<Meet> list = meetRepository.findAll();
@@ -108,19 +112,40 @@ public class MeetService {
         log.info("모임 생성 : {} ", meetDto);
 
         try {
-            boolean imgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
-            if (imgExist) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+            if(multipartFile != null){
+                boolean imgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
+                if (imgExist) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+            }
+
+            ChatRoom createChatRoom = chatRoomService.save(ChatRoom.builder()
+                    .chatRoomName(meetDto.getMeetName() + "모임의 채팅방")
+                    .build());
+
 
             Meet meet = meetDto.toEntity();
             meet.setTag(tagService.findById(meetDto.getTagId()));
             meet.setDrink(drinkService.findById(drinkId));
-
-
+            meet.setChatRoom(createChatRoom);
             Meet createdMeet = meetRepository.save(meet);
-            User hostUser = userService.findByUserId(meetDto.getHostId());
+
+            User hostUser = userService.findByUserId(userId);
+            log.info("모임 잘 만들어 졌나 {}", createdMeet);
 
             //MeetUser 정보를 추가한다.
             meetUserService.saveMeetUser(createdMeet, hostUser, Status.HOST);
+
+            //채팅-유저 테이블에 데이터 추가
+            ChatRoomUser chatRoomUser = chatRoomUserService.save(ChatRoomUser.builder()
+                                                                    .chatRoom(createChatRoom)
+                                                                    .user(hostUser)
+                                                                    .build());
+
+            chatMessageService.save(ChatMessage.builder()
+                    .chatRoom(createChatRoom)
+                    .user(null)
+                    .message("채팅방이 생성되었습니다.")
+                    .timestamp(LocalDateTime.now())
+                    .build());
 
             //팔로워에게 메세지를 보낸다
             List<Follow> followers = followService.findByFollower(userId);
@@ -131,8 +156,9 @@ public class MeetService {
                 pushService.send(hostUser, fw.getFollower(), PushType.CREATEMEET, pushMessage.toString(), "이동할 url");
             }
 
-            return ResponseEntity.ok("모임 생성 성공! 모임 ID : " + createdMeet.getMeetId());
+            return ResponseEntity.ok(createdMeet);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("모임 생성 중 문제가 발생했습니다. \n" + e.getMessage());
         }
     }
@@ -144,12 +170,15 @@ public class MeetService {
         User host = userService.findByUserId(userId);
 
         try{
-            boolean imgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
+            if(multipartFile != null){
+                boolean imgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
 
-            if (imgExist) { //업로드할 파일이 있으면 DB와 S3에 존재하는 이미지를 제거한다/
-                s3Service.deleteImg(prevMeetImgSrc);
-                meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-            } else meetDto.setImgSrc(prevMeetImgSrc);
+                if (imgExist) { //업로드할 파일이 있으면 DB와 S3에 존재하는 이미지를 제거한다/
+                    s3Service.deleteImg(prevMeetImgSrc);
+                    meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+                } else meetDto.setImgSrc(prevMeetImgSrc);
+            }else meetDto.setImgSrc(prevMeetImgSrc);
+
 
             //기존 데이터를 가져온 뒤 업데이트 한다.
             Meet updateMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
@@ -196,6 +225,7 @@ public class MeetService {
 
             //마지막에 모임 정보를 제거한다.
             meetRepository.findById(meetId).ifPresent(meetRepository::delete);
+
 
             //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
             for (User user : meetUser.getUsers()) {
