@@ -50,7 +50,9 @@ public class MeetController {
         if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
 
-        return meetService.saveMeet(meetDto, userId, drinkId, multipartFile.get());
+        if(multipartFile.isPresent()){
+            return meetService.saveMeet(meetDto, userId, drinkId, multipartFile.get());
+        }else return meetService.saveMeet(meetDto, userId, drinkId, null);
     }
 
     //모임 수정
@@ -64,7 +66,9 @@ public class MeetController {
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
         if (!userId.equals(meetDto.getHostId())) return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임 정보를 수정할 수 없습니다.");
 
-        return meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());
+        if(multipartFile.isPresent()){
+            return meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());
+        }else return meetService.updateMeet(meetDto, userId, meetId, drinkId, null);
     }
 
     //모임 삭제하기
