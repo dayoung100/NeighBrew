@@ -45,7 +45,7 @@ public class UserService {
         log.info(String.valueOf(updateDto.getBirth()));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
-        Optional<User> temp = userRepository.findByNickname(updateDto.getNickname());
+        User temp = userRepository.findByNickname(updateDto.getNickname());
         if(temp != null){
             throw new IllegalArgumentException("중복");
         }
