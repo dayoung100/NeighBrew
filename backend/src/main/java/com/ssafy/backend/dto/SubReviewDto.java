@@ -13,6 +13,6 @@ public class SubReviewDto {
     private Long subReviewId;
     private String content;
     private String createdAt;
-    private Long reviewId;
+    private Long drinkReviewId;
     private Long userId;
 }

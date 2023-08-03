@@ -24,7 +24,7 @@ public class SubReview {
     private Date createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id")
+    @JoinColumn(name = "drink_review_id")
     private DrinkReview drinkReview;
 
     @ManyToOne(fetch = FetchType.LAZY)
