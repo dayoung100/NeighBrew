@@ -81,7 +81,6 @@ public class MeetController {
                                         @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) {
         if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
-        if (!userId.equals(meetDto.getHostId())) return ResponseEntity.badRequest().body("모임장이 아니신 경우 모임 정보를 수정할 수 없습니다.");
 
         try{
             if(multipartFile.isPresent()) meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());

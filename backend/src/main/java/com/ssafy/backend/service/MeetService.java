@@ -259,6 +259,9 @@ public class MeetService {
         log.info("{}유저 {}모임 신청 취소 ", userId, meetId);
 
         Meet meet = findByMeetId(meetId);
+
+        //Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
+
         //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
         //푸시알림 로그 삭제
