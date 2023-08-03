@@ -195,7 +195,7 @@ const MyPage = () => {
   return (
     <>
       <header>
-        <Navbar modalHandler={modalHandler} />
+        <Navbar modalHandler={modalHandler} userid={parseInt(userid)} />
       </header>
       <div
         style={{
@@ -317,8 +317,8 @@ const MyPage = () => {
       ) : (
         <DrinkpostMain></DrinkpostMain>
       )}
-
-      <div style={{ height: "80px" }}></div>
+      {/* Footer에 의해 가려지는게 없게 하기위해 존재하는 div */}
+      <div style={{ height: "3rem" }}></div>
       <Modal
         isOpen={deleteModalOn}
         onRequestClose={() => setDeleteModalOn(false)}
@@ -369,9 +369,7 @@ const MyPage = () => {
           유저 정보 변경
         </Button>
       </Modal>
-      <footer>
-        <Footer />
-      </footer>
+      <Footer />
     </>
   );
 };
@@ -464,7 +462,7 @@ const ImgDiv = styled.div`
   aspect-ratio: 1/1;
   border-radius: 50%;
   float: left;
-  margin-right: 3rem;
+  margin-right: 4rem;
   /* margin: 0 1rem; */
 `;
 
