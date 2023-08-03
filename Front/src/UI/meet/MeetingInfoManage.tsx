@@ -164,6 +164,7 @@ const WhiteModal = {
     fontFamily: "SeoulNamsan",
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",
@@ -314,30 +315,28 @@ const MeetingInfoManage = () => {
   //각종 글자수 제한
   //나이, 간수치 등의 최대 최소 제한 확인
 
-  //필수 입력값 검증
-  //TODO: try-catch로 일단 해결
-  // const checkRequiredValue = () => {
-  //   let isValid: boolean = true;
-  //   //필수 입력값 관리용 리스트
-  //   const required = [
-  //     meetTitle,
-  //     maxParticipants,
-  //     date,
-  //     time,
-  //     selectedCategory,
-  //     sido,
-  //     gugun,
-  //     dong,
-  //     selectedDrink.drinkId,
-  //   ];
-  //   //필수 입력값이 전부 있는가?
-  //   required.forEach((value) => {
-  //     if (value == null) isValid = false;
-  //     if (typeof value === "number" && value === 0) isValid = false;
-  //     if (typeof value === "string" && value === "") isValid = false;
-  //   });
-  //   return isValid;
-  // };
+  //필수 입력값 검증(try-catch외에 추가로)
+  const checkRequiredValue = () => {
+    let hasError: number = 0;
+    let errMsg: string = "";
+    //TODO: 엔터가 모달에 적용안되는 거 해결
+    //날짜와 시간-둘은 합쳐져서 try-catch로 잡지 못함
+    if (date === "") {
+      ++hasError;
+      errMsg += `날짜를 입력해주세요.\n`;
+    }
+    if (time === "") {
+      ++hasError;
+      errMsg += `시간을 입력해주세요.\n`;
+    }
+    //최대인원은 기본값이 0 -> try-catch안됨
+    if (maxParticipants === 0) {
+      ++hasError;
+      errMsg += `최대인원을 입력해주세요.\n`;
+    }
+    setErrorMsg(errMsg);
+    return hasError > 0 ? false : true;
+  };
 
   //필수가 아닌 입력값 검증
   const checkNonRequiredValue = (value: string | number) => {
@@ -349,11 +348,11 @@ const MeetingInfoManage = () => {
   //수정 완료 버튼 클릭 api
   //TODO: 필수 입력값은 입력했는지 체크
   const updateMeeting = async () => {
-    // //필수 입력값이 다 들어 있는지 확인
-    // if (!checkRequiredValue()) {
-    //   alert("입력값을 다 넣어주세요");
-    //   return;
-    // }
+    //api 요청 전에 확인
+    if (!checkRequiredValue()) {
+      setIsModalOn(true);
+      return;
+    }
     let f = new FormData();
 
     //필수 입력o
@@ -388,7 +387,6 @@ const MeetingInfoManage = () => {
         GoMeetDetailHandler(); //모임 상세 페이지로 이동
       })
       .catch((error) => {
-        console.dir(error);
         setErrorMsg(error.response.data);
         setIsModalOn(true);
       });
