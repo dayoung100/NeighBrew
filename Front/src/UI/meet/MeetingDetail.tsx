@@ -16,9 +16,9 @@ import backgroundImg from "../../assets/ForTest/backgroundImg.jpg";
 import { callApi } from "../../utils/api";
 import { MeetDetail, User } from "../../Type/types";
 
-const MeetThumbnail = styled.div`
+const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(${backgroundImg}) no-repeat center;
+    url(${(props) => props.$bgImgSrc}) no-repeat center;
   background-size: cover;
   width: 100%;
   height: 30vh;
@@ -121,6 +121,11 @@ const MeetingDetail = () => {
   const [memberList, setMemberList] = useState<User[]>([]); //참여자 리스트
   const [userId, setUserId] = useState(0); //현재 유저의 userId
   const [userStatus, setUserStatus] = useState("");
+  const bgImg =
+    meetDetailData.meetDto.imgSrc === "" ||
+    meetDetailData.meetDto.imgSrc == null
+      ? "/src/assets/meetDefaultImg.jpg"
+      : meetDetailData.meetDto.imgSrc;
 
   //네비게이터 : 모임 관리 페이지로 이동, 뒤로가기 기능
   const navigate = useNavigate();
@@ -128,8 +133,10 @@ const MeetingDetail = () => {
     navigate(-1);
   };
   const GotoMeetManageHandler = (meetId: number) => {
-    console.log("goto manage page, meetId is: ", meetId);
     navigate(`/meet/${meetId}/manage`);
+  };
+  const GotoDrinkPostHandler = (drinkId: number) => {
+    navigate(`/drinkpost/${drinkId}`);
   };
 
   //api 호출
@@ -232,7 +239,7 @@ const MeetingDetail = () => {
 
   return (
     <div style={{ color: "var(--c-black)" }}>
-      <MeetThumbnail>
+      <MeetThumbnail $bgImgSrc={bgImg}>
         <div
           style={{
             display: "flex",
@@ -332,9 +339,10 @@ const MeetingDetail = () => {
           imgSrc="../src/assets/star.svg"
           tag={getTagName(meetDetailData.meetDto.drink.tagId)}
           content={meetDetailData.meetDto.drink.description}
-          numberInfo={"후기 수 " + 3}
           outLine={false}
-          routingFunc={GoBackHandler}
+          routingFunc={() =>
+            GotoDrinkPostHandler(meetDetailData.meetDto.drink.drinkId)
+          }
         />
         <MeetTitle>모임 소개</MeetTitle>
         <div
@@ -345,6 +353,7 @@ const MeetingDetail = () => {
             textAlign: "left",
             marginTop: "0.5rem",
             marginBottom: "2rem",
+            whiteSpace: "pre-line",
           }}
         >
           {meetDetailData.meetDto.description}
