@@ -38,4 +38,12 @@ public class SubReviewController {
         subReviewService.deleteSubReview(subReviewId, Long.valueOf(userId));
         return ResponseEntity.ok().body("댓글 삭제 성공");
     }
+
+    // 댓글을 수정하는 API
+    @Transactional
+    @PutMapping("/guard/update/{subReviewId}")
+    public ResponseEntity<?> updateSubReview(@PathVariable Long subReviewId, @RequestBody SubReviewDto subReviewDto, HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        return ResponseEntity.ok().body(subReviewService.updateSubReview(subReviewId, subReviewDto, Long.valueOf(userId)));
+    }
 }

@@ -53,4 +53,22 @@ public class SubReviewService {
 
         subReviewRepository.delete(subReview);
     }
+
+    public SubReview updateSubReview(Long subReviewId, SubReviewDto subReviewDto, Long userId) {
+        SubReview subReview = subReviewRepository.findById(subReviewId).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
+        // 댓글 작성자와 수정 요청자가 같은지 확인
+        if (!subReview.getUser().equals(user)) {
+            throw new IllegalArgumentException("댓글 작성자와 수정 요청자가 다릅니다.");
+        }
+
+        // content가 비어있는지 확인
+        if (subReviewDto.getContent().isEmpty()) {
+            throw new IllegalArgumentException("댓글 내용이 비어있습니다.");
+        }
+
+        subReview.update(subReviewDto.getContent());
+        return subReviewRepository.save(subReview);
+    }
 }
