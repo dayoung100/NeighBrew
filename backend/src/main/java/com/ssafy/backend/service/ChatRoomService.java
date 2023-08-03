@@ -6,16 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.entity.ChatMessage;
 import com.ssafy.backend.entity.ChatRoom;
 import com.ssafy.backend.entity.ChatRoomUser;
-
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.ChatMessageRepository;
-
 import com.ssafy.backend.repository.ChatRoomRepository;
 import com.ssafy.backend.repository.ChatRoomUserRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,7 @@ public class ChatRoomService {
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final UserRepository userRepository;
     private final ObjectMapper mapper = new ObjectMapper();
+
     public List<ChatRoom> findUserChatRooms(Long userId) {
         return chatRoomUserRepository.findByUser_UserId(userId)
                 .stream()
