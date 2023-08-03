@@ -1,5 +1,6 @@
 package com.ssafy.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.backend.dto.MeetDto;
 import lombok.*;
 
@@ -68,8 +69,9 @@ public class Meet {
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    // 모임과 채팅 간의 양방향 일대일 연관관계
-    @OneToOne(mappedBy = "meet", cascade = CascadeType.ALL)
+    // 채팅과 모임 간의 양방향 일대일 연관관계 - 연관관계 주인은 chatRoom
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
     @Builder
@@ -97,12 +99,9 @@ public class Meet {
     }
 
     public void update(Meet meet) {
-        this.meetId = meet.getMeetId();
         this.meetName = meet.getMeetName();
         this.description = meet.getDescription();
-        this.nowParticipants = meet.getNowParticipants();
         this.maxParticipants = meet.getMaxParticipants();
-        this.hostId = meet.getHostId();
         this.meetDate = meet.getMeetDate();
         this.tag = meet.getTag();
         this.sido = meet.getSido();
@@ -134,6 +133,7 @@ public class Meet {
                 .minLiverPoint(this.minLiverPoint)
                 .drink(this.drink)
                 .imgSrc(this.imgSrc)
+                .chatRoomId(this.chatRoom.getChatRoomId())
                 .build();
     }
 

@@ -14,7 +14,9 @@ import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatRoomService {
     private final ChatMessageRepository chatMessageRepository;
+
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final UserRepository userRepository;
@@ -35,6 +38,7 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public ChatRoom createChatRoom(Map<String, Object> map) {
         ChatRoom room = ChatRoom.builder()
                 .chatRoomName((String) map.get("name"))
@@ -103,5 +107,38 @@ public class ChatRoomService {
                 .build();
         chatMessageRepository.save(message);
         return new ObjectMapper().writeValueAsString(message);
+    }
+
+    public List<User> getUsersInChatRoom(Long chatRoomId) {
+        return chatRoomRepository
+                .findById(chatRoomId)
+                .orElseThrow(()
+                        -> new IllegalArgumentException("존재하지 않는 채팅방입니다."))
+                .getUsers()
+                .stream()
+                .map(ChatRoomUser::getUser)
+                .collect(Collectors.toList());
+    }
+
+
+    public ChatRoom save(ChatRoom chatRoom) {
+        return chatRoomRepository.save(chatRoom);
+    }
+
+    public void deleteExistUser(ChatRoom chatRoom, Long userId) {
+        chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, chatRoom.getChatRoomId());
+        chatRoomUserRepository.flush();
+
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        if (chatRoom.getUsers().isEmpty())
+            chatRoomRepository.delete(chatRoom);
+
+        ChatMessage message = ChatMessage.builder()
+                .message(findUser.getNickname() + "님이 채팅방을 나갔습니다.")
+                .timestamp(LocalDateTime.now())
+                .user(findUser)
+                .build();
+        chatMessageRepository.save(message);
     }
 }

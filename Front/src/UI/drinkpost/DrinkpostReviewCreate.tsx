@@ -87,10 +87,14 @@ const DrinkpostReviewCreate = () => {
         console.log("안댐");
       });
   };
+
+  const toPreviousPage = () => {
+    navigate(`/drinkpost/${drinkId}`);
+  };
   return (
     <>
       <Navdiv>
-        <div style={{ marginLeft: "10px" }}>
+        <div style={{ marginLeft: "10px", cursor: "pointer" }} onClick={toPreviousPage}>
           <img src={backIcon} alt="" />
         </div>
         <h2 onClick={() => navigate(`/drinkpost/${drinkId}`)}>{drink?.name}</h2>

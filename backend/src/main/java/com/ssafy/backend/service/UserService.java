@@ -45,6 +45,10 @@ public class UserService {
         log.info(String.valueOf(updateDto.getBirth()));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
+        Optional<User> temp = userRepository.findByNickname(updateDto.getNickname());
+        if(temp != null){
+            throw new IllegalArgumentException("중복");
+        }
         user.updateFromDto(updateDto);
 
         return userRepository.save(user);
@@ -64,9 +68,6 @@ public class UserService {
     public List<User> findAll() {
         return userRepository.findAll();
     }
-
-
-    public List<User> findByUserIdIn(Long... userIds) { return userRepository.findByUserIdIn(userIds);}
 
     public List<Optional<User>>searchUsers(String nickName){
             log.info(nickName);

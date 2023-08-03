@@ -30,11 +30,12 @@ public class MeetDto {
     private Float minLiverPoint;
     private Drink drink;
     private String imgSrc;
+    private Long chatRoomId;
 
     public MeetDto() {}
 
     @Builder
-    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc) {
+    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
         this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;
@@ -51,6 +52,7 @@ public class MeetDto {
         this.minLiverPoint = minLiverPoint;
         this.drink = drink;
         this.imgSrc = imgSrc;
+        this.chatRoomId = chatRoomId;
     }
 
     public Meet toEntity(){
