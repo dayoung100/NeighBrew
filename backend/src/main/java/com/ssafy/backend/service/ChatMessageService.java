@@ -16,4 +16,8 @@ public class ChatMessageService {
     public Optional<List<ChatMessage>> getChatMessages(Long chatRoomId) {
         return Optional.ofNullable(chatMessageRepository.findByChatRoom_ChatRoomIdOrderByTimestamp(chatRoomId));
     }
+
+    public void save(ChatMessage chatMessage) {
+        chatMessageRepository.save(chatMessage);
+    }
 }

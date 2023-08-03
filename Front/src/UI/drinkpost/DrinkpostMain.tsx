@@ -1,88 +1,75 @@
-// main
-import { styled } from "styled-components";
-import DrinkCard from "./DrinkCard";
-// import singleShowcase from "./singleShowcase";
-import { useState, useEffect } from "react";
-import Navbar from "./../navbar/Navbar";
+import styled from "styled-components";
+import mdsPick from "../../assets/mdsimg.png";
+import totaldrink from "../../assets/totaldrink.png";
+import { useNavigate } from "react-router-dom";
+import darkwood from "../../assets/darkwood.jpg";
+import Navbar from "../navbar/NavbarForDrinkpost";
 import Footer from "../footer/Footer";
-import useIntersectionObserver from "./../../hooks/useIntersectionObserver";
-import DrinkpostCreateButton from "./DrinkpostCreateButton";
-// import { useNavigate } from "react-router-dom";
-// import axios from "axios";
-import { callApi } from "../../utils/api";
-import { Drink } from "../../Type/types";
 
-const ShowcaseBody = styled.div`
-  font-size: 14px;
+const MdsDiv = styled.div`
+  width: 96%;
+  height: 192px;
+  border-radius: 20px 20px 0px 0px;
+  background-image: url(${mdsPick});
+  /* background-size: cover; */
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0px 2vw 0px 2vw;
+  text-align: start;
 `;
 
-// export type DrinkType = {
-//   drinkId: number;
-//   name: string;
-//   description: string;
-//   degree: number;
-//   tagId: number;
-//   image: string;
-// };
+const DarkWood = styled.div`
+  width: 100%;
+  background-image: url(${darkwood});
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 24px;
+`;
 
-// 무한 스크롤
+const Total = styled.div`
+  max-width: 100vw;
+  height: 120px;
+  margin: 0px 10px 0px 10px;
+  background-image: url(${totaldrink});
+  /* background-size: cover; */
+  background-repeat: no-repeat;
+  background-position: center;
+`;
 
-const drinkpost = () => {
-  const [page, setPage] = useState(0);
-  const [drinkList, setDrinkList] = useState<Drink[]>([]);
+const ReviewDiv = styled.div``;
 
-  // const navigate = useNavigate();
-
-  const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
-    console.log(`감지결과 : ${isIntersecting}`);
-    // isIntersecting이 true면 감지했다는 뜻임
-    if (isIntersecting) {
-      if (page < 6) {
-        setTimeout(() => {
-          callApi("get", `api/drink?page=${page}&size=12`)
-            .then(res => {
-              setDrinkList(prev => [...prev, ...res.data.content]);
-              console.log(res.data.content);
-              console.log(drinkList);
-              console.log(page);
-              setPage(prev => prev + 1);
-            })
-            .catch(err => {
-              console.log(err);
-            });
-          console.log(page);
-        }, 100);
-      }
-    }
+const drinkpostMain = () => {
+  const navigate = useNavigate();
+  const clickTotalDrink = () => {
+    navigate("/drinkpost/total");
   };
-  const { setTarget } = useIntersectionObserver({ onIntersect });
-  // 위의 두 변수로 검사할 요소를 observer로 설정
-  // 여기에는 axios 요청 들어갈 예정
+  const toDrinkSearch = () => {
+    navigate("/drinkpost/search");
+  };
 
   return (
     <>
-      <Navbar></Navbar>
-      <ShowcaseBody>
-        <div style={{ textAlign: "start" }}>
-          <h2 style={{ margin: "0px 0px 0px 10px" }}>네이브루의 술장</h2>
+      <div>
+        <Navbar toDrinkSearch={toDrinkSearch}></Navbar>
+        <MdsDiv>
+          <h3 style={{ margin: "0px 0px 0px 10px", padding: "10px", color: "white" }}>MD's Pick</h3>
+        </MdsDiv>
+        <DarkWood></DarkWood>
+        <div style={{ marginTop: "30px", marginBottom: "30px" }} onClick={clickTotalDrink}>
+          <Total></Total>
         </div>
-
-        <div className="whole" style={{ display: "flex", flexWrap: "wrap", paddingBottom: "60px" }}>
-          {drinkList.map(drink => {
-            return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
-          })}
+        <div style={{ margin: "0px 20px 0px 20px" }}>
+          <div style={{ textAlign: "start" }}>
+            <h3>후기 모아보기</h3>
+          </div>
+          <div
+            className="reviewList"
+            style={{ display: "flex", flexWrap: "wrap", margin: "0px 30px 0px 30px" }}
+          ></div>
         </div>
-        <div
-          ref={setTarget}
-          style={{ marginTop: "100px", height: "5px", backgroundColor: "--c-black" }}
-        >
-          내가 보여요?
-        </div>
-      </ShowcaseBody>
-      <DrinkpostCreateButton></DrinkpostCreateButton>
-      <Footer></Footer>
+        <Footer></Footer>
+      </div>
     </>
   );
 };
-
-export default drinkpost;
+export default drinkpostMain;
