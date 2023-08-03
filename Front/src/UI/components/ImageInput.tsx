@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 
 const QuestionDiv = styled.div`
@@ -28,7 +28,7 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 15px;
   position: relative;
@@ -37,14 +37,20 @@ const ImageArea = styled.div<{ src: string }>`
   overflow: hidden;
 `;
 
-const ImageInput = () => {
+type ImageInputProps = {
+  imgSrc?: string; //이미지 경로
+  getFunc?: (f: File) => void; //파일 타입을 부모로 가져가는 함수
+};
+
+const ImageInput = (props: ImageInputProps) => {
   //파일 업로드 용
-  const [imgFile, setImgFile] = useState("");
+  const [imgFile, setImgFile] = useState(props.imgSrc ?? "");
   const imgRef = useRef<HTMLInputElement>(null);
 
   //이미지 파일 업로드 시 미리보기
   const saveImgFile = () => {
-    const file = imgRef.current.files[0];
+    const file = imgRef.current.files[0]; //파일 객체 부모로 전달
+    props.getFunc(file);
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -54,13 +60,20 @@ const ImageInput = () => {
     };
   };
 
+  useEffect(() => {
+    console.dir(imgFile);
+  }, [imgFile]);
+
   return (
     <QuestionDiv style={{ textAlign: "left" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Title style={{ margin: "0" }}>대표 이미지</Title>
         <ImgInput>
           <label htmlFor="img_file">
-            <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
+            <img
+              src="/src/assets/imageButton.svg"
+              style={{ margin: "0 0.5rem" }}
+            />
           </label>
           <input
             type="file"

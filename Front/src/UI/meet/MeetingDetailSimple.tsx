@@ -44,7 +44,7 @@ const meetingDetail = (props: MeetingDetailProps) => {
       <div style={{ display: "flex" }}>
         {props.liverLimit && (
           <div style={{ display: "flex", alignItems: "center", width: "50%" }}>
-            <img src="/src/assets/liver.svg" width="10rem" />
+            <img src="/src/assets/liverIcon.svg" width="10rem" />
             간수치 제한
           </div>
         )}
