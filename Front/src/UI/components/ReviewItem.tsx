@@ -4,18 +4,19 @@ import { useState, useRef } from "react";
 import { Review } from "../../Type/types";
 
 const ReviewCard = styled.div`
-  background-color: white;
   display: flex;
-  justify-content: start;
-  margin: 30px;
-  width: 85%;
+  flex-direction: column;
+  width: 48%;
+  height: auto;
+  background-color: white;
+  margin-bottom: 10px;
 `;
 
 const ReviewImg = styled.div`
   background-color: var(--c-gray);
   border-radius: 12px;
-  min-width: 90px;
-  height: 90px;
+  width: 100%;
+  height: 180px;
 `;
 
 const UserCard = styled.div`
