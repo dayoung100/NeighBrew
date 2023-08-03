@@ -59,7 +59,6 @@ public class NaverApiClient implements OAuthApiClient {
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
 
-
         NaverTokens response = restTemplate.postForObject(url, request, NaverTokens.class);
 
         assert response != null;
@@ -81,17 +80,16 @@ public class NaverApiClient implements OAuthApiClient {
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
 
-
         return restTemplate.postForObject(url, request, NaverInfoResponse.class);
     }
 
     @Override
     public String authApiUrl(OAuthLoginParams params) {
 
-//        String redirectUri = "http://i9b310.p.ssafy.io//naver/callback";
-        String redirectUri = "http://localhost:5173/naver/callback";
+        String redirectUri = "https://i9b310.p.ssafy.io/naver/callback";
+//        String redirectUri = "http://localhost:5173/naver/callback";
         String responseType = "code";
 
-        return authUrl + "/oauth2.0/authorize" +  "?response_type=" + responseType + "&client_id=" + clientId + "&state=" + clientSecret +"&redirect_uri=" + redirectUri;
+        return authUrl + "/oauth2.0/authorize" + "?response_type=" + responseType + "&client_id=" + clientId + "&state=" + clientSecret + "&redirect_uri=" + redirectUri;
     }
 }
