@@ -26,6 +26,7 @@ public class ChatController {
     private final ChatDmRoomService chatDmRoomService;
     private final ObjectMapper mapper = new ObjectMapper();
 
+    //단체 메세지를 보낸다.
     @MessageMapping("/chat/{roomId}/sendMessage")
     public void sendMessage(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
         String res = chatRoomService.sendMessage(roomId, data);
@@ -40,15 +41,23 @@ public class ChatController {
         messagingTemplate.convertAndSend("/pub/room/" + roomId, res);
     }
 
-    @MessageMapping("/dm/{senderId}/{receiverId}/")
-    public void createChatOrSend(@DestinationVariable Long senderId,
-                                 @DestinationVariable Long receiverId,
-                                 @Payload Map<String, Object> payLoad){
-        String message = (String) payLoad.get("message");
-        Long userId = (Long) payLoad.get("userId");
-        String userNickName = (String) payLoad.get("userNickName");
-        log.info("{}, {}, {}", message, userNickName, userId);
-        //String res = chatDmRoomService.createChatOrSend(senderId, receiverId, message);
-        //messagingTemplate.convertAndSend("/pub/chat/" + senderId + "/" + receiverId, res);
+    //dm 참여 및 메세지 전송
+    @MessageMapping("/dm/{receiverId}/sendMessage")
+    public void createChatOrSend(@DestinationVariable Long receiverId,
+                                 @Payload String payload) throws JsonProcessingException {
+        Map<String, Object> sendData = chatDmRoomService.createChatOrSend(receiverId, payload);
+        String dmRoomId = (String) sendData.get("dmRoomId");
+
+        messagingTemplate.convertAndSend("/pub/dm/" + dmRoomId, mapper.writeValueAsString(sendData));
     }
+
+    //dm떠나기
+    @Transactional
+    @MessageMapping("/dm/{dmRoomId}/leave")
+    public void leaveDm(@DestinationVariable Long dmRoomId,
+                        @Payload String payload) throws JsonProcessingException {
+        String sendData = chatDmRoomService.leaveDm(dmRoomId, payload);
+        messagingTemplate.convertAndSend("/pub/dm/" + dmRoomId, sendData);
+    }
+
 }
