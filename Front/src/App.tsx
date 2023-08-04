@@ -25,6 +25,7 @@ import DrinkpostSearch from "./UI/drinkpost/DrinkpostSearch";
 import DrinkpostReviewCreate from "./UI/drinkpost/DrinkpostReviewCreate";
 import Test from "./Test";
 import DrinkpostMain from "./UI/drinkpost/DrinkpostMain";
+import DrinkpostReviewDetail from "./UI/drinkpost/DrinkpostReviewDetail";
 
 function App() {
   const navigate = useNavigate();
@@ -77,6 +78,10 @@ function App() {
         ></Route>
         <Route path="/drinkpost/total" element={<DrinkpostTotal></DrinkpostTotal>}></Route>
         <Route path="/test" element={<Test></Test>}></Route>
+        <Route
+          path="/drinkpost/:drinkId/:reviewId"
+          element={<DrinkpostReviewDetail></DrinkpostReviewDetail>}
+        ></Route>
       </Routes>
     </>
   );

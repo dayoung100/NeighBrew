@@ -47,8 +47,19 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
         User temp = userRepository.findByNickname(updateDto.getNickname());
         if(temp != null){
-            throw new IllegalArgumentException("중복");
+            log.info(temp.toString());
+            if(updateDto.getNickname().equals(user.getNickname())){
+                if(!updateDto.getBirth().equals(user.getBirth()) || !updateDto.getIntro().equals(user.getIntro())) {
+
+                }else {
+                    throw new IllegalArgumentException("에러");
+                }
+            }else{
+                log.info("이름 이미 있음");
+                throw new IllegalArgumentException("중복");
+            }
         }
+
         user.updateFromDto(updateDto);
 
         return userRepository.save(user);

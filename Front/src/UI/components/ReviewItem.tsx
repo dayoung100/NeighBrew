@@ -2,6 +2,7 @@ import styled from "styled-components";
 import likeIcon from "../../assets/likeIcon.svg";
 import { useState, useRef } from "react";
 import { Review } from "../../Type/types";
+import { callApi } from "../../utils/api";
 
 const ReviewCard = styled.div`
   display: flex;
@@ -24,11 +25,12 @@ const UserCard = styled.div`
   text-align: start;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding-bottom: 5px;
 `;
 
 const DescriptionP = styled.p`
-  margin-left: 10px;
+  margin-left: 1vw;
   text-align: start;
   /* 추가하기 */
   display: -webkit-box;
@@ -62,6 +64,15 @@ const MoreButton = styled.button`
 
 const ReviewItem = ({ review }: { review: Review }) => {
   const [showMore, setShowMore] = useState(false);
+  const [like, setLike] = useState(review.likeCount);
+  const likeReview = () => {
+    callApi("post", `api/like/guard/${review.drinkReviewId}`)
+      .then(res => {
+        console.log(res.data);
+        setLike(prev => prev + 1);
+      })
+      .catch(err => console.error(err));
+  };
   const toggleShowMore = () => {
     setShowMore(!showMore);
   };
@@ -73,15 +84,27 @@ const ReviewItem = ({ review }: { review: Review }) => {
         </ReviewImg>
         <div style={{ width: "100%" }}>
           <UserCard>
-            <div>
-              <img src={review.user.profile} alt="profile" />
-              <span>
+            <div style={{ display: "flex", paddingTop: "1vh" }}>
+              <img
+                src={review.user.profile}
+                alt=""
+                style={{
+                  width: "6vw",
+                  height: "auto",
+                  borderRadius: "10px",
+                  marginRight: "2vw",
+                  marginLeft: "1vw",
+                }}
+              />
+
+              <div>
                 <b>{review.user.name}</b>
-              </span>
+              </div>
             </div>
-            <div>
+
+            <div style={{ cursor: "pointer" }} onClick={likeReview}>
               <img src={likeIcon} alt="like" />
-              <span>38</span>
+              <span>{like}</span>
             </div>
           </UserCard>
           <div style={{ textAlign: "start" }}>

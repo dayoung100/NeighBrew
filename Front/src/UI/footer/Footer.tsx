@@ -18,7 +18,7 @@ const Button = styled.button<{ now: number; choosebutton: number }>`
   height: 3rem;
   background-color: white;
   border: none;
-  margin: 1rem auto;
+  margin: 0.5rem auto 2px auto;
   border-bottom: ${props => (props.now == props.choosebutton ? "2px solid #000000" : "none")};
 `;
 
