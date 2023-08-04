@@ -79,7 +79,13 @@ const meetingMain = () => {
           내모임
         </TopMenuDetail>
       </TopMenu>
-      <div style={{ paddingBottom: "5rem", background: "var(--c-lightgray)" }}>
+      <div
+        style={{
+          paddingBottom: "10rem",
+          background: "var(--c-lightgray)",
+          minHeight: "80vh",
+        }}
+      >
         {selectedMenu === "find" ? <MeetingFind /> : <MeetingMy />}
       </div>
       <RoundBtn onClick={GotoCreateHandler}>
