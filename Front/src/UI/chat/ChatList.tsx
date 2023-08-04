@@ -41,6 +41,10 @@ const ChatList = () => {
       .catch(e => {
         console.log(e);
       });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }, []);
   return (
     <>
