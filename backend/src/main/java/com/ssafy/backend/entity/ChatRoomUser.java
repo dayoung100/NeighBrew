@@ -14,7 +14,7 @@ public class ChatRoomUser {
     private Long chatRoomUserId;
 
     @ManyToOne
-    @JoinColumn(name = "chatRoomId")
+    @JoinColumn(name = "chat_room_id")
     @JsonManagedReference
     private ChatRoom chatRoom;
 
