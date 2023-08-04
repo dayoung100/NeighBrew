@@ -58,8 +58,8 @@ public class ChatDmRoomService {
         //메세지 저장
         chatDmMessageService.save(ChatDmMessage.builder()
                 .chatDmRoom(chatDmRoom)
-                .sender(sender)
-                .content(message)
+                .user(sender)
+                .message(message)
                 .createdAt(LocalDateTime.now())
                 .build());
 
@@ -109,9 +109,9 @@ public class ChatDmRoomService {
 
         //시스템 메세지를 저장
         chatDmMessageService.save(ChatDmMessage.builder()
-                .content(leaveUser.getNickname() + "님이 채팅방을 나갔습니다.")
+                .message(leaveUser.getNickname() + "님이 채팅방을 나갔습니다.")
                 .createdAt(LocalDateTime.now())
-                .sender(null)
+                .user(null)
                 .build());
 
         //채팅방을 나갔다는 메세지를 전송한다.
@@ -123,7 +123,12 @@ public class ChatDmRoomService {
     }
 
     public List<ChatDmRoom> findChatDmRoomsByUserId(Long userId) {
-        return null;
+        return chatDmRoomRepository.findChatDmRoomById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+    }
+
+    public Long checkDmRoomExist(Long senderId, Long receiverId) {
+        Optional<ChatDmRoom> findDmRoom = chatDmRoomRepository.findDmUserIds(senderId, receiverId);
+        return findDmRoom.isPresent() ? findDmRoom.get().getChatDmRoomId() : -1L;
     }
 }
 

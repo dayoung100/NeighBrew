@@ -19,21 +19,21 @@ public class ChatDmMessage {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User sender;
+    private User user;
 
     @Lob
     @Column(nullable = false)
-    private String content;
+    private String message;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @Setter
     private LocalDateTime createdAt;
 
     @Builder
-    public ChatDmMessage(ChatDmRoom chatDmRoom, User sender, String content, LocalDateTime createdAt) {
+    public ChatDmMessage(ChatDmRoom chatDmRoom, User user, String message, LocalDateTime createdAt) {
         this.chatDmRoom = chatDmRoom;
-        this.sender = sender;
-        this.content = content;
+        this.user = user;
+        this.message = message;
         this.createdAt = createdAt;
     }
 

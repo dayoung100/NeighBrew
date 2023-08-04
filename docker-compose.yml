@@ -5,12 +5,14 @@ services:
     build:
       context: ./Front
       dockerfile: Dockerfile
-    # volumes:
-    #   - ./nginx/dist/:/app/dist
+    environment:
+      - TZ=Asia/Seoul
     ports:
       - "5173:5173"
   server:
     container_name: server
+    environment:
+      - TZ=Asia/Seoul
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -23,6 +25,7 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=neighbrewbe-10
+      - TZ=Asia/Seoul
       - MYSQL_DATABASE=neighbrew
       - MYSQL_PASSWORD=neighbrew-10
       # - MYSQL_USER=neighbrewbe
