@@ -23,10 +23,6 @@ const meetingFind = () => {
     setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
   }, [meetAllData]);
 
-  useEffect(() => {
-    console.dir(meetData); //확인용
-  }, [meetData]);
-
   //api 호출
   useEffect(() => {
     const promise = callApi("get", "api/meet");
@@ -39,7 +35,6 @@ const meetingFind = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
-    // console.log(tagId);
   };
 
   //필터 애니메이션 관련
@@ -134,7 +129,6 @@ const meetingFind = () => {
   //술의 이름으로 필터링
   const drinkNameFiltering = (data: Meeting) => {
     if (inputText === "") return true;
-    console.log("주류 이름:", data.drink.name);
     return data.drink.name === inputText;
   };
 

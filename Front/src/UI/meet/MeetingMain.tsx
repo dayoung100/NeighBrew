@@ -53,7 +53,6 @@ const meetingMain = () => {
 
   const GotoCreateHandler = () => {
     navigate(`/meet/create`);
-    console.log("goto meeting create page");
   };
 
   useEffect(() => {

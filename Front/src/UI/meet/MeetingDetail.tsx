@@ -190,7 +190,6 @@ const MeetingDetail = () => {
     });
     promise
       .then((res) => {
-        console.log(res.data);
         setUserStatus("APPLY");
       })
       .catch((err) => console.log(err));
@@ -205,7 +204,6 @@ const MeetingDetail = () => {
       meetId: meetId,
     });
     promise.then((res) => {
-      console.log(res.data);
       setUserStatus("NONE");
     });
   }

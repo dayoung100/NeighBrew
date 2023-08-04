@@ -62,12 +62,10 @@ const MeetingManageMain = () => {
   const [meetData, setMeetData] = useState<Meeting>(initialData);
 
   const GotoMeetInfoManage = (meetId: number) => {
-    console.log("goto manage page, meetId is: ", meetId, "[info]");
     navigate(`/meet/${meetId}/manage/info`);
   };
 
   const GotoMemberManage = (meetId: number) => {
-    console.log("goto manage page, meetId is: ", meetId, "[member]");
     navigate(`/meet/${meetId}/manage/member`);
   };
 

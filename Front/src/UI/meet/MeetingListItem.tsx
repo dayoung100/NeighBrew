@@ -18,7 +18,6 @@ const MeetingListItem = ({ data, isWaiting = false }: MeetingListItemProps) => {
   //네비게이터 : 모임 상세페이지로 이동
   const navigate = useNavigate();
   const GotoMeetDetailHandler = (meetId: number) => {
-    console.log(meetId, "find");
     navigate(`/meet/${meetId}`);
   };
 
