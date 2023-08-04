@@ -1,4 +1,4 @@
-import { useParams, useRouteError } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
@@ -6,11 +6,10 @@ import { useNavigate } from "react-router-dom";
 import temgif from "../../assets/temgif.gif";
 import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
-import { Chat } from "../../Type/types";
+import { Chat, User } from "../../Type/types";
 import { callApi } from "../../utils/api";
-import Footer from "../footer/Footer";
 
-const MyChat = styled.div`
+const OtherChat = styled.div`
   position: relative;
   display: inline-block;
   background-color: #f0d389;
@@ -23,20 +22,12 @@ const MyChat = styled.div`
   font-size: 13px;
   text-align: left;
   font-family: "SeoulNamsan";
-  &::before {
-    content: "";
-    position: absolute;
-    bottom: -5px;
-    left: 0%;
-    transform: translateX(-50%);
-    border-style: solid;
-    border-width: 10px 10px 0 10px;
-    border-color: #f0d389 transparent transparent transparent;
-  }
 `;
-const OtherChat = styled.div`
+
+const MyChat = styled.div`
   position: relative;
   display: inline-block;
+  flex-direction: row;
   background-color: white;
   border-radius: 12px;
   padding: 14px;
@@ -44,20 +35,51 @@ const OtherChat = styled.div`
   word-break: break-all;
   margin-bottom: 5px;
   margin-right: 1px;
+  margin-left: 0.5rem;
   font-size: 13px;
   text-align: right;
   font-family: "SeoulNamsan";
-  &:before {
-    content: "";
-    position: absolute;
-    bottom: -5px;
-    left: 100%;
-    transform: translateX(-50%);
-    border-style: solid;
-    border-width: 10px 10px 0 10px;
-    border-color: white transparent transparent transparent;
-  }
 `;
+
+const ChatOtherBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 0.7rem;
+`;
+
+const ChatMyBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 0.7rem;
+`;
+
+const ChatMyMsg = styled.div`
+  font-size: 0.4rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+`;
+const ChatOtherMsg = styled.div`
+  font-size: 0.4rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+`;
+
+const ChatTime = styled.div`
+  margin-left: 0.5rem;
+  margin-bottom: 0.4rem;
+`;
+
+const ChatUserName = styled.div`
+  font-family: "JejuGothic";
+  font-size: 0.2rem;
+  margin-bottom: 0.4rem;
+  margin-top: 1.2rem;
+`;
+
 const ChatNav = styled.div`
   box-sizing: border-box;
   padding: 0.5rem;
@@ -72,7 +94,8 @@ const ChatNav = styled.div`
 `;
 
 const RightModal = styled.div<{ ismodal: boolean }>`
-  transform: ${props => (props.ismodal ? "translateX(6%)" : "translateX(100%)")};
+  transform: ${(props) =>
+    props.ismodal ? "translateX(6%)" : "translateX(100%)"};
   position: fixed;
   width: 95%;
   overflow-x: scroll;
@@ -83,7 +106,7 @@ const RightModal = styled.div<{ ismodal: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 2rem;
+  padding: 0rem 2rem;
 `;
 const ImgDiv = styled.div`
   width: 15%;
@@ -100,11 +123,18 @@ const Img = styled.img`
   height: 100%;
   object-fit: cover;
 `;
+
 const UserDiv = styled.div`
   display: flex;
   margin-bottom: 1rem;
   font-size: 20px;
-  font-family: "SeoulNamsan";
+  @font-face {
+    font-family: "SUITE-Regular";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2")
+      format("woff2");
+    font-style: normal;
+  }
+  font-family: "SUITE-Regular";
   width: 100%;
   align-items: center;
 `;
@@ -130,7 +160,7 @@ const Input = styled.input`
 `;
 
 const BackDrop = styled.div<{ ismodal: boolean }>`
-  display: ${props => (props.ismodal ? "block" : "none")};
+  display: ${(props) => (props.ismodal ? "block" : "none")};
   transition: all 1s;
   width: 100%;
   max-width: 430px;
@@ -143,13 +173,12 @@ const BackDrop = styled.div<{ ismodal: boolean }>`
 const ChatRoom = () => {
   const { id } = useParams();
   const [sockjs, setSockjs] = useState();
-  // const [client, setClient] = useState<any>(null);
   const client = useRef<CompatClient>();
   const [messages, setMessages] = useState<Chat[]>([]);
   const [ismodal, setIsmodal] = useState(false);
   const [chatRoomName, setChatRoomName] = useState();
   const userId = parseInt(localStorage.getItem("myId"));
-  const [users, setUsers] = useState(["현욱", "현빈", "준서", "다영", "영교", "동혁"]);
+  const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState("");
   const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
@@ -165,7 +194,7 @@ const ChatRoom = () => {
       console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
 
       // 웹소켓 이벤트 핸들러 설정
-      client.current!.subscribe(`/pub/room/${id}`, res => {
+      client.current!.subscribe(`/pub/room/${id}`, (res) => {
         console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
         console.log(receivedMessage);
@@ -174,7 +203,10 @@ const ChatRoom = () => {
           {
             message: receivedMessage.message,
             userId: receivedMessage.userId,
-            user: { userId: receivedMessage.userId, nickname: receivedMessage.userNickname },
+            user: {
+              userId: receivedMessage.userId,
+              nickname: receivedMessage.userNickname,
+            },
           },
         ]);
       });
@@ -218,12 +250,20 @@ const ChatRoom = () => {
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
     callApi("GET", `api/chatMessage/${id}/messages`)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         setChatRoomName(res.data[0].chatRoom.chatRoomName);
         setMessages(res.data);
       })
-      .catch(e => {
+      .catch((e) => {
+        console.error(e);
+      });
+
+    callApi("GET", `/api/chatroom/${id}/users`)
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((e) => {
         console.error(e);
       });
   }, []);
@@ -296,19 +336,26 @@ const ChatRoom = () => {
       </header>
       <BackDrop ismodal={ismodal} onClick={chaterInfoHandler}></BackDrop>
       <RightModal ismodal={ismodal}>
-        <h2 style={{ fontFamily: "JejuGothic" }}>모임의 이름이 들어갑니다</h2>
-        <p style={{ fontFamily: "SeoulNamsan", marginBottom: "5px" }}>대전 서구 둔산동 연남</p>
-        <p style={{ marginBottom: "10px", fontFamily: "SeoulNamsan" }}>2023.01.17 PM 8:00</p>
         <div style={{ border: "1px solid var(--c-lightgray)" }}></div>
         <br />
-        <h3 style={{ fontFamily: "JejuGothic" }}>참여자 목록</h3>
+        <p
+          style={{
+            fontFamily: "JejuGothic",
+            fontSize: "1.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          참여자 목록
+        </p>
         {users.map((user, i) => {
           return (
             <UserDiv key={i}>
               <ImgDiv>
-                <Img src={temgif}></Img>
+                <Img
+                  src={user.profile == "no image" ? temgif : user.profile}
+                ></Img>
               </ImgDiv>
-              <p>{user}</p>
+              <p>{user.nickname}</p>
             </UserDiv>
           );
         })}
@@ -329,24 +376,33 @@ const ChatRoom = () => {
             <div
               style={{
                 display: "flex",
-                alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
+                alignItems:
+                  message.user?.userId == userId ? "flex-end" : "flex-start",
                 flexDirection: "column",
+                marginLeft: "0.3rem",
               }}
               key={i}
             >
-              <p
-                style={{
-                  fontFamily: "JejuGothic",
-                  fontSize: "12px",
-                  margin: "0 1rem",
-                }}
-              >
-                {message.user?.userId === userId ? "나" : message.user?.nickname}
-              </p>
-              {message.user?.userId == userId ? (
-                <OtherChat>{message.message}</OtherChat>
+              {message.user?.userId === userId ? (
+                <ChatMyBox>
+                  <ChatUserName>나</ChatUserName>
+                  <ChatMyMsg>
+                    <ChatTime>
+                      {message.createdAt.split("T")[1].substring(0, 5)}
+                    </ChatTime>
+                    <MyChat>{message.message}</MyChat>
+                  </ChatMyMsg>
+                </ChatMyBox>
               ) : (
-                <MyChat>{message.message}</MyChat>
+                <ChatOtherBox>
+                  <ChatUserName>{message.user?.nickname}</ChatUserName>
+                  <ChatOtherMsg>
+                    <OtherChat>{message.message}</OtherChat>
+                    <ChatTime>
+                      {message.createdAt.split("T")[1].substring(0, 5)}
+                    </ChatTime>
+                  </ChatOtherMsg>
+                </ChatOtherBox>
               )}
             </div>
           );
@@ -355,7 +411,11 @@ const ChatRoom = () => {
       </div>
       <footer>
         <InputDiv>
-          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
+          <Input
+            value={message}
+            onChange={messageHandler}
+            onKeyUp={sendMessageHandler}
+          ></Input>
           {message.length > 0 ? (
             <div onClick={sendMessageHandler}>
               <SendIcon></SendIcon>
@@ -375,7 +435,13 @@ export default ChatRoom;
 
 const SendIcon = () => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="25" viewBox="0 0 30 27" fill="none">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="28"
+      height="25"
+      viewBox="0 0 30 27"
+      fill="none"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
