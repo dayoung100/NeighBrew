@@ -14,11 +14,18 @@ export interface User {
   oauthProvider?: string;
   drinkcount?: number;
 }
+export interface Message {
+  chatMessageId: number;
+  chatRoom: ChatRoom;
+  user: User;
+  message: string;
+  createdAt: string;
+}
 export interface Chat {
   chatMessageId?: number;
   message?: string;
   user?: User;
-  timestamp?: string;
+  createdAt?: string;
   chatRoom?: ChatRoom;
   userid?: number;
 }
@@ -69,6 +76,7 @@ export interface Review {
   drinkReviewId: number;
   img: string;
   user: User;
+  likeCount: number;
 }
 // 특정 유저의 팔로잉과 팔로워 목록을 보여줌
 export interface Followers {

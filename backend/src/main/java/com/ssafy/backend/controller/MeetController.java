@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -83,14 +84,21 @@ public class MeetController {
         if (meetDto.getMeetName().isEmpty()) return ResponseEntity.badRequest().body("모임 이름이 등록되지 않았습니다.");
         if (meetDto.getMeetDate() == null) return ResponseEntity.badRequest().body("모임 날짜 정보가 누락되었습니다.");
         if (meetDto.getMeetDate().toLocalDate() == null) return ResponseEntity.badRequest().body("모임 날짜가 입력되지 않았습니다.");
-        if (meetDto.getMeetDate().toLocalDate() == null) return ResponseEntity.badRequest().body("모임 시간이 입력되지 않았습니다.");
+        if (meetDto.getMeetDate().toLocalTime() == null) return ResponseEntity.badRequest().body("모임 시간이 입력되지 않았습니다.");
         if (meetDto.getMaxParticipants() == null) return ResponseEntity.badRequest().body("모임 최대 인원 수용 정보가 입력되지 않았습니다.");
         if (meetDto.getMaxParticipants() > 8) return ResponseEntity.badRequest().body("모임 최대 인원 수용치를 초과했습니다.");
         if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
+        if (meetDto.getMinAge() < 20) return ResponseEntity.badRequest().body("모임 최소나이를 다시 입력해 주세요.");
+        if (meetDto.getMinAge() >= 200) return ResponseEntity.badRequest().body("모임 최대 나이를 다시 입력해 주세요.");
+        if (meetDto.getMeetDate().toLocalTime().isBefore(LocalTime.now())) return ResponseEntity.badRequest().body("모임 시간이 지났습니다. 다시 한 번 입력해 주세요.");
+
 
         try{
-            if(multipartFile.isPresent()) meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());
+            if(multipartFile.isPresent()) {
+                if(multipartFile.get().getSize() > 5242880) return ResponseEntity.badRequest().body("파일 업로드 크기는 5MB로 제한되어 있습니다.");
+                meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());
+            }
             else meetService.updateMeet(meetDto, userId, meetId, drinkId, null);
 
             return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");

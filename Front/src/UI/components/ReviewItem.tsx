@@ -2,6 +2,7 @@ import styled from "styled-components";
 import likeIcon from "../../assets/likeIcon.svg";
 import { useState, useRef } from "react";
 import { Review } from "../../Type/types";
+import { callApi } from "../../utils/api";
 
 const ReviewCard = styled.div`
   display: flex;
@@ -63,6 +64,15 @@ const MoreButton = styled.button`
 
 const ReviewItem = ({ review }: { review: Review }) => {
   const [showMore, setShowMore] = useState(false);
+  const [like, setLike] = useState(review.likeCount);
+  const likeReview = () => {
+    callApi("post", `api/like/guard/${review.drinkReviewId}`)
+      .then(res => {
+        console.log(res.data);
+        setLike(prev => prev + 1);
+      })
+      .catch(err => console.error(err));
+  };
   const toggleShowMore = () => {
     setShowMore(!showMore);
   };
@@ -77,7 +87,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
             <div style={{ display: "flex", paddingTop: "1vh" }}>
               <img
                 src={review.user.profile}
-                alt="profile"
+                alt=""
                 style={{
                   width: "6vw",
                   height: "auto",
@@ -92,9 +102,9 @@ const ReviewItem = ({ review }: { review: Review }) => {
               </div>
             </div>
 
-            <div>
+            <div style={{ cursor: "pointer" }} onClick={likeReview}>
               <img src={likeIcon} alt="like" />
-              <span>38</span>
+              <span>{like}</span>
             </div>
           </UserCard>
           <div style={{ textAlign: "start" }}>

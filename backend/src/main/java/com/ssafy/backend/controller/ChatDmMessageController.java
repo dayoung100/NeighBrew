@@ -1,6 +1,7 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.entity.ChatMessage;
+import com.ssafy.backend.service.ChatDmMessageService;
 import com.ssafy.backend.service.ChatMessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,21 +15,17 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/chatMessage")
-public class ChatMessageController {
-    private final ChatMessageService chatMessageService;
+@RequestMapping("/api/dm-message")
+public class ChatDmMessageController {
+    private final ChatDmMessageService chatDmMessageService;
 
-    //단체 채팅방 메세지 가져온다.
-    @GetMapping("{chatRoomId}/messages")
-    public ResponseEntity<List<ChatMessage>> getChatMessages(@PathVariable Long chatRoomId) {
-        Optional<List<ChatMessage>> messages = chatMessageService.getChatMessages(chatRoomId);
-        return messages.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-
-    //DM 메세지 가져온다
-    @GetMapping("/dm/{dmRoomId}/messages")
+    //dm 방 별로 메세지들을 가져온다.
+    @GetMapping("/{dmRoomId}")
     public ResponseEntity<?> getDmMessages(@PathVariable Long dmRoomId){
-        return null;
+        try{
+            return ResponseEntity.ok(chatDmMessageService.findDmMessagesByRoomId(dmRoomId));
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("메세지 정보를 호출하던 중 에러가 발생했습니다.\n" + e.getMessage());
+        }
     }
 }

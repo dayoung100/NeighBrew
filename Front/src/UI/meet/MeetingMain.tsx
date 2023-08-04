@@ -19,14 +19,17 @@ const TopMenu = styled.div`
 `;
 
 const TopMenuDetail = styled.button<{ isfocused: string }>`
-  color: var(--${props => (props.isfocused === "true" ? "c-black" : "c-gray")});
+  color: var(
+    --${(props) => (props.isfocused === "true" ? "c-black" : "c-gray")}
+  );
   font-family: "JejuGothic";
   font-size: 20px;
   line-height: 150%;
   padding: 0 1rem;
   outline: none;
   border: none;
-  border-bottom: ${props => (props.isfocused === "true" ? "2px solid var(--c-black);" : "none;")};
+  border-bottom: ${(props) =>
+    props.isfocused === "true" ? "2px solid var(--c-black);" : "none;"};
   background: white;
 `;
 
@@ -76,7 +79,7 @@ const meetingMain = () => {
           내모임
         </TopMenuDetail>
       </TopMenu>
-      <div style={{ marginBottom: "5rem" }}>
+      <div style={{ paddingBottom: "5rem", background: "var(--c-lightgray)" }}>
         {selectedMenu === "find" ? <MeetingFind /> : <MeetingMy />}
       </div>
       <RoundBtn onClick={GotoCreateHandler}>
