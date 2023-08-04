@@ -122,19 +122,6 @@ const DrinkpostDetail = () => {
   const [detail, setDetail] = useState<Drink>();
   const [reviewList, setReviewList] = useState<Review[]>([]);
 
-  // const getTagName = (tagId: number) => {
-  //   const tag = [
-  //     { tagId: 0, tagName: "전체" },
-  //     { tagId: 1, tagName: "양주" },
-  //     { tagId: 2, tagName: "전통주" },
-  //     { tagId: 3, tagName: "전체" },
-  //     { tagId: 4, tagName: "사케" },
-  //     { tagId: 5, tagName: "와인" },
-  //     { tagId: 6, tagName: "수제맥주" },
-  //     { tagId: 7, tagName: "소주/맥주" },
-  //   ];
-  //   return tag[tagId].tagName;
-  // };
   const toggleShowMore = () => {
     setShowMore(!showMore);
   };
@@ -233,7 +220,7 @@ const DrinkpostDetail = () => {
             </div>
           </SimpleInfo>
           <ImageInfo>
-            <img src={transImage(detail?.image)} alt="" style={{ width: "15vh" }} />
+            <img src={transImage(detail?.image)} alt="" style={{ width: "12vh" }} />
           </ImageInfo>
         </InfoDiv>
 
@@ -255,7 +242,7 @@ const DrinkpostDetail = () => {
 
         <div className="reviewBox" style={{ position: "relative", bottom: "8vh" }}>
           <h1 style={{ textAlign: "start", marginBottom: "10px" }}>후기</h1>
-          {detail?.description.split("\n").length}
+
           <div
             className="reviewList"
             style={{
