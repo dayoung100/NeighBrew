@@ -16,7 +16,7 @@ const Button = styled.button`
   height: 3rem;
   background-color: white;
   border: none;
-  margin: 1rem auto;
+  margin: 0.7rem auto;
 `;
 
 const ChatList = () => {
@@ -66,7 +66,7 @@ const ChatList = () => {
           {directMessageIcon}
         </Button>
       </div>
-      <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)" }}>
+      <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)", minHeight: "940px" }}>
         {chatList.map(chatRoom => {
           return (
             <Chat
@@ -79,7 +79,7 @@ const ChatList = () => {
           );
         })}
       </div>
-      <div style={{ height: "80px" }}></div>
+      {/* <div style={{ height: "80px" }}></div> */}
       <footer>
         <Footer />
       </footer>
