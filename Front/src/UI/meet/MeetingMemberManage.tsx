@@ -3,7 +3,7 @@
 모임 관리 - 참여자 관리 페이지
 참여중인 인원, 신청한 인원을 보여주고 승인, 거절이 가능
 */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import NavbarSimple from "../navbar/NavbarSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
@@ -36,8 +36,17 @@ const NoBtn = styled(BtnSmall)`
 `;
 
 const MeetingMemberManage = () => {
-  const [memberList, setMemberList] = useState(["주최자 이름", "참여자1", "참여자2", "참여자3"]);
-  const [applicantList, setApplicantList] = useState(["신청자1", "신청자2", "신청자3"]);
+  const [memberList, setMemberList] = useState([
+    "주최자 이름",
+    "참여자1",
+    "참여자2",
+    "참여자3",
+  ]);
+  const [applicantList, setApplicantList] = useState([
+    "신청자1",
+    "신청자2",
+    "신청자3",
+  ]);
 
   const acceptHandler = (userName: string) => {
     console.log("you accepted user : ", userName);
@@ -46,12 +55,21 @@ const MeetingMemberManage = () => {
     console.log("you refused user : ", userName);
   };
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+
   return (
     <div style={{ fontFamily: "JejuGothic" }}>
       <header>
         <NavbarSimple title="모임 관리" />
       </header>
-      <div style={{ fontSize: "32px", marginTop: "1rem" }}>모임의 제목이 들어갑니다</div>
+      <div style={{ fontSize: "32px", marginTop: "1rem" }}>
+        모임의 제목이 들어갑니다
+      </div>
       <div style={{ marginBottom: "7rem" }}>
         <SubTitle style={{ display: "flex", alignItems: "center" }}>
           <div>참여중</div>

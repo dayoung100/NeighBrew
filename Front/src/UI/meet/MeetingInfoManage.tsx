@@ -303,6 +303,10 @@ const MeetingInfoManage = () => {
     setMaxAge(meetData.meetDto.maxAge); //최대 나이
     setMeetDesc(meetData.meetDto.description); //모임 소개
     setImgSrc(meetData.meetDto.imgSrc); //이미지 경로
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }, [meetData]);
 
   //inputText로 술장 검색 api

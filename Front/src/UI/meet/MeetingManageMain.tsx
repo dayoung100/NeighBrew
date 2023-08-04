@@ -71,6 +71,13 @@ const MeetingManageMain = () => {
     navigate(`/meet/${meetId}/manage/member`);
   };
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+
   //api 호출, 모임 이름 세팅
   useEffect(() => {
     callApi("get", `api/meet/${meetId}`).then((res) =>

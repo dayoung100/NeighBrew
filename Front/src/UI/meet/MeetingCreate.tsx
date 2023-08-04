@@ -290,6 +290,10 @@ const MeetingCreate = () => {
     setImgSrc(initialData.meetDto.imgSrc); //이미지 경로
     //로컬 스토리지에서 userId 가져오기
     setUserId(parseInt(localStorage.getItem("myId")));
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }, []);
 
   //inputText로 술장 검색 api
