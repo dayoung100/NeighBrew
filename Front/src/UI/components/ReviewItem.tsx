@@ -24,11 +24,12 @@ const UserCard = styled.div`
   text-align: start;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding-bottom: 5px;
 `;
 
 const DescriptionP = styled.p`
-  margin-left: 10px;
+  margin-left: 1vw;
   text-align: start;
   /* 추가하기 */
   display: -webkit-box;
@@ -73,12 +74,24 @@ const ReviewItem = ({ review }: { review: Review }) => {
         </ReviewImg>
         <div style={{ width: "100%" }}>
           <UserCard>
-            <div>
-              <img src={review.user.profile} alt="profile" />
-              <span>
+            <div style={{ display: "flex", paddingTop: "1vh" }}>
+              <img
+                src={review.user.profile}
+                alt="profile"
+                style={{
+                  width: "6vw",
+                  height: "auto",
+                  borderRadius: "10px",
+                  marginRight: "2vw",
+                  marginLeft: "1vw",
+                }}
+              />
+
+              <div>
                 <b>{review.user.name}</b>
-              </span>
+              </div>
             </div>
+
             <div>
               <img src={likeIcon} alt="like" />
               <span>38</span>

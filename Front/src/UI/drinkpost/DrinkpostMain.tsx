@@ -5,6 +5,10 @@ import { useNavigate } from "react-router-dom";
 import darkwood from "../../assets/darkwood.jpg";
 import Navbar from "../navbar/NavbarForDrinkpost";
 import Footer from "../footer/Footer";
+import ReviewItem from "../components/ReviewItem";
+import { useState, useEffect } from "react";
+import { Review } from "../../Type/types";
+import { callApi } from "../../utils/api";
 
 const MdsDiv = styled.div`
   width: 96%;
@@ -36,9 +40,8 @@ const Total = styled.div`
   background-position: center;
 `;
 
-const ReviewDiv = styled.div``;
-
 const drinkpostMain = () => {
+  const [reviewList, setReviewList] = useState<Review[]>([]);
   const navigate = useNavigate();
   const clickTotalDrink = () => {
     navigate("/drinkpost/total");
@@ -46,6 +49,13 @@ const drinkpostMain = () => {
   const toDrinkSearch = () => {
     navigate("/drinkpost/search");
   };
+
+  useEffect(() => {
+    callApi("get", "api/drinkreview/likes").then(res => {
+      console.log(res.data);
+      setReviewList(res.data);
+    });
+  });
 
   return (
     <>
@@ -58,14 +68,23 @@ const drinkpostMain = () => {
         <div style={{ marginTop: "30px", marginBottom: "30px" }} onClick={clickTotalDrink}>
           <Total></Total>
         </div>
-        <div style={{ margin: "0px 20px 0px 20px" }}>
+        <div style={{ margin: "0px 5vw 0px 5vw" }}>
           <div style={{ textAlign: "start" }}>
             <h3>후기 모아보기</h3>
           </div>
           <div
             className="reviewList"
-            style={{ display: "flex", flexWrap: "wrap", margin: "0px 30px 0px 30px" }}
-          ></div>
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              margin: "0px 0px 0px 0px",
+              justifyContent: "space-between",
+            }}
+          >
+            {reviewList.map(review => {
+              return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
+            })}
+          </div>
         </div>
         <Footer></Footer>
       </div>
