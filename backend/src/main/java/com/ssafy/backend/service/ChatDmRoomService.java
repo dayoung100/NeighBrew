@@ -35,7 +35,8 @@ public class ChatDmRoomService {
                                                 String payload) throws JsonProcessingException {
         //클라이언트에서 보낸 메세지 데이터 파싱
         JsonNode jsonNode = mapper.readTree(payload);
-        String message = String.valueOf(jsonNode.get("message"));
+        String message = jsonNode.get("message").asText()
+                ;
         Long senderId = jsonNode.get("userId").asLong();
         String userNickName = String.valueOf(jsonNode.get("userNickname"));
         log.info("메세지 데이터 파싱 결과 : {}, {}, {}", message, userNickName, senderId);
