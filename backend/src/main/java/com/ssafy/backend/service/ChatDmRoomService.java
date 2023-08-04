@@ -6,12 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.entity.ChatDmMessage;
 import com.ssafy.backend.entity.ChatDmRoom;
+import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.ChatDmRoomRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import com.ssafy.backend.entity.User;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -49,22 +49,19 @@ public class ChatDmRoomService {
         ChatDmRoom chatDmRoom;
 
         //방이 있으면 받아온다
-        if(!chatDmRoomOptional.isPresent()){
-            chatDmRoom = chatDmRoomOptional.get();
-        }else{//방이 없으면 먼저 보낸 사람을 중심으로 방을 생성한다.
-            chatDmRoom = chatDmRoomRepository.save(ChatDmRoom.builder()
-                    .user1(sender)
-                    .user2(receiver)
-                    .build());
-        }
+        //방이 없으면 먼저 보낸 사람을 중심으로 방을 생성한다.
+        chatDmRoom = chatDmRoomOptional.orElseGet(() -> chatDmRoomRepository.save(ChatDmRoom.builder()
+                .user1(sender)
+                .user2(receiver)
+                .build()));
 
         //메세지 저장
         chatDmMessageService.save(ChatDmMessage.builder()
-                        .chatDmRoom(chatDmRoom)
-                        .sender(sender)
-                        .content(message)
-                        .createdAt(LocalDateTime.now())
-                        .build());
+                .chatDmRoom(chatDmRoom)
+                .sender(sender)
+                .content(message)
+                .createdAt(LocalDateTime.now())
+                .build());
 
         //반환할 유저 데이터(ID, NickName, 프로필URL)
         UserDto userData = UserDto.builder()
@@ -81,6 +78,7 @@ public class ChatDmRoomService {
         result.put("user", userData);
         result.put("message", message);
 
+        log.info("채팅방 생성 결과 : {}", result);
         return result;
     }
 
@@ -93,7 +91,7 @@ public class ChatDmRoomService {
         User leaveUser = userRepository.findByUserId(leaveUserId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 입니다."));
 
         //유저 정보가 채팅방에 유저가 1명 남은 상태에서 다시 접근하면 모든 데이터를 지운다.
-        if(findDmRoom.getUser1() == null || findDmRoom.getUser2() == null){
+        if (findDmRoom.getUser1() == null || findDmRoom.getUser2() == null) {
             //dmRoom 삭제
             chatDmRoomRepository.deleteById(dmRoomId);
             //dmRoom에서 작성된 모든 dmMessage 삭제
@@ -104,7 +102,7 @@ public class ChatDmRoomService {
         }
 
         //나가려는 유저와 같은 User정보를 null로 바꾼다.
-        if(findDmRoom.getUser1().getUserId().equals(leaveUserId))
+        if (findDmRoom.getUser1().getUserId().equals(leaveUserId))
             chatDmRoomRepository.removeUser1FromChatRoom(dmRoomId);
         else
             chatDmRoomRepository.removeUser2FromChatRoom(dmRoomId);
@@ -120,7 +118,7 @@ public class ChatDmRoomService {
         Map<String, Object> result = new HashMap<>();
         result.put("userId", null);
         result.put("user", null);
-        result.put("",leaveUser.getNickname() + "님이 채팅방을 나갔습니다.");
+        result.put("", leaveUser.getNickname() + "님이 채팅방을 나갔습니다.");
         return mapper.writeValueAsString(result);
     }
 
