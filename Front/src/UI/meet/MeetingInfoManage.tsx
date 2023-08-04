@@ -149,6 +149,14 @@ const InfoTextArea = styled.textarea`
   resize: none;
 `;
 
+const ErrorDiv = styled.div`
+  color: red;
+  text-align: left;
+  font-family: "SeoulNamsan";
+  font-size: 15px;
+  padding: 0.5rem;
+`;
+
 //TODO: 모달 디자인이니까 공통 변수로 빼는게 나을 듯??
 const WhiteModal = {
   content: {
@@ -215,8 +223,12 @@ const MeetingInfoManage = () => {
   const GoMeetDetailHandler = () => {
     navigate(`/meet/${meetId}`);
   };
+  const GoMeetMainHandler = () => {
+    navigate(`/meet`);
+  };
   //모달 관련
   const [isModalOn, setIsModalOn] = useState(false);
+  const [isGotoMainModalOn, setIsGotoMainModalOn] = useState(false); //모임 메인으로 이동시키는 모달은 따로 관리
   const [errorMsg, setErrorMsg] = useState(""); //모달에 띄울 에러메시지
 
   //미팅 기존 정보
@@ -225,7 +237,7 @@ const MeetingInfoManage = () => {
   const [userId, setUserId] = useState(0); //현재 유저의 userId
 
   //폼에 들어갈 state들
-  const [meetTitle, setMeetTitle] = useState("");
+  const [meetTitle, setMeetTitle] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState(0); //주종카테고리
   const [selectedDrink, setSelectedDrink] = useState<Drink>(initialDrinkData); //주류
   const [sido, setSido] = useState(""); //시도
@@ -244,6 +256,26 @@ const MeetingInfoManage = () => {
   //검색 관련 state
   const [inputText, setInputText] = useState(""); //검색창에 입력된 텍스트
   const [searchResultList, setSearchResultList] = useState<Drink[]>([]); //주류 검색 결과 리스트
+
+  //입력 확인 또는 검증용
+  const [titleOK, setTitleOK] = useState(false);
+  const [drinkOK, setDrinkOK] = useState(false);
+  const [positionOK, setPositionOK] = useState(false);
+  const [timeOK, setTimeOK] = useState(false);
+  const [numOK, setNumOK] = useState(false);
+  const [liverOK, setLiverOK] = useState(false);
+  const [ageOK, setAgeOK] = useState(false);
+  const [fileOK, setFileOK] = useState(false);
+  const validArray = [
+    titleOK,
+    drinkOK,
+    positionOK,
+    timeOK,
+    numOK,
+    liverOK,
+    ageOK,
+    fileOK,
+  ];
 
   //api 호출, 기존 모임의 정보 저장
   useEffect(() => {
@@ -274,7 +306,6 @@ const MeetingInfoManage = () => {
   }, [meetData]);
 
   //inputText로 술장 검색 api
-  //TODO: 검색 결과가 없을 때 처리
   useEffect(() => {
     const promise = callApi(
       "get",
@@ -309,34 +340,83 @@ const MeetingInfoManage = () => {
     setIsSearchFocused(false);
   };
 
-  //TODO: 모임 데이터 검증 필요->일단 exception handler로?
-  //모임 현재 인원수보다 최대 인원수와 현재 인원수가 작을 수 없게
-  //유저 아이디가 호스트 아이디와 같은지
-  //각종 글자수 제한
-  //나이, 간수치 등의 최대 최소 제한 확인
+  //api 호출 전 각종 데이터 검증
+  //유저 아이디와 호스트 아이디 확인
+  //권한이 없다면 메인 페이지로 이동시킴
+  const checkIsHost = () => {
+    let isValid: boolean = true;
+    if (userId !== meetData.meetDto.hostId) {
+      isValid = false;
+      setErrorMsg("모임 편집 권한이 없습니다.");
+    }
+    return isValid;
+  };
 
-  //필수 입력값 검증(try-catch외에 추가로)
+  //입력값 검증
+  useEffect(() => {
+    //제목: 필수 입력/15자 이내
+    if (meetTitle === "" || meetTitle == null || meetTitle.length > 15) {
+      setTitleOK(false);
+    } else setTitleOK(true);
+    //술: 필수 입력
+    if (selectedDrink.drinkId === 0) {
+      setDrinkOK(false);
+    } else setDrinkOK(true);
+    //위치: 필수 입력
+    if (sido === "" || gugun === "" || dong === "") {
+      setPositionOK(false);
+    } else setPositionOK(true);
+    //날짜: 필수 입력/현재 시점 이후로
+    if (
+      date === "" ||
+      time === "" ||
+      new Date(`${date}T${time}:00`) <
+        new Date(`${localDate()}T${localTime()}:00`)
+    ) {
+      setTimeOK(false);
+    } else setTimeOK(true);
+    //최대인원: 필수 입력/최대 8명
+    if (maxParticipants === 0 || maxParticipants > 8) {
+      setNumOK(false);
+    } else setNumOK(true);
+    //간수치: 100이하
+    if (liverLimit > 100) {
+      setLiverOK(false);
+    } else setLiverOK(true);
+    //나이: 최소나이는 20세 이상/나이는 200이하
+    if (minAge < 20 || maxAge > 200) {
+      setAgeOK(false);
+    } else setAgeOK(true);
+    //이미지: 이미지타입/이미지크기
+    if (
+      file &&
+      (file.size > 1024 * 1024 * 5 || !file.type.startsWith("image/"))
+    ) {
+      setFileOK(false);
+    } else setFileOK(true);
+  });
+
+  //필수 입력값 검증(위 내용 외에 추가로 모달창 오픈)
   const checkRequiredValue = () => {
-    let hasError: number = 0;
-    let errMsg: string = "";
-    //TODO: 엔터가 모달에 적용안되는 거 해결
-    //날짜와 시간-둘은 합쳐져서 try-catch로 잡지 못함
-    if (date === "") {
-      ++hasError;
-      errMsg += `날짜를 입력해주세요.
-      `;
+    //빨간글씨가 하나라도 있으면 모달 오픈
+    let isValid = validArray.every((el) => el);
+    if (!isValid) {
+      setErrorMsg("입력값을 확인해주세요.");
+      return false;
     }
-    if (time === "") {
-      ++hasError;
-      errMsg += `시간을 입력해주세요.\n`;
+    //모임 현재 인원수 < 최대인원수
+    if (meetData.meetDto.nowParticipants > maxParticipants) {
+      setErrorMsg(
+        `최대 인원수는 현재 인원수보다 적어질 수 없습니다. \n 현재 인원수: ${meetData.meetDto.nowParticipants}\n`
+      );
+      return false;
     }
-    //최대인원은 기본값이 0 -> try-catch안됨
-    if (maxParticipants === 0) {
-      ++hasError;
-      errMsg += `최대인원을 입력해주세요.\n`;
+    //최소 나이 > 최대 나이 일때
+    if (maxAge && minAge > maxAge) {
+      setErrorMsg("최소 나이는 최대 나이보다 \n 클 수 없습니다.");
+      return false;
     }
-    setErrorMsg(errMsg);
-    return hasError > 0 ? false : true;
+    return true;
   };
 
   //필수가 아닌 입력값 검증
@@ -349,12 +429,18 @@ const MeetingInfoManage = () => {
   //수정 완료 버튼 클릭 api
   const updateMeeting = async () => {
     //api 요청 전에 확인
+    //호스트가 맞는가?
+    if (!checkIsHost()) {
+      setIsGotoMainModalOn(true);
+      return;
+    }
+    //입력 값들이 적절한가? - 추가사항모달
     if (!checkRequiredValue()) {
       setIsModalOn(true);
       return;
     }
-    let f = new FormData();
 
+    let f = new FormData();
     //필수 입력o
     f.append("meetName", meetTitle);
     f.append("maxParticipants", maxParticipants.toString());
@@ -383,7 +469,6 @@ const MeetingInfoManage = () => {
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
     promise
       .then((res) => {
-        console.dir(res.data);
         GoMeetDetailHandler(); //모임 상세 페이지로 이동
       })
       .catch((error) => {
@@ -437,6 +522,22 @@ const MeetingInfoManage = () => {
     return tag[tagId].tagName;
   }
 
+  //현재 날짜를 받아오기 -> min 값으로 설정
+  const localDate = () => {
+    const date = new Date().toISOString().substring(0, 10);
+    return date;
+  };
+
+  //현재 시간을 받아오기
+  const localTime = () => {
+    const time = new Date(
+      new Date().getTime() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .slice(11, 16);
+    return time;
+  };
+
   return (
     <div>
       <header>
@@ -450,6 +551,9 @@ const MeetingInfoManage = () => {
             value={meetTitle}
             onChange={(e) => setMeetTitle(e.target.value)}
           />
+          {!titleOK && (
+            <ErrorDiv>📌모임 이름은 필수로 입력해야합니다.(15자 이내)</ErrorDiv>
+          )}
         </QuestionDiv>
         <QuestionDiv>
           <Title>우리가 마실 것은</Title>
@@ -477,6 +581,11 @@ const MeetingInfoManage = () => {
                     }}
                   />
                 </div>
+                {!isSearchFocused && !drinkOK && (
+                  <ErrorDiv>
+                    📌한 가지의 주류를 필수적으로 입력해야합니다.
+                  </ErrorDiv>
+                )}
                 {isSearchFocused && (
                   <SearchResultDiv>
                     <div
@@ -603,13 +712,30 @@ const MeetingInfoManage = () => {
             </DropdownInput>
             동
           </div>
+          {!positionOK && <ErrorDiv>📌위치는 필수 입력 사항입니다.</ErrorDiv>}
         </QuestionDiv>
         <QuestionDiv>
           <Title>시간</Title>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <DateInput value={date} onChange={(e) => setDate(e.target.value)} />
-            <TimeInput value={time} onChange={(e) => setTime(e.target.value)} />
+            <DateInput
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              min={localDate().toString()}
+              required
+            />
+            <TimeInput
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              required
+            />
           </div>
+          {!timeOK && (
+            <ErrorDiv>
+              <div>📌날짜와 시간은 필수 입력 사항입니다.</div>
+              <div>(현재 날짜와 시간 이후로만 입력 가능)</div>
+            </ErrorDiv>
+          )}
         </QuestionDiv>
         <QuestionDiv style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>
           <Title>조건</Title>
@@ -631,7 +757,7 @@ const MeetingInfoManage = () => {
                 )
               }
             />
-            명
+            명{!numOK && <ErrorDiv>📌필수 입력사항입니다.(8명 이내)</ErrorDiv>}
           </div>
           <div
             style={{
@@ -648,6 +774,7 @@ const MeetingInfoManage = () => {
               onChange={(e) => setLiverLimit(parseInt(e.target.value))}
             />
             IU/L이상
+            {!liverOK && <ErrorDiv>📌100 IU/L 이하</ErrorDiv>}
           </div>
           <div
             style={{
@@ -671,6 +798,7 @@ const MeetingInfoManage = () => {
             />
             세 미만
           </div>
+          {!ageOK && <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>}
         </QuestionDiv>
         <QuestionDiv>
           <Title>설명</Title>
@@ -682,6 +810,9 @@ const MeetingInfoManage = () => {
         </QuestionDiv>
         <div>
           <ImageInput key={imgSrc} getFunc={setFile} imgSrc={imgSrc} />
+          {!fileOK && (
+            <ErrorDiv>📌이미지만 업로드 가능합니다.(5MB 이하)</ErrorDiv>
+          )}
         </div>
       </div>
       <footer>
@@ -691,7 +822,6 @@ const MeetingInfoManage = () => {
           bgColor="white"
           reqFunc={() => {
             updateMeeting();
-            console.log("모임 정보 수정 완료");
           }}
         />
       </footer>
@@ -701,6 +831,16 @@ const MeetingInfoManage = () => {
         style={WhiteModal}
       >
         <div style={{ whiteSpace: "pre-line" }}>{errorMsg}</div>
+      </Modal>
+      <Modal
+        isOpen={isGotoMainModalOn}
+        onRequestClose={() => {
+          setIsGotoMainModalOn(false);
+          GoMeetMainHandler(); //모임 메인 페이지로 이동
+        }}
+        style={WhiteModal}
+      >
+        <div>{errorMsg}</div>
       </Modal>
     </div>
   );

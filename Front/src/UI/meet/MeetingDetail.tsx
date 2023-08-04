@@ -265,7 +265,7 @@ const MeetingDetail = () => {
           <div
             style={{
               fontFamily: "JejuGothic",
-              fontSize: "32px",
+              fontSize: "28px",
               margin: "0 auto 0.5rem auto",
               width: "20rem",
             }}
