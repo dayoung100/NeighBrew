@@ -42,13 +42,13 @@ public class ChatController {
     }
 
     //dm 참여 및 메세지 전송
-    @MessageMapping("/dm/{receiverId}/sendMessage")
+    @MessageMapping("/dm/{senderId}/{receiverId}/sendMessage")
     public void createChatOrSend(@DestinationVariable Long receiverId,
+                                 @DestinationVariable Long senderId,
                                  @Payload String payload) throws JsonProcessingException {
         Map<String, Object> sendData = chatDmRoomService.createChatOrSend(receiverId, payload);
-        String dmRoomId = (String) sendData.get("dmRoomId");
 
-        messagingTemplate.convertAndSend("/pub/dm/" + dmRoomId, mapper.writeValueAsString(sendData));
+        messagingTemplate.convertAndSend("/pub/dm/" + senderId + "/" + receiverId, mapper.writeValueAsString(sendData));
     }
 
     //dm떠나기
