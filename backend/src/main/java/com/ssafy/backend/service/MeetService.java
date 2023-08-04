@@ -281,7 +281,7 @@ public class MeetService {
 
         //모임에서 나간다
         Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
-        if(applyUserStatus != Status.HOST) throw new IllegalArgumentException("죄송합니다.. 방장님은 나가실 수 없으십니다. 모임 삭제를 요청하세요.");
+        if(applyUserStatus == Status.HOST) throw new IllegalArgumentException("죄송합니다.. 방장님은 나가실 수 없으십니다. 모임 삭제를 요청하세요.");
 
         //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.GUEST);

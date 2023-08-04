@@ -6,6 +6,7 @@ import com.ssafy.backend.repository.ChatDmMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -17,10 +18,12 @@ public class ChatDmMessageService {
         return chatDmMessageRepository.save(chatDmMessage);
     }
 
+    @Transactional
     public void deleteAllMessage(Long dmRoomId) {
+        chatDmMessageRepository.deleteByChatDmRoom_ChatDmRoomId(dmRoomId);
     }
 
     public List<ChatDmMessage> findDmMessagesByRoomId(Long dmRoomId) {
-        return null;
+        return chatDmMessageRepository.findByChatDmRoom_ChatDmRoomId(dmRoomId).orElseThrow(()-> new IllegalArgumentException("채팅방 정보가 올바르지 않습니다."));
     }
 }
