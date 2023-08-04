@@ -16,7 +16,6 @@ import java.util.Map;
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
-
     // 채팅방 생성
     @PostMapping("/room")
     public ResponseEntity<ChatRoom> createChatRoom(@RequestBody Map<String, Object> map) {
@@ -34,5 +33,4 @@ public class ChatRoomController {
     public ResponseEntity<?> getChatRoomUsers(@PathVariable Long chatRoomId) {
         return ResponseEntity.ok(chatRoomService.getUsersInChatRoom(chatRoomId));
     }
-
 }
