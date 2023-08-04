@@ -139,6 +139,13 @@ const MeetingDetail = () => {
     navigate(`/drinkpost/${drinkId}`);
   };
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+
   //api 호출
   useEffect(() => {
     const promise = callApi("get", `api/meet/${meetId}`);
