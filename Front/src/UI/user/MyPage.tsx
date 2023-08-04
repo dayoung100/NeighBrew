@@ -73,11 +73,9 @@ const MyPage = () => {
   };
   const myDrinks = () => {
     callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
+      console.log(res.data);
       setUserData(userData => ({ ...userData, drinkcount: res.data.length }));
     });
-  };
-  const reportHandler = () => {
-    alert("신고되었습니다.");
   };
   const goFollowerPage = () => {
     navigate("/myPage/follower/" + userid);
@@ -129,6 +127,10 @@ const MyPage = () => {
     setDeleteModalOn(true);
   };
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
     refresh();
     userInfo();
     followers();
@@ -168,6 +170,9 @@ const MyPage = () => {
         .then(() => {
           followers();
         })
+        .then(() => {
+          myDrinks();
+        })
         .catch(err => console.log(err));
     }
     if (userData.nickname == nickname && userData.intro == intro && userData.birth == birth) return;
@@ -183,15 +188,21 @@ const MyPage = () => {
       .then(() => {
         followers();
       })
+      .then(() => {
+        myDrinks();
+      })
       .catch(err => {
-        // console.log(err);
-        userInfo();
         if (err.response.data == "중복") {
           alert("중복된 닉네임입니다. 다시 입력해주세요.");
         }
       });
   };
-
+  const reportHandler = () => {
+    if (window.confirm("정말 신고 하시겠습니까?")) {
+      alert("신고되었습니다..");
+    } else {
+    }
+  };
   return (
     <>
       <header>
@@ -285,9 +296,20 @@ const MyPage = () => {
           >
             메세지
           </button>
-          <button style={{ margin: "0 1rem", width: "10%" }}>
-            {/* <img src={siren} alt="" /> */}
-          </button>
+          <SirenArea></SirenArea>
+          {/* 
+          <img
+            src={siren}
+            alt=""
+            style={{
+              margin: "0 1rem",
+              cursor: "pointer",
+              width: "10%",
+              height: "100%",
+
+            }}
+            onClick={reportHandler} 
+          />*/}
         </FollowDiv>
       </div>
       <div>
@@ -339,7 +361,7 @@ const MyPage = () => {
         </FlexDiv>
         <QuestionDiv style={{ textAlign: "left", marginBottom: "2rem" }}>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <Title style={{ margin: "0" }}>대표 이미지</Title>
+            <Title style={{ margin: "0" }}>프로필 이미지</Title>
             <ImgInput>
               <label htmlFor="img_file">
                 <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
@@ -364,9 +386,28 @@ const MyPage = () => {
             backgroundColor: "var(--c-yellow)",
             color: "var(--c-black)",
             borderRadius: "8px",
+            marginBottom: "1rem",
           }}
         >
           유저 정보 변경
+        </Button>
+        <br />
+        <Button
+          onClick={() => {
+            setDeleteModalOn(false);
+            localStorage.removeItem("token");
+            localStorage.removeItem("myId");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("chooseMenu");
+            navigate("/");
+          }}
+          style={{
+            backgroundColor: "var(--c-lightgray)",
+            color: "var(--c-black)",
+            borderRadius: "8px",
+          }}
+        >
+          로그아웃
         </Button>
       </Modal>
       <Footer />
@@ -408,6 +449,16 @@ const ImageArea = styled.div<{ src: string }>`
   width: 30%;
   padding-bottom: 30%;
   overflow: hidden;
+`;
+const SirenArea = styled.div`
+  background: url("/src/assets/siren.png") no-repeat center;
+  background-size: cover;
+  border-radius: 50%;
+  /* position: relative; */
+  width: 6%;
+  padding-bottom: 6%;
+  overflow: hidden;
+  margin-left: 0.7rem;
 `;
 // user 이미지, 간수치, 술장이 들어갈 div
 const FlexDivRow = styled.div`
