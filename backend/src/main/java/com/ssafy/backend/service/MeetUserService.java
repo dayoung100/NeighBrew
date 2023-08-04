@@ -48,6 +48,9 @@ public class MeetUserService {
         meetUserRepository.save(findMeetUser);
     }
 
+
+
+    @Transactional
     public void deleteExitUser(Long userId, Long meetId, Status status) {
         meetUserRepository.deleteByUser_UserIdAndMeet_MeetIdAndStatus(userId, meetId, status);
     }

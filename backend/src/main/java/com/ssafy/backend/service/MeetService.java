@@ -198,6 +198,7 @@ public class MeetService {
 
     }
 
+    @Transactional
     public void deleteMeet(Long hostId, Long meetId) throws NoSuchFieldException {
         log.info("meetId : {}인 모임 삭제", meetId);
 
@@ -259,6 +260,7 @@ public class MeetService {
         pushService.send(attendUser, host, PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
     }
 
+    @Transactional
     public void applyCancelMeet(Long userId, Long meetId) throws Exception {
         log.info("{}유저 {}모임 신청 취소 ", userId, meetId);
 
