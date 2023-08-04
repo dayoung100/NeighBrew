@@ -17,7 +17,6 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatRoomId;
 
-
     @Lob
     @Column(nullable = false)
     private String chatRoomName;

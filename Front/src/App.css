@@ -11,7 +11,7 @@
 :root {
   --c-black: #322d29;
   --c-gray: #aaaaaa;
-  --c-lightgray: #ececec;
+  --c-lightgray: #f4f4f4;
   --c-beige: #efe9e1;
   --c-yellow: #f2bc79;
 }
@@ -21,13 +21,14 @@ body {
 }
 header {
   position: sticky;
-  top: 0;
+  top: 0px;
   z-index: 10;
 }
 footer {
-  position: sticky;
-  bottom: 0;
+  position: fixed;
+  bottom: 0px;
   z-index: 10;
+  width: 100%;
 }
 #root {
   max-width: 430px;

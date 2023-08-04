@@ -16,33 +16,29 @@ const Button = styled.button`
   height: 3rem;
   background-color: white;
   border: none;
-  margin: 1rem auto;
+  margin: 0.7rem auto;
 `;
 
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
-  const MeetingIcon = meetingicon(
-    chooseChat === 0 ? "var(--c-black)" : "#AAAAAA"
-  );
+  const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
   const navigate = useNavigate();
 
   const chatRoomDetail = (roomId: number) => {
     console.log(roomId);
     navigate(`/chatList/${roomId}`);
   };
-  const directMessageIcon = directMessage(
-    chooseChat === 0 ? "#AAAAAA" : "var(--c-black)"
-  );
+  const directMessageIcon = directMessage(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
 
   const userId = localStorage.getItem("myId");
   useEffect(() => {
     callApi("GET", `api/chatroom/${userId}/getChatRoom`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
         setChatList(res.data);
       })
-      .catch((e) => {
+      .catch(e => {
         console.log(e);
       });
   }, []);
@@ -54,8 +50,7 @@ const ChatList = () => {
             setChooseChat(0);
           }}
           style={{
-            borderBottom:
-              chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
           }}
         >
           {MeetingIcon}
@@ -65,15 +60,14 @@ const ChatList = () => {
             setChooseChat(1);
           }}
           style={{
-            borderBottom:
-              chooseChat === 0 ? "none" : "2px solid var(--c-black)",
+            borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
           }}
         >
           {directMessageIcon}
         </Button>
       </div>
-      <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)" }}>
-        {chatList.map((chatRoom) => {
+      <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)", minHeight: "940px" }}>
+        {chatList.map(chatRoom => {
           return (
             <Chat
               key={chatRoom.chatRoomId}
@@ -85,7 +79,7 @@ const ChatList = () => {
           );
         })}
       </div>
-      <div style={{ height: "80px" }}></div>
+      {/* <div style={{ height: "80px" }}></div> */}
       <footer>
         <Footer />
       </footer>

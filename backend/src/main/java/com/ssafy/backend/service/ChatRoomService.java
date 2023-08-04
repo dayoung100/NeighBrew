@@ -61,7 +61,7 @@ public class ChatRoomService {
                 .chatRoom(room)
                 .user(null)
                 .message("채팅방이 생성되었습니다.")
-                .timestamp(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .build());
 
         return room;
@@ -82,7 +82,7 @@ public class ChatRoomService {
                 .chatRoom(chatRoom)
                 .message(jsonNode.get("message").asText())
                 .user(user)
-                .timestamp(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         chatMessageRepository.save(chatMessage);
@@ -102,7 +102,7 @@ public class ChatRoomService {
 
         ChatMessage message = ChatMessage.builder()
                 .message(user.getNickname() + "님이 채팅방을 나갔습니다.")
-                .timestamp(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .user(user)
                 .build();
         chatMessageRepository.save(message);
@@ -136,7 +136,7 @@ public class ChatRoomService {
 
         ChatMessage message = ChatMessage.builder()
                 .message(findUser.getNickname() + "님이 채팅방을 나갔습니다.")
-                .timestamp(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .user(findUser)
                 .build();
         chatMessageRepository.save(message);

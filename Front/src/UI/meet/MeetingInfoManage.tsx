@@ -4,7 +4,7 @@
 모임 이름, 주종 카테고리, 술 검색, 위치, 시간, 조건, 설명, 이미지 첨부 가능
 */
 import { useState, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import NavbarSimple from "../navbar/NavbarSimple";
 import styled, { css } from "styled-components";
 import DrinkCategory from "../drinkCategory/DrinkCategory";
@@ -17,6 +17,7 @@ import { MeetDetail } from "../../Type/types";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
+import Modal from "react-modal";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -148,6 +149,29 @@ const InfoTextArea = styled.textarea`
   resize: none;
 `;
 
+//TODO: 모달 디자인이니까 공통 변수로 빼는게 나을 듯??
+const WhiteModal = {
+  content: {
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "15rem",
+    height: "6rem",
+    padding: "0.5rem 1rem",
+    borderRadius: "15px",
+    background: "white",
+    textAlign: "center",
+    fontFamily: "SeoulNamsan",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  overlay: {
+    background: "rgba(0, 0, 0, 0.5)",
+    zIndex: "11",
+  },
+};
+
 //TODO: 초기값을 context api로 만들던가 해서 공유하기
 const initialData: MeetDetail = {
   meetDto: {
@@ -157,7 +181,7 @@ const initialData: MeetDetail = {
     hostId: 0,
     nowParticipants: 0,
     maxParticipants: 0,
-    meetDate: "0000-01-01T00:00:00",
+    meetDate: "9999-01-01T00:00:00",
     tagId: 0,
     sido: "-",
     gugun: "-",
@@ -186,9 +210,19 @@ const initialDrinkData: Drink = {
 };
 
 const MeetingInfoManage = () => {
+  //네비게이터: 모임 수정 후 모임 상세로 이동, 주류 추가 페이지로 이동
+  const navigate = useNavigate();
+  const GoMeetDetailHandler = () => {
+    navigate(`/meet/${meetId}`);
+  };
+  //모달 관련
+  const [isModalOn, setIsModalOn] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(""); //모달에 띄울 에러메시지
+
   //미팅 기존 정보
   const [meetData, setMeetData] = useState<MeetDetail>(initialData);
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
+  const [userId, setUserId] = useState(0); //현재 유저의 userId
 
   //폼에 들어갈 state들
   const [meetTitle, setMeetTitle] = useState("");
@@ -204,7 +238,8 @@ const MeetingInfoManage = () => {
   const [minAge, setMinAge] = useState(0); //최소나이
   const [maxAge, setMaxAge] = useState(0); //최대나이
   const [meetDesc, setMeetDesc] = useState(""); //모임 소개
-  const [imgSrc, setImgSrc] = useState(""); //이미지
+  const [imgSrc, setImgSrc] = useState<string>(""); //이미지 경로
+  const [file, setFile] = useState(null); //파일 타입
 
   //검색 관련 state
   const [inputText, setInputText] = useState(""); //검색창에 입력된 텍스트
@@ -216,6 +251,8 @@ const MeetingInfoManage = () => {
     promise.then((res) => {
       setMeetData(res.data);
     });
+    //로컬 스토리지에서 userId 가져오기
+    setUserId(parseInt(localStorage.getItem("myId")));
   }, [meetId]);
 
   //받아온 모임 정보로 state 초기값 설정
@@ -233,16 +270,33 @@ const MeetingInfoManage = () => {
     setMinAge(meetData.meetDto.minAge); //최소 나이
     setMaxAge(meetData.meetDto.maxAge); //최대 나이
     setMeetDesc(meetData.meetDto.description); //모임 소개
-    setImgSrc(meetData.meetDto.imgSrc); //이미지경로
+    setImgSrc(meetData.meetDto.imgSrc); //이미지 경로
   }, [meetData]);
 
   //inputText로 술장 검색 api
+  //TODO: 검색 결과가 없을 때 처리
   useEffect(() => {
-    const promise = callApi("get", `api/drink/search?name=${inputText}`);
+    const promise = callApi(
+      "get",
+      `api/drink/search?tagId=${selectedCategory}&name=${inputText}`
+    );
     promise.then((res) => {
       setSearchResultList(res.data.content);
     });
-  }, [inputText]);
+  }, [inputText, selectedCategory]);
+
+  //카테고리 변경 시 주류 검색 결과 및 조건 초기화
+  useEffect(() => {
+    //선택된 술이 원래의 술이고,
+    //변경된 카테고리도 원래의 술이라면 -> 초기 로딩임 -> 초기화x
+    if (
+      selectedDrink.drinkId === meetData.meetDto.drink.drinkId &&
+      selectedCategory === meetData.meetDto.tagId
+    )
+      return;
+    setSelectedDrink(initialDrinkData);
+    setInputText("");
+  }, [selectedCategory]);
 
   //주종 카테고리 선택
   const getDrinkCategory = (tagId: number) => {
@@ -253,6 +307,89 @@ const MeetingInfoManage = () => {
   const getDrink = (drink: Drink) => {
     setSelectedDrink(drink);
     setIsSearchFocused(false);
+  };
+
+  //TODO: 모임 데이터 검증 필요->일단 exception handler로?
+  //모임 현재 인원수보다 최대 인원수와 현재 인원수가 작을 수 없게
+  //유저 아이디가 호스트 아이디와 같은지
+  //각종 글자수 제한
+  //나이, 간수치 등의 최대 최소 제한 확인
+
+  //필수 입력값 검증(try-catch외에 추가로)
+  const checkRequiredValue = () => {
+    let hasError: number = 0;
+    let errMsg: string = "";
+    //TODO: 엔터가 모달에 적용안되는 거 해결
+    //날짜와 시간-둘은 합쳐져서 try-catch로 잡지 못함
+    if (date === "") {
+      ++hasError;
+      errMsg += `날짜를 입력해주세요.\n`;
+    }
+    if (time === "") {
+      ++hasError;
+      errMsg += `시간을 입력해주세요.\n`;
+    }
+    //최대인원은 기본값이 0 -> try-catch안됨
+    if (maxParticipants === 0) {
+      ++hasError;
+      errMsg += `최대인원을 입력해주세요.\n`;
+    }
+    setErrorMsg(errMsg);
+    return hasError > 0 ? false : true;
+  };
+
+  //필수가 아닌 입력값 검증
+  const checkNonRequiredValue = (value: string | number) => {
+    //숫자 값이 없는지 -> 있어야만 폼데이터에 넣음
+    let res = value !== 0 && value != null && !Number.isNaN(value);
+    return res;
+  };
+
+  //수정 완료 버튼 클릭 api
+  //TODO: 필수 입력값은 입력했는지 체크
+  const updateMeeting = async () => {
+    //api 요청 전에 확인
+    if (!checkRequiredValue()) {
+      setIsModalOn(true);
+      return;
+    }
+    let f = new FormData();
+
+    //필수 입력o
+    f.append("meetName", meetTitle);
+    f.append("maxParticipants", maxParticipants.toString());
+    f.append("meetDate", `${date}T${time}:00`);
+    f.append("tagId", selectedCategory.toString());
+    f.append("sido", sido);
+    f.append("gugun", gugun);
+    f.append("dong", dong);
+    f.append(
+      "drinkId",
+      selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
+    );
+    //필수 입력x
+    if (checkNonRequiredValue(liverLimit)) {
+      f.append("minLiverPoint", liverLimit.toString());
+    }
+    if (checkNonRequiredValue(minAge)) {
+      f.append("minAge", minAge.toString());
+    }
+    if (checkNonRequiredValue(maxAge)) {
+      f.append("maxAge", maxAge.toString());
+    }
+    f.append("description", meetDesc);
+    f.append("image", file);
+
+    const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
+    promise
+      .then((res) => {
+        console.dir(res.data);
+        GoMeetDetailHandler(); //모임 상세 페이지로 이동
+      })
+      .catch((error) => {
+        setErrorMsg(error.response.data);
+        setIsModalOn(true);
+      });
   };
 
   //검색 결과 창 애니메이션 용
@@ -267,8 +404,10 @@ const MeetingInfoManage = () => {
     const date = new Date(dateData);
     const year = date.getFullYear();
     const month =
-      date.getMonth() > 8 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`;
-    const day = date.getDate();
+      date.getMonth() + 1 < 10
+        ? `0${date.getMonth() + 1}`
+        : date.getMonth() + 1;
+    const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
 
     return `${year}-${month}-${day}`;
   }
@@ -277,7 +416,8 @@ const MeetingInfoManage = () => {
   function formateTime(dateData: string) {
     const date = new Date(dateData);
     const hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
-    const minute = date.getMinutes();
+    const minute =
+      date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
 
     return `${hour}:${minute}`;
   }
@@ -315,7 +455,13 @@ const MeetingInfoManage = () => {
           <Title>우리가 마실 것은</Title>
           <SubTitle>카테고리를 선택해주세요</SubTitle>
           <CateDiv>
-            <DrinkCategory getFunc={getDrinkCategory} />
+            {selectedCategory !== 0 && (
+              <DrinkCategory
+                getFunc={getDrinkCategory}
+                selectedId={selectedCategory}
+                isSearch={false}
+              />
+            )}
           </CateDiv>
 
           <div ref={parent}>
@@ -377,7 +523,6 @@ const MeetingInfoManage = () => {
                   imgSrc="/src/assets/tempgif.gif"
                   tag={getTagName(selectedDrink.tagId)}
                   content={selectedDrink.description}
-                  numberInfo={3}
                   isWaiting={false}
                   outLine={true}
                   routingFunc={null}
@@ -487,7 +632,7 @@ const MeetingInfoManage = () => {
               marginBottom: "0.5rem",
             }}
           >
-            <img src="/src/assets/liver.svg" />
+            <img src="/src/assets/liverIcon.svg" />
             <SubTitle>간수치</SubTitle>
             <InputShort
               placeholder="40"
@@ -528,7 +673,7 @@ const MeetingInfoManage = () => {
           ></InfoTextArea>
         </QuestionDiv>
         <div>
-          <ImageInput />
+          <ImageInput key={imgSrc} getFunc={setFile} imgSrc={imgSrc} />
         </div>
       </div>
       <footer>
@@ -537,10 +682,18 @@ const MeetingInfoManage = () => {
           color="var(--c-yellow)"
           bgColor="white"
           reqFunc={() => {
+            updateMeeting();
             console.log("모임 정보 수정 완료");
           }}
         />
       </footer>
+      <Modal
+        isOpen={isModalOn}
+        onRequestClose={() => setIsModalOn(false)}
+        style={WhiteModal}
+      >
+        <div>{errorMsg}</div>
+      </Modal>
     </div>
   );
 };
