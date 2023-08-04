@@ -191,9 +191,9 @@ const initialData: MeetDetail = {
     maxParticipants: 0,
     meetDate: "9999-01-01T00:00:00",
     tagId: 0,
-    sido: "-",
-    gugun: "-",
-    dong: "-",
+    sido: "",
+    gugun: "",
+    dong: "",
     drink: {
       degree: 0,
       description: "",
@@ -352,21 +352,30 @@ const MeetingInfoManage = () => {
     return isValid;
   };
 
-  //입력값 검증
+  //////////////api 호출 전 각종 데이터 검증//////////////
+  //제목: 필수 입력/15자 이내
   useEffect(() => {
-    //제목: 필수 입력/15자 이내
     if (meetTitle === "" || meetTitle == null || meetTitle.length > 15) {
       setTitleOK(false);
     } else setTitleOK(true);
-    //술: 필수 입력
+  }, [meetTitle]);
+
+  //술: 필수 입력
+  useEffect(() => {
     if (selectedDrink.drinkId === 0) {
       setDrinkOK(false);
     } else setDrinkOK(true);
-    //위치: 필수 입력
+  }, [selectedDrink]);
+
+  //위치: 필수 입력
+  useEffect(() => {
     if (sido === "" || gugun === "" || dong === "") {
       setPositionOK(false);
     } else setPositionOK(true);
-    //날짜: 필수 입력/현재 시점 이후로
+  }, [sido, gugun, dong]);
+
+  //날짜: 필수 입력/현재 시점 이후로
+  useEffect(() => {
     if (
       date === "" ||
       time === "" ||
@@ -375,26 +384,45 @@ const MeetingInfoManage = () => {
     ) {
       setTimeOK(false);
     } else setTimeOK(true);
-    //최대인원: 필수 입력/최대 8명
+  }, [date, time]);
+
+  //최대인원: 필수 입력/최대 8명
+  useEffect(() => {
     if (maxParticipants === 0 || maxParticipants > 8) {
       setNumOK(false);
     } else setNumOK(true);
-    //간수치: 100이하
+  }, [maxParticipants]);
+
+  useEffect(() => {
+    if (maxParticipants === 0 || maxParticipants > 8) {
+      setNumOK(false);
+    } else setNumOK(true);
+  }, [maxParticipants]);
+
+  //간수치: 100이하
+  useEffect(() => {
     if (liverLimit > 100) {
       setLiverOK(false);
     } else setLiverOK(true);
-    //나이: 최소나이는 20세 이상/나이는 200이하
+  }, [liverLimit]);
+
+  //나이: 최소나이는 20세 이상/나이는 200이하
+  useEffect(() => {
     if (minAge < 20 || maxAge > 200) {
       setAgeOK(false);
     } else setAgeOK(true);
-    //이미지: 이미지타입/이미지크기
+  }, [minAge, maxAge]);
+
+  //이미지: 이미지타입/이미지크기
+  useEffect(() => {
     if (
       file &&
       (file.size > 1024 * 1024 * 5 || !file.type.startsWith("image/"))
     ) {
       setFileOK(false);
     } else setFileOK(true);
-  });
+  }, [file]);
+  //////////////api 호출 전 각종 데이터 검증//////////////
 
   //필수 입력값 검증(위 내용 외에 추가로 모달창 오픈)
   const checkRequiredValue = () => {
@@ -404,10 +432,10 @@ const MeetingInfoManage = () => {
       setErrorMsg("입력값을 확인해주세요.");
       return false;
     }
-    //모임 현재 인원수 < 최대인원수
+    //모임 현재 인원수 > 최대인원수 일때
     if (meetData.meetDto.nowParticipants > maxParticipants) {
       setErrorMsg(
-        `최대 인원수는 현재 인원수보다 적어질 수 없습니다. \n 현재 인원수: ${meetData.meetDto.nowParticipants}\n`
+        `최대 인원수는 현재 인원수보다 적어질 수 없습니다. \n 현재 인원수: ${meetData.meetDto.nowParticipants}`
       );
       return false;
     }
@@ -434,7 +462,7 @@ const MeetingInfoManage = () => {
       setIsGotoMainModalOn(true);
       return;
     }
-    //입력 값들이 적절한가? - 추가사항모달
+    //입력 값들이 적절한가?
     if (!checkRequiredValue()) {
       setIsModalOn(true);
       return;
