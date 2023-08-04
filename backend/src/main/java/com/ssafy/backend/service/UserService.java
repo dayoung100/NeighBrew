@@ -47,18 +47,16 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
         User temp = userRepository.findByNickname(updateDto.getNickname());
         if(temp != null){
-            // 3개가 다 변화가 없으면 안보냄
-            // 닉네임이 변경되는 경우
-            // 닉네임은 변경 안되는데 생년월일이나 인트로가 다른 경우
-            // 생년월일만 변경
-            // 인트로만 변경
-            // 이름만 변경
-            if(temp.getNickname().equals(updateDto.getNickname())){
-                if(!temp.getBirth().equals(updateDto.getBirth()) || !temp.getIntro().equals(updateDto.getIntro())) {
+            log.info(temp.toString());
+            if(updateDto.getNickname().equals(user.getNickname())){
+                if(!updateDto.getBirth().equals(user.getBirth()) || !updateDto.getIntro().equals(user.getIntro())) {
 
                 }else {
-                    throw new IllegalArgumentException("중복.");
+                    throw new IllegalArgumentException("에러");
                 }
+            }else{
+                log.info("이름 이미 있음");
+                throw new IllegalArgumentException("중복");
             }
         }
 
