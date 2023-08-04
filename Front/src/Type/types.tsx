@@ -14,11 +14,18 @@ export interface User {
   oauthProvider?: string;
   drinkcount?: number;
 }
+export interface Message {
+  chatMessageId: number;
+  chatRoom: ChatRoom;
+  user: User;
+  message: string;
+  createdAt: string;
+}
 export interface Chat {
   chatMessageId?: number;
   message?: string;
   user?: User;
-  timestamp?: string;
+  createdAt?: string;
   chatRoom?: ChatRoom;
   userid?: number;
 }
