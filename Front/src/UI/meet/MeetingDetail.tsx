@@ -197,12 +197,17 @@ const MeetingDetail = () => {
       console.log(res.data);
       setUserStatus("NONE");
     });
-    console.log("신청을 취소했어요");
   }
 
-  //TODO: 모임 나가기
+  //모임 나가기
   function exitMeet() {
-    setUserStatus("NONE");
+    const promise = callApi("delete", `api/meet/exit`, {
+      userId: userId,
+      meetId: meetId,
+    });
+    promise.then((res) => {
+      setUserStatus("NONE");
+    });
     console.log("모임을 나갔어요");
   }
 
