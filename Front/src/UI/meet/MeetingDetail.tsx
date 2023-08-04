@@ -16,9 +16,9 @@ import backgroundImg from "../../assets/ForTest/backgroundImg.jpg";
 import { callApi } from "../../utils/api";
 import { MeetDetail, User } from "../../Type/types";
 
-const MeetThumbnail = styled.div`
+const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(${backgroundImg}) no-repeat center;
+    url(${(props) => props.$bgImgSrc}) no-repeat center;
   background-size: cover;
   width: 100%;
   height: 30vh;
@@ -121,6 +121,11 @@ const MeetingDetail = () => {
   const [memberList, setMemberList] = useState<User[]>([]); //참여자 리스트
   const [userId, setUserId] = useState(0); //현재 유저의 userId
   const [userStatus, setUserStatus] = useState("");
+  const bgImg =
+    meetDetailData.meetDto.imgSrc === "" ||
+    meetDetailData.meetDto.imgSrc == null
+      ? "/src/assets/meetDefaultImg.jpg"
+      : meetDetailData.meetDto.imgSrc;
 
   //네비게이터 : 모임 관리 페이지로 이동, 뒤로가기 기능
   const navigate = useNavigate();
@@ -128,8 +133,10 @@ const MeetingDetail = () => {
     navigate(-1);
   };
   const GotoMeetManageHandler = (meetId: number) => {
-    console.log("goto manage page, meetId is: ", meetId);
     navigate(`/meet/${meetId}/manage`);
+  };
+  const GotoDrinkPostHandler = (drinkId: number) => {
+    navigate(`/drinkpost/${drinkId}`);
   };
 
   //api 호출
@@ -173,10 +180,16 @@ const MeetingDetail = () => {
     console.log("참여 신청했어요");
   }
 
-  //TODO: 신청 취소하기
-  //api적용 없이 신청 취소 후 다시 신청하면 에러 있을듯
+  //신청 취소하기
   function cancelApply() {
-    setUserStatus("NONE");
+    const promise = callApi("put", `api/meet/apply-cancel`, {
+      userId: userId,
+      meetId: meetId,
+    });
+    promise.then((res) => {
+      console.log(res.data);
+      setUserStatus("NONE");
+    });
     console.log("신청을 취소했어요");
   }
 
@@ -232,7 +245,7 @@ const MeetingDetail = () => {
 
   return (
     <div style={{ color: "var(--c-black)" }}>
-      <MeetThumbnail>
+      <MeetThumbnail $bgImgSrc={bgImg}>
         <div
           style={{
             display: "flex",
@@ -252,7 +265,7 @@ const MeetingDetail = () => {
           <div
             style={{
               fontFamily: "JejuGothic",
-              fontSize: "32px",
+              fontSize: "28px",
               margin: "0 auto 0.5rem auto",
               width: "20rem",
             }}
@@ -332,9 +345,10 @@ const MeetingDetail = () => {
           imgSrc="../src/assets/star.svg"
           tag={getTagName(meetDetailData.meetDto.drink.tagId)}
           content={meetDetailData.meetDto.drink.description}
-          numberInfo={"후기 수 " + 3}
           outLine={false}
-          routingFunc={GoBackHandler}
+          routingFunc={() =>
+            GotoDrinkPostHandler(meetDetailData.meetDto.drink.drinkId)
+          }
         />
         <MeetTitle>모임 소개</MeetTitle>
         <div
@@ -345,6 +359,7 @@ const MeetingDetail = () => {
             textAlign: "left",
             marginTop: "0.5rem",
             marginBottom: "2rem",
+            whiteSpace: "pre-line",
           }}
         >
           {meetDetailData.meetDto.description}

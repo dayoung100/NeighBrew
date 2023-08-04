@@ -22,17 +22,6 @@ const MeetingListItem = ({ data, isWaiting = false }: MeetingListItemProps) => {
     navigate(`/meet/${meetId}`);
   };
 
-  //날짜와 시간 변환 함수
-  function formateDate(dateData: string) {
-    const date = new Date(dateData);
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hour = date.getHours();
-    const minute = date.getMinutes();
-
-    return `${month}월 ${day}일 ${hour}시 ${minute}분`;
-  }
-
   //태그ID를 태그 이름으로 변환
   //TODO: 공용 변수로 빼기??
   function getTagName(tagId: number) {
@@ -53,26 +42,19 @@ const MeetingListItem = ({ data, isWaiting = false }: MeetingListItemProps) => {
     <div>
       {data.map((meeting: Meeting) => {
         const meetId = meeting.meetId;
-        const hasAgeLimit =
-          (meeting.minAge ?? 0) > 0 || (meeting.maxAge ?? 0) > 0 ? true : false;
-        const position = `${meeting.sido} ${meeting.gugun} ${meeting.dong}`;
-        const formattedDate = formateDate(meeting.meetDate);
         const tagName = getTagName(meeting.tagId);
+        const bgImg =
+          meeting.imgSrc === "" || meeting.imgSrc == null
+            ? "/src/assets/meetDefaultImg.jpg"
+            : meeting.imgSrc;
+
         return (
           <ListInfoItem
             key={meetId}
             title={meeting.meetName}
-            imgSrc="../src/assets/tempgif.gif"
+            imgSrc={bgImg}
             tag={tagName}
-            content={
-              <MeetingDetailSimple
-                position={position}
-                time={formattedDate}
-                hostId={meeting.hostId}
-                liverLimit={(meeting.minLiverPoint ?? 0) > 0 ? true : false}
-                ageLimit={hasAgeLimit}
-              />
-            }
+            content={<MeetingDetailSimple meetData={meeting} />}
             numberInfo={
               <PeopleNumInfo
                 now={meeting.nowParticipants}
