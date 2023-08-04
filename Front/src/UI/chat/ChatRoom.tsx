@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
 import { useNavigate } from "react-router-dom";
 import temgif from "../../assets/temgif.gif";
+import exitImg from "../../assets/exit.png";
 import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import { Chat, User } from "../../Type/types";
@@ -14,11 +15,12 @@ const OtherChat = styled.div`
   display: inline-block;
   background-color: #f0d389;
   border-radius: 12px;
-  padding: 14px;
-  max-width: 60%;
+  padding: 10px;
+  max-width: 70%;
   word-break: break-all;
   margin-bottom: 5px;
   margin-left: 1px;
+  margin-right: 0.5rem;
   font-size: 13px;
   text-align: left;
   font-family: "SeoulNamsan";
@@ -31,7 +33,7 @@ const MyChat = styled.div`
   background-color: white;
   border-radius: 12px;
   padding: 14px;
-  max-width: 60%;
+  max-width: 70%;
   word-break: break-all;
   margin-bottom: 5px;
   margin-right: 1px;
@@ -69,7 +71,7 @@ const ChatOtherMsg = styled.div`
 `;
 
 const ChatTime = styled.div`
-  margin-left: 0.5rem;
+  margin-left: 2px;
   margin-bottom: 0.4rem;
 `;
 
@@ -94,8 +96,7 @@ const ChatNav = styled.div`
 `;
 
 const RightModal = styled.div<{ ismodal: boolean }>`
-  transform: ${(props) =>
-    props.ismodal ? "translateX(6%)" : "translateX(100%)"};
+  transform: ${props => (props.ismodal ? "translateX(16%)" : "translateX(100%)")};
   position: fixed;
   width: 95%;
   overflow-x: scroll;
@@ -127,7 +128,7 @@ const Img = styled.img`
 const UserDiv = styled.div`
   display: flex;
   margin-bottom: 1rem;
-  font-size: 20px;
+  font-size: 18px;
   @font-face {
     font-family: "SUITE-Regular";
     src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2")
@@ -135,7 +136,7 @@ const UserDiv = styled.div`
     font-style: normal;
   }
   font-family: "SUITE-Regular";
-  width: 100%;
+  width: 75%;
   align-items: center;
 `;
 
@@ -160,7 +161,7 @@ const Input = styled.input`
 `;
 
 const BackDrop = styled.div<{ ismodal: boolean }>`
-  display: ${(props) => (props.ismodal ? "block" : "none")};
+  display: ${props => (props.ismodal ? "block" : "none")};
   transition: all 1s;
   width: 100%;
   max-width: 430px;
@@ -194,7 +195,7 @@ const ChatRoom = () => {
       console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
 
       // 웹소켓 이벤트 핸들러 설정
-      client.current!.subscribe(`/pub/room/${id}`, (res) => {
+      client.current!.subscribe(`/pub/room/${id}`, res => {
         console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
         console.log(receivedMessage);
@@ -207,6 +208,12 @@ const ChatRoom = () => {
               userId: receivedMessage.userId,
               nickname: receivedMessage.userNickname,
             },
+            createdAt:
+              new Date().getHours() +
+              ":" +
+              (new Date().getMinutes() < 10
+                ? "0" + new Date().getMinutes()
+                : new Date().getMinutes()),
           },
         ]);
       });
@@ -250,20 +257,20 @@ const ChatRoom = () => {
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
     callApi("GET", `api/chatMessage/${id}/messages`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
         setChatRoomName(res.data[0].chatRoom.chatRoomName);
         setMessages(res.data);
       })
-      .catch((e) => {
+      .catch(e => {
         console.error(e);
       });
 
     callApi("GET", `/api/chatroom/${id}/users`)
-      .then((res) => {
+      .then(res => {
         setUsers(res.data);
       })
-      .catch((e) => {
+      .catch(e => {
         console.error(e);
       });
   }, []);
@@ -347,25 +354,26 @@ const ChatRoom = () => {
         >
           참여자 목록
         </p>
-        {users.map((user, i) => {
-          return (
-            <UserDiv key={i}>
-              <ImgDiv>
-                <Img
-                  src={user.profile == "no image" ? temgif : user.profile}
-                ></Img>
-              </ImgDiv>
-              <p>{user.nickname}</p>
-            </UserDiv>
-          );
-        })}
-        <div style={{ marginTop: "1rem" }}>
-          <button onClick={OutRoomHandler}>채팅방 나가기</button>
+        <div>
+          {users.map((user, i) => {
+            return (
+              <UserDiv key={i}>
+                <ImgDiv>
+                  <Img src={user.profile == "no image" ? temgif : user.profile}></Img>
+                </ImgDiv>
+                <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
+              </UserDiv>
+            );
+          })}
+        </div>
+        <div style={{ position: "fixed", top: "80%" }}>
+          {/* <button onClick={OutRoomHandler}>채팅방 나가기</button> */}
+          <img src={exitImg} alt="" />
         </div>
       </RightModal>
       <div
         style={{
-          backgroundColor: ismodal ? "#757575" : "var(--c-lightgray)",
+          backgroundColor: ismodal ? "#757575" : "#b4fdb5",
           width: "100%",
           minHeight: "100vh",
           overflow: "auto",
@@ -376,10 +384,8 @@ const ChatRoom = () => {
             <div
               style={{
                 display: "flex",
-                alignItems:
-                  message.user?.userId == userId ? "flex-end" : "flex-start",
+                alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
                 flexDirection: "column",
-                marginLeft: "0.3rem",
               }}
               key={i}
             >
@@ -388,18 +394,26 @@ const ChatRoom = () => {
                   <ChatUserName>나</ChatUserName>
                   <ChatMyMsg>
                     <ChatTime>
-                      {message.createdAt.split("T")[1].substring(0, 5)}
+                      {message.createdAt.length > 5
+                        ? message.createdAt.split("T")[1].substring(0, 5)
+                        : message.createdAt}
                     </ChatTime>
                     <MyChat>{message.message}</MyChat>
                   </ChatMyMsg>
                 </ChatMyBox>
               ) : (
                 <ChatOtherBox>
-                  <ChatUserName>{message.user?.nickname}</ChatUserName>
+                  <ChatUserName>
+                    {message.user?.nickname.includes("@")
+                      ? message.user.nickname.split("@")[0]
+                      : message.user.nickname}
+                  </ChatUserName>
                   <ChatOtherMsg>
                     <OtherChat>{message.message}</OtherChat>
                     <ChatTime>
-                      {message.createdAt.split("T")[1].substring(0, 5)}
+                      {message.createdAt.length > 5
+                        ? message.createdAt.split("T")[1].substring(0, 5)
+                        : message.createdAt}
                     </ChatTime>
                   </ChatOtherMsg>
                 </ChatOtherBox>
@@ -411,11 +425,7 @@ const ChatRoom = () => {
       </div>
       <footer>
         <InputDiv>
-          <Input
-            value={message}
-            onChange={messageHandler}
-            onKeyUp={sendMessageHandler}
-          ></Input>
+          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
           {message.length > 0 ? (
             <div onClick={sendMessageHandler}>
               <SendIcon></SendIcon>
@@ -435,13 +445,7 @@ export default ChatRoom;
 
 const SendIcon = () => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="28"
-      height="25"
-      viewBox="0 0 30 27"
-      fill="none"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="25" viewBox="0 0 30 27" fill="none">
       <path
         fillRule="evenodd"
         clipRule="evenodd"

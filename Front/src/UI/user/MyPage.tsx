@@ -175,6 +175,15 @@ const MyPage = () => {
         })
         .catch(err => console.log(err));
     }
+    if (userData.nickname != nickname && nickname.length > 15) {
+      alert("닉네임이 길어 변경할 수 없습니다.");
+      setNickname(userData.nickname);
+      return;
+    }
+    if (intro == "" || nickname == "" || birth == "") {
+      alert("빈 값이 존재합니다.");
+      return;
+    }
     if (userData.nickname == nickname && userData.intro == intro && userData.birth == birth) return;
     console.log(nickname, intro, birth);
     callApi("put", "api/user/guard", {
@@ -296,20 +305,7 @@ const MyPage = () => {
           >
             메세지
           </button>
-          <SirenArea></SirenArea>
-          {/* 
-          <img
-            src={siren}
-            alt=""
-            style={{
-              margin: "0 1rem",
-              cursor: "pointer",
-              width: "10%",
-              height: "100%",
-
-            }}
-            onClick={reportHandler} 
-          />*/}
+          <SirenArea onClick={reportHandler}></SirenArea>
         </FollowDiv>
       </div>
       <div>
