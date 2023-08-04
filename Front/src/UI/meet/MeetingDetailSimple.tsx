@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
+import { callApi } from "../../utils/api";
 import { Meeting, User } from "../../Type/types";
 
 const InnerText = styled.div`
@@ -41,8 +42,14 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
   const hasAgeLimit =
     (meetData.minAge ?? 0) > 0 || (meetData.maxAge ?? 0) > 0 ? true : false;
   const hasLiverLimit = (meetData.minLiverPoint ?? 0) > 0 ? true : false;
-  //TODO: 호스트 아이디로 호스트 프사와 닉네임 가져오기
   const [host, setHost] = useState<User>(initialUser);
+
+  useEffect(() => {
+    const promise = callApi("get", `/api/user/${meetData.hostId}`);
+    promise.then((res) => {
+      setHost(res.data);
+    });
+  }, [meetData]);
 
   return (
     <div style={{ fontFamily: "Noto Sans KR", fontSize: "10px" }}>

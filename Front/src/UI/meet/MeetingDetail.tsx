@@ -114,6 +114,17 @@ const initialData: MeetDetail = {
   statuses: [],
 };
 
+const initialUser = {
+  userId: 0,
+  email: "",
+  nickname: "",
+  name: "",
+  liverPoint: 0,
+  profile: "",
+  follower: 0,
+  following: 0,
+};
+
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
@@ -297,7 +308,7 @@ const MeetingDetail = () => {
             {memberList[0] && (
               <div style={{ display: "flex", alignItems: "center" }}>
                 <img
-                  src="../src/assets/tempgif.gif"
+                  src={memberList[0].profile}
                   width="20rem"
                   style={{ borderRadius: "100px" }}
                 />
@@ -400,7 +411,7 @@ const MeetingDetail = () => {
                 userId={member.userId}
                 name={member.nickname}
                 intro={member.intro}
-                imgSrc="../src/assets/tempgif.gif"
+                imgSrc={member.profile}
                 isMaster={index === 0}
                 width={15}
               />
