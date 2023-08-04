@@ -8,6 +8,7 @@ import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import { Chat } from "../../Type/types";
 import { callApi } from "../../utils/api";
+import Footer from "../footer/Footer";
 
 const MyChat = styled.div`
   position: relative;
@@ -88,7 +89,6 @@ const ImgDiv = styled.div`
   width: 15%;
   height: 100%;
   overflow: hidden;
-  /* inline-size: 25ch; */
   aspect-ratio: 1/1;
   border-radius: 50%;
   float: left;
@@ -112,13 +112,12 @@ const UserDiv = styled.div`
 const InputDiv = styled.div`
   width: 100%;
   background-color: white;
-  position: sticky;
   height: 2.5rem;
   box-sizing: border-box;
-  margin-bottom: 3px;
   display: flex;
   align-items: center;
   justify-content: space-around;
+  padding: 0.5rem;
 `;
 
 const Input = styled.input`
@@ -235,12 +234,10 @@ const ChatRoom = () => {
   }, [messages]);
   // 스크롤 로직
   const scroll = () => {
-    if (rapperDiv.current) {
-      window.scrollTo({
-        top: rapperDiv.current!.scrollHeight,
-        behavior: "smooth",
-      });
-    }
+    window.scrollTo({
+      top: rapperDiv.current!.scrollHeight,
+      behavior: "smooth",
+    });
   };
 
   useEffect(() => {
@@ -263,7 +260,6 @@ const ChatRoom = () => {
   return (
     <div ref={rapperDiv}>
       <header>
-        {/* <Navbar /> */}
         <ChatNav>
           <div
             style={{
@@ -321,12 +317,11 @@ const ChatRoom = () => {
         </div>
       </RightModal>
       <div
-        // ref={rapperDiv}
         style={{
           backgroundColor: ismodal ? "#757575" : "var(--c-lightgray)",
-          height: "100%",
           width: "100%",
-          // maxWidth: "450px",
+          minHeight: "100vh",
+          overflow: "auto",
         }}
       >
         {messages.map((message, i) => {
@@ -356,6 +351,7 @@ const ChatRoom = () => {
             </div>
           );
         })}
+        <div style={{ height: "3rem" }}></div>
       </div>
       <footer>
         <InputDiv>
@@ -365,7 +361,9 @@ const ChatRoom = () => {
               <SendIcon></SendIcon>
             </div>
           ) : (
-            <></>
+            <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
+              <SendIcon></SendIcon>
+            </div>
           )}
         </InputDiv>
       </footer>

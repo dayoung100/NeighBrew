@@ -243,7 +243,7 @@ const CateDiv = styled.div`
 
 const SearchResultDiv = styled.div`
   background: var(--c-lightgray);
-  padding: 1rem 0;
+  padding: 1rem 0 0 0;
 `;
 
 const SearchResultHeader = styled.div`

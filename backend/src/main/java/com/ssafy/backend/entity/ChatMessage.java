@@ -27,15 +27,15 @@ public class ChatMessage {
     @Column(nullable = false)
     private String message;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @Setter
-    private LocalDateTime timestamp;
+    private LocalDateTime createdAt;
 
     @Builder
-    public ChatMessage(ChatRoom chatRoom, String message, User user, LocalDateTime timestamp) {
+    public ChatMessage(ChatRoom chatRoom, String message, User user, LocalDateTime createdAt) {
         this.chatRoom = chatRoom;
         this.message = message;
-        this.timestamp = timestamp;
+        this.createdAt = createdAt;
         this.user = user;
     }
 }
