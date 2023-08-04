@@ -51,11 +51,13 @@ const drinkpostMain = () => {
   };
 
   useEffect(() => {
-    callApi("get", "api/drinkreview/likes").then(res => {
-      console.log(res.data);
-      setReviewList(res.data);
-    });
-  });
+    callApi("get", "api/drinkreview/likes")
+      .then(res => {
+        console.log(res.data);
+        setReviewList(res.data);
+      })
+      .catch(err => console.error(err));
+  }, []);
 
   return (
     <>
