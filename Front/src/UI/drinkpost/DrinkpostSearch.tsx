@@ -8,7 +8,7 @@ import { searchNavIcon } from "../../assets/AllIcon";
 import { Drink } from "../../Type/types";
 import DrinkCard from "./DrinkCard";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const Body = styled.div`
   background-color: white;

@@ -1,8 +1,11 @@
 import styled from "styled-components";
 import likeIcon from "../../assets/likeIcon.svg";
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Review } from "../../Type/types";
 import { callApi } from "../../utils/api";
+import defaultReviewImage from "../../assets/JWBlueL.jpg";
+import defaultBeerImage from "../../assets/Beer.jpg";
+import { useNavigate } from "react-router-dom";
 
 const ReviewCard = styled.div`
   display: flex;
@@ -14,7 +17,9 @@ const ReviewCard = styled.div`
 `;
 
 const ReviewImg = styled.div`
-  background-color: var(--c-gray);
+  background-image: url(${defaultBeerImage});
+  background-size: cover;
+  background-repeat: no-repeat;
   border-radius: 12px;
   width: 100%;
   height: 180px;
@@ -64,23 +69,18 @@ const MoreButton = styled.button`
 
 const ReviewItem = ({ review }: { review: Review }) => {
   const [showMore, setShowMore] = useState(false);
-  const [like, setLike] = useState(review.likeCount);
-  const likeReview = () => {
-    callApi("post", `api/like/guard/${review.drinkReviewId}`)
-      .then(res => {
-        console.log(res.data);
-        setLike(prev => prev + 1);
-      })
-      .catch(err => console.error(err));
-  };
   const toggleShowMore = () => {
     setShowMore(!showMore);
+  };
+  const navigate = useNavigate();
+  const toReviewDetail = () => {
+    navigate(`/drinkpost/${review.drink.drinkId}/${review.drinkReviewId}`);
   };
   return (
     <>
       <ReviewCard>
-        <ReviewImg>
-          <img src={review.img} alt="reviewImg" />
+        <ReviewImg onClick={toReviewDetail}>
+          {/* <img src={defaultReviewImage} alt="reviewImg" /> */}
         </ReviewImg>
         <div style={{ width: "100%" }}>
           <UserCard>
@@ -91,20 +91,20 @@ const ReviewItem = ({ review }: { review: Review }) => {
                 style={{
                   width: "6vw",
                   height: "auto",
-                  borderRadius: "10px",
+                  borderRadius: "20px",
                   marginRight: "2vw",
                   marginLeft: "1vw",
                 }}
               />
 
               <div>
-                <b>{review.user.name}</b>
+                <b>{review.user.nickname}</b>
               </div>
             </div>
 
-            <div style={{ cursor: "pointer" }} onClick={likeReview}>
+            <div style={{ cursor: "pointer" }}>
               <img src={likeIcon} alt="like" />
-              <span>{like}</span>
+              <span>{review.likeCount}</span>
             </div>
           </UserCard>
           <div style={{ textAlign: "start" }}>

@@ -35,18 +35,21 @@ const DrinkThumbnail = styled.div`
 
 const InfoDiv = styled.div`
   display: flex;
+  position: relative;
 `;
 
 const SimpleInfo = styled.div`
   text-align: center;
-  width: 50vw;
+  width: 50%;
   word-wrap: break-word;
 `;
 
 const ImageInfo = styled.div`
-  width: 40vh;
-  position: relative;
-  bottom: 15vh;
+  width: 40%;
+  position: absolute;
+  left: 70%;
+  transform: translateX(-50%);
+  bottom: 0;
 `;
 
 const CreateReviewDiv = styled.div`
@@ -187,8 +190,8 @@ const DrinkpostDetail = () => {
       <WholeDiv>
         <InfoDiv>
           <SimpleInfo>
-            <h3 style={{ margin: "20px 0px 20px 20px" }}>{detail?.name}</h3>
             <div style={{ textAlign: "center", marginLeft: "10vw" }}>
+              <h3 style={{ marginRight: "2vw", textAlign: "start" }}>{detail?.name}</h3>
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <b style={{ marginRight: "2vw" }}>주종</b>
                 {getTagNameMk2(detail?.tagId)}
@@ -224,7 +227,7 @@ const DrinkpostDetail = () => {
           </ImageInfo>
         </InfoDiv>
 
-        <div style={{ position: "relative", bottom: "10vh" }}>
+        <div style={{}}>
           <DescriptionP className={showMore ? "show" : ""}>
             <hr />
             {detail?.description}
@@ -240,7 +243,7 @@ const DrinkpostDetail = () => {
           )}
         </div>
 
-        <div className="reviewBox" style={{ position: "relative", bottom: "8vh" }}>
+        <div className="reviewBox">
           <h1 style={{ textAlign: "start", marginBottom: "10px" }}>후기</h1>
 
           <div
