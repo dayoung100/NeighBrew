@@ -16,3 +16,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9999:9999"
+
+  database:
+    container_name: database
+    image: mysql:latest
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=neighbrewbe-10
+      - MYSQL_DATABASE=neighbrew
+      - MYSQL_PASSWORD=neighbrew-10
+      # - MYSQL_USER=neighbrewbe
