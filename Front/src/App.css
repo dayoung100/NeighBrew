@@ -21,13 +21,14 @@ body {
 }
 header {
   position: sticky;
-  top: 0;
+  top: 0px;
   z-index: 10;
 }
 footer {
-  position: sticky;
-  bottom: 0;
+  position: fixed;
+  bottom: 0px;
   z-index: 10;
+  width: 100%;
 }
 #root {
   max-width: 430px;
