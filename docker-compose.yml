@@ -23,9 +23,11 @@ services:
     container_name: database
     image: mysql:latest
     restart: always
+    ports:
+      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=neighbrewbe-10
       - TZ=Asia/Seoul
       - MYSQL_DATABASE=neighbrew
-      - MYSQL_PASSWORD=neighbrew-10
-      # - MYSQL_USER=neighbrewbe
+      - MYSQL_PASSWORD=neighbrewbe-10
+      - MYSQL_USER=neighbrewbe
