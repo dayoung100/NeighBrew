@@ -31,3 +31,6 @@ services:
       - MYSQL_DATABASE=neighbrew
       - MYSQL_PASSWORD=neighbrewbe-10
       - MYSQL_USER=neighbrewbe
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
