@@ -34,9 +34,10 @@ const TopTag = styled.div`
   margin: 5px 5px 0px 0px;
 `;
 
+// 글자수가 길면 글자 수 줄이기
 const Tag = styled.div`
   height: 1rem;
-  padding: 0.2rem 0.5rem;
+  padding: 0.2rem 0.5rem 0.2rem 0.5rem;
   margin-right: 0.5rem;
   margin-top: 0.2rem;
   border-radius: 14px;
