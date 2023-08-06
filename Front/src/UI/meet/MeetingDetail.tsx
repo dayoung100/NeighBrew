@@ -75,7 +75,7 @@ const MeetPosDateDiv = styled.div`
   align-items: center;
   justify-content: space-around;
   position: absolute;
-  top: 12rem;
+  top: -3rem;
   left: 50%;
   transform: translate(-50%, 0%);
   z-index: 2;
@@ -330,6 +330,18 @@ const MeetingDetail = () => {
         </div>
       </MeetThumbnail>
       <MeetDetailDiv>
+        <MeetPosDateDiv>
+          <div>
+            <img src="/src/assets/mapPinColor.svg" width="20rem" />
+            <div>{`${meetDetailData.meetDto.sido}시`}</div>
+            <div>{`${meetDetailData.meetDto.gugun}  ${meetDetailData.meetDto.dong}`}</div>
+          </div>
+          <div>
+            <img src="/src/assets/calendarColor.svg" width="20rem" />
+            <div>{formateDate(meetDetailData.meetDto.meetDate)}</div>
+            <div>{formateTime(meetDetailData.meetDto.meetDate)}</div>
+          </div>
+        </MeetPosDateDiv>
         <div
           style={{
             display: "flex",
@@ -422,18 +434,6 @@ const MeetingDetail = () => {
           })}
         </div>
       </MeetDetailDiv>
-      <MeetPosDateDiv>
-        <div>
-          <img src="/src/assets/mapPinColor.svg" width="20rem" />
-          <div>{`${meetDetailData.meetDto.sido}시`}</div>
-          <div>{`${meetDetailData.meetDto.gugun}  ${meetDetailData.meetDto.dong}`}</div>
-        </div>
-        <div>
-          <img src="/src/assets/calendarColor.svg" width="20rem" />
-          <div>{formateDate(meetDetailData.meetDto.meetDate)}</div>
-          <div>{formateTime(meetDetailData.meetDto.meetDate)}</div>
-        </div>
-      </MeetPosDateDiv>
       {userStatus === "HOST" && (
         //user 상태에 따라 버튼 변경
         <FooterBigBtn
