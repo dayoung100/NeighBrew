@@ -51,6 +51,15 @@ const Tag = styled.div`
   }
 `;
 
+const UserProfileImg = styled.div<{ src: string }>`
+  background: url(${(props) => props.src}) no-repeat center;
+  background-size: cover;
+  width: 2rem;
+  padding-bottom: 2rem;
+  border-radius: 100px;
+  margin-right: 0.2rem;
+`;
+
 const MeetDetailDiv = styled.div`
   background: var(--c-lightgray);
   min-height: 70vh;
@@ -305,11 +314,7 @@ const MeetingDetail = () => {
             <div>주최자: </div>
             {memberList[0] && (
               <div style={{ display: "flex", alignItems: "center" }}>
-                <img
-                  src={memberList[0].profile}
-                  width="20rem"
-                  style={{ borderRadius: "100px" }}
-                />
+                <UserProfileImg src={memberList[0].profile} />
                 <div>{memberList[0].nickname}</div>
               </div>
             )}

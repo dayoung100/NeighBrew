@@ -3,11 +3,20 @@ import styled from "styled-components";
 import { callApi } from "../../utils/api";
 import { Meeting, User } from "../../Type/types";
 
-const InnerText = styled.div<{ widthRem: number }>`
-  width: ${(props) => props.widthRem}rem;
+const InnerText = styled.div<{ $widthRem: number }>`
+  width: ${(props) => props.$widthRem}rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const UserProfileImg = styled.div<{ src: string }>`
+  background: url(${(props) => props.src}) no-repeat center;
+  background-size: cover;
+  width: 1rem;
+  padding-bottom: 1rem;
+  border-radius: 100px;
+  margin-right: 0.2rem;
 `;
 
 const initialUser = {
@@ -56,16 +65,18 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
       <div style={{ display: "flex" }}>
         <div style={{ display: "flex", alignContent: "center", width: "50%" }}>
           <img src="/src/assets/mapPin.svg" width="10rem"></img>
-          <InnerText widthRem={5}>{position}</InnerText>
+          <InnerText $widthRem={5}>{position}</InnerText>
         </div>
         <div style={{ display: "flex", alignContent: "center" }}>
           <img src="/src/assets/calendar.svg" width="10rem" />
-          <InnerText widthRem={6}>{formattedDate}</InnerText>
+          <InnerText $widthRem={6}>{formattedDate}</InnerText>
         </div>
       </div>
-      <InnerText widthRem={12}>
-        <span>{host.profile}</span>
-        <span>주최자: {host.nickname}</span>
+      <InnerText $widthRem={12}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <UserProfileImg src={host.profile} />
+          <div>{host.nickname}</div>
+        </div>
       </InnerText>
       <div style={{ display: "flex" }}>
         {hasLiverLimit && (
