@@ -7,7 +7,8 @@ import styled from "styled-components";
 import whiskeyImage from "../../assets/whiskeyImage.png";
 import { useNavigate } from "react-router-dom";
 import { Drink } from "../../Type/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { callApi } from "../../utils/api";
 
 const Card = styled.div`
   flex-direction: column;
@@ -18,6 +19,7 @@ const Card = styled.div`
   border-radius: 14px;
   background-color: var(--c-lightgray);
   align-items: center;
+  padding: 5px 3px 5px 3px;
 `;
 
 const CardImage = styled.img`
@@ -33,14 +35,19 @@ const TopTag = styled.div`
 `;
 
 const Tag = styled.div`
-  min-width: 65px;
-  max-width: 150px;
-  height: 20px;
+  height: 1rem;
+  padding: 0.2rem 0.5rem;
+  margin-right: 0.5rem;
+  margin-top: 0.2rem;
   border-radius: 14px;
-
-  background-color: var(--c-yellow);
+  font-size: 0.8rem;
+  background-color: #f2bc79;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
+// 글씨 중간에  작성되도록 하는 css
 const NameCard = styled.div`
   white-space: nowrap;
   overflow: hidden;
@@ -50,9 +57,11 @@ const NameCard = styled.div`
   margin: 5px 5px 5px 5px;
   padding: 5px 0px 5px 0px;
   font-size: 12px;
-  width: 90%;
-  height: 10%;
-  font-weight: bold;
+  width: 85%;
+  height: 7%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const DrinkCard = ({ drink }: { drink: Drink }) => {
@@ -62,6 +71,7 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
       string: str.slice(0, limit),
     };
   };
+
   function getTagName(tagId: number) {
     const tag = [
       { tagId: 0, tagName: "전체" },
