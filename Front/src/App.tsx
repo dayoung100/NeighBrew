@@ -26,6 +26,7 @@ import DrinkpostReviewCreate from "./UI/drinkpost/DrinkpostReviewCreate";
 import Test from "./Test";
 import DrinkpostMain from "./UI/drinkpost/DrinkpostMain";
 import DrinkpostReviewDetail from "./UI/drinkpost/DrinkpostReviewDetail";
+import DirectChat from "./UI/chat/DirectChat";
 
 function App() {
   const navigate = useNavigate();
@@ -65,6 +66,8 @@ function App() {
         <Route path="/myPage/follow/:userid" element={<Follow></Follow>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:id" element={<ChatRoom></ChatRoom>} />
+        <Route path="/directchat/:senderId/:receiverId" element={<DirectChat></DirectChat>}></Route>
+
         <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
         <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
         <Route path="/google/:str" element={<GoogleLogin></GoogleLogin>}></Route>

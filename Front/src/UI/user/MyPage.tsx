@@ -212,6 +212,11 @@ const MyPage = () => {
     } else {
     }
   };
+
+  // DM 보내기
+  const directMessageHandler = () => {
+    navigate("/directMessage/" + localStorage.getItem("myId") + "/" + userid);
+  };
   return (
     <>
       <header>
@@ -301,7 +306,7 @@ const MyPage = () => {
               cursor: "pointer",
               width: "40%",
             }}
-            onClick={followHandler}
+            onClick={directMessageHandler}
           >
             메세지
           </button>
