@@ -92,4 +92,8 @@ public class DrinkReviewService {
     public List<DrinkReview> getReviewsOrderByLikes(Pageable pageable) {
         return drinkReviewRepository.findAllByOrderByLikeCountDesc(pageable);
     }
+
+    public DrinkReview getReviewByDrinkReviewId(Long drinkReviewId) {
+        return drinkReviewRepository.findById(drinkReviewId).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+    }
 }
