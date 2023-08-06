@@ -9,6 +9,7 @@ import com.ssafy.backend.repository.DrinkRepository;
 import com.ssafy.backend.repository.DrinkReviewRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DrinkReviewService {
@@ -39,7 +41,7 @@ public class DrinkReviewService {
     public Page<DrinkReview> getReviewsByDrinkId(Long drinkId, Pageable pageable) {
         Optional<Drink> drink = drinkRepository.findById(drinkId);
         if (drink.isPresent()) {
-            return drinkReviewRepository.findByDrink(drink.get(),pageable);
+            return drinkReviewRepository.findByDrink(drink.get(), pageable);
         } else {
             throw new IllegalArgumentException("음료가 존재하지 않습니다.");
         }
@@ -94,6 +96,7 @@ public class DrinkReviewService {
     }
 
     public DrinkReview getReviewByDrinkReviewId(Long drinkReviewId) {
-        return drinkReviewRepository.findById(drinkReviewId).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+        log.info("drinkReviewId: {}", drinkReviewId);
+        return drinkReviewRepository.findByDrinkReviewId(drinkReviewId).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
     }
 }

@@ -4,6 +4,7 @@ import com.ssafy.backend.dto.DrinkReviewDto;
 import com.ssafy.backend.dto.DrinkReviewUpdateDto;
 import com.ssafy.backend.service.DrinkReviewService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/drinkreview")
@@ -25,6 +27,7 @@ public class DrinkReviewController {
     // 리뷰 아이디로 리뷰 가져오기
     @GetMapping("/review/{drinkReviewId}")
     public ResponseEntity<?> getReviewByDrinkReviewId(@PathVariable Long drinkReviewId) {
+        log.info("drinkReviewId: {}", drinkReviewId);
         return ResponseEntity.ok(drinkReviewService.getReviewByDrinkReviewId(drinkReviewId));
     }
 
