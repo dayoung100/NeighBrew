@@ -22,6 +22,12 @@ public class DrinkReviewController {
         return ResponseEntity.ok(drinkReviewService.getReviewsByDrinkId(drinkId, pageable));
     }
 
+    // 리뷰 아이디로 리뷰 가져오기
+    @GetMapping("/review/{drinkReviewId}")
+    public ResponseEntity<?> getReviewByDrinkReviewId(@PathVariable Long drinkReviewId) {
+        return ResponseEntity.ok(drinkReviewService.getReviewByDrinkReviewId(drinkReviewId));
+    }
+
     @GetMapping("/{drinkId}/{userId}")
     public ResponseEntity<?> getReviewByUserIdAndDrinkId(@PathVariable Long drinkId, @PathVariable Long userId) {
         return ResponseEntity.ok(drinkReviewService.getReviewsByUserIdAndDrinkId(userId, drinkId));
