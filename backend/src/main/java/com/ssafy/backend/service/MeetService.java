@@ -198,6 +198,7 @@ public class MeetService {
 
     }
 
+    @Transactional
     public void deleteMeet(Long hostId, Long meetId) throws NoSuchFieldException {
         log.info("meetId : {}인 모임 삭제", meetId);
 
@@ -259,6 +260,7 @@ public class MeetService {
         pushService.send(attendUser, host, PushType.MEETACCESS, pushMessage.toString(), "이동할 url");
     }
 
+    @Transactional
     public void applyCancelMeet(Long userId, Long meetId) throws Exception {
         log.info("{}유저 {}모임 신청 취소 ", userId, meetId);
 
@@ -281,7 +283,7 @@ public class MeetService {
 
         //모임에서 나간다
         Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
-        if(applyUserStatus != Status.HOST) throw new IllegalArgumentException("죄송합니다.. 방장님은 나가실 수 없으십니다. 모임 삭제를 요청하세요.");
+        if(applyUserStatus == Status.HOST) throw new IllegalArgumentException("죄송합니다.. 방장님은 나가실 수 없으십니다. 모임 삭제를 요청하세요.");
 
         //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.GUEST);
