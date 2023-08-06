@@ -41,14 +41,11 @@ const drinkpostTotal = () => {
       if (page < 10) {
         setTimeout(() => {
           callApi("get", `api/drink?page=${page}&size=12`)
-            .then(res => {
-              setDrinkList(prev => [...prev, ...res.data.content]);
-              console.log(res.data.content);
-              console.log(drinkList);
-              console.log(page);
-              setPage(prev => prev + 1);
+            .then((res) => {
+              setDrinkList((prev) => [...prev, ...res.data.content]);
+              setPage((prev) => prev + 1);
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           console.log(page);
@@ -68,19 +65,34 @@ const drinkpostTotal = () => {
       <ShowcaseBody>
         <div style={{ textAlign: "start" }}>
           <h2 style={{ margin: "0px 0px 0px 10px" }}>네이브루의 술장</h2>
+          {/* 실선 추가 */}
+          {/* 회색 */}
+          {/* 중앙정렬 */}
+          <div
+            style={{
+              height: "1px",
+              backgroundColor: "#c4c4c4",
+              margin: "10px 20px 10px 20px",
+            }}
+          ></div>
         </div>
 
-        <div className="whole" style={{ display: "flex", flexWrap: "wrap", paddingBottom: "60px" }}>
-          {drinkList.map(drink => {
+        <div
+          className="whole"
+          style={{ display: "flex", flexWrap: "wrap", paddingBottom: "60px" }}
+        >
+          {drinkList.map((drink) => {
             return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
           })}
         </div>
         <div
           ref={setTarget}
-          style={{ marginTop: "100px", height: "5px", backgroundColor: "--c-black" }}
-        >
-          내가 보여요?
-        </div>
+          style={{
+            marginTop: "100px",
+            height: "5px",
+            backgroundColor: "--c-black",
+          }}
+        ></div>
       </ShowcaseBody>
       <DrinkpostCreateButton></DrinkpostCreateButton>
       <Footer></Footer>
