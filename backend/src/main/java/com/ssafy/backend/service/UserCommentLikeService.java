@@ -44,4 +44,21 @@ public class UserCommentLikeService {
             return true;
         }
     }
+
+    public Object getIsLike(Long userId, Long reviewId) {
+        User user = userRepository.findById(userId).orElse(null);
+        DrinkReview drinkReview = drinkReviewRepository.findById(reviewId).orElse(null);
+
+        if (user == null || drinkReview == null) {
+            return false;
+        }
+
+        Optional<UserCommentLike> existingLike = userCommentLikeRepository.findByUser_UserIdAndDrinkReview_DrinkReviewId(userId, reviewId);
+
+        if (existingLike.isPresent()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

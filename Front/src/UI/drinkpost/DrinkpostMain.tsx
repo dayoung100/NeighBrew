@@ -47,10 +47,31 @@ const Total = styled.div`
   font-size: 30px;
 `;
 
+// 한줄에 두개씩 보여주기
+// 화면 비율 맞추기
+const ReviewList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 0px 10px 0px 10px;
+`;
+
+// 리뷰 카드
+// 한줄에 두개씩 보여주기
+
+// 리뷰 이미지
+const ReviewImg = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  object-fit: cover;
+`;
+
 const drinkpostMain = () => {
   const toForward = forwardIcon();
   const [reviewList, setReviewList] = useState<Review[]>([]);
   const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken");
   const clickTotalDrink = () => {
     navigate("/drinkpost/total");
   };
@@ -59,7 +80,7 @@ const drinkpostMain = () => {
   };
 
   useEffect(() => {
-    callApi("get", "api/drinkreview/likes").then(res => {
+    callApi("get", "api/drinkreview/likes").then((res) => {
       console.log(res.data);
       setReviewList(res.data);
     });
@@ -70,31 +91,41 @@ const drinkpostMain = () => {
       <div>
         <Navbar toDrinkSearch={toDrinkSearch}></Navbar>
         <MdsDiv>
-          <h3 style={{ margin: "0px 0px 0px 10px", padding: "10px", color: "white" }}>MD's Pick</h3>
+          <h3
+            style={{
+              margin: "0px 0px 0px 10px",
+              padding: "10px",
+              color: "white",
+            }}
+          >
+            MD's Pick
+          </h3>
         </MdsDiv>
         <DarkWood></DarkWood>
-        <div style={{ margin: "30px 30px 30px 30px" }} onClick={clickTotalDrink}>
+        <div
+          style={{ margin: "30px 30px 30px 30px" }}
+          onClick={clickTotalDrink}
+        >
           <Total>
-            <p style={{ marginBottom: "3%", marginRight: "5%" }}>모든 술 보기 {toForward}</p>
+            <p style={{ marginBottom: "3%", marginRight: "5%" }}>
+              모든 술 보기 {toForward}
+            </p>
           </Total>
         </div>
         <div style={{ margin: "0px 5vw 0px 5vw" }}>
           <div style={{ textAlign: "start" }}>
             <h3>후기 모아보기</h3>
           </div>
-          <div
-            className="reviewList"
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              margin: "0px 0px 0px 0px",
-              justifyContent: "space-between",
-            }}
-          >
-            {reviewList.map(review => {
-              return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
+          <ReviewList>
+            {reviewList.map((review) => {
+              return (
+                <ReviewItem
+                  key={review.drinkReviewId}
+                  review={review}
+                ></ReviewItem>
+              );
             })}
-          </div>
+          </ReviewList>
         </div>
         <Footer></Footer>
       </div>
