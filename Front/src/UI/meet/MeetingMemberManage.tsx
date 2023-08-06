@@ -113,9 +113,7 @@ const MeetingMemberManage = () => {
           })}
         </div>
       </div>
-      <footer>
-        <Footer />
-      </footer>
+      <Footer />
     </div>
   );
 };

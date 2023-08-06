@@ -809,16 +809,14 @@ const MeetingCreate = () => {
           )}
         </div>
       </div>
-      <footer>
-        <FooterBigBtn
-          content="모임 만들기"
-          color="var(--c-yellow)"
-          bgColor="white"
-          reqFunc={() => {
-            updateMeeting();
-          }}
-        />
-      </footer>
+      <FooterBigBtn
+        content="모임 만들기"
+        color="var(--c-yellow)"
+        bgColor="white"
+        reqFunc={() => {
+          updateMeeting();
+        }}
+      />
       <Modal
         isOpen={isModalOn}
         onRequestClose={() => setIsModalOn(false)}

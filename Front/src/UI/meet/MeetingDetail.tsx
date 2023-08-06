@@ -434,41 +434,39 @@ const MeetingDetail = () => {
           <div>{formateTime(meetDetailData.meetDto.meetDate)}</div>
         </div>
       </MeetPosDateDiv>
-      <footer>
-        {userStatus === "HOST" && (
-          //user 상태에 따라 버튼 변경
-          <FooterBigBtn
-            content="모임 관리"
-            reqFunc={() => GotoMeetManageHandler(parseInt(meetId))}
-            color="var(--c-yellow)"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
-        {userStatus === "GUEST" && (
-          <FooterBigBtn
-            content="모임 나가기"
-            reqFunc={() => exitMeet()} //모임 나가기
-            color="#F28F79"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
-        {userStatus === "APPLY" && (
-          <FooterBigBtn
-            content="승인 대기 중"
-            reqFunc={() => cancelApply()} //참여신청 취소하기
-            color="var(--c-gray)"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
-        {userStatus === "NONE" && (
-          <FooterBigBtn
-            content="참여 신청하기"
-            reqFunc={() => applyMeet()} //참여신청하기
-            color="var(--c-yellow)"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
-      </footer>
+      {userStatus === "HOST" && (
+        //user 상태에 따라 버튼 변경
+        <FooterBigBtn
+          content="모임 관리"
+          reqFunc={() => GotoMeetManageHandler(parseInt(meetId))}
+          color="var(--c-yellow)"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
+      {userStatus === "GUEST" && (
+        <FooterBigBtn
+          content="모임 나가기"
+          reqFunc={() => exitMeet()} //모임 나가기
+          color="#F28F79"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
+      {userStatus === "APPLY" && (
+        <FooterBigBtn
+          content="승인 대기 중"
+          reqFunc={() => cancelApply()} //참여신청 취소하기
+          color="var(--c-gray)"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
+      {userStatus === "NONE" && (
+        <FooterBigBtn
+          content="참여 신청하기"
+          reqFunc={() => applyMeet()} //참여신청하기
+          color="var(--c-yellow)"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
     </div>
   );
 };

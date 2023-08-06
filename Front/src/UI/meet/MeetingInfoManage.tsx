@@ -847,16 +847,14 @@ const MeetingInfoManage = () => {
           )}
         </div>
       </div>
-      <footer>
-        <FooterBigBtn
-          content="정보 수정 완료"
-          color="var(--c-yellow)"
-          bgColor="white"
-          reqFunc={() => {
-            updateMeeting();
-          }}
-        />
-      </footer>
+      <FooterBigBtn
+        content="정보 수정 완료"
+        color="var(--c-yellow)"
+        bgColor="white"
+        reqFunc={() => {
+          updateMeeting();
+        }}
+      />
       <Modal
         isOpen={isModalOn}
         onRequestClose={() => setIsModalOn(false)}

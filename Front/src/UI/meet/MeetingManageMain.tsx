@@ -153,9 +153,7 @@ const MeetingManageMain = () => {
           </div>
         </div>
       </Modal>
-      <footer>
-        <Footer />
-      </footer>
+      <Footer />
     </div>
   );
 };
