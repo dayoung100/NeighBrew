@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { callApi } from "../../utils/api";
 import { Meeting, User } from "../../Type/types";
 
-const InnerText = styled.div`
-  width: 5rem;
+const InnerText = styled.div<{ widthRem: number }>`
+  width: ${(props) => props.widthRem}rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -56,17 +56,17 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
       <div style={{ display: "flex" }}>
         <div style={{ display: "flex", alignContent: "center", width: "50%" }}>
           <img src="/src/assets/mapPin.svg" width="10rem"></img>
-          <InnerText>{position}</InnerText>
+          <InnerText widthRem={5}>{position}</InnerText>
         </div>
         <div style={{ display: "flex", alignContent: "center" }}>
           <img src="/src/assets/calendar.svg" width="10rem" />
-          {formattedDate}
+          <InnerText widthRem={6}>{formattedDate}</InnerText>
         </div>
       </div>
-      <div>
+      <InnerText widthRem={12}>
         <span>{host.profile}</span>
         <span>주최자: {host.nickname}</span>
-      </div>
+      </InnerText>
       <div style={{ display: "flex" }}>
         {hasLiverLimit && (
           <div style={{ display: "flex", alignItems: "center", width: "50%" }}>
