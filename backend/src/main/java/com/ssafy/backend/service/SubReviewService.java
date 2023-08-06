@@ -1,5 +1,6 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.dto.SubReviewDto;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.entity.SubReview;
@@ -22,6 +23,7 @@ public class SubReviewService {
     private final SubReviewRepository subReviewRepository;
     private final UserRepository userRepository;
     private final DrinkReviewRepository drinkReviewRepository;
+    private final PushService pushService;
 
     // 리뷰의 댓글을 조회하는 API
     public List<SubReviewDto> getSubReviewList(Long reviewId) {
@@ -62,6 +64,10 @@ public class SubReviewService {
                 .drinkReview(drinkReview)
                 .user(user)
                 .build();
+
+        //send(User sender, User receiver, PushType pushType, String content, String url) {
+        String pushContent = user.getNickname() + "님께서 " + drinkReview.getContent().substring(0, 10) + "... 리뷰에 댓글을 남기셨습니다.";
+        pushService.send(drinkReview.getUser(), user, PushType.COMMNET, pushContent, "이동할 URL");
         return subReviewRepository.save(subReview);
     }
 
