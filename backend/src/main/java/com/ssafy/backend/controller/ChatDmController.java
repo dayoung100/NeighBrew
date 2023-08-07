@@ -41,10 +41,13 @@ public class ChatDmController {
     }
 
     //dm 방 별로 메세지들을 가져온다.
-    @GetMapping("/message/{dmRoomId}")
-    public ResponseEntity<?> getDmMessages(@PathVariable Long dmRoomId){
+    @GetMapping("/message/{userId1}/{userId2}")
+    public ResponseEntity<?> getDmMessages(@PathVariable Long userId1,
+                                           @PathVariable Long userId2){
         try{
-            return ResponseEntity.ok(chatDmMessageService.findDmMessagesByRoomId(dmRoomId));
+            return userId1.compareTo(userId2) < 0
+            ? ResponseEntity.ok(chatDmMessageService.findDmMessagesByRoomId(userId2, userId1))
+            : ResponseEntity.ok(chatDmMessageService.findDmMessagesByRoomId(userId1, userId2));
         }catch(Exception e){
             return ResponseEntity.badRequest().body("메세지 정보를 호출하던 중 에러가 발생했습니다.\n" + e.getMessage());
         }

@@ -34,22 +34,29 @@ public class ChatDmRoomService {
     private final PushService pushService;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${i9b310.p.ssafy.io}")
+    @Value("${neighbrew.url}")
     private String neighbrewUrl;
 
     @Transactional
-    public Map<String, Object> createChatOrSend(Long receiverId,
+    public Map<String, Object> createChatOrSend(Long user1Id,
+                                                Long user2Id,
                                                 String payload) throws JsonProcessingException {
         //클라이언트에서 보낸 메세지 데이터 파싱
         JsonNode jsonNode = mapper.readTree(payload);
-        String message = jsonNode.get("message").asText()
-                ;
-        Long senderId = jsonNode.get("userId").asLong();
+        String message = jsonNode.get("message").asText();
+        Long senderId = jsonNode.get("senderId").asLong() == user1Id
+                ? user1Id
+                : user2Id;
+        Long receiverId = senderId == user1Id
+                ? user2Id
+                : user1Id;
         String userNickName = String.valueOf(jsonNode.get("userNickname"));
+
         log.info("메세지 데이터 파싱 결과 : {}, {}, {}", message, userNickName, senderId);
 
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new IllegalArgumentException("Sender does not exist."));
+
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new IllegalArgumentException("Receiver does not exist."));
 
@@ -94,20 +101,20 @@ public class ChatDmRoomService {
         return result;
     }
 
-    public String leaveDm(Long dmRoomId, String payload) throws JsonProcessingException {
+    public String leaveDm(Long user1Id, Long user2Id, String payload) throws JsonProcessingException {
         //데이터를 파싱한다.
         JsonNode jsonNode = mapper.readTree(payload);
-        Long leaveUserId = jsonNode.get("userId").asLong();
+        Long leaveUserId = jsonNode.get("leaveUserId").asLong();
 
-        ChatDmRoom findDmRoom = chatDmRoomRepository.findById(dmRoomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방 입니다."));
+        ChatDmRoom findDmRoom = chatDmRoomRepository.findByUser1_UserIdAndUser2_UserId(user1Id, user2Id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방 입니다."));
         User leaveUser = userRepository.findByUserId(leaveUserId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 입니다."));
 
         //유저 정보가 채팅방에 유저가 1명 남은 상태에서 다시 접근하면 모든 데이터를 지운다.
         if (findDmRoom.getUser1() == null || findDmRoom.getUser2() == null) {
             //dmRoom 삭제
-            chatDmRoomRepository.deleteById(dmRoomId);
+            chatDmRoomRepository.deleteById(findDmRoom.getChatDmRoomId());
             //dmRoom에서 작성된 모든 dmMessage 삭제
-            chatDmMessageService.deleteAllMessage(dmRoomId);
+            chatDmMessageService.deleteAllMessage(findDmRoom.getChatDmRoomId());
 
             //둘 다 나가면 반환 되는 메세지는 없다.
             return null;
@@ -115,9 +122,9 @@ public class ChatDmRoomService {
 
         //나가려는 유저와 같은 User정보를 null로 바꾼다.
         if (findDmRoom.getUser1().getUserId().equals(leaveUserId))
-            chatDmRoomRepository.removeUser1FromChatRoom(dmRoomId);
+            chatDmRoomRepository.removeUser1FromChatRoom(findDmRoom.getChatDmRoomId());
         else
-            chatDmRoomRepository.removeUser2FromChatRoom(dmRoomId);
+            chatDmRoomRepository.removeUser2FromChatRoom(findDmRoom.getChatDmRoomId());
 
         //시스템 메세지를 저장
         chatDmMessageService.save(ChatDmMessage.builder()

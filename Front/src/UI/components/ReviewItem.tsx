@@ -1,16 +1,15 @@
 import styled from "styled-components";
 import likeIcon from "../../assets/likeIcon.svg";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Review } from "../../Type/types";
 import { callApi } from "../../utils/api";
-import defaultReviewImage from "../../assets/JWBlueL.jpg";
 import defaultBeerImage from "../../assets/Beer.jpg";
 import { useNavigate } from "react-router-dom";
 
 const ReviewCard = styled.div`
   display: flex;
   flex-direction: column;
-  width: 48%;
+  width: 44%;
   height: auto;
   background-color: white;
   margin-bottom: 10px;
@@ -136,7 +135,6 @@ const ReviewItem = ({ review }: { review: Review }) => {
   const [showMore, setShowMore] = useState(false);
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(review.likeCount);
-  const userId = localStorage.getItem("userId");
   const toggleShowMore = () => {
     setShowMore(!showMore);
   };
@@ -173,19 +171,16 @@ const ReviewItem = ({ review }: { review: Review }) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then(res => {
-      if (res.data === true) {
-        setLikeCount(likeCount + 1);
-        console.log(likeCount);
-        console.log(like);
+    }).then(() => {
+      if (!like) {
+        setLikeCount((prev) => prev + 1);
       } else {
-        console.log(likeCount);
-        console.log(like);
-        setLikeCount(likeCount - 1);
+        setLikeCount((prev) => prev - 1);
       }
     });
     setLike(!like);
   };
+
   return (
     <>
       <ReviewCard>
@@ -205,7 +200,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
                 // className={like ? "like" : "unlike"}
                 onClick={likeHandler}
               />
-              <LikeCount>{review.likeCount}</LikeCount>
+              <LikeCount>{likeCount}</LikeCount>
             </LikeDiv>
           </UserCard>
           <div style={{ textAlign: "start" }}>
