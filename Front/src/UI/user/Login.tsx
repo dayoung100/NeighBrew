@@ -4,10 +4,24 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { callApi } from "../../utils/api";
+import naverLogin from '../../assets/Login/naverLogin.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import kakaoLogin from '../../assets/Login/kakaoLogin.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import googleLogin from '../../assets/Login/googleLogin.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import NeighBrew from '../../assets/Login/NeighBrew.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import icon from '../../assets/Login/icon.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import LoginImg from '../../assets/Login/Login.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 
 const ImgDiv = styled.div`
   width: 20%;
   height: 30%;
+  overflow: hidden;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  float: left;
+  margin-right: 1rem;
+`;
+
+const ImgDivIcon = styled.div`
   overflow: hidden;
   aspect-ratio: 1/1;
   border-radius: 50%;
@@ -32,16 +46,42 @@ const SocialDiv = styled.div`
 const Div = styled.div`
   display: flex;
   height: 70%;
-  width: 100%;
+  width: 60%;
   margin: 1rem 0;
   align-items: center;
-  border-radius: 12px;
-  border: 2px solid #b2afaf;
+ 
   font-weight: 14px;
   font-family: "JejuGothic";
   font-size: 20px;
-  box-shadow: 10px 5px 5px black;
+  
 `;
+
+
+
+const OrangeSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--c-yellow);
+  width: 100%;
+
+`;
+
+const WhiteSection = styled.div`
+    top: -3rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    width: 100%;
+    border-radius:  50px 50px 0 0; /* 상단만 둥글게 처리 */
+   
+`;
+
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -98,29 +138,49 @@ const Login = () => {
   };
   console.log(import.meta.env.VITE_API_BASE_URL);
   return (
-    <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
-      <h2>로그인</h2>
-      <SocialDiv>
-        <Div>
-          <ImgDiv onClick={NaverloginHandler} style={{ cursor: "pointer" }}>
-            <Img src="https://image.rocketpunch.com/company/5466/naver_logo.png?s=400x400&t=inside" />
-          </ImgDiv>
-          <p>네이버 로그인</p>
-        </Div>
-        <Div>
-          <ImgDiv onClick={KakaologinHandler} style={{ cursor: "pointer" }}>
-            <Img src="https://cdn.imweb.me/thumbnail/20220403/a8e484f2dfe39.png" />
-          </ImgDiv>
-          <p>카카오 로그인</p>
-        </Div>
-        <Div>
-          <ImgDiv onClick={GoogleloginHandler} style={{ cursor: "pointer" }}>
-            <Img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/800px-Google_%22G%22_Logo.svg.png" />
-          </ImgDiv>
-          <p>구글 로그인</p>
-        </Div>
-      </SocialDiv>
-      <div></div>
+<div style={{ display: "flex", alignItems: "center", flexDirection: "column"}}>
+      <OrangeSection>
+        <div style={{marginBottom : "3rem"}}>
+          <img src={NeighBrew} style={{ marginTop: "5rem" }} />
+        </div>
+        <div style={{marginBottom : "9rem"}}><p style={{fontFamily:"Noto Sans KR", fontSize:"1.15rem"}}>네이브루에 오신걸 환영합니다.</p></div>
+
+
+      </OrangeSection>
+
+      <WhiteSection >
+            {/* 아이콘을 위치시킬 영역 */}
+    <ImgDivIcon style={{ position: "relative", top: "-4rem", zIndex: 1,  borderRadius:  "5rem 5rem 0 0" }}>
+          <img src={icon} />
+        </ImgDivIcon>
+        
+        
+      <div style={{ position: "relative", top: "-3rem", zIndex: 1 }}>
+      <div>
+        <img src={LoginImg} style={{ width: "5rem"}}  />
+      </div>
+      </div>
+      
+      <div style={{width: "100%",
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "column",
+    position: "relative",
+    top: "-3rem"}}>
+      <Div onClick={KakaologinHandler} style={{ cursor: "pointer" , marginTop : ""}}>      
+        <Img src={kakaoLogin} />
+      </Div>
+
+      <Div onClick={NaverloginHandler} style={{ cursor: "pointer" }}> 
+          <Img src={naverLogin} />
+      </Div>
+
+      <Div onClick={GoogleloginHandler} style={{ cursor: "pointer" }}> 
+        <Img src={googleLogin} />
+      </Div>
+      </div>
+      </WhiteSection>
+
     </div>
   );
 };
