@@ -1,6 +1,7 @@
 package com.ssafy.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,10 +25,12 @@ public class ChatDmRoom {
 
     @OneToOne
     @JoinColumn(name="user1_id")
+    @JsonIgnore
     private User user1;
 
     @OneToOne
     @JoinColumn(name="user2_id")
+    @JsonIgnore
     private User user2;
 
     @Builder
