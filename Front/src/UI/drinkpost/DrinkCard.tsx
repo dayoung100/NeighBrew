@@ -1,21 +1,15 @@
-// drinkcard
-
-// 술장에 올려질 술 하나하나의 컴포넌트입니다.
-// 큰 이미지 하나와 술의 이름으로 이루어져있습니다.
-
 import styled from "styled-components";
 import whiskeyImage from "../../assets/whiskeyImage.png";
 import { useNavigate } from "react-router-dom";
 import { Drink } from "../../Type/types";
-import { useEffect, useState } from "react";
-import { callApi } from "../../utils/api";
+import { useState } from "react";
 
 const Card = styled.div`
   flex-direction: column;
   display: flex;
   width: 30vw;
   height: 230px;
-  margin: 10px 3px 10px 3px;
+  margin: 10px 2px 10px 2px;
   border-radius: 14px;
   background-color: var(--c-lightgray);
   align-items: center;
@@ -27,6 +21,7 @@ const CardImage = styled.img`
   height: 80%;
   margin: 10px;
 `;
+
 const TopTag = styled.div`
   width: 100%;
   display: flex;
