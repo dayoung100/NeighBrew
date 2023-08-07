@@ -45,26 +45,26 @@ public class GoogleApiClient implements OAuthApiClient {
     private String clientId;
     @Value("${oauth.google.client_secret}")
     private String clientSecret;
+    @Value("${oauth.google.url.redirect}")
+    private String redirectUri;
+
 
     @Qualifier("restTemplate")
     private final RestTemplate restTemplate;
-
     @Override
     public OAuthProvider oAuthProvider() {
         return OAuthProvider.GOOGLE;
     }
-
     @Override
     public String requestAccessToken(OAuthLoginParams params) {
         log.info("requestAccessToken :" + params);
         String url = apiUrl;
         String code = params.code();
-
         String decodedData ="";
         try {
             String encodedData = null;
             decodedData = URLDecoder.decode(code, "UTF-8");
-//            System.out.println(decodedData);
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -127,25 +127,10 @@ public class GoogleApiClient implements OAuthApiClient {
 
     }
 
-
-
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//        httpHeaders.set("Authorization", "Bearer " + accessToken);
-//
-//
-//
-//        HttpEntity<?> request = new HttpEntity<>(httpHeaders);
-//
-//
-//
-//        return restTemplate.postForObject(url, request, GoogleInfoResponse.class);
-
-
     @Override
     public String authApiUrl(OAuthLoginParams params) {
         log.info("authApiUrl :" + params);
-//        String redirectUri = "https://i9b310.p.ssafy.io//google/callback";
+        // 구글 로컬 테스트를 위해 잠시 빼둠
         String redirectUri = "http://localhost:5173/google/callback";
         String responseType = "code";
         String url = authUrl + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType +"&scope=email profile";
