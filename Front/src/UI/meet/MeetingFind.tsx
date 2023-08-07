@@ -39,7 +39,10 @@ const meetingFind = () => {
   const [page, setPage] = useState(0);
   useEffect(() => {
     console.log("page:" + page);
-    const promise = callApi("get", `api/meet?page=${page}&size=10`);
+    const promise = callApi(
+      "get",
+      `api/meet?page=${page}&size=10&tagId=${selectedCategory}`
+    );
     promise.then((res) => {
       setMeetNewData(res.data);
       setMeetAllData((prev) => [...prev, ...res.data]); //받아온 데이터로 meetAllData 세팅
@@ -180,6 +183,12 @@ const meetingFind = () => {
     setMeetData(filterData);
   }, [selectedCategory, sido, gugun, dong, startDate, endDate, inputText]);
 
+  //확인용
+  useEffect(() => {
+    console.dir(meetData);
+    console.log(selectedCategory);
+  }, [meetData, selectedCategory]);
+
   return (
     //TODO: 날짜 세팅에 props 설정
     //TODO: 검색창 인풋에 props 설정
@@ -247,8 +256,8 @@ const meetingFind = () => {
             </FilterDiv>
           )}
         </div>
-        {meetData.length >= 10 && <MeetingListItem data={meetData} />}
-        {meetData.length < 10 && <div style={{ minHeight: "100vh" }}></div>}
+        {meetData.length >= 1 && <MeetingListItem data={meetData} />}
+        {meetData.length < 1 && <div style={{ minHeight: "100vh" }}></div>}
         {!throttle && meetNewData.length > 0 && (
           <div
             ref={setTarget}
