@@ -31,7 +31,7 @@ const meetingFind = () => {
       setTimeout(() => {
         setPage((prev) => prev + 1);
         setThrottle(false);
-      }, 1000);
+      }, 300);
     }
   };
 
