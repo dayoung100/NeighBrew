@@ -3,14 +3,17 @@ package com.ssafy.backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.entity.ChatDmMessage;
 import com.ssafy.backend.entity.ChatDmRoom;
+import com.ssafy.backend.entity.Push;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.ChatDmRoomRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,7 +31,11 @@ public class ChatDmRoomService {
     private final ChatDmRoomRepository chatDmRoomRepository;
     private final ChatDmMessageService chatDmMessageService;
     private final UserRepository userRepository;
+    private final PushService pushService;
     private final ObjectMapper mapper = new ObjectMapper();
+
+    @Value("${i9b310.p.ssafy.io}")
+    private String neighbrewUrl;
 
     @Transactional
     public Map<String, Object> createChatOrSend(Long receiverId,
@@ -78,6 +85,10 @@ public class ChatDmRoomService {
         result.put("userId", senderId);
         result.put("user", userData);
         result.put("message", message);
+
+        //send(User sender, User receiver, PushType pushType, String content, String url) {
+        String pushContent = sender.getNickname() + "님께서 메세지를 보내셨습니다.\n" + message;
+        pushService.send(sender, receiver, PushType.CHAT, pushContent, neighbrewUrl + "/dmurl");;
 
         log.info("채팅방 생성 결과 : {}", result);
         return result;

@@ -29,6 +29,7 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final UserRepository userRepository;
+    private final PushService pushService;
     private final ObjectMapper mapper = new ObjectMapper();
 
     public List<ChatRoom> findUserChatRooms(Long userId) {
@@ -44,6 +45,14 @@ public class ChatRoomService {
                 .chatRoomName((String) map.get("name"))
                 .build();
 
+        chatRoomRepository.save(room);
+        chatMessageRepository.save(ChatMessage.builder()
+                .chatRoom(room)
+                .user(null)
+                .message("채팅방이 생성되었습니다.")
+                .createdAt(LocalDateTime.now())
+                .build());
+
         List<Integer> userIdList = (List<Integer>) map.get("userIdList");
 
         for (Integer userId : userIdList) {
@@ -55,15 +64,6 @@ public class ChatRoomService {
 
             chatRoomUserRepository.save(chatRoomUser);
         }
-
-        chatRoomRepository.save(room);
-        chatMessageRepository.save(ChatMessage.builder()
-                .chatRoom(room)
-                .user(null)
-                .message("채팅방이 생성되었습니다.")
-                .createdAt(LocalDateTime.now())
-                .build());
-
         return room;
     }
 
