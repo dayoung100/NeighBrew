@@ -171,7 +171,7 @@ const BackDrop = styled.div<{ ismodal: boolean }>`
   background-color: #322d29;
 `;
 
-const ChatRoom = () => {
+const DirectChat = () => {
   const { senderId, receiverId } = useParams();
   const [sockjs, setSockjs] = useState();
   const client = useRef<CompatClient>();
@@ -368,7 +368,7 @@ const ChatRoom = () => {
                 <ImgDiv>
                   <Img src={user.profile == "no image" ? temgif : user.profile}></Img>
                 </ImgDiv>
-                <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
+                {/* <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p> */}
               </UserDiv>
             );
           })}
@@ -382,7 +382,7 @@ const ChatRoom = () => {
         style={{
           backgroundColor: ismodal ? "#757575" : "#b4fdb5",
           width: "100%",
-          minHeight: "100vh",
+          minHeight: "90vh",
           overflow: "auto",
         }}
       >
@@ -410,11 +410,11 @@ const ChatRoom = () => {
                 </ChatMyBox>
               ) : (
                 <ChatOtherBox>
-                  <ChatUserName>
+                  {/* <ChatUserName>
                     {message.user?.nickname.includes("@")
                       ? message.user.nickname.split("@")[0]
                       : message.user.nickname}
-                  </ChatUserName>
+                  </ChatUserName> */}
                   <ChatOtherMsg>
                     <OtherChat>{message.message}</OtherChat>
                     <ChatTime>
@@ -448,7 +448,7 @@ const ChatRoom = () => {
   );
 };
 
-export default ChatRoom;
+export default DirectChat;
 
 const SendIcon = () => {
   return (
