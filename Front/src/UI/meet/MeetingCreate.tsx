@@ -16,14 +16,14 @@ import autoAnimate from "@formkit/auto-animate";
 
 const Title = styled.div`
   font-family: "JejuGothic";
-  font-size: 20px;
+  font-size: 1.25rem;
   text-align: left;
   margin-bottom: 0.5rem;
 `;
 
 const SubTitle = styled.div`
   font-family: SeoulNamsan;
-  font-size: 14px;
+  font-size: 0.875rem;
   text-align: left;
 `;
 
@@ -37,9 +37,9 @@ const Input = styled.input`
   text-align: left;
   padding: 2% 0;
   border: none;
-  border-bottom: 1px solid var(--c-gray);
+  border-bottom: 0.0625rem solid var(--c-gray);
   font-family: "SeoulNamsan";
-  font-size: 14px;
+  font-size: 0.875rem;
   outline: none;
   &::placeholder {
     color: var(--c-gray);
@@ -58,7 +58,7 @@ const DropdownInput = styled.select`
   text-align: right;
   padding: 1% 3%;
   border: none;
-  border-bottom: 1px solid var(--c-gray);
+  border-bottom: 0.0625rem solid var(--c-gray);
   font-family: "SeoulNamsan";
   outline: none;
   -webkit-appearance: none; /* 화살표 없애기 for chrome*/
@@ -67,8 +67,8 @@ const DropdownInput = styled.select`
 `;
 
 const SearchResultDiv = styled.div`
-  border-radius: 15px;
-  border: 1px solid var(--c-gray);
+  border-radius: 0.9375rem;
+  border: 0.0625rem solid var(--c-gray);
   height: 12rem;
   margin-top: 0.5rem;
   display: flex;
@@ -83,9 +83,9 @@ const AddBtn = styled.div`
   width: 5rem;
   margin: auto auto;
   padding: 2% 5%;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   font-family: "SeoulNamsan";
-  font-size: 7px;
+  font-size: 0.4375rem;
 `;
 
 const DateAndTimeInputStyle = css`
@@ -94,9 +94,9 @@ const DateAndTimeInputStyle = css`
   font-family: "SeoulNamsan";
   text-align: right;
   border: none;
-  border-bottom: 1px solid var(--c-gray);
+  border-bottom: 0.0625rem solid var(--c-gray);
   background: white;
-  font-size: 14px;
+  font-size: 0.875rem;
   outline: none;
 `;
 
@@ -126,11 +126,11 @@ const InfoTextArea = styled.textarea`
   height: 10rem;
   margin: 0 auto;
   padding: 1rem;
-  border: 1px solid var(--c-gray);
-  border-radius: 15px;
+  border: 0.0625rem solid var(--c-gray);
+  border-radius: 0.9375rem;
   outline: none;
   font-family: "SeoulNamsan";
-  font-size: 14px;
+  font-size: 0.875rem;
   resize: none;
 `;
 
@@ -187,7 +187,7 @@ const MeetingCreate = () => {
           <CateDiv>
             <DrinkCategory getFunc={getDrinkCategory} />
           </CateDiv>
-          <SubTitle style={{ marginBottom: "0.3rem" }}>
+          <SubTitle style={{ marginBottom: ".3rem" }}>
             정확한 술의 이름을 검색할 수 있어요
           </SubTitle>
           <div ref={parent}>
@@ -247,7 +247,7 @@ const MeetingCreate = () => {
               alignItems: "center",
               justifyContent: "space-between",
               fontFamily: "SeoulNamsan",
-              fontSize: "14px",
+              fontSize: ".875rem",
             }}
           >
             <Title>위치</Title>
@@ -275,13 +275,13 @@ const MeetingCreate = () => {
             <TimeInput />
           </div>
         </QuestionDiv>
-        <QuestionDiv style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>
+        <QuestionDiv style={{ fontFamily: "SeoulNamsan", fontSize: ".875rem" }}>
           <Title>조건</Title>
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              marginBottom: "0.5rem",
+              marginBottom: ".5rem",
             }}
           >
             <SubTitle>최대 인원</SubTitle>
@@ -291,7 +291,7 @@ const MeetingCreate = () => {
             style={{
               display: "flex",
               alignItems: "center",
-              marginBottom: "0.5rem",
+              marginBottom: ".5rem",
             }}
           >
             <img src="/src/assets/liver.svg" />
@@ -303,7 +303,7 @@ const MeetingCreate = () => {
             style={{
               display: "flex",
               alignItems: "center",
-              marginBottom: "0.5rem",
+              marginBottom: ".5rem",
             }}
           >
             <img src="/src/assets/age.svg" />

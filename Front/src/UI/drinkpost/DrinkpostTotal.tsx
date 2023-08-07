@@ -11,7 +11,7 @@ import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
 
 const ShowcaseBody = styled.div`
-  font-size: 14px;
+  font-size: 0.875rem;
   margin-left: 1vw;
 `;
 
@@ -53,22 +53,26 @@ const drinkpostTotal = () => {
       <Navbar toDrinkSearch={toDrinkSearch}></Navbar>
       <ShowcaseBody>
         <div style={{ textAlign: "start" }}>
-          <h2 style={{ margin: "0px 0px 0px 10px" }}>네이브루의 술장</h2>
+          <h2 style={{ margin: "0rem 0rem 0rem .625rem" }}>네이브루의 술장</h2>
           {/* 실선 추가 */}
           {/* 회색 */}
           {/* 중앙정렬 */}
           <div
             style={{
-              height: "1px",
+              height: ".0625rem",
               backgroundColor: "#c4c4c4",
-              margin: "10px 20px 10px 20px",
+              margin: ".625rem 1.25rem .625rem 1.25rem",
             }}
           ></div>
         </div>
 
         <div
           className="whole"
-          style={{ display: "flex", flexWrap: "wrap", paddingBottom: "60px" }}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            paddingBottom: "3.75rem",
+          }}
         >
           {drinkList.map((drink) => {
             return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
@@ -77,8 +81,8 @@ const drinkpostTotal = () => {
         <div
           ref={setTarget}
           style={{
-            marginTop: "100px",
-            height: "5px",
+            marginTop: "6.25rem",
+            height: ".3125rem",
             backgroundColor: "--c-black",
           }}
         ></div>

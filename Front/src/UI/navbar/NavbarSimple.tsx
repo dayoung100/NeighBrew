@@ -5,7 +5,7 @@ import styled from "styled-components";
 const Title = styled.div`
   text-align: center;
   font-family: "JejuGothic";
-  font-size: 20px;
+  font-size: 1.25rem;
 `;
 
 const ArrowBtn = styled.div`

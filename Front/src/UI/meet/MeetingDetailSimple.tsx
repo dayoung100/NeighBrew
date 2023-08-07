@@ -45,7 +45,7 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
   const [host, setHost] = useState<User>(initialUser);
 
   return (
-    <div style={{ fontFamily: "Noto Sans KR", fontSize: "10px" }}>
+    <div style={{ fontFamily: "Noto Sans KR", fontSize: ".625rem" }}>
       <div style={{ display: "flex" }}>
         <div style={{ display: "flex", alignContent: "center", width: "50%" }}>
           <img src="/src/assets/mapPin.svg" width="10rem"></img>
