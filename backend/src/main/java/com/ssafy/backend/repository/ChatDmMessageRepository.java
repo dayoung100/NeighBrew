@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface ChatDmMessageRepository extends JpaRepository<ChatDmMessage, Long> {
     @Query("SELECT cdr FROM ChatDmRoom cdr WHERE (cdr.user1.userId = :senderId AND cdr.user2.userId = :receiverId) OR (cdr.user1.userId = :receiverId AND cdr.user2.userId = :senderId)")
     Optional<List<ChatDmMessage>> findByChatDmRoom_ChatDmRoomId(@Param("senderId")Long senderId,
-                                                                @Param("senderId")Long receiverId);
+                                                                @Param("receiverId")Long receiverId);
 
     void deleteByChatDmRoom_ChatDmRoomId(Long dmRoomId);
 }
