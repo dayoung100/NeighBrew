@@ -12,26 +12,48 @@ import MeetingListItem from "./MeetingListItem";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Meeting } from "../../Type/types";
+import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
 const meetingFind = () => {
   //받아온 모임 정보 리스트(전체)
   const [meetAllData, setMeetAllData] = useState<Meeting[]>([]);
   //필터링 한 후 모임 정보
   const [meetData, setMeetData] = useState<Meeting[]>([]);
+  //페이징 적용, 새로 받아오는 모임 정보(끝에 도달했는지 확인용)
+  const [meetNewData, setMeetNewData] = useState<Meeting[]>([]);
+  const [throttle, setThrottle] = useState(false);
+
+  //TODO: 무한 스크롤 로직
+  const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
+    // isIntersecting이 true면 감지했다는 뜻임
+    if (isIntersecting && !throttle) {
+      setThrottle(true);
+      setTimeout(() => {
+        setPage((prev) => prev + 1);
+        setThrottle(false);
+      }, 300);
+    }
+  };
+
+  const { setTarget } = useIntersectionObserver({ onIntersect });
+  const [page, setPage] = useState(0);
+  useEffect(() => {
+    console.log("page:" + page);
+    const promise = callApi("get", `api/meet?page=${page}&size=10`);
+    promise.then((res) => {
+      setMeetNewData(res.data);
+      setMeetAllData((prev) => [...prev, ...res.data]); //받아온 데이터로 meetAllData 세팅
+    });
+  }, [page]);
 
   useEffect(() => {
-    setMeetData(meetAllData.map(item => item)); //필터 적용을 위해 복사한 리스트 만들어두기
+    setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
   }, [meetAllData]);
 
   useEffect(() => {
-    console.dir(meetData); //확인용
-  }, [meetData]);
-
-  //api 호출
-  useEffect(() => {
-    const promise = callApi("get", "api/meet");
-    promise.then(res => {
-      setMeetAllData(res.data); //받아온 데이터로 meetAllData 세팅
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
   }, []);
 
@@ -39,7 +61,6 @@ const meetingFind = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
-    // console.log(tagId);
   };
 
   //필터 애니메이션 관련
@@ -51,7 +72,14 @@ const meetingFind = () => {
 
   //필터 지역 검색용
   const [sidoList, setSiList] = useState(["서울", "경기", "대전", "시도"]);
-  const [gugunList, setGuList] = useState(["동구", "중구", "서구", "유성구", "대덕구", "구군"]);
+  const [gugunList, setGuList] = useState([
+    "동구",
+    "중구",
+    "서구",
+    "유성구",
+    "대덕구",
+    "구군",
+  ]);
   const [dongList, setDongList] = useState([
     "봉명동",
     "중앙동",
@@ -127,7 +155,6 @@ const meetingFind = () => {
   //술의 이름으로 필터링
   const drinkNameFiltering = (data: Meeting) => {
     if (inputText === "") return true;
-    console.log("주류 이름:", data.drink.name);
     return data.drink.name === inputText;
   };
 
@@ -173,7 +200,7 @@ const meetingFind = () => {
                 <FilterElement>
                   <div>
                     <DropdownInput onChange={sidoSetter} value={sido}>
-                      {sidoList.map(siItem => {
+                      {sidoList.map((siItem) => {
                         return (
                           <option value={siItem} key={siItem}>
                             {siItem}
@@ -185,7 +212,7 @@ const meetingFind = () => {
                   </div>
                   <div>
                     <DropdownInput onChange={gugunSetter} value={gugun}>
-                      {gugunList.map(guItem => {
+                      {gugunList.map((guItem) => {
                         return (
                           <option value={guItem} key={guItem}>
                             {guItem}
@@ -197,7 +224,7 @@ const meetingFind = () => {
                   </div>
                   <div>
                     <DropdownInput onChange={dongSetter} value={dong}>
-                      {dongList.map(dongItem => {
+                      {dongList.map((dongItem) => {
                         return (
                           <option value={dongItem} key={dongItem}>
                             {dongItem}
@@ -220,7 +247,16 @@ const meetingFind = () => {
             </FilterDiv>
           )}
         </div>
-        <MeetingListItem data={meetData} />
+        {meetData.length >= 10 && <MeetingListItem data={meetData} />}
+        {meetData.length < 10 && <div style={{ minHeight: "100vh" }}></div>}
+        {!throttle && meetNewData.length > 0 && (
+          <div
+            ref={setTarget}
+            style={{
+              height: "1px",
+            }}
+          ></div>
+        )}
       </SearchResultDiv>
     </div>
   );
@@ -230,6 +266,7 @@ export default meetingFind;
 const CateDiv = styled.div`
   height: 10rem;
   margin-top: 1rem;
+  background: white;
   div {
     margin: 0;
   }

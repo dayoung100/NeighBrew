@@ -62,14 +62,19 @@ const MeetingManageMain = () => {
   const [meetData, setMeetData] = useState<Meeting>(initialData);
 
   const GotoMeetInfoManage = (meetId: number) => {
-    console.log("goto manage page, meetId is: ", meetId, "[info]");
     navigate(`/meet/${meetId}/manage/info`);
   };
 
   const GotoMemberManage = (meetId: number) => {
-    console.log("goto manage page, meetId is: ", meetId, "[member]");
     navigate(`/meet/${meetId}/manage/member`);
   };
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   //api 호출, 모임 이름 세팅
   useEffect(() => {
@@ -148,9 +153,7 @@ const MeetingManageMain = () => {
           </div>
         </div>
       </Modal>
-      <footer>
-        <Footer />
-      </footer>
+      <Footer />
     </div>
   );
 };

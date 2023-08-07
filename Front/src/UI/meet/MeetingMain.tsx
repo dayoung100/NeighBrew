@@ -38,13 +38,20 @@ const RoundBtn = styled.div`
   justify-content: center;
   align-items: center;
   position: fixed;
-  bottom: 5.5rem;
-  right: 1rem;
+  bottom: 10%;
+
   background: var(--c-yellow);
   width: 4rem;
   height: 4rem;
   border-radius: 100px;
   z-index: 10;
+
+  @media (max-width: 430px) {
+    right: 5%;
+  }
+  @media (min-width: 431px) {
+    left: 350px;
+  }
 `;
 
 const meetingMain = () => {
@@ -53,7 +60,6 @@ const meetingMain = () => {
 
   const GotoCreateHandler = () => {
     navigate(`/meet/create`);
-    console.log("goto meeting create page");
   };
 
   useEffect(() => {
@@ -79,13 +85,21 @@ const meetingMain = () => {
           내모임
         </TopMenuDetail>
       </TopMenu>
-      <div style={{ paddingBottom: "5rem", background: "var(--c-lightgray)" }}>
+      <div
+        style={{
+          paddingBottom: "10rem",
+          background: "var(--c-lightgray)",
+          minHeight: "80vh",
+        }}
+      >
         {selectedMenu === "find" ? <MeetingFind /> : <MeetingMy />}
       </div>
-      <RoundBtn onClick={GotoCreateHandler}>
-        <img src="/src/assets/plusButton.svg" width="25rem" />
-      </RoundBtn>
-      <Footer />
+      <footer>
+        <RoundBtn onClick={GotoCreateHandler}>
+          <img src="/src/assets/plusButton.svg" width="25rem" />
+        </RoundBtn>
+        <Footer />
+      </footer>
     </div>
   );
 };

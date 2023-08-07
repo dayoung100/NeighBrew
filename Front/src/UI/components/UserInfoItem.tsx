@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-const UserProfileImg = styled.img`
+const UserProfileImg = styled.div<{ src: string }>`
+  background: url(${(props) => props.src}) no-repeat center;
+  background-size: cover;
   width: 4rem;
   border-radius: 100px;
+  padding-bottom: 4rem;
 `;
 
 type UserInfoItemProps = {

@@ -51,6 +51,15 @@ const Tag = styled.div`
   }
 `;
 
+const UserProfileImg = styled.div<{ src: string }>`
+  background: url(${(props) => props.src}) no-repeat center;
+  background-size: cover;
+  width: 2rem;
+  padding-bottom: 2rem;
+  border-radius: 100px;
+  margin-right: 0.2rem;
+`;
+
 const MeetDetailDiv = styled.div`
   background: var(--c-lightgray);
   min-height: 70vh;
@@ -66,7 +75,7 @@ const MeetPosDateDiv = styled.div`
   align-items: center;
   justify-content: space-around;
   position: absolute;
-  top: 12rem;
+  top: -3rem;
   left: 50%;
   transform: translate(-50%, 0%);
   z-index: 2;
@@ -114,6 +123,17 @@ const initialData: MeetDetail = {
   statuses: [],
 };
 
+const initialUser = {
+  userId: 0,
+  email: "",
+  nickname: "",
+  name: "",
+  liverPoint: 0,
+  profile: "",
+  follower: 0,
+  following: 0,
+};
+
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
@@ -138,6 +158,13 @@ const MeetingDetail = () => {
   const GotoDrinkPostHandler = (drinkId: number) => {
     navigate(`/drinkpost/${drinkId}`);
   };
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   //api 호출
   useEffect(() => {
@@ -172,7 +199,6 @@ const MeetingDetail = () => {
     });
     promise
       .then((res) => {
-        console.log(res.data);
         setUserStatus("APPLY");
       })
       .catch((err) => console.log(err));
@@ -187,15 +213,19 @@ const MeetingDetail = () => {
       meetId: meetId,
     });
     promise.then((res) => {
-      console.log(res.data);
       setUserStatus("NONE");
     });
-    console.log("신청을 취소했어요");
   }
 
-  //TODO: 모임 나가기
+  //모임 나가기
   function exitMeet() {
-    setUserStatus("NONE");
+    const promise = callApi("delete", `api/meet/exit`, {
+      userId: userId,
+      meetId: meetId,
+    });
+    promise.then((res) => {
+      setUserStatus("NONE");
+    });
     console.log("모임을 나갔어요");
   }
 
@@ -284,11 +314,7 @@ const MeetingDetail = () => {
             <div>주최자: </div>
             {memberList[0] && (
               <div style={{ display: "flex", alignItems: "center" }}>
-                <img
-                  src="../src/assets/tempgif.gif"
-                  width="20rem"
-                  style={{ borderRadius: "100px" }}
-                />
+                <UserProfileImg src={memberList[0].profile} />
                 <div>{memberList[0].nickname}</div>
               </div>
             )}
@@ -304,6 +330,18 @@ const MeetingDetail = () => {
         </div>
       </MeetThumbnail>
       <MeetDetailDiv>
+        <MeetPosDateDiv>
+          <div>
+            <img src="/src/assets/mapPinColor.svg" width="20rem" />
+            <div>{`${meetDetailData.meetDto.sido}시`}</div>
+            <div>{`${meetDetailData.meetDto.gugun}  ${meetDetailData.meetDto.dong}`}</div>
+          </div>
+          <div>
+            <img src="/src/assets/calendarColor.svg" width="20rem" />
+            <div>{formateDate(meetDetailData.meetDto.meetDate)}</div>
+            <div>{formateTime(meetDetailData.meetDto.meetDate)}</div>
+          </div>
+        </MeetPosDateDiv>
         <div
           style={{
             display: "flex",
@@ -388,7 +426,7 @@ const MeetingDetail = () => {
                 userId={member.userId}
                 name={member.nickname}
                 intro={member.intro}
-                imgSrc="../src/assets/tempgif.gif"
+                imgSrc={member.profile}
                 isMaster={index === 0}
                 width={15}
               />
@@ -396,53 +434,39 @@ const MeetingDetail = () => {
           })}
         </div>
       </MeetDetailDiv>
-      <MeetPosDateDiv>
-        <div>
-          <img src="/src/assets/mapPinColor.svg" width="20rem" />
-          <div>{`${meetDetailData.meetDto.sido}시`}</div>
-          <div>{`${meetDetailData.meetDto.gugun}  ${meetDetailData.meetDto.dong}`}</div>
-        </div>
-        <div>
-          <img src="/src/assets/calendarColor.svg" width="20rem" />
-          <div>{formateDate(meetDetailData.meetDto.meetDate)}</div>
-          <div>{formateTime(meetDetailData.meetDto.meetDate)}</div>
-        </div>
-      </MeetPosDateDiv>
-      <footer>
-        {userStatus === "HOST" && (
-          //user 상태에 따라 버튼 변경
-          <FooterBigBtn
-            content="모임 관리"
-            reqFunc={() => GotoMeetManageHandler(parseInt(meetId))}
-            color="var(--c-yellow)"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
-        {userStatus === "GUEST" && (
-          <FooterBigBtn
-            content="모임 나가기"
-            reqFunc={() => exitMeet()} //모임 나가기
-            color="#F28F79"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
-        {userStatus === "APPLY" && (
-          <FooterBigBtn
-            content="승인 대기 중"
-            reqFunc={() => cancelApply()} //참여신청 취소하기
-            color="var(--c-gray)"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
-        {userStatus === "NONE" && (
-          <FooterBigBtn
-            content="참여 신청하기"
-            reqFunc={() => applyMeet()} //참여신청하기
-            color="var(--c-yellow)"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
-      </footer>
+      {userStatus === "HOST" && (
+        //user 상태에 따라 버튼 변경
+        <FooterBigBtn
+          content="모임 관리"
+          reqFunc={() => GotoMeetManageHandler(parseInt(meetId))}
+          color="var(--c-yellow)"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
+      {userStatus === "GUEST" && (
+        <FooterBigBtn
+          content="모임 나가기"
+          reqFunc={() => exitMeet()} //모임 나가기
+          color="#F28F79"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
+      {userStatus === "APPLY" && (
+        <FooterBigBtn
+          content="승인 대기 중"
+          reqFunc={() => cancelApply()} //참여신청 취소하기
+          color="var(--c-gray)"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
+      {userStatus === "NONE" && (
+        <FooterBigBtn
+          content="참여 신청하기"
+          reqFunc={() => applyMeet()} //참여신청하기
+          color="var(--c-yellow)"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
     </div>
   );
 };

@@ -1,12 +1,23 @@
-import { useState } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
+import { callApi } from "../../utils/api";
 import { Meeting, User } from "../../Type/types";
 
-const InnerText = styled.div`
-  width: 5rem;
+const InnerText = styled.div<{ $widthRem: number }>`
+  width: ${(props) => props.$widthRem}rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const UserProfileImg = styled.div<{ src: string }>`
+  background: url(${(props) => props.src}) no-repeat center;
+  background-size: cover;
+  width: 1rem;
+  padding-bottom: 1rem;
+  border-radius: 100px;
+  margin-right: 0.2rem;
 `;
 
 const initialUser = {
@@ -41,25 +52,33 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
   const hasAgeLimit =
     (meetData.minAge ?? 0) > 0 || (meetData.maxAge ?? 0) > 0 ? true : false;
   const hasLiverLimit = (meetData.minLiverPoint ?? 0) > 0 ? true : false;
-  //TODO: 호스트 아이디로 호스트 프사와 닉네임 가져오기
   const [host, setHost] = useState<User>(initialUser);
+
+  useEffect(() => {
+    const promise = callApi("get", `/api/user/${meetData.hostId}`);
+    promise.then((res) => {
+      setHost(res.data);
+    });
+  }, [meetData]);
 
   return (
     <div style={{ fontFamily: "Noto Sans KR", fontSize: "10px" }}>
       <div style={{ display: "flex" }}>
         <div style={{ display: "flex", alignContent: "center", width: "50%" }}>
           <img src="/src/assets/mapPin.svg" width="10rem"></img>
-          <InnerText>{position}</InnerText>
+          <InnerText $widthRem={5}>{position}</InnerText>
         </div>
         <div style={{ display: "flex", alignContent: "center" }}>
           <img src="/src/assets/calendar.svg" width="10rem" />
-          {formattedDate}
+          <InnerText $widthRem={6}>{formattedDate}</InnerText>
         </div>
       </div>
-      <div>
-        <span>{host.profile}</span>
-        <span>주최자: {host.nickname}</span>
-      </div>
+      <InnerText $widthRem={12}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <UserProfileImg src={host.profile} />
+          <div>{host.nickname}</div>
+        </div>
+      </InnerText>
       <div style={{ display: "flex" }}>
         {hasLiverLimit && (
           <div style={{ display: "flex", alignItems: "center", width: "50%" }}>
@@ -77,4 +96,4 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
     </div>
   );
 };
-export default meetingDetail;
+export default React.memo(meetingDetail);

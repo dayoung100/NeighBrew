@@ -19,7 +19,8 @@ const Button = styled.button<{ now: number; choosebutton: number }>`
   background-color: white;
   border: none;
   margin: 0.5rem auto 2px auto;
-  border-bottom: ${props => (props.now == props.choosebutton ? "2px solid #000000" : "none")};
+  border-bottom: ${(props) =>
+    props.now == props.choosebutton ? "2px solid #000000" : "none"};
 `;
 
 const Footer = () => {
