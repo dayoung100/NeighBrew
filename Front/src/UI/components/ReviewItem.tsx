@@ -169,19 +169,21 @@ const ReviewItem = ({ review }: { review: Review }) => {
   // 좋아요 버튼 누르면 좋아요 수 증가
   // 즉시반영
   const likeHandler = () => {
+    console.log("----!!!!");
     callApi("POST", `api/like/guard/${review.drinkReviewId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }).then((res) => {
-      if (res.data === true) {
-        setLikeCount(likeCount + 1);
+      if (!like) {
+        setLikeCount((prev) => prev + 1);
       } else {
-        setLikeCount(likeCount - 1);
+        setLikeCount((prev) => prev - 1);
       }
     });
     setLike(!like);
   };
+
   return (
     <>
       <ReviewCard>
@@ -201,7 +203,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
                 // className={like ? "like" : "unlike"}
                 onClick={likeHandler}
               />
-              <LikeCount>{review.likeCount}</LikeCount>
+              <LikeCount>{likeCount}</LikeCount>
             </LikeDiv>
           </UserCard>
           <div style={{ textAlign: "start" }}>
