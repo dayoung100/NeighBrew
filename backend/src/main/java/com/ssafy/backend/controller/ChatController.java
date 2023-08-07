@@ -43,7 +43,7 @@ public class ChatController {
     }
 
     //dm 참여 및 메세지 전송
-    @MessageMapping("/dm/{user1Id}/{user2Id}/sendMessage")
+    @MessageMapping("/dm/{user1Id}/{user2Id}")
     public void createChatOrSend(@DestinationVariable Long user1Id,
                                  @DestinationVariable Long user2Id,
                                  @Payload String payload) throws JsonProcessingException {
