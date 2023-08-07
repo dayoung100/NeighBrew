@@ -13,6 +13,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.transaction.Transactional;
 import java.util.Map;
@@ -42,22 +43,29 @@ public class ChatController {
     }
 
     //dm 참여 및 메세지 전송
-    @MessageMapping("/dm/{senderId}/{receiverId}/sendMessage")
-    public void createChatOrSend(@DestinationVariable Long receiverId,
-                                 @DestinationVariable Long senderId,
+    @MessageMapping("/dm/{user1Id}/{user2Id}/sendMessage")
+    public void createChatOrSend(@DestinationVariable Long user1Id,
+                                 @DestinationVariable Long user2Id,
                                  @Payload String payload) throws JsonProcessingException {
-        Map<String, Object> sendData = chatDmRoomService.createChatOrSend(receiverId, payload);
 
-        messagingTemplate.convertAndSend("/pub/dm/" + senderId + "/" + receiverId, mapper.writeValueAsString(sendData));
+        Map<String, Object> sendData = user1Id.compareTo(user2Id) < 0
+                ? chatDmRoomService.createChatOrSend(user1Id, user2Id, payload)
+                : chatDmRoomService.createChatOrSend(user2Id, user1Id, payload);
+        messagingTemplate.convertAndSend("/pub/dm/" + user1Id + "/" + user2Id, mapper.writeValueAsString(sendData));
     }
 
     //dm떠나기
     @Transactional
-    @MessageMapping("/dm/{dmRoomId}/leave")
-    public void leaveDm(@DestinationVariable Long dmRoomId,
+    @MessageMapping("/dm/{user1Id}/{user2Id}/leave")
+    public void leaveDm(@DestinationVariable Long user1Id,
+                        @DestinationVariable Long user2Id,
                         @Payload String payload) throws JsonProcessingException {
-        String sendData = chatDmRoomService.leaveDm(dmRoomId, payload);
-        messagingTemplate.convertAndSend("/pub/dm/" + dmRoomId, sendData);
+
+        //유저 아이디 값을 비교해서 작은 것을 앞으로 보낸다.
+        String sendData = user1Id.compareTo(user2Id) < 0
+                ? chatDmRoomService.leaveDm(user1Id, user2Id, payload)
+                : chatDmRoomService.leaveDm(user2Id, user1Id, payload);
+        messagingTemplate.convertAndSend("/pub/dm/" + user1Id + "/" + user2Id, sendData);
     }
 
 }
