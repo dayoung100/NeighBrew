@@ -10,7 +10,7 @@ const LikeAndComment = styled.div`
   justify-content: space-around;
   width: 36%;
   margin-top: 1.5vh;
-  font-size: 1.25rem;
+  font-size: 20px;
 `;
 
 const Description = styled.div`
@@ -18,12 +18,12 @@ const Description = styled.div`
 `;
 
 const WholeDiv = styled.div`
-  margin: 1.5rem;
+  margin: 24px;
 `;
 
 const ImageDiv = styled.div`
   background-color: var(--c-lightgray);
-  border-radius: 1.875rem;
+  border-radius: 30px;
   width: 100%;
   height: 36vh;
 `;
@@ -38,7 +38,7 @@ const Usercard = styled.div`
 const FollowDiv = styled.div`
   width: 5rem;
   height: 2rem;
-  border-radius: 1.25rem;
+  border-radius: 20px;
   background-color: var(--c-yellow);
   display: flex;
   justify-content: center;
@@ -48,7 +48,7 @@ const FollowDiv = styled.div`
 // const ProfileDiv = styled.div`
 //   width: 12%;
 //   aspect-ratio: 1/1;
-//   border-radius: 1.875rem;
+//   border-radius: 30px;
 //   background-color: var(--c-lightgray);
 //   margin-right: 4%;
 // `;
@@ -70,17 +70,17 @@ const DrinkpostReviewDetail = () => {
   useEffect(() => {
     console.log();
     callApi("get", `api/drink/${drinkId}`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
         setDrink(res.data);
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
     callApi("get", `api/drinkreview/review/${reviewId}`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
         setReview(res.data);
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
   }, []);
 
   // useEffect(() => {
@@ -89,10 +89,10 @@ const DrinkpostReviewDetail = () => {
 
   const clickLike = () => {
     callApi("post", `api/like/guard/${reviewId}`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
   };
   return (
     <>

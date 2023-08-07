@@ -24,9 +24,9 @@ const Follower = () => {
   }, [parent]);
 
   const getFollower = () => {
-    callApi("get", `api/follow/follower/${userid}`).then((res) => {
-      res.data.map((tem) => {
-        setUsers((users) => [...users, tem.follower]);
+    callApi("get", `api/follow/follower/${userid}`).then(res => {
+      res.data.map(tem => {
+        setUsers(users => [...users, tem.follower]);
       });
     });
   };
@@ -46,13 +46,7 @@ const Follower = () => {
           >
             {ArrowLeftIcon}
           </div>
-          <span
-            style={{
-              marginRight: "0rem",
-              fontFamily: "JejuGothic",
-              fontSize: "1.25rem",
-            }}
-          >
+          <span style={{ marginRight: "0rem", fontFamily: "JejuGothic", fontSize: "20px" }}>
             팔로워 목록
           </span>
           <div></div>
@@ -72,30 +66,22 @@ const Follower = () => {
               style={{ cursor: "pointer" }}
             >
               <ImgDiv>
-                <Img
-                  src={user.profile == "no image" ? tempgif : user.profile}
-                />
+                <Img src={user.profile == "no image" ? tempgif : user.profile} />
               </ImgDiv>
               <div style={{ textAlign: "left" }}>
                 <p
-                  style={{
-                    fontFamily: "JejuGothic",
-                    fontSize: "1rem",
-                    marginBottom: "0.5rem",
-                  }}
+                  style={{ fontFamily: "JejuGothic", fontSize: "16px", marginBottom: "0.5rem" }}
                   key={idx}
                 >
                   {user.nickname}
                 </p>
-                <p style={{ fontFamily: "SeoulNamsan", fontSize: ".875rem" }}>
-                  {user.intro}
-                </p>
+                <p style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>{user.intro}</p>
               </div>
             </User>
           );
         })}
       </div>
-      <div style={{ height: "5rem" }}></div>
+      <div style={{ height: "80px" }}></div>
       <footer>
         <Footer />
       </footer>

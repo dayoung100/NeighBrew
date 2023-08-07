@@ -6,7 +6,7 @@ const CreateButton = styled.div`
   display: flex;
   justify-content: end;
   position: fixed;
-  bottom: 6.25rem;
+  bottom: 100px;
   left: 76vw;
 `;
 

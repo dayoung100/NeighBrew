@@ -30,7 +30,7 @@ const PeopleNumInfo = (props: PeopleNumProps) => {
         style={{
           fontFamily: "Noto Sans KR",
           fontSize: `${props.size}px`,
-          margin: "0 .1875rem",
+          margin: "0 3px",
         }}
       >
         {props.now}/{props.max}

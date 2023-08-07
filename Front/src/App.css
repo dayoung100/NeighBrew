@@ -17,22 +17,22 @@
 }
 
 body {
-  margin: 0rem;
+  margin: 0px;
 }
 header {
   position: sticky;
-  top: 0rem;
+  top: 0px;
   z-index: 10;
 }
 footer {
   position: fixed;
-  bottom: 0rem;
+  bottom: 0px;
   z-index: 10;
   width: 100%;
 }
 #root {
-  max-width: 26.875rem;
-  min-width: 21.875rem;
+  max-width: 430px;
+  min-width: 350px;
   text-align: center;
   color: var(--c-black);
 }
@@ -60,10 +60,10 @@ footer {
   display: flex;
   justify-content: space-around;
   width: 100%;
-  max-width: 26.875rem;
+  max-width: 430px;
   background-color: #ffffff;
   position: fixed;
-  bottom: 0rem;
+  bottom: 0px;
 }
 
 p {

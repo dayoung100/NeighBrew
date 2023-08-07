@@ -21,14 +21,14 @@ import Modal from "react-modal";
 
 const Title = styled.div`
   font-family: "JejuGothic";
-  font-size: 1.25rem;
+  font-size: 20px;
   text-align: left;
   margin-bottom: 0.5rem;
 `;
 
 const SubTitle = styled.div`
   font-family: SeoulNamsan;
-  font-size: 0.875rem;
+  font-size: 14px;
   text-align: left;
 `;
 
@@ -38,10 +38,10 @@ const QuestionDiv = styled.div`
 
 const ReselectBtn = styled.div`
   background: var(--c-lightgray);
-  border-radius: 0.625rem;
+  border-radius: 10px;
   width: 3rem;
   font-family: "SeoulNamsan";
-  font-size: 0.9375rem;
+  font-size: 15px;
   padding: 0.5rem;
   margin: 0.5rem 0 0 auto;
 `;
@@ -52,9 +52,9 @@ const Input = styled.input`
   text-align: left;
   padding: 2% 0;
   border: none;
-  border-bottom: 0.0625rem solid var(--c-gray);
+  border-bottom: 1px solid var(--c-gray);
   font-family: "SeoulNamsan";
-  font-size: 0.875rem;
+  font-size: 14px;
   outline: none;
   &::placeholder {
     color: var(--c-gray);
@@ -73,7 +73,7 @@ const DropdownInput = styled.select`
   text-align: right;
   padding: 1% 3%;
   border: none;
-  border-bottom: 0.0625rem solid var(--c-gray);
+  border-bottom: 1px solid var(--c-gray);
   font-family: "SeoulNamsan";
   outline: none;
   -webkit-appearance: none; /* 화살표 없애기 for chrome*/
@@ -82,8 +82,8 @@ const DropdownInput = styled.select`
 `;
 
 const SearchResultDiv = styled.div`
-  border-radius: 0.9375rem;
-  border: 0.0625rem solid var(--c-gray);
+  border-radius: 15px;
+  border: 1px solid var(--c-gray);
   height: 12rem;
   margin-top: 0.5rem;
   display: flex;
@@ -98,9 +98,9 @@ const AddBtn = styled.div`
   width: 5rem;
   margin: auto auto;
   padding: 2% 5%;
-  border-radius: 1.25rem;
+  border-radius: 20px;
   font-family: "SeoulNamsan";
-  font-size: 0.4375rem;
+  font-size: 7px;
 `;
 
 const DateAndTimeInputStyle = css`
@@ -109,9 +109,9 @@ const DateAndTimeInputStyle = css`
   font-family: "SeoulNamsan";
   text-align: right;
   border: none;
-  border-bottom: 0.0625rem solid var(--c-gray);
+  border-bottom: 1px solid var(--c-gray);
   background: white;
-  font-size: 0.875rem;
+  font-size: 14px;
   outline: none;
 `;
 
@@ -141,11 +141,11 @@ const InfoTextArea = styled.textarea`
   height: 10rem;
   margin: 0 auto;
   padding: 1rem;
-  border: 0.0625rem solid var(--c-gray);
-  border-radius: 0.9375rem;
+  border: 1px solid var(--c-gray);
+  border-radius: 15px;
   outline: none;
   font-family: "SeoulNamsan";
-  font-size: 0.875rem;
+  font-size: 14px;
   resize: none;
 `;
 
@@ -153,7 +153,7 @@ const ErrorDiv = styled.div`
   color: red;
   text-align: left;
   font-family: "SeoulNamsan";
-  font-size: 0.9375rem;
+  font-size: 15px;
   padding: 0.5rem;
 `;
 
@@ -165,8 +165,8 @@ const WhiteModal = {
     transform: "translate(-50%, -50%)",
     width: "15rem",
     height: "6rem",
-    padding: ".5rem 1rem",
-    borderRadius: ".9375rem",
+    padding: "0.5rem 1rem",
+    borderRadius: "15px",
     background: "white",
     textAlign: "center",
     fontFamily: "SeoulNamsan",
@@ -569,7 +569,7 @@ const MeetingInfoManage = () => {
           <div ref={parent}>
             {selectedDrink.drinkId === 0 && (
               <div>
-                <SubTitle style={{ marginBottom: ".3rem" }}>
+                <SubTitle style={{ marginBottom: "0.3rem" }}>
                   정확한 술의 이름을 검색할 수 있어요
                 </SubTitle>
                 <div onFocus={() => setIsSearchFocused(true)}>
@@ -662,7 +662,7 @@ const MeetingInfoManage = () => {
               alignItems: "center",
               justifyContent: "space-between",
               fontFamily: "SeoulNamsan",
-              fontSize: ".875rem",
+              fontSize: "14px",
             }}
           >
             <Title>위치</Title>
@@ -737,13 +737,13 @@ const MeetingInfoManage = () => {
             </ErrorDiv>
           )}
         </QuestionDiv>
-        <QuestionDiv style={{ fontFamily: "SeoulNamsan", fontSize: ".875rem" }}>
+        <QuestionDiv style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>
           <Title>조건</Title>
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              marginBottom: ".5rem",
+              marginBottom: "0.5rem",
             }}
           >
             <SubTitle>최대 인원</SubTitle>
@@ -763,7 +763,7 @@ const MeetingInfoManage = () => {
             style={{
               display: "flex",
               alignItems: "center",
-              marginBottom: ".5rem",
+              marginBottom: "0.5rem",
             }}
           >
             <img src="/src/assets/liverIcon.svg" />
@@ -780,7 +780,7 @@ const MeetingInfoManage = () => {
             style={{
               display: "flex",
               alignItems: "center",
-              marginBottom: ".5rem",
+              marginBottom: "0.5rem",
             }}
           >
             <img src="/src/assets/age.svg" />

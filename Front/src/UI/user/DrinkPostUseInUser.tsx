@@ -24,14 +24,14 @@ const drinkpost = () => {
       if (page < 6) {
         setTimeout(() => {
           callApi("get", `api/drink?page=${page}&size=12`)
-            .then((res) => {
-              setDrinkList((prev) => [...prev, ...res.data.content]);
+            .then(res => {
+              setDrinkList(prev => [...prev, ...res.data.content]);
               console.log(res.data.content);
               console.log(drinkList);
               console.log(page);
-              setPage((prev) => prev + 1);
+              setPage(prev => prev + 1);
             })
-            .catch((err) => {
+            .catch(err => {
               console.log(err);
             });
           console.log(page);
@@ -46,27 +46,16 @@ const drinkpost = () => {
   return (
     <>
       <ShowcaseBody>
-        <h1 style={{ paddingTop: ".625rem" }}>내 술장</h1>
+        <h1 style={{ paddingTop: "10px" }}>내 술장</h1>
 
-        <div
-          className="whole"
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            paddingBottom: "3.75rem",
-          }}
-        >
+        <div className="whole" style={{ display: "flex", flexWrap: "wrap", paddingBottom: "60px" }}>
           {drinkList.map((drink, i) => {
             return <DrinkCard key={i} drink={drink}></DrinkCard>;
           })}
         </div>
         <div
           ref={setTarget}
-          style={{
-            marginTop: "6.25rem",
-            height: ".3125rem",
-            backgroundColor: "--c-black",
-          }}
+          style={{ marginTop: "100px", height: "5px", backgroundColor: "--c-black" }}
         ></div>
       </ShowcaseBody>
     </>

@@ -17,29 +17,29 @@ const Navdiv = styled.div`
 `;
 
 const CreateBody = styled.div`
-  border: 0.125rem solid black;
+  border: 2px solid black;
 `;
 
 const InputDiv = styled.div`
-  margin-left: 2.25rem;
+  margin-left: 36px;
   text-align: start;
-  margin-bottom: 1.875rem;
+  margin-bottom: 30px;
 `;
 
 const ImageDiv = styled.div`
-  margin-left: 2.25rem;
+  margin-left: 36px;
   text-align: start;
 `;
 
 const Input = styled.input`
-  font-size: 1.25rem;
+  font-size: 20px;
   width: 98%;
   height: 70%;
   border: none;
-  border-bottom: 0.0625rem solid #444;
+  border-bottom: 1px solid #444;
   outline: none;
   &:focus {
-    border-bottom: 0.125rem solid #000000;
+    border-bottom: 2px solid #000000;
   }
 `;
 
@@ -49,7 +49,7 @@ const QuestionDiv = styled.div`
 
 const Title = styled.div`
   font-family: "JejuGothic";
-  font-size: 1.25rem;
+  font-size: 20px;
   text-align: left;
   margin-bottom: 0.5rem;
 `;
@@ -61,7 +61,7 @@ const ImgInput = styled.div`
     width: 0;
     height: 0;
     padding: 0;
-    margin: -0.0625rem;
+    margin: -1px;
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
@@ -69,9 +69,9 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${(props) => props.src}) no-repeat center;
+  background: url(${props => props.src}) no-repeat center;
   background-size: cover;
-  border-radius: 0.9375rem;
+  border-radius: 15px;
   position: relative;
   width: 30%;
   padding-bottom: 30%;
@@ -92,20 +92,20 @@ const DrinkpostReviewCreate = () => {
 
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
-      .then((res) => {
+      .then(res => {
         setDrink(res.data);
         console.log(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
   }, []);
   useEffect(() => {
     callApi("get", `api/user/guard/myinfo`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
         setMyInfo(res.data);
         console.log(myInfo);
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
   }, []);
 
   const reviewSubmit = () => {
@@ -129,11 +129,11 @@ const DrinkpostReviewCreate = () => {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
         navigate(`/drinkpost/${drinkId}`);
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
 
     // callApi("post", "api/drinkreview/guard", {
     //   myInfo: myInfo.userId,
@@ -173,16 +173,12 @@ const DrinkpostReviewCreate = () => {
       const formData = new FormData();
       formData.append("image", file);
       if (file !== undefined) {
-        const response = await axios.post(
-          `http://i9b310.p.ssafy.io/api/img/upload`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: "Bearer " + localStorage.getItem("token"),
-            },
-          }
-        );
+        const response = await axios.post(`http://i9b310.p.ssafy.io/api/img/upload`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
         return response.data;
       }
     } catch (error) {
@@ -211,16 +207,13 @@ const DrinkpostReviewCreate = () => {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
+      .then(res => console.log(res.data))
+      .catch(err => console.log(err));
   };
   return (
     <>
       <Navdiv>
-        <div
-          style={{ marginLeft: ".625rem", cursor: "pointer" }}
-          onClick={toPreviousPage}
-        >
+        <div style={{ marginLeft: "10px", cursor: "pointer" }} onClick={toPreviousPage}>
           <img src={backIcon} alt="" />
         </div>
         <h2 onClick={() => navigate(`/drinkpost/${drinkId}`)}>{drink?.name}</h2>
@@ -228,7 +221,7 @@ const DrinkpostReviewCreate = () => {
       </Navdiv>
       <CreateBody>
         <InputDiv>
-          <div style={{ marginBottom: ".625rem" }}>
+          <div style={{ marginBottom: "10px" }}>
             <label htmlFor="review">
               <b>후기 작성</b>
             </label>
@@ -240,16 +233,13 @@ const DrinkpostReviewCreate = () => {
             autoFocus
           ></Input>
         </InputDiv>
-        <div style={{ marginLeft: "2.25rem" }}>
+        <div style={{ marginLeft: "36px" }}>
           <QuestionDiv style={{ textAlign: "left" }}>
             <div style={{ display: "flex", alignItems: "center" }}>
               <Title style={{ margin: "0" }}>대표 이미지</Title>
               <ImgInput>
                 <label htmlFor="img_file">
-                  <img
-                    src="/src/assets/imageButton.svg"
-                    style={{ margin: "0 .5rem" }}
-                  />
+                  <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
                 </label>
                 <input
                   type="file"

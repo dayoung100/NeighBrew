@@ -20,7 +20,7 @@ const meetingFind = () => {
   const [meetData, setMeetData] = useState<Meeting[]>([]);
 
   useEffect(() => {
-    setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
+    setMeetData(meetAllData.map(item => item)); //필터 적용을 위해 복사한 리스트 만들어두기
   }, [meetAllData]);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const meetingFind = () => {
   //api 호출
   useEffect(() => {
     const promise = callApi("get", "api/meet");
-    promise.then((res) => {
+    promise.then(res => {
       setMeetAllData(res.data); //받아온 데이터로 meetAllData 세팅
     });
   }, []);
@@ -51,14 +51,7 @@ const meetingFind = () => {
 
   //필터 지역 검색용
   const [sidoList, setSiList] = useState(["서울", "경기", "대전", "시도"]);
-  const [gugunList, setGuList] = useState([
-    "동구",
-    "중구",
-    "서구",
-    "유성구",
-    "대덕구",
-    "구군",
-  ]);
+  const [gugunList, setGuList] = useState(["동구", "중구", "서구", "유성구", "대덕구", "구군"]);
   const [dongList, setDongList] = useState([
     "봉명동",
     "중앙동",
@@ -180,7 +173,7 @@ const meetingFind = () => {
                 <FilterElement>
                   <div>
                     <DropdownInput onChange={sidoSetter} value={sido}>
-                      {sidoList.map((siItem) => {
+                      {sidoList.map(siItem => {
                         return (
                           <option value={siItem} key={siItem}>
                             {siItem}
@@ -192,7 +185,7 @@ const meetingFind = () => {
                   </div>
                   <div>
                     <DropdownInput onChange={gugunSetter} value={gugun}>
-                      {gugunList.map((guItem) => {
+                      {gugunList.map(guItem => {
                         return (
                           <option value={guItem} key={guItem}>
                             {guItem}
@@ -204,7 +197,7 @@ const meetingFind = () => {
                   </div>
                   <div>
                     <DropdownInput onChange={dongSetter} value={dong}>
-                      {dongList.map((dongItem) => {
+                      {dongList.map(dongItem => {
                         return (
                           <option value={dongItem} key={dongItem}>
                             {dongItem}
@@ -259,7 +252,7 @@ const SearchResultHeader = styled.div`
   width: 90%;
   margin: 0 auto;
   font-family: "JejuGothic";
-  font-size: 1.25rem;
+  font-size: 20px;
 `;
 
 const FilterBtn = styled.button`
@@ -274,7 +267,7 @@ const FilterDiv = styled.div`
   display: flex;
   justify-content: center;
   margin: 0 1rem;
-  border-bottom: 0.0625rem solid var(--c-gray);
+  border-bottom: 1px solid var(--c-gray);
 `;
 
 const FilterBg = styled.div`
@@ -284,12 +277,12 @@ const FilterBg = styled.div`
   align-items: center;
   justify-content: center;
   background: white;
-  border-radius: 0.9375rem;
+  border-radius: 15px;
   width: 100%;
   margin: 1rem auto;
   padding: 1rem;
   font-family: "JejuGothic";
-  font-size: 0.875rem;
+  font-size: 14px;
 `;
 
 const FilterElement = styled.div`
@@ -305,7 +298,7 @@ const DropdownInput = styled.select`
   text-align: right;
   padding: 3% 5%;
   border: none;
-  border-bottom: 0.0625rem solid var(--c-gray);
+  border-bottom: 1px solid var(--c-gray);
   font-family: "SeoulNamsan";
   outline: none;
   -webkit-appearance: none; /* 화살표 없애기 for chrome*/
@@ -319,7 +312,7 @@ const DateInput = styled.input.attrs({ type: "date" })`
   font-family: "SeoulNamsan";
   text-align: right;
   border: none;
-  border-bottom: 0.0625rem solid var(--c-gray);
+  border-bottom: 1px solid var(--c-gray);
   background: white;
   outline: none;
 `;

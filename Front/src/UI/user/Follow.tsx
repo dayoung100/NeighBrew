@@ -24,9 +24,9 @@ const Follow = () => {
   }, [parent]);
 
   const getFollower = () => {
-    callApi("get", `api/follow/following/${userid}`).then((res) => {
-      res.data.map((tem) => {
-        setUsers((users) => [...users, tem.following]);
+    callApi("get", `api/follow/following/${userid}`).then(res => {
+      res.data.map(tem => {
+        setUsers(users => [...users, tem.following]);
       });
       console.log(res.data);
     });
@@ -47,13 +47,7 @@ const Follow = () => {
           >
             {ArrowLeftIcon}
           </div>
-          <span
-            style={{
-              marginRight: "0rem",
-              fontFamily: "JejuGothic",
-              fontSize: "1.25rem",
-            }}
-          >
+          <span style={{ marginRight: "0rem", fontFamily: "JejuGothic", fontSize: "20px" }}>
             팔로워 목록
           </span>
           <div></div>
@@ -77,24 +71,16 @@ const Follow = () => {
                 <Img src={user.profile == "no image" ? temgif : user.profile} />
               </ImgDiv>
               <div style={{ textAlign: "left" }}>
-                <p
-                  style={{
-                    fontFamily: "JejuGothic",
-                    fontSize: "1rem",
-                    marginBottom: ".5rem",
-                  }}
-                >
+                <p style={{ fontFamily: "JejuGothic", fontSize: "16px", marginBottom: "0.5rem" }}>
                   {user.nickname}
                 </p>
-                <p style={{ fontFamily: "SeoulNamsan", fontSize: ".875rem" }}>
-                  {user.intro}
-                </p>
+                <p style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>{user.intro}</p>
               </div>
             </User>
           );
         })}
       </div>
-      <div style={{ height: "5rem" }}></div>
+      <div style={{ height: "80px" }}></div>
       <footer>
         <Footer />
       </footer>

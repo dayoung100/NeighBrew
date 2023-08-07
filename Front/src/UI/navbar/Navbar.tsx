@@ -12,7 +12,7 @@ const Button = styled.button`
 
   &:focus {
     outline: none;
-    border-bottom: 0.125rem solid #000000;
+    border-bottom: 2px solid #000000;
   }
 `;
 

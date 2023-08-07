@@ -13,7 +13,7 @@ import { Drink, Review } from "../../Type/types";
 import backgroundImg from "../../assets/mdsimg.png";
 
 const WholeDiv = styled.div`
-  border-radius: 1.875rem 1.875rem 0rem 0rem;
+  border-radius: 30px 30px 0px 0px;
   background-color: white;
   min-height: 70vh;
   position: relative;
@@ -55,9 +55,9 @@ const ImageInfo = styled.div`
 const CreateReviewDiv = styled.div`
   display: flex;
   justify-content: space-between;
-  border: 0.0625rem solid var(--c-gray);
-  border-radius: 0.75rem;
-  margin: 1.875rem;
+  border: 1px solid var(--c-gray);
+  border-radius: 12px;
+  margin: 30px;
 `;
 
 const NavbarBackIcon = styled.div`
@@ -67,25 +67,25 @@ const NavbarBackIcon = styled.div`
 
 const CreateReviewButton = styled.div`
   background-color: var(--c-yellow);
-  border-radius: 0.75rem;
+  border-radius: 12px;
   width: 30%;
   height: 100%;
-  margin: 0.1875rem 0.9375rem 0.1875rem 0.9375rem;
-  font-size: 0.75rem;
+  margin: 3px 15px 3px 15px;
+  font-size: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const IconAndTextDiv = styled.div`
-  margin: 0.625rem 0.9375rem 0.625rem 0.9375rem;
+  margin: 10px 15px 10px 15px;
   display: flex;
   align-items: center;
   width: 30%;
 `;
 
 const DescriptionP = styled.p`
-  margin-top: 1.25rem;
+  margin-top: 20px;
   text-align: start;
   /* 추가하기 */
   display: -webkit-box;
@@ -135,22 +135,22 @@ const DrinkpostDetail = () => {
   // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
         setDetail(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
     // callApi("get", reviewUrl)
     // .then(res=> )
   }, []);
 
   useEffect(() => {
     callApi("get", `api/drinkreview/${drinkId}`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
-        setReviewList((prev) => [...prev, ...res.data.content]);
+        setReviewList(prev => [...prev, ...res.data.content]);
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
   }, []);
 
   const transImage = (img: string) => {
@@ -185,28 +185,18 @@ const DrinkpostDetail = () => {
   return (
     <>
       <DrinkThumbnail>
-        <NavbarBackIcon onClick={() => navigate("/drinkpost/")}>
-          {ArrowLeftIcon}
-        </NavbarBackIcon>
+        <NavbarBackIcon onClick={() => navigate("/drinkpost/")}>{ArrowLeftIcon}</NavbarBackIcon>
       </DrinkThumbnail>
       <WholeDiv>
         <InfoDiv>
           <SimpleInfo>
             <div style={{ textAlign: "center", marginLeft: "10vw" }}>
-              <h3 style={{ marginRight: "2vw", textAlign: "start" }}>
-                {detail?.name}
-              </h3>
+              <h3 style={{ marginRight: "2vw", textAlign: "start" }}>{detail?.name}</h3>
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <b style={{ marginRight: "2vw" }}>주종</b>
                 {getTagNameMk2(detail?.tagId)}
               </div>
-              <div
-                style={{
-                  paddingTop: "1vh",
-                  display: "flex",
-                  justifyContent: "flex-start",
-                }}
-              >
+              <div style={{ paddingTop: "1vh", display: "flex", justifyContent: "flex-start" }}>
                 <b style={{ marginRight: "2vw" }}>도수 </b>
                 {detail?.degree}%
               </div>
@@ -220,7 +210,7 @@ const DrinkpostDetail = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                borderRadius: "1.25rem",
+                borderRadius: "20px",
                 marginTop: "2vh",
                 marginLeft: "8vw",
                 cursor: "pointer",
@@ -233,11 +223,7 @@ const DrinkpostDetail = () => {
             </div>
           </SimpleInfo>
           <ImageInfo>
-            <img
-              src={transImage(detail?.image)}
-              alt=""
-              style={{ width: "12vh" }}
-            />
+            <img src={transImage(detail?.image)} alt="" style={{ width: "12vh" }} />
           </ImageInfo>
         </InfoDiv>
 
@@ -258,7 +244,7 @@ const DrinkpostDetail = () => {
         </div>
 
         <div className="reviewBox">
-          <h1 style={{ textAlign: "start", marginBottom: ".625rem" }}>후기</h1>
+          <h1 style={{ textAlign: "start", marginBottom: "10px" }}>후기</h1>
 
           <div
             className="reviewList"
@@ -269,13 +255,8 @@ const DrinkpostDetail = () => {
               justifyContent: "space-between",
             }}
           >
-            {reviewList.map((review) => {
-              return (
-                <ReviewItem
-                  key={review.drinkReviewId}
-                  review={review}
-                ></ReviewItem>
-              );
+            {reviewList.map(review => {
+              return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
             })}
           </div>
         </div>

@@ -32,29 +32,29 @@ const Tag = styled.div`
   background: var(--c-yellow);
   padding: 1.5% 2%;
   font-family: "SeoulNamsan";
-  font-size: 0.4375rem;
-  border-radius: 0.625rem;
+  font-size: 7px;
+  border-radius: 10px;
   color: var(--c-black);
   &::before {
     content: "";
     display: inline-block;
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background-color: white;
-    margin-right: 0.125rem;
+    margin-right: 2px;
   }
   span {
     display: flex;
     justify-content: center;
-    min-width: 1.875rem;
+    min-width: 30px;
   }
 `;
 
 const MeetDetailDiv = styled.div`
   background: var(--c-lightgray);
   min-height: 70vh;
-  border-radius: 1.875rem 1.875rem 0rem 0rem;
+  border-radius: 30px 30px 0px 0px;
   position: relative;
   z-index: 1;
   top: -2rem;
@@ -73,16 +73,16 @@ const MeetPosDateDiv = styled.div`
   width: 17rem;
   height: 4rem;
   background: white;
-  border-radius: 1.25rem;
-  box-shadow: 0rem 0.25rem 0.625rem 0rem rgba(0, 0, 0, 0.07);
+  border-radius: 20px;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.07);
   padding: 1rem;
   font-family: "SeoulNamsan";
-  font-size: 1rem;
+  font-size: 16px;
 `;
 
 const MeetTitle = styled.div`
   font-family: "JejuGothic";
-  font-size: 1.25rem;
+  font-size: 20px;
   text-align: left;
   margin-top: 1.5rem;
 `;
@@ -265,8 +265,8 @@ const MeetingDetail = () => {
           <div
             style={{
               fontFamily: "JejuGothic",
-              fontSize: "1.75rem",
-              margin: "0 auto .5rem auto",
+              fontSize: "28px",
+              margin: "0 auto 0.5rem auto",
               width: "20rem",
             }}
           >
@@ -278,7 +278,7 @@ const MeetingDetail = () => {
               alignItems: "center",
               justifyContent: "center",
               fontFamily: "SeoulNamsan",
-              fontSize: ".9375rem",
+              fontSize: "15px",
             }}
           >
             <div>주최자: </div>
@@ -287,7 +287,7 @@ const MeetingDetail = () => {
                 <img
                   src="../src/assets/tempgif.gif"
                   width="20rem"
-                  style={{ borderRadius: "6.25rem" }}
+                  style={{ borderRadius: "100px" }}
                 />
                 <div>{memberList[0].nickname}</div>
               </div>
@@ -308,7 +308,7 @@ const MeetingDetail = () => {
           style={{
             display: "flex",
             justifyContent: "space-evenly",
-            fontSize: ".8125rem",
+            fontSize: "13px",
             fontFamily: "Noto Sans KR",
           }}
         >
@@ -317,7 +317,7 @@ const MeetingDetail = () => {
               <img
                 src="/src/assets/liverIcon.svg"
                 width="20rem"
-                style={{ marginRight: ".1875rem" }}
+                style={{ marginRight: "3px" }}
               />
               <div>{meetDetailData.meetDto.minLiverPoint}</div>
               IU/L
@@ -328,7 +328,7 @@ const MeetingDetail = () => {
               <img
                 src="/src/assets/age.svg"
                 width="20rem"
-                style={{ marginRight: ".1875rem" }}
+                style={{ marginRight: "3px" }}
               />
               {meetDetailData.meetDto.minAge > 0 && (
                 <div>{meetDetailData.meetDto.minAge}세 이상</div>
@@ -355,9 +355,9 @@ const MeetingDetail = () => {
           style={{
             color: "var(--c-black)",
             fontFamily: "Noto Sans KR",
-            fontSize: ".9375rem",
+            fontSize: "15px",
             textAlign: "left",
-            marginTop: ".5rem",
+            marginTop: "0.5rem",
             marginBottom: "2rem",
             whiteSpace: "pre-line",
           }}
@@ -369,7 +369,7 @@ const MeetingDetail = () => {
           <div
             style={{
               marginTop: "1.6rem",
-              marginLeft: ".5rem",
+              marginLeft: "0.5rem",
             }}
           >
             <PeopleNumInfo
@@ -380,7 +380,7 @@ const MeetingDetail = () => {
             />
           </div>
         </div>
-        <div style={{ margin: "0 .5rem" }}>
+        <div style={{ margin: "0 0.5rem" }}>
           {memberList.map((member, index) => {
             return (
               <UserInfoItem

@@ -14,7 +14,7 @@ import { callApi } from "../../utils/api";
 import { Meeting } from "../../Type/types";
 
 const BigBtn = styled.div`
-  border-radius: 1.875rem;
+  border-radius: 30px;
   background: var(--c-yellow);
   width: 15rem;
   margin: 1rem auto;
@@ -28,8 +28,8 @@ const WhiteModal = {
     transform: "translate(-50%, -50%)",
     width: "15rem",
     height: "6rem",
-    padding: ".5rem 1rem",
-    borderRadius: ".9375rem",
+    padding: "0.5rem 1rem",
+    borderRadius: "15px",
     background: "white",
     textAlign: "center",
     fontFamily: "SeoulNamsan",
@@ -85,8 +85,8 @@ const MeetingManageMain = () => {
       </header>
       <div
         style={{
-          fontSize: "2rem",
-          margin: "1rem auto .5rem auto",
+          fontSize: "32px",
+          margin: "1rem auto 0.5rem auto",
           width: "20rem",
         }}
       >
@@ -132,7 +132,7 @@ const MeetingManageMain = () => {
               console.log("삭제 완료");
               setDeleteModalOn(false);
             }}
-            style={{ width: "7rem", padding: ".5rem 0" }}
+            style={{ width: "7rem", padding: "0.5rem 0" }}
           >
             예
           </div>
@@ -142,7 +142,7 @@ const MeetingManageMain = () => {
               console.log("삭제 취소");
               setDeleteModalOn(false);
             }}
-            style={{ width: "7rem", padding: ".5rem 0" }}
+            style={{ width: "7rem", padding: "0.5rem 0" }}
           >
             아니오
           </div>

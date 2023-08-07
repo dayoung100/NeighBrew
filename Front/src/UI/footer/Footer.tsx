@@ -18,9 +18,8 @@ const Button = styled.button<{ now: number; choosebutton: number }>`
   height: 3rem;
   background-color: white;
   border: none;
-  margin: 0.5rem auto 0.125rem auto;
-  border-bottom: ${(props) =>
-    props.now == props.choosebutton ? ".125rem solid #000000" : "none"};
+  margin: 0.5rem auto 2px auto;
+  border-bottom: ${props => (props.now == props.choosebutton ? "2px solid #000000" : "none")};
 `;
 
 const Footer = () => {
