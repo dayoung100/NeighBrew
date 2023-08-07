@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -38,18 +35,27 @@ public class ChatDmService {
     private String neighbrewUrl;
 
     //DM 목록 조회
-    public List<ChatDmRoom> findChatDmRoomsByUserId(Long userId) {
-        return chatDmRoomRepository.findChatDmRoomById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
-    }
 
-    //메세지 관련
-    public List<ChatDmMessage> findDmMessagesByRoomId(Long user1Id, Long user2Id) {
+    //public Map<String, Object> findChatDmRoomsByUserId(Long userId) {
+        //Map<String, Object> result = new HashMap<>();
+    public List<ChatDmRoom> findChatDmRoomsByUserId(Long userId) {
+        List<ChatDmRoom> dmList =  chatDmRoomRepository.findChatDmRoomById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+
+        return dmList;
+    }
+    public Map<String, Object>  findDmMessagesByRoomId(Long user1Id, Long user2Id) {
+        Map<String, Object> result = new HashMap<>();
         log.info("{}와{}의 메세지 가져오기", user1Id, user2Id);
 
-        ChatDmRoom dmRoom = chatDmRoomRepository.findByUser1_UserIdAndUser2_UserId(user1Id, user2Id).orElseThrow(() -> new IllegalArgumentException("유저와 연관된 채팅방 내역을 찾을 수 없습니다."));
-        log.info("{}" , dmRoom);
-        if(dmRoom.getChatDmRoomId().equals(-1L)) return null;
-        return chatDmMessageRepository.findByChatDmRoom_ChatDmRoomId(dmRoom.getChatDmRoomId()).orElseThrow(()-> new IllegalArgumentException("채팅방 정보가 올바르지 않습니다."));
+        Optional<ChatDmRoom> dmRoom = chatDmRoomRepository.findByUser1_UserIdAndUser2_UserId(user1Id, user2Id);
+        if(dmRoom.isPresent()){
+            result.put("messages", chatDmMessageRepository.findByChatDmRoom_ChatDmRoomId(dmRoom.get().getChatDmRoomId()).orElseThrow(()-> new IllegalArgumentException("채팅방 정보가 올바르지 않습니다.")));
+        }else {
+            result.put("messages", new ArrayList<>());
+        }
+        result.put("user1", userRepository.findById(user1Id));
+        result.put("user2", userRepository.findById(user2Id));
+        return result;
     }
 
 
@@ -134,19 +140,11 @@ public class ChatDmService {
                 .createdAt(LocalDateTime.now())
                 .build());
 
-        //반환할 유저 데이터(ID, NickName, 프로필URL)
-        UserDto userData = UserDto.builder()
-                .userId(sender.getUserId())
-                .name(sender.getName())
-                .profile(sender.getProfile())
-                .nickname(sender.getNickname())
-                .build();
-
         //받은 메세지 내용은 그대로 돌려준다
         Map<String, Object> result = new HashMap<>();
         result.put("dmRoomId", chatDmRoom.getChatDmRoomId());
         result.put("userId", sender.getUserId());
-        result.put("user", userData);
+        result.put("user", sender);
         result.put("message", message);
 
         //PushService.send(User sender, User receiver, PushType pushType, String content, String url)
