@@ -5,6 +5,18 @@ import { callApi } from "../../utils/api";
 import styled from "styled-components";
 import { likeIcon, commentIcon } from "./../../assets/AllIcon";
 
+const LikeAndComment = styled.div`
+  display: flex;
+  justify-content: space-around;
+  width: 36%;
+  margin-top: 1.5vh;
+  font-size: 20px;
+`;
+
+const Description = styled.div`
+  text-align: start;
+`;
+
 const WholeDiv = styled.div`
   margin: 24px;
 `;
@@ -18,53 +30,55 @@ const ImageDiv = styled.div`
 
 const Usercard = styled.div`
   display: flex;
+  align-items: center;
+  margin-bottom: 4%;
+  justify-content: space-between;
 `;
 
-const LikeAndComment = styled.div`
+const FollowDiv = styled.div`
+  width: 5rem;
+  height: 2rem;
+  border-radius: 20px;
+  background-color: var(--c-yellow);
   display: flex;
-  justify-content: space-around;
-  width: 36%;
-  margin-top: 1.5vh;
-  font-size: 20px;
+  justify-content: center;
+  align-items: center;
 `;
 
-const Description = styled.div`
-  text-align: start;
-`;
+// const ProfileDiv = styled.div`
+//   width: 12%;
+//   aspect-ratio: 1/1;
+//   border-radius: 30px;
+//   background-color: var(--c-lightgray);
+//   margin-right: 4%;
+// `;
 
-type LikeState = {
-  liked: boolean;
-};
+const UserImg = styled.img`
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  margin-right: 1rem;
+`;
 
 const DrinkpostReviewDetail = () => {
+  const Like = likeIcon();
+  const Comment = commentIcon();
   const { drinkId, reviewId } = useParams();
   const [review, setReview] = useState<Review>();
   const [drink, setDrink] = useState<Drink>();
-  const Like = likeIcon();
-  const Comment = commentIcon();
-  const [joayo, setJoayo] = useState<LikeState>(() => {
-    const storedLiked = localStorage.getItem("liked");
-    return storedLiked ? JSON.parse(storedLiked) : { liked: false };
-  });
 
   useEffect(() => {
-    localStorage.setItem("liked", JSON.stringify(joayo));
-  }, [joayo]);
-
-  // const clickLike = () => {
-  //   callApi("post", `api/like/guard/${review.drinkReviewId}`)
-  //     .then(res => {
-  //       setLike({liked : !joayo.liked})
-  //       console.log(res.data);
-  //     })
-  //     .catch(err => console.error(err));
-  // };
-
-  useEffect(() => {
+    console.log();
     callApi("get", `api/drink/${drinkId}`)
       .then(res => {
         console.log(res.data);
         setDrink(res.data);
+      })
+      .catch(err => console.error(err));
+    callApi("get", `api/drinkreview/review/${reviewId}`)
+      .then(res => {
+        console.log(res.data);
+        setReview(res.data);
       })
       .catch(err => console.error(err));
   }, []);
@@ -85,23 +99,26 @@ const DrinkpostReviewDetail = () => {
       <WholeDiv>
         <h2>{drink?.name}</h2>
         <Usercard>
-          <div>
-            {/* <div
-              style={{
-                borderRadius: "30px",
-                backgroundImage: `url(${review?.user.profile})`,
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-              }}
-            ></div> */}
-            <div></div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div>
+              <UserImg src={review?.user.profile}></UserImg>
+            </div>
+            {/* <ProfileDiv></ProfileDiv> */}
+            <div>
+              <b>{review?.user.nickname}</b>
+            </div>
           </div>
+          <FollowDiv>팔로우</FollowDiv>
         </Usercard>
         <ImageDiv></ImageDiv>
         <LikeAndComment>
-          <div>{Like}14</div>
+          <div>
+            {Like} {review?.likeCount}
+          </div>
 
-          <div>{Comment}23</div>
+          <div>
+            {Comment} {review?.drinkReviewId}
+          </div>
         </LikeAndComment>
         <Description></Description>
         <hr />

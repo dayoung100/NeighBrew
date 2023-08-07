@@ -7,7 +7,7 @@ import { useState } from "react";
 const Card = styled.div`
   flex-direction: column;
   display: flex;
-  width: 30vw;
+  width: 28vw;
   height: 230px;
   margin: 10px 2px 10px 2px;
   border-radius: 14px;
