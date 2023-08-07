@@ -35,6 +35,10 @@ const meetingMy = () => {
   useEffect(() => {
     //로컬 스토리지에서 userId 가져오기
     setUserId(parseInt(localStorage.getItem("myId")));
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }, []);
 
   //api 호출

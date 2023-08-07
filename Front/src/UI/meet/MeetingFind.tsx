@@ -12,22 +12,48 @@ import MeetingListItem from "./MeetingListItem";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Meeting } from "../../Type/types";
+import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
 const meetingFind = () => {
   //받아온 모임 정보 리스트(전체)
   const [meetAllData, setMeetAllData] = useState<Meeting[]>([]);
   //필터링 한 후 모임 정보
   const [meetData, setMeetData] = useState<Meeting[]>([]);
+  //페이징 적용, 새로 받아오는 모임 정보(끝에 도달했는지 확인용)
+  const [meetNewData, setMeetNewData] = useState<Meeting[]>([]);
+  const [throttle, setThrottle] = useState(false);
+
+  //TODO: 무한 스크롤 로직
+  const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
+    // isIntersecting이 true면 감지했다는 뜻임
+    if (isIntersecting && !throttle) {
+      setThrottle(true);
+      setTimeout(() => {
+        setPage((prev) => prev + 1);
+        setThrottle(false);
+      }, 1000);
+    }
+  };
+
+  const { setTarget } = useIntersectionObserver({ onIntersect });
+  const [page, setPage] = useState(0);
+  useEffect(() => {
+    console.log("page:" + page);
+    const promise = callApi("get", `api/meet?page=${page}&size=10`);
+    promise.then((res) => {
+      setMeetNewData(res.data);
+      setMeetAllData((prev) => [...prev, ...res.data]); //받아온 데이터로 meetAllData 세팅
+    });
+  }, [page]);
 
   useEffect(() => {
     setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
   }, [meetAllData]);
 
-  //api 호출
   useEffect(() => {
-    const promise = callApi("get", "api/meet");
-    promise.then((res) => {
-      setMeetAllData(res.data); //받아온 데이터로 meetAllData 세팅
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
   }, []);
 
@@ -221,7 +247,16 @@ const meetingFind = () => {
             </FilterDiv>
           )}
         </div>
-        <MeetingListItem data={meetData} />
+        {meetData.length >= 10 && <MeetingListItem data={meetData} />}
+        {meetData.length < 10 && <div style={{ minHeight: "100vh" }}></div>}
+        {!throttle && meetNewData.length > 0 && (
+          <div
+            ref={setTarget}
+            style={{
+              height: "1px",
+            }}
+          ></div>
+        )}
       </SearchResultDiv>
     </div>
   );

@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { callApi } from "../../utils/api";
@@ -95,4 +96,4 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
     </div>
   );
 };
-export default meetingDetail;
+export default React.memo(meetingDetail);
