@@ -109,9 +109,9 @@ public class UserController {
         return ResponseEntity.ok(url);
     }
 
-    @PostMapping("/guard/search")
-    public ResponseEntity<?> searchUsers(@RequestBody UserSearchDto userSearchDto, HttpServletRequest request){
-        String nickname = userSearchDto.getNickName();
+    @GetMapping("/search/{nickname}")
+    public ResponseEntity<?> searchUsers(@PathVariable String nickname){
+        log.info(nickname);
        return ResponseEntity.ok(userService.searchUsers(nickname));
     }
 

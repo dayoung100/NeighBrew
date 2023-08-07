@@ -59,7 +59,7 @@ public class AuthController {
 
     @GetMapping("/login/google")
     public ResponseEntity<Map<String, String>> loginRequsetResponse(GoogleLoginParams params)  {
-        Map<String, String> response = new HashMap<>();;
+        Map<String, String> response = new HashMap<>();
         response.put("URL", oAuthLoginService.redirectApiUrl(params));
         return ResponseEntity.ok(response);
     }
