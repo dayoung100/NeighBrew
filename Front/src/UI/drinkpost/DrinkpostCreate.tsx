@@ -5,13 +5,9 @@ import DrinkCategory from "../drinkCategory/DrinkCategory";
 import styled from "styled-components";
 import { useState, useRef } from "react";
 import createButton from "../../assets/createButton.svg";
-import imageButton from "../../assets/imageButton.svg";
-import defaultImage from "../../assets/defaultImage.svg";
 import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
-import ImageInput from "../components/ImageInput";
 import axios from "axios";
-import whiskeyImage from "../../assets/whiskeyImage.png";
 
 // 여기부터 지정한 부분까지 style 부분입니다.
 // GuideText는 h3 tag가 상하 margin을 너무 많이 잡아서 새로 만든 겁니다.
@@ -29,13 +25,14 @@ const InputDiv = styled.div`
   box-sizing: border-box;
   margin-bottom: 3px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-around;
 `;
 
 // 실질적으로 정보를 입력할 input tag입니다.
+// placeholder 사이즈는 10px
 const Input = styled.input`
-  font-size: 20px;
+  font-size: 16px;
   width: 98%;
   height: 70%;
   border: none;
@@ -45,6 +42,18 @@ const Input = styled.input`
   &:focus {
     border-bottom: 2px solid #000000;
   }
+`;
+
+// 에러 메세지를 띄우기 위한 div tag입니다.
+// display는 none으로 되어있습니다.
+// 에러 메세지를 띄우기 위해서는 display를 block으로 바꿔주면 됩니다.
+const ErrorMessage = styled.div<{
+  style: { display: string };
+}>`
+  font-size: 12px;
+  color: red;
+  margin-top: 5px;
+  display: none;
 `;
 
 // 도수 관련 정보 입력은 한 줄로 되어있습니다.
@@ -62,6 +71,7 @@ const InputDivAlcohol = styled.span`
 
 // 도수 관련 input tag는 작습니다.
 // 따라서 width는 15%으로 맞춰져있습니다.
+// defalueValue는 0으로 되어있습니다.
 const InputAlcohol = styled.input`
   font-size: 18px;
   width: 15%;
@@ -72,6 +82,10 @@ const InputAlcohol = styled.input`
 
   &:focus {
     border-bottom: 2px solid var(--c-black);
+  }
+
+  &::placeholder {
+    color: var(--c-gray);
   }
 `;
 
@@ -101,7 +115,7 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 15px;
   position: relative;
@@ -120,15 +134,14 @@ const DrinkpostCreate = () => {
     setSelectedCategory(tagId);
   };
   const [drinkName, setDrinkName] = useState("");
-  const [drinkType, setDrinkType] = useState("");
   const [drinkDescription, setDrinkDescription] = useState("");
   const [drinkAlcohol, setDrinkAlcohol] = useState("");
+  const [inputCheck, setInputCheck] = useState(false);
 
   const navigate = useNavigate();
 
   const drinkNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDrinkName(e.target.value);
-    console.log("name");
   };
   const drinkAlcoholHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDrinkAlcohol(e.target.value);
@@ -152,21 +165,23 @@ const DrinkpostCreate = () => {
     };
   };
 
-  const uploadImageToServer = async imgFile => {
+  const uploadImageToServer = async (imgFile) => {
     const file = imgRef.current.files[0];
     try {
       const formData = new FormData();
       formData.append("img", file);
-      // console.log(imgFile);
-      const response = await axios.post("http://i9b310.p.ssafy.io/api/img/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://i9b310.p.ssafy.io/api/img/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       return response.data;
     } catch (error) {
-      console.error(error);
       throw error;
     }
   };
@@ -178,27 +193,31 @@ const DrinkpostCreate = () => {
     } else {
       imageUrl = null;
     }
-    console.log(imageUrl);
+
     try {
       callApi("post", "api/drink", {
-        name: drinkName,
+        name: drinkName.trim(),
         image: imageUrl,
-        description: drinkDescription,
+        description: drinkDescription.trim(),
         degree: drinkAlcohol,
         tagId: selectedCategory,
       })
-        .then(res => {
-          console.log(res.data);
+        .then((res) => {
+          // drinkdescription이 없을 경우
+          // catch로 로 이동
+          if (drinkDescription.trim().length === 0) {
+            throw Error;
+          }
           navigate(`/drinkpost/${res.data.drinkId}`);
         })
-        .catch(err => console.log(err));
-    } catch (error) {
-      console.log(error);
-    }
+        .catch(() => {
+          setInputCheck(true);
+        });
+    } catch (error) {}
   };
 
   return (
-    <div style={{ border: "2px solid black" }}>
+    <div>
       <h3>술 문서 등록하기</h3>
       <div style={{ textAlign: "start", margin: "0px 15px 80px 15px" }}>
         <GuideText>이름</GuideText>
@@ -209,6 +228,15 @@ const DrinkpostCreate = () => {
             placeholder="ex. 글렌피딕 15년, 테라스 가우다"
             autoFocus
           ></Input>
+          {/* 등록 버튼을 누르기전에는 숨겨져있음 */}
+          <ErrorMessage
+            style={{
+              display:
+                drinkName.trim().length === 0 && inputCheck ? "block" : "none",
+            }}
+          >
+            이름을 입력해주세요.
+          </ErrorMessage>
         </InputDiv>
         <h3>카테고리</h3>
         <div style={{ display: "flex", justifyContent: "center" }}>
@@ -221,10 +249,23 @@ const DrinkpostCreate = () => {
             onChange={drinkDescriptionHandler}
             placeholder="ex. 탄닌 덕분에 은은한 단맛이 돌아요."
           ></Input>
+          <ErrorMessage
+            style={{
+              display:
+                drinkDescription.trim().length === 0 && inputCheck
+                  ? "block"
+                  : "none",
+            }}
+          >
+            설명을 입력해주세요.
+          </ErrorMessage>
         </InputDiv>
         <InputDivAlcohol>
           <h3 style={{ marginRight: "1rem" }}>도수</h3>
-          <InputAlcohol value={drinkAlcohol} onChange={drinkAlcoholHandler}></InputAlcohol>
+          <InputAlcohol
+            value={drinkAlcohol}
+            onChange={drinkAlcoholHandler}
+          ></InputAlcohol>
           <p>%</p>
         </InputDivAlcohol>
         <QuestionDiv style={{ textAlign: "left" }}>
@@ -232,7 +273,10 @@ const DrinkpostCreate = () => {
             <Title style={{ margin: "0" }}>대표 이미지</Title>
             <ImgInput>
               <label htmlFor="img_file">
-                <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
+                <img
+                  src="/src/assets/imageButton.svg"
+                  style={{ margin: "0 0.5rem" }}
+                />
               </label>
               <input
                 type="file"
