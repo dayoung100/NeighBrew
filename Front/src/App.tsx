@@ -83,6 +83,7 @@ function App() {
         ></Route>
         <Route path="/drinkpost/total" element={<DrinkpostTotal></DrinkpostTotal>}></Route>
         <Route path="/test" element={<Test></Test>}></Route>
+
         <Route
           path="/drinkpost/:drinkId/:reviewId"
           element={<DrinkpostReviewDetail></DrinkpostReviewDetail>}

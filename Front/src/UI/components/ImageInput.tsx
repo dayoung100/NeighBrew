@@ -28,7 +28,7 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${(props) => props.src}) no-repeat center;
+  background: url(${props => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 15px;
   position: relative;
@@ -70,10 +70,7 @@ const ImageInput = (props: ImageInputProps) => {
         <Title style={{ margin: "0" }}>대표 이미지</Title>
         <ImgInput>
           <label htmlFor="img_file">
-            <img
-              src="/src/assets/imageButton.svg"
-              style={{ margin: "0 0.5rem" }}
-            />
+            <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
           </label>
           <input
             type="file"
