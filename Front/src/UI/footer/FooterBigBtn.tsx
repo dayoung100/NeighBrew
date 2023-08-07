@@ -9,10 +9,10 @@ const Button = styled.button<{ btncolor: string }>`
   width: 15rem;
   height: 3rem;
   border: none;
-  border-radius: 35px;
+  border-radius: 2.1875rem;
   color: var(--c-black);
   font-family: "JejuGothic";
-  font-size: 20px;
+  font-size: 1.25rem;
   background: ${(props) => props.btncolor};
 `;
 
