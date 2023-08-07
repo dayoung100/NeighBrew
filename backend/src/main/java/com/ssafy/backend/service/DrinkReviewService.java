@@ -1,5 +1,6 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.Enum.UploadType;
 import com.ssafy.backend.dto.DrinkReviewDto;
 import com.ssafy.backend.dto.DrinkReviewUpdateDto;
 import com.ssafy.backend.entity.Drink;
@@ -13,7 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,13 +28,21 @@ public class DrinkReviewService {
     private final UserRepository userRepository;
     private final DrinkRepository drinkRepository;
     private final DrinkReviewRepository drinkReviewRepository;
+    private final S3Service s3Service;
 
-    public DrinkReview createDrinkReview(DrinkReviewDto request) {
+    public DrinkReview createDrinkReview(DrinkReviewDto request, MultipartFile multipartFile) throws IOException, IllegalArgumentException {
+        //DrinkDto에 이미지 추가
+        if(multipartFile != null){
+            if(!multipartFile.isEmpty()) request.setImg(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
+        }else request.setImg("no image");
+
         Optional<User> user = userRepository.findById(request.getUserId());
         Optional<Drink> drink = drinkRepository.findById(request.getDrinkId());
 
         if (user.isPresent() && drink.isPresent()) {
+            log.info("dto 조회 : {}", request);
             DrinkReview newDrinkReview = request.toEntity(user.get(), drink.get());
+            log.info("dto 조회 : {}", newDrinkReview.getImg());
             return drinkReviewRepository.save(newDrinkReview);
         } else {
             throw new IllegalArgumentException("유저와 음료 중 존재하지 않는 정보가 있습니다.");

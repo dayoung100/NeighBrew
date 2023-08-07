@@ -9,8 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -43,10 +46,20 @@ public class DrinkReviewController {
     }
 
     @PostMapping("/guard")
-    public ResponseEntity<?> createDrinkReview(HttpServletRequest request, @RequestBody DrinkReviewDto drinkReviewDto) {
-        String userId = (String) request.getAttribute("userId");
+    public ResponseEntity<?> createDrinkReview(Long userId,
+                                               DrinkReviewDto drinkReviewDto,
+                                               @RequestPart(value = "image", required = false)Optional<MultipartFile> multipartFile) {
+        log.info("입력값 확인 : {}, {}, {}", userId, drinkReviewDto, multipartFile.get().getOriginalFilename());
         drinkReviewDto.setUserId(Long.valueOf(userId));
-        return ResponseEntity.status(HttpStatus.CREATED).body(drinkReviewService.createDrinkReview(drinkReviewDto));
+        try{
+            if(multipartFile.isPresent())
+                return ResponseEntity.status(HttpStatus.CREATED).body(drinkReviewService.createDrinkReview(drinkReviewDto, multipartFile.get()));
+            else
+                return ResponseEntity.status(HttpStatus.CREATED).body(drinkReviewService.createDrinkReview(drinkReviewDto, null));
+        }catch(Exception e) {
+            return ResponseEntity.badRequest().body("리뷰 작성 중 문제가 발생했습니다. \n" + e.getMessage());
+        }
+
     }
 
     @PutMapping("/guard/{drinkReviewId}")
