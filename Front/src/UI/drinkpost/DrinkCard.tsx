@@ -13,7 +13,7 @@ import { callApi } from "../../utils/api";
 const Card = styled.div`
   flex-direction: column;
   display: flex;
-  width: 30vw;
+  width: 28vw;
   height: 230px;
   margin: 10px 3px 10px 3px;
   border-radius: 14px;

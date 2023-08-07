@@ -151,20 +151,20 @@ const ReviewItem = ({ review }: { review: Review }) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then((res) => {
+    }).then(res => {
       setLike(res.data);
     });
   }, [token, review.drinkReviewId]);
 
   useEffect(() => {
     callApi("GET", `api/drinkreview/review/${review.drinkReviewId}`)
-      .then((res) => {
+      .then(res => {
         setLikeCount(res.data.likeCount);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
-  }, [review.drinkReviewId]);
+  }, [review.drinkReviewId, likeCount]);
 
   // 좋아요 버튼 누르면 좋아요 수 증가
   // 즉시반영
@@ -173,10 +173,14 @@ const ReviewItem = ({ review }: { review: Review }) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then((res) => {
+    }).then(res => {
       if (res.data === true) {
         setLikeCount(likeCount + 1);
+        console.log(likeCount);
+        console.log(like);
       } else {
+        console.log(likeCount);
+        console.log(like);
         setLikeCount(likeCount - 1);
       }
     });
@@ -205,14 +209,9 @@ const ReviewItem = ({ review }: { review: Review }) => {
             </LikeDiv>
           </UserCard>
           <div style={{ textAlign: "start" }}>
-            <DescriptionP className={showMore ? "show" : ""}>
-              {review?.content}
-            </DescriptionP>
+            <DescriptionP className={showMore ? "show" : ""}>{review?.content}</DescriptionP>
             {review?.content.length > 100 && (
-              <MoreButton
-                onClick={toggleShowMore}
-                className={showMore ? "hide" : ""}
-              >
+              <MoreButton onClick={toggleShowMore} className={showMore ? "hide" : ""}>
                 ...더보기
               </MoreButton>
             )}
