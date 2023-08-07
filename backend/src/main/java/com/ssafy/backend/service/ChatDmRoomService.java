@@ -34,7 +34,7 @@ public class ChatDmRoomService {
     private final PushService pushService;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${i9b310.p.ssafy.io}")
+    @Value("${neighbrew.url}")
     private String neighbrewUrl;
 
     @Transactional
