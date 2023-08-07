@@ -1,7 +1,6 @@
 package com.ssafy.backend.service;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.Enum.UploadType;
@@ -11,11 +10,12 @@ import com.ssafy.backend.entity.*;
 import com.ssafy.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.tree.ExpandVetoException;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -42,8 +42,8 @@ public class MeetService {
     private final ChatRoomUserService chatRoomUserService;
     private final ChatMessageService chatMessageService;
 
-    public List<MeetDto> findAll() {
-        List<Meet> list = meetRepository.findAll();
+    public List<MeetDto> findAll(Pageable pageable) {
+        Page<Meet> list = meetRepository.findAllByOrderByCreatedAtDesc(pageable);
 
         List<MeetDto> dtos = new ArrayList<>();
         for (Meet meet : list) {
@@ -236,7 +236,7 @@ public class MeetService {
         log.info("모임 신청할 정보를 출력한다. : {}, {}", userId, meetId);
 
         MeetUserDto meetUser = findMeetUserByMeetId(meetId);
-        Meet attendMeet = meetRepository.findById(meetId).orElseThrow(()-> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
+        Meet attendMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
         Long hostId = meetUser.getMeetDto().getHostId();
 
         User attendUser = userService.findByUserId(userId);
@@ -269,7 +269,7 @@ public class MeetService {
         Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
         log.info("현재 {}유저의 {}모임 신청 상태 : {}", userId, meetId, applyUserStatus);
 
-        if(applyUserStatus != Status.APPLY) throw new IllegalArgumentException("가입신청중인 유저만 모임 신청을 취소할 수 있습니다.");
+        if (applyUserStatus != Status.APPLY) throw new IllegalArgumentException("가입신청중인 유저만 모임 신청을 취소할 수 있습니다.");
 
         //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
@@ -283,7 +283,8 @@ public class MeetService {
 
         //모임에서 나간다
         Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
-        if(applyUserStatus == Status.HOST) throw new IllegalArgumentException("죄송합니다.. 방장님은 나가실 수 없으십니다. 모임 삭제를 요청하세요.");
+        if (applyUserStatus == Status.HOST)
+            throw new IllegalArgumentException("죄송합니다.. 방장님은 나가실 수 없으십니다. 모임 삭제를 요청하세요.");
 
         //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.GUEST);
@@ -300,7 +301,7 @@ public class MeetService {
 
         //Host유저와 관리할유저 리스트 반환(1개의 쿼리를 사용 하기 위함) 0번 : 호스트, 1번 : 관리할 유저
         User host = userService.findByUserId(manageMentMeet.getHostId());
-        User manageUser= userService.findByUserId(userId);
+        User manageUser = userService.findByUserId(userId);
 
         if (applyResult) {//신청 결과가 true
             //모임 상태를 변경 시킨다.
@@ -310,8 +311,8 @@ public class MeetService {
 
             //채팅방에 참여 시킨다
             chatRoomUserService.save(ChatRoomUser.builder()
-                            .user(manageUser)
-                            .chatRoom(manageMentMeet.getChatRoom())
+                    .user(manageUser)
+                    .chatRoom(manageMentMeet.getChatRoom())
                     .build());
 
             chatMessageService.save(ChatMessage.builder()
