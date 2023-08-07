@@ -34,7 +34,9 @@ public class DrinkReviewService {
         //DrinkDto에 이미지 추가
         if(multipartFile != null){
             if(!multipartFile.isEmpty()) request.setImg(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
-        }else request.setImg("no image");
+            //formData에 image는 있지만 파일이 없을 때
+            else request.setImg("no image");
+        }else request.setImg("no image");//null 값이 전달 되었을 때
 
         Optional<User> user = userRepository.findById(request.getUserId());
         Optional<Drink> drink = drinkRepository.findById(request.getDrinkId());

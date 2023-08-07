@@ -49,7 +49,6 @@ public class DrinkReviewController {
     public ResponseEntity<?> createDrinkReview(Long userId,
                                                DrinkReviewDto drinkReviewDto,
                                                @RequestPart(value = "image", required = false)Optional<MultipartFile> multipartFile) {
-        log.info("입력값 확인 : {}, {}, {}", userId, drinkReviewDto, multipartFile.get().getOriginalFilename());
         drinkReviewDto.setUserId(Long.valueOf(userId));
         try{
             if(multipartFile.isPresent())
