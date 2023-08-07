@@ -46,7 +46,7 @@ const SocialDiv = styled.div`
 const Div = styled.div`
   display: flex;
   height: 70%;
-  width: 60%;
+  width: 70%;
   margin: 1rem 0;
   align-items: center;
  
@@ -155,18 +155,18 @@ const Login = () => {
         </ImgDivIcon>
         
         
-      <div style={{ position: "relative", top: "-3rem", zIndex: 1 }}>
-      <div>
+      {/* <div style={{ position: "relative", top: "-2rem", zIndex: 1 }}> */}
+      {/* <div>
         <img src={LoginImg} style={{ width: "5rem"}}  />
-      </div>
-      </div>
+      </div> */}
+      {/* </div> */}
       
       <div style={{width: "100%",
     alignItems: "center",
     display: "flex",
     flexDirection: "column",
     position: "relative",
-    top: "-3rem"}}>
+    top: "1rem"}}>
       <Div onClick={KakaologinHandler} style={{ cursor: "pointer" , marginTop : ""}}>      
         <Img src={kakaoLogin} />
       </Div>
