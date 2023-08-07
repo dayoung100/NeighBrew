@@ -1,5 +1,6 @@
 package com.ssafy.backend.controller;
 
+import com.amazonaws.Response;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.service.*;
@@ -23,14 +24,21 @@ import java.util.Optional;
 public class MeetController {
     private final MeetService meetService;
 
-    //모든 모임에 대해 출력
+    //태그별로 데이터 조회
     @GetMapping()
-    public ResponseEntity<?> getAllMeet(Pageable pageable) {
-        //pageable 디폴트 10개로 설정
-        if (pageable.getPageSize() == 20) pageable = Pageable.ofSize(10);
-        log.info("모든 모임 상세 출력");
-        log.info("pageable : {}", pageable);
-        return ResponseEntity.ok(meetService.findAll(pageable));
+    public ResponseEntity<?> getTagMeet(@RequestParam Long tagId,
+                                        Pageable pageable){
+        if( tagId > 7L || tagId < 0L) return ResponseEntity.badRequest().body("태그ID가 존재하지 않습니다.");
+
+        if(pageable.getPageSize() == 20) pageable = Pageable.ofSize(10);
+        log.info("{}에 해당하는 모임 10개 출력 + {}",pageable);
+
+        try{
+            if(tagId == 0L) return ResponseEntity.ok(meetService.findAll(pageable));
+            return ResponseEntity.ok(meetService.findByTagId(tagId, pageable));
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("모임 조회중 문제가 발생했습니다.\n" + e.getMessage());
+        }
     }
 
     // meetId에 해당하는 모임 상세 정보 조회
