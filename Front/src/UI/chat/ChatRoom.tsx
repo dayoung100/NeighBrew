@@ -375,7 +375,7 @@ const ChatRoom = () => {
         style={{
           backgroundColor: ismodal ? "#757575" : "#b4fdb5",
           width: "100%",
-          minHeight: "100vh",
+          minHeight: "90vh",
           overflow: "auto",
         }}
       >

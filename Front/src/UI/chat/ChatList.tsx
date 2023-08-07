@@ -24,7 +24,6 @@ const ChatList = () => {
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
   const navigate = useNavigate();
-
   const chatRoomDetail = (roomId: number) => {
     console.log(roomId);
     navigate(`/chatList/${roomId}`);
@@ -32,7 +31,7 @@ const ChatList = () => {
   const directMessageIcon = directMessage(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
 
   const userId = localStorage.getItem("myId");
-  useEffect(() => {
+  const classListHandler = () => {
     callApi("GET", `api/chatroom/${userId}/getChatRoom`)
       .then(res => {
         console.log(res.data);
@@ -41,11 +40,30 @@ const ChatList = () => {
       .catch(e => {
         console.log(e);
       });
+  };
+  const dmListHandler = () => {
+    callApi("GET", `api/dm/list/${userId}`)
+      .then(res => {
+        console.log(res.data);
+        setChatList(res.data);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+  useEffect(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   }, []);
+  useEffect(() => {
+    if (chooseChat === 0) {
+      classListHandler();
+    } else {
+      dmListHandler();
+    }
+  }, [chooseChat]);
   return (
     <>
       <div>

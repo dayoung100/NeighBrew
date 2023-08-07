@@ -121,6 +121,11 @@ const MyPage = () => {
   };
   const birthHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
+    if (parseInt(e.target.value.split("-")[0]) >= 2005) {
+      alert("만 18세 이상만 이용 가능합니다");
+      setBirth(birth);
+      return;
+    }
     setBirth(e.target.value);
   };
   const modalHandler = () => {
