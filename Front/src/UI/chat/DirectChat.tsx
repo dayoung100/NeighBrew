@@ -185,6 +185,13 @@ const ChatRoom = () => {
     setMessage(e.target.value);
   };
   // 웹소켓 연결 및 이벤트 핸들러 설정
+  let user1 = senderId;
+  let user2 = receiverId;
+  if (parseInt(user1) > parseInt(user2)) {
+    user1 = receiverId;
+    user2 = senderId;
+  }
+
   const connectToWebSocket = () => {
     client.current = Stomp.over(() => {
       const ws = new SockJS("/ws");
@@ -195,7 +202,7 @@ const ChatRoom = () => {
       console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
 
       // 웹소켓 이벤트 핸들러 설정
-      client.current!.subscribe(`/pu`, res => {
+      client.current!.subscribe(`/pub/dm/${user1}/${user2}/sendMessage`, res => {
         console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
         console.log(receivedMessage);
@@ -229,7 +236,7 @@ const ChatRoom = () => {
   ) => {
     if (e.type == "click") {
       client.current.send(
-        `/sub/chat/${id}/sendMessage`,
+        `/pub/dm/${user1}/${user2}/sendMessage`,
         {},
         JSON.stringify({ message: message, userId, user: { userId: userId } })
       );
@@ -241,7 +248,7 @@ const ChatRoom = () => {
         // 백엔드에 메시지 전송
         console.log(client);
         client.current.send(
-          `/sub/chat/${id}/sendMessage`,
+          `/pub/dm/${user1}/${user2}/sendMessage`,
           {},
           JSON.stringify({ message: message, userId, user: { userId: userId } })
         );
@@ -256,7 +263,7 @@ const ChatRoom = () => {
 
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
-    callApi("GET", `api/dm/${id}/messages`)
+    callApi("GET", `/api/dm/message/${user1}/${user2}`)
       .then(res => {
         console.log(res.data);
         setChatRoomName(res.data[0].chatRoom.chatRoomName);
@@ -266,13 +273,13 @@ const ChatRoom = () => {
         console.error(e);
       });
 
-    callApi("GET", `/api/chatroom/${id}/users`)
-      .then(res => {
-        setUsers(res.data);
-      })
-      .catch(e => {
-        console.error(e);
-      });
+    // callApi("GET", `/api/chatroom/${id}/users`)
+    //   .then(res => {
+    //     setUsers(res.data);
+    //   })
+    //   .catch(e => {
+    //     console.error(e);
+    //   });
   }, []);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직

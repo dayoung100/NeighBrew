@@ -175,7 +175,7 @@ const MyPage = () => {
         })
         .catch(err => console.log(err));
     }
-    if (userData.nickname != nickname && nickname.length > 15) {
+    if (userData.nickname != nickname && nickname.length > 10) {
       alert("닉네임이 길어 변경할 수 없습니다.");
       setNickname(userData.nickname);
       return;
@@ -215,8 +215,9 @@ const MyPage = () => {
 
   // DM 보내기
   const directMessageHandler = () => {
-    navigate("/directMessage/" + localStorage.getItem("myId") + "/" + userid);
+    navigate("/directchat/" + localStorage.getItem("myId") + "/" + userid);
   };
+
   return (
     <>
       <header>

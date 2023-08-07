@@ -27,6 +27,7 @@ import Test from "./Test";
 import DrinkpostMain from "./UI/drinkpost/DrinkpostMain";
 import DrinkpostReviewDetail from "./UI/drinkpost/DrinkpostReviewDetail";
 import DirectChat from "./UI/chat/DirectChat";
+import SearchUser from "./UI/user/SearchUser";
 
 function App() {
   const navigate = useNavigate();
@@ -64,6 +65,7 @@ function App() {
         <Route path="/myPage/:userid" element={<Mypage></Mypage>}></Route>
         <Route path="/myPage/follower/:userid" element={<Follower></Follower>}></Route>
         <Route path="/myPage/follow/:userid" element={<Follow></Follow>}></Route>
+        <Route path="/usersearch" element={<SearchUser></SearchUser>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:id" element={<ChatRoom></ChatRoom>} />
         <Route path="/directchat/:senderId/:receiverId" element={<DirectChat></DirectChat>}></Route>
