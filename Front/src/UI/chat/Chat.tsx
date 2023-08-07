@@ -3,6 +3,8 @@ import styled from "styled-components";
 import tempimg from "../../assets/tempgif.gif";
 import temimg from "../../assets/temgif.gif";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { callApi } from "../../utils/api";
 
 const ChatDiv = styled.div`
   padding: 0.3rem;
@@ -44,10 +46,19 @@ const Chat = (props: {
   chatRoomDetail(roomId: number): void;
 }) => {
   const navigate = useNavigate();
-
+  const [user, setUsers] = useState([]);
   const moveToChatRoomHandler = () => {
     navigate(`/chatList/${props.chatRoomId}`);
   };
+  useEffect(() => {
+    callApi("GET", `/api/chatroom/${props.chatRoomId}/users`)
+      .then(res => {
+        setUsers(res.data);
+      })
+      .catch(e => {
+        console.error(e);
+      });
+  }, []);
   return (
     <ChatDiv onClick={() => props.chatRoomDetail(props.chatRoomId)}>
       <ImgDiv>
@@ -64,9 +75,12 @@ const Chat = (props: {
           >
             채팅방 제목: {props.chatRoomName}
           </span>
-          <span style={{ color: "var(--c-gray", fontSize: "12px" }}>4</span> <span></span>
+          <span style={{ color: "var(--c-gray", fontSize: "12px", marginLeft: "0.5rem" }}>
+            {user.length}
+          </span>{" "}
+          <span></span>
         </div>
-        <p
+        {/* <p
           style={{
             fontSize: "12px",
             fontFamily: "SeoulNamsan",
@@ -74,7 +88,7 @@ const Chat = (props: {
           }}
         >
           10조 채팅방 입니다.
-        </p>
+        </p> */}
       </div>
     </ChatDiv>
   );
