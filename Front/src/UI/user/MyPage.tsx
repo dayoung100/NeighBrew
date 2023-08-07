@@ -33,7 +33,9 @@ const MyPage = () => {
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const [following, setFollowing] = useState(0); // 팔로잉,팔로워 목록
   const { userid } = useParams();
-  const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
+  const MeetingIcon = meetingicon(
+    chooseChat === 0 ? "var(--c-black)" : "#AAAAAA"
+  );
   const Brewery = brewery(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
   const [deleteModalOn, setDeleteModalOn] = useState(false);
   const [nickname, setNickname] = useState("");
@@ -44,20 +46,20 @@ const MyPage = () => {
   // 팔로우 하기
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/guard/${userid}`)
-      .then(res => {
+      .then((res) => {
         followers();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
   // 팔로워, 팔로잉 인원 수 세기 (팔로우 버튼 색깔 변경)
   const followers = async () => {
-    callApi("get", `api/follow/follower/${userid}`).then(res => {
+    callApi("get", `api/follow/follower/${userid}`).then((res) => {
       if (res.data.length == 0) {
-        setUserData(userData => ({ ...userData, follower: res.data.length }));
+        setUserData((userData) => ({ ...userData, follower: res.data.length }));
         setFollowing(0);
         return;
       }
-      setUserData(userData => ({ ...userData, follower: res.data.length }));
+      setUserData((userData) => ({ ...userData, follower: res.data.length }));
       res.data.map((item, i) => {
         if (item.follower.userId == parseInt(localStorage.getItem("myId"))) {
           setFollowing(1);
@@ -67,14 +69,14 @@ const MyPage = () => {
         }
       });
     });
-    callApi("get", `api/follow/following/${userid}`).then(res => {
-      setUserData(userData => ({ ...userData, following: res.data.length }));
+    callApi("get", `api/follow/following/${userid}`).then((res) => {
+      setUserData((userData) => ({ ...userData, following: res.data.length }));
     });
   };
   const myDrinks = () => {
-    callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
+    callApi("get", `api/drink/user/${userid}/review-drink`).then((res) => {
       console.log(res.data);
-      setUserData(userData => ({ ...userData, drinkcount: res.data.length }));
+      setUserData((userData) => ({ ...userData, drinkcount: res.data.length }));
     });
   };
   const goFollowerPage = () => {
@@ -85,20 +87,20 @@ const MyPage = () => {
   };
   const userInfo = () => {
     callApi("get", `api/user/${userid}`)
-      .then(res => {
+      .then((res) => {
         setUserData(res.data);
         console.log(res.data);
       })
       .then(() => {
         setBirth(userData.birth == null ? "2003-01-01" : userData.birth);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
   const refresh = () => {
     if (localStorage.getItem("token") != null) {
       callApi("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
-      }).then(res => {
+      }).then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
       });
@@ -164,7 +166,7 @@ const MyPage = () => {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
         })
-        .then(res => {
+        .then((res) => {
           userInfo();
         })
         .then(() => {
@@ -173,7 +175,7 @@ const MyPage = () => {
         .then(() => {
           myDrinks();
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     }
     if (userData.nickname != nickname && nickname.length > 10) {
       alert("닉네임이 길어 변경할 수 없습니다.");
@@ -184,14 +186,19 @@ const MyPage = () => {
       alert("빈 값이 존재합니다.");
       return;
     }
-    if (userData.nickname == nickname && userData.intro == intro && userData.birth == birth) return;
+    if (
+      userData.nickname == nickname &&
+      userData.intro == intro &&
+      userData.birth == birth
+    )
+      return;
     console.log(nickname, intro, birth);
     callApi("put", "api/user/guard", {
       nickname: nickname,
       intro: intro,
       birth: birth,
     })
-      .then(res => {
+      .then((res) => {
         userInfo();
       })
       .then(() => {
@@ -200,7 +207,7 @@ const MyPage = () => {
       .then(() => {
         myDrinks();
       })
-      .catch(err => {
+      .catch((err) => {
         if (err.response.data == "중복") {
           alert("중복된 닉네임입니다. 다시 입력해주세요.");
         }
@@ -225,7 +232,7 @@ const MyPage = () => {
       </header>
       <div
         style={{
-          minHeight: "200px",
+          minHeight: "12.5rem",
           display: "flex",
           flexDirection: "column",
         }}
@@ -233,10 +240,14 @@ const MyPage = () => {
         <UserDiv>
           <FlexDivRow>
             <ImgDiv>
-              <Img src={userData.profile == "no image" ? temgif : userData.profile}></Img>
+              <Img
+                src={userData.profile == "no image" ? temgif : userData.profile}
+              ></Img>
             </ImgDiv>
             <UserImgDiv>
-              <p style={{ marginBottom: "0.5rem" }}>{userData!.liverPoint} IU/L</p>
+              <p style={{ marginBottom: "0.5rem" }}>
+                {userData!.liverPoint} IU/L
+              </p>
               <LiverDiv liverpoint={userData!.liverPoint ?? 40}>
                 <Img src={liver} alt="" />
               </LiverDiv>
@@ -271,7 +282,9 @@ const MyPage = () => {
             marginBottom: "0.5rem",
           }}
         >
-          <span onClick={goFollowPage}>팔로잉 {userData.following} &nbsp;&nbsp; </span>{" "}
+          <span onClick={goFollowPage}>
+            팔로잉 {userData.following} &nbsp;&nbsp;{" "}
+          </span>{" "}
           <span onClick={goFollowerPage}>팔로워 {userData.follower}</span>
         </div>
         <div
@@ -287,9 +300,10 @@ const MyPage = () => {
         <FollowDiv>
           <button
             style={{
-              backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+              backgroundColor:
+                following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
               border: "none",
-              borderRadius: "8px",
+              borderRadius: ".5rem",
               fontFamily: "JejuGothic",
               cursor: "pointer",
               width: "40%",
@@ -302,7 +316,7 @@ const MyPage = () => {
           <button
             style={{
               border: "none",
-              borderRadius: "8px",
+              borderRadius: ".5rem",
               fontFamily: "JejuGothic",
               cursor: "pointer",
               width: "40%",
@@ -320,20 +334,36 @@ const MyPage = () => {
             setChooseChat(0);
           }}
           style={{
-            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+            borderBottom:
+              chooseChat === 0 ? ".125rem solid var(--c-black)" : "none",
           }}
         >
           {MeetingIcon}
-          <p style={{ color: chooseChat === 0 ? "var(--c-black)" : "var(--c-lightgray)" }}>모임</p>
+          <p
+            style={{
+              color: chooseChat === 0 ? "var(--c-black)" : "var(--c-lightgray)",
+            }}
+          >
+            모임
+          </p>
         </Button>
         <Button
           onClick={() => {
             setChooseChat(1);
           }}
-          style={{ borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)" }}
+          style={{
+            borderBottom:
+              chooseChat === 0 ? "none" : ".125rem solid var(--c-black)",
+          }}
         >
           {Brewery}
-          <p style={{ color: chooseChat === 0 ? "var(--c-lightgray)" : "var(--c-black)" }}>술장</p>
+          <p
+            style={{
+              color: chooseChat === 0 ? "var(--c-lightgray)" : "var(--c-black)",
+            }}
+          >
+            술장
+          </p>
         </Button>
       </div>
       {chooseChat === 0 ? (
@@ -351,7 +381,12 @@ const MyPage = () => {
       >
         <FlexDiv>
           <label htmlFor="nickname">닉네임</label>
-          <input type="text" id="nickname" value={nickname} onInput={nicknameHandler} />
+          <input
+            type="text"
+            id="nickname"
+            value={nickname}
+            onInput={nicknameHandler}
+          />
         </FlexDiv>
         <FlexDiv>
           <label htmlFor="intro">한줄 설명</label>
@@ -359,14 +394,23 @@ const MyPage = () => {
         </FlexDiv>
         <FlexDiv>
           <label htmlFor="date">생년월일</label>
-          <input type="date" id="date" value={birth} onInput={birthHandler} max="2005-01-01" />
+          <input
+            type="date"
+            id="date"
+            value={birth}
+            onInput={birthHandler}
+            max="2005-01-01"
+          />
         </FlexDiv>
         <QuestionDiv style={{ textAlign: "left", marginBottom: "2rem" }}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Title style={{ margin: "0" }}>프로필 이미지</Title>
             <ImgInput>
               <label htmlFor="img_file">
-                <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
+                <img
+                  src="/src/assets/imageButton.svg"
+                  style={{ margin: "0 0.5rem" }}
+                />
               </label>
               <input
                 type="file"
@@ -387,7 +431,7 @@ const MyPage = () => {
           style={{
             backgroundColor: "var(--c-yellow)",
             color: "var(--c-black)",
-            borderRadius: "8px",
+            borderRadius: ".5rem",
             marginBottom: "1rem",
           }}
         >
@@ -406,7 +450,7 @@ const MyPage = () => {
           style={{
             backgroundColor: "var(--c-lightgray)",
             color: "var(--c-black)",
-            borderRadius: "8px",
+            borderRadius: ".5rem",
           }}
         >
           로그아웃
@@ -424,7 +468,7 @@ const QuestionDiv = styled.div`
 
 const Title = styled.div`
   font-family: "JejuGothic";
-  font-size: 20px;
+  font-size: 1.25rem;
   text-align: left;
   margin-bottom: 0.5rem;
 `;
@@ -436,7 +480,7 @@ const ImgInput = styled.div`
     width: 0;
     height: 0;
     padding: 0;
-    margin: -1px;
+    margin: -0.0625rem;
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
@@ -444,7 +488,7 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 50%;
   position: relative;
@@ -491,7 +535,7 @@ const UserImgDiv = styled.div`
   margin: 0 0.5rem;
   background-color: var(--c-lightgray);
   border-radius: 1rem;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-family: "JejuGothic";
   font-weight: 500;
 `;
@@ -502,7 +546,7 @@ const Button = styled.button`
   height: 3rem;
   background-color: white;
   border: none;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-family: "JejuGothic";
   /* margin: 1rem auto; */
 `;
@@ -527,7 +571,7 @@ const Img = styled.img`
 
 const UserDiv = styled.div`
   width: 100%;
-  /* height: 180px; */
+  /* height: 11.25rem; */
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -540,7 +584,7 @@ const LiverDiv = styled.div<{ liverpoint: number }>`
   /* height: 100%; */
   overflow: hidden;
   background-image: linear-gradient(to top, #e591a1 50%, #ececec 50%);
-  background-size: ${props => "50% " + (props.liverpoint + 80) + "%"};
+  background-size: ${(props) => "50% " + (props.liverpoint + 80) + "%"};
   /* background-size: 50% 150%; */
   animation: fillAnimation 5s forwards;
   @keyframes fillAnimation {
@@ -562,7 +606,7 @@ const BottleDiv = styled.div<{}>`
   /* height: 100%; */
   overflow: hidden;
   background-image: linear-gradient(to top, #d5a002 50%, #ececec 50%);
-  /* background-size: ${props => "50% " + (props.liverpoint + 80) + "%"}; */
+  /* background-size: ${(props) => "50% " + (props.liverpoint + 80) + "%"}; */
   background-size: 20% 80%;
   animation: fillAnimation 5s forwards;
   @keyframes fillAnimation {
@@ -587,7 +631,7 @@ const WhiteModal = {
     width: "80%",
     height: "80%",
     padding: "0.5rem 1rem",
-    borderRadius: "15px",
+    borderRadius: ".9375rem",
     background: "white",
     textAlign: "center",
     fontFamily: "SeoulNamsan",

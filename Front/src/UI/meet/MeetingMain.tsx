@@ -15,7 +15,7 @@ const TopMenu = styled.div`
   display: flex;
   margin: 1rem 0.5rem 0 0.5rem;
   background-color: white;
-  border-bottom: 1px solid var(--c-gray);
+  border-bottom: 0.0625rem solid var(--c-gray);
 `;
 
 const TopMenuDetail = styled.button<{ isfocused: string }>`
@@ -23,13 +23,13 @@ const TopMenuDetail = styled.button<{ isfocused: string }>`
     --${(props) => (props.isfocused === "true" ? "c-black" : "c-gray")}
   );
   font-family: "JejuGothic";
-  font-size: 20px;
+  font-size: 1.25rem;
   line-height: 150%;
   padding: 0 1rem;
   outline: none;
   border: none;
   border-bottom: ${(props) =>
-    props.isfocused === "true" ? "2px solid var(--c-black);" : "none;"};
+    props.isfocused === "true" ? ".125rem solid var(--c-black);" : "none;"};
   background: white;
 `;
 
@@ -43,7 +43,7 @@ const RoundBtn = styled.div`
   background: var(--c-yellow);
   width: 4rem;
   height: 4rem;
-  border-radius: 100px;
+  border-radius: 6.25rem;
   z-index: 10;
 `;
 

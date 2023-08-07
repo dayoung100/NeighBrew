@@ -12,19 +12,19 @@ import { useEffect, useState } from "react";
 
 const Body = styled.div`
   background-color: white;
-  height: 800px;
+  height: 50rem;
 `;
 
 const SearchList = styled.div`
-  margin: 0px 10px 0px 10px;
-  padding-top: 10px;
+  margin: 0rem 0.625rem 0rem 0.625rem;
+  padding-top: 0.625rem;
 `;
 
 const SearchDiv = styled.div`
   display: flex;
   justify-content: flex-end;
   background: var(--c-lightgray);
-  border-radius: 20px;
+  border-radius: 1.25rem;
   padding: 0.5rem 1rem;
 `;
 
@@ -46,7 +46,7 @@ const SearchBtn = styled.button`
 `;
 
 const ShowcaseBody = styled.div`
-  font-size: 14px;
+  font-size: 0.875rem;
   display: flex;
   justify-content: center;
   margin-left: 3vw;
@@ -63,7 +63,9 @@ const DrinkpostSearch = () => {
     e.preventDefault();
     setSearchWord(e.target.value);
   };
-  const sendSearchHandler = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const sendSearchHandler = async (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
     e.preventDefault();
     console.log(e.code);
     setSearchResult([]);
@@ -72,11 +74,13 @@ const DrinkpostSearch = () => {
       if (e.keyCode == 229) return;
       // setSendSearch(prev => !prev);
       let data: Drink[] = [];
-      await callApi("get", `api/drink/search?name=${searchWord}&size=10`).then(res => {
-        data = res.data.content;
-      });
+      await callApi("get", `api/drink/search?name=${searchWord}&size=10`).then(
+        (res) => {
+          data = res.data.content;
+        }
+      );
       await console.log(data);
-      await setSearchResult(prev => [...prev, ...data]);
+      await setSearchResult((prev) => [...prev, ...data]);
       console.log(searchResult);
     }
   };
@@ -87,11 +91,13 @@ const DrinkpostSearch = () => {
     if (searchWord === "") return;
 
     let data: Drink[] = [];
-    await callApi("get", `api/drink/search?name=${searchWord}&size=10`).then(res => {
-      data = res.data.content;
-    });
+    await callApi("get", `api/drink/search?name=${searchWord}&size=10`).then(
+      (res) => {
+        data = res.data.content;
+      }
+    );
     await console.log(data);
-    await setSearchResult(prev => [...prev, ...data]);
+    await setSearchResult((prev) => [...prev, ...data]);
     console.log(searchResult);
   };
 
@@ -116,7 +122,7 @@ const DrinkpostSearch = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-around",
-          margin: "15px 10px 0px 10px",
+          margin: ".9375rem .625rem 0rem .625rem",
         }}
       >
         <div onClick={() => navigate(-1)}>
@@ -135,7 +141,13 @@ const DrinkpostSearch = () => {
           </SearchDiv>
         </div>
       </div>
-      <h3 style={{ display: "flex", justifyContent: "start", margin: "20px 0px 0px 20px" }}>
+      <h3
+        style={{
+          display: "flex",
+          justifyContent: "start",
+          margin: "1.25rem 0rem 0rem 1.25rem",
+        }}
+      >
         검색결과
       </h3>
       <Body className="searchList">
@@ -145,10 +157,10 @@ const DrinkpostSearch = () => {
             style={{
               display: "flex",
               flexWrap: "wrap",
-              paddingBottom: "60px",
+              paddingBottom: "3.75rem",
             }}
           >
-            {searchResult.map(drink => {
+            {searchResult.map((drink) => {
               return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
             })}
           </div>

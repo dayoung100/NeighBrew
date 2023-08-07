@@ -8,25 +8,25 @@ const Card = styled.div`
   flex-direction: column;
   display: flex;
   width: 28vw;
-  height: 230px;
-  margin: 10px 2px 10px 2px;
-  border-radius: 14px;
+  height: 14.375rem;
+  margin: 0.625rem 0.125rem 0.625rem 0.125rem;
+  border-radius: 0.875rem;
   background-color: var(--c-lightgray);
   align-items: center;
-  padding: 5px 3px 5px 3px;
+  padding: 0.3125rem 0.1875rem 0.3125rem 0.1875rem;
 `;
 
 const CardImage = styled.img`
-  width: 45px;
+  width: 2.8125rem;
   height: 80%;
-  margin: 10px;
+  margin: 0.625rem;
 `;
 
 const TopTag = styled.div`
   width: 100%;
   display: flex;
   justify-content: end;
-  margin: 5px 5px 0px 0px;
+  margin: 0.3125rem 0.3125rem 0rem 0rem;
 `;
 
 // 글자수가 길면 글자 수 줄이기
@@ -35,7 +35,7 @@ const Tag = styled.div`
   padding: 0.2rem 0.5rem 0.2rem 0.5rem;
   margin-right: 0.5rem;
   margin-top: 0.2rem;
-  border-radius: 14px;
+  border-radius: 0.875rem;
   font-size: 0.8rem;
   background-color: #f2bc79;
   display: flex;
@@ -48,11 +48,11 @@ const NameCard = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-radius: 14px;
+  border-radius: 0.875rem;
   background-color: #ffffff;
-  margin: 5px 5px 5px 5px;
-  padding: 5px 0px 5px 0px;
-  font-size: 12px;
+  margin: 0.3125rem 0.3125rem 0.3125rem 0.3125rem;
+  padding: 0.3125rem 0rem 0.3125rem 0rem;
+  font-size: 0.75rem;
   width: 85%;
   height: 7%;
   display: flex;

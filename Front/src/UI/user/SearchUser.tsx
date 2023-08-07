@@ -23,7 +23,7 @@ const SearchUser = () => {
   }, [parent]);
 
   const search = (name: string) => {
-    callApi("get", `api/user/search/${name}`).then(res => {
+    callApi("get", `api/user/search/${name}`).then((res) => {
       console.log(res.data);
       setUsers(res.data);
     });
@@ -42,7 +42,13 @@ const SearchUser = () => {
           >
             {ArrowLeftIcon}
           </div>
-          <span style={{ marginRight: "0rem", fontFamily: "JejuGothic", fontSize: "20px" }}>
+          <span
+            style={{
+              marginRight: "0rem",
+              fontFamily: "JejuGothic",
+              fontSize: "1.25rem",
+            }}
+          >
             유저 검색
           </span>
           <div></div>
@@ -66,16 +72,24 @@ const SearchUser = () => {
                 <Img src={user.profile == "no image" ? temgif : user.profile} />
               </ImgDiv>
               <div style={{ textAlign: "left" }}>
-                <p style={{ fontFamily: "JejuGothic", fontSize: "16px", marginBottom: "0.5rem" }}>
+                <p
+                  style={{
+                    fontFamily: "JejuGothic",
+                    fontSize: "1rem",
+                    marginBottom: ".5rem",
+                  }}
+                >
                   {user.nickname}
                 </p>
-                <p style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>{user.intro}</p>
+                <p style={{ fontFamily: "SeoulNamsan", fontSize: ".875rem" }}>
+                  {user.intro}
+                </p>
               </div>
             </User>
           );
         })}
       </div>
-      <div style={{ height: "80px" }}></div>
+      <div style={{ height: "5rem" }}></div>
       <footer>
         <Footer />
       </footer>

@@ -23,24 +23,24 @@ const InputDiv = styled.div`
   position: sticky;
   height: 2.5rem;
   box-sizing: border-box;
-  margin-bottom: 3px;
+  margin-bottom: 0.1875rem;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 `;
 
 // 실질적으로 정보를 입력할 input tag입니다.
-// placeholder 사이즈는 10px
+// placeholder 사이즈는 .625rem
 const Input = styled.input`
-  font-size: 16px;
+  font-size: 1rem;
   width: 98%;
   height: 70%;
   border: none;
-  border-bottom: 1px solid #444;
+  border-bottom: 0.0625rem solid #444;
   outline: none;
 
   &:focus {
-    border-bottom: 2px solid #000000;
+    border-bottom: 0.125rem solid #000000;
   }
 `;
 
@@ -50,9 +50,9 @@ const Input = styled.input`
 const ErrorMessage = styled.div<{
   style: { display: string };
 }>`
-  font-size: 12px;
+  font-size: 0.75rem;
   color: red;
-  margin-top: 5px;
+  margin-top: 0.3125rem;
   display: none;
 `;
 
@@ -64,7 +64,7 @@ const InputDivAlcohol = styled.span`
   position: sticky;
   height: 2.5rem;
   box-sizing: border-box;
-  margin-bottom: 3px;
+  margin-bottom: 0.1875rem;
   display: flex;
   align-items: center;
 `;
@@ -73,15 +73,15 @@ const InputDivAlcohol = styled.span`
 // 따라서 width는 15%으로 맞춰져있습니다.
 // defalueValue는 0으로 되어있습니다.
 const InputAlcohol = styled.input`
-  font-size: 18px;
+  font-size: 1.125rem;
   width: 15%;
   height: 70%;
   border: none;
-  border-bottom: 1px solid var(--c-gray);
+  border-bottom: 0.0625rem solid var(--c-gray);
   outline: none;
 
   &:focus {
-    border-bottom: 2px solid var(--c-black);
+    border-bottom: 0.125rem solid var(--c-black);
   }
 
   &::placeholder {
@@ -95,7 +95,7 @@ const QuestionDiv = styled.div`
 
 const Title = styled.div`
   font-family: "JejuGothic";
-  font-size: 20px;
+  font-size: 1.25rem;
   text-align: left;
   margin-bottom: 0.5rem;
 `;
@@ -107,7 +107,7 @@ const ImgInput = styled.div`
     width: 0;
     height: 0;
     padding: 0;
-    margin: -1px;
+    margin: -0.0625rem;
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
@@ -117,7 +117,7 @@ const ImgInput = styled.div`
 const ImageArea = styled.div<{ src: string }>`
   background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
-  border-radius: 15px;
+  border-radius: 0.9375rem;
   position: relative;
   width: 30%;
   padding-bottom: 30%;
@@ -219,7 +219,9 @@ const DrinkpostCreate = () => {
   return (
     <div>
       <h3>술 문서 등록하기</h3>
-      <div style={{ textAlign: "start", margin: "0px 15px 80px 15px" }}>
+      <div
+        style={{ textAlign: "start", margin: "0rem .9375rem 5rem .9375rem" }}
+      >
         <GuideText>이름</GuideText>
         <InputDiv>
           <Input
@@ -275,7 +277,7 @@ const DrinkpostCreate = () => {
               <label htmlFor="img_file">
                 <img
                   src="/src/assets/imageButton.svg"
-                  style={{ margin: "0 0.5rem" }}
+                  style={{ margin: "0 .5rem" }}
                 />
               </label>
               <input
@@ -289,14 +291,14 @@ const DrinkpostCreate = () => {
           </div>
           {imgFile && <ImageArea src={imgFile}></ImageArea>}
         </QuestionDiv>
-        {/* <div style={{ marginTop: "20px", display: "flex", alignItems: "flex-end" }}>
+        {/* <div style={{ marginTop: "1.25rem", display: "flex", alignItems: "flex-end" }}>
           <span>
             <b>대표 이미지</b>
           </span>
-          <span style={{ marginLeft: "12px" }}>
+          <span style={{ marginLeft: ".75rem" }}>
             <img src={imageButton} alt="chumbuFilePicture" />
           </span>
-          <span style={{ marginLeft: "15px" }}>
+          <span style={{ marginLeft: ".9375rem" }}>
             <img src={defaultImage} alt="uploadedPicture" />
           </span>
         </div> */}
