@@ -1,14 +1,12 @@
 // main
 import { styled } from "styled-components";
 import DrinkCard from "./DrinkCard";
-// import singleShowcase from "./singleShowcase";
 import { useState, useEffect } from "react";
 import Navbar from "../navbar/NavbarForDrinkpost";
 import Footer from "../footer/Footer";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 import DrinkpostCreateButton from "./DrinkpostCreateButton";
 import { useNavigate } from "react-router-dom";
-// import axios from "axios";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
 
@@ -16,15 +14,6 @@ const ShowcaseBody = styled.div`
   font-size: 14px;
   margin-left: 1vw;
 `;
-
-// export type DrinkType = {
-//   drinkId: number;
-//   name: string;
-//   description: string;
-//   degree: number;
-//   tagId: number;
-//   image: string;
-// };
 
 // 무한 스크롤
 
