@@ -4,12 +4,12 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { callApi } from "../../utils/api";
-import naverLogin from '../../assets/Login/naverLogin.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import kakaoLogin from '../../assets/Login/kakaoLogin.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import googleLogin from '../../assets/Login/googleLogin.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import NeighBrew from '../../assets/Login/NeighBrew.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import icon from '../../assets/Login/icon.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import LoginImg from '../../assets/Login/Login.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import naverLogin from "../../assets/Login/naverLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import LoginImg from "../../assets/Login/Login.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 
 const ImgDiv = styled.div`
   width: 20%;
@@ -49,14 +49,11 @@ const Div = styled.div`
   width: 70%;
   margin: 1rem 0;
   align-items: center;
- 
+
   font-weight: 14px;
   font-family: "JejuGothic";
   font-size: 20px;
-  
 `;
-
-
 
 const OrangeSection = styled.div`
   display: flex;
@@ -65,23 +62,19 @@ const OrangeSection = styled.div`
   align-items: center;
   background-color: var(--c-yellow);
   width: 100%;
-
 `;
 
 const WhiteSection = styled.div`
-    top: -3rem;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
-    width: 100%;
-    border-radius:  50px 50px 0 0; /* 상단만 둥글게 처리 */
-   
+  top: -3rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  width: 100%;
+  border-radius: 50px 50px 0 0; /* 상단만 둥글게 처리 */
 `;
-
-
 
 const Login = () => {
   const navigate = useNavigate();
@@ -136,51 +129,59 @@ const Login = () => {
         console.log(err);
       });
   };
-  console.log(import.meta.env.VITE_API_BASE_URL);
+  useEffect(() => {
+    localStorage.setItem("chooseMenu", "0");
+  }, []);
   return (
-<div style={{ display: "flex", alignItems: "center", flexDirection: "column"}}>
+    <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
       <OrangeSection>
-        <div style={{marginBottom : "3rem"}}>
+        <div style={{ marginBottom: "3rem" }}>
           <img src={NeighBrew} style={{ marginTop: "5rem" }} />
         </div>
-        <div style={{marginBottom : "9rem"}}><p style={{fontFamily:"Noto Sans KR", fontSize:"1.15rem"}}>네이브루에 오신걸 환영합니다.</p></div>
-
-
+        <div style={{ marginBottom: "9rem" }}>
+          <p style={{ fontFamily: "Noto Sans KR", fontSize: "1.15rem" }}>
+            네이브루에 오신걸 환영합니다.
+          </p>
+        </div>
       </OrangeSection>
 
-      <WhiteSection >
-            {/* 아이콘을 위치시킬 영역 */}
-    <ImgDivIcon style={{ position: "relative", top: "-4rem", zIndex: 1,  borderRadius:  "5rem 5rem 0 0" }}>
+      <WhiteSection>
+        {/* 아이콘을 위치시킬 영역 */}
+        <ImgDivIcon
+          style={{ position: "relative", top: "-4rem", zIndex: 1, borderRadius: "5rem 5rem 0 0" }}
+        >
           <img src={icon} />
         </ImgDivIcon>
-        
-        
-      {/* <div style={{ position: "relative", top: "-2rem", zIndex: 1 }}> */}
-      {/* <div>
+
+        {/* <div style={{ position: "relative", top: "-2rem", zIndex: 1 }}> */}
+        {/* <div>
         <img src={LoginImg} style={{ width: "5rem"}}  />
       </div> */}
-      {/* </div> */}
-      
-      <div style={{width: "100%",
-    alignItems: "center",
-    display: "flex",
-    flexDirection: "column",
-    position: "relative",
-    top: "1rem"}}>
-      <Div onClick={KakaologinHandler} style={{ cursor: "pointer" , marginTop : ""}}>      
-        <Img src={kakaoLogin} />
-      </Div>
+        {/* </div> */}
 
-      <Div onClick={NaverloginHandler} style={{ cursor: "pointer" }}> 
-          <Img src={naverLogin} />
-      </Div>
+        <div
+          style={{
+            width: "100%",
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "column",
+            position: "relative",
+            top: "1rem",
+          }}
+        >
+          <Div onClick={KakaologinHandler} style={{ cursor: "pointer", marginTop: "" }}>
+            <Img src={kakaoLogin} />
+          </Div>
 
-      <Div onClick={GoogleloginHandler} style={{ cursor: "pointer" }}> 
-        <Img src={googleLogin} />
-      </Div>
-      </div>
+          <Div onClick={NaverloginHandler} style={{ cursor: "pointer" }}>
+            <Img src={naverLogin} />
+          </Div>
+
+          <Div onClick={GoogleloginHandler} style={{ cursor: "pointer" }}>
+            <Img src={googleLogin} />
+          </Div>
+        </div>
       </WhiteSection>
-
     </div>
   );
 };

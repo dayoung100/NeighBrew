@@ -140,6 +140,7 @@ const MyPage = () => {
     userInfo();
     followers();
     myDrinks();
+    localStorage.setItem("chooseMenu", "3");
   }, []);
 
   const [imgFile, setImgFile] = useState(null);
@@ -218,9 +219,11 @@ const MyPage = () => {
     }
   };
 
-  // DM 보내기
+  // DM 창으로 이동
   const directMessageHandler = () => {
-    navigate("/directchat/" + localStorage.getItem("myId") + "/" + userid);
+    if (userid != localStorage.getItem("myId")) {
+      navigate("/directchat/" + localStorage.getItem("myId") + "/" + userid);
+    }
   };
 
   return (
