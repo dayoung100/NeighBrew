@@ -10,7 +10,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatDmRoom {
     @Id
@@ -23,12 +22,10 @@ public class ChatDmRoom {
 
     @OneToOne
     @JoinColumn(name="user1_id")
-    @JsonIgnore
     private User user1;
 
     @OneToOne
     @JoinColumn(name="user2_id")
-    @JsonIgnore
     private User user2;
 
     @Builder
