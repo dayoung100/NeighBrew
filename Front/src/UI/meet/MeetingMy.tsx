@@ -35,14 +35,17 @@ const meetingMy = () => {
   useEffect(() => {
     //로컬 스토리지에서 userId 가져오기
     setUserId(parseInt(localStorage.getItem("myId")));
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }, []);
 
   //api 호출
   useEffect(() => {
     if (userId !== 0) {
       const promise = callApi("get", `api/meet/mymeet/${userId}`);
-      promise.then(res => {
-        console.dir(res.data);
+      promise.then((res) => {
         setMeetData(res.data); //받아온 데이터로 meetData 세팅
       });
     }
