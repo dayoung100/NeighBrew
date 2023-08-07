@@ -23,7 +23,7 @@ public class ChatDmMessageService {
         chatDmMessageRepository.deleteByChatDmRoom_ChatDmRoomId(dmRoomId);
     }
 
-    public List<ChatDmMessage> findDmMessagesByRoomId(Long dmRoomId) {
-        return chatDmMessageRepository.findByChatDmRoom_ChatDmRoomId(dmRoomId).orElseThrow(()-> new IllegalArgumentException("채팅방 정보가 올바르지 않습니다."));
+    public List<ChatDmMessage> findDmMessagesByRoomId(Long senderId, Long receiverId) {
+        return chatDmMessageRepository.findByChatDmRoom_ChatDmRoomId(senderId, receiverId).orElseThrow(()-> new IllegalArgumentException("채팅방 정보가 올바르지 않습니다."));
     }
 }
