@@ -27,41 +27,51 @@ const MemberText = styled.div`
 `;
 
 const MemberName = styled.div`
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: bold;
-  margin-bottom: 0.125rem;
+  margin-bottom: 2px;
 `;
 
 // 흐린 글씨
 const MemberDescription = styled.div`
-  font-size: 0.875rem;
+  font-size: 14px;
   color: #828282;
 `;
 
-const ButtonContainer = styled.div`
+// 라디오 버튼 컨테이너
+const RadioContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
-// 납짝한 버튼
-const RaatingButton = styled.button`
-  width: 7.5rem;
-  height: 100%;
-  border-radius: 2.5rem;
-  border: 0.0063rem solid black;
-  background-color: white;
-  color: black;
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.4375rem;
+// 라디오 버튼
+// 눌리면 색깔 바뀌게 하기
+const RadioButton = styled.button<{ selected: boolean }>`
+  height: 35px;
+  width: 30%;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  /* border: 1px solid black; */
+  /* isSelect에 따라 border 제거 */
+  border: ${({ selected }) => (selected ? "none" : ".5008px solid black")};
+  background-color: ${({ selected }) =>
+    selected ? "var(--c-yellow)" : "white"};
+  color: ${({ selected }) => (selected ? "white" : "black")};
 `;
 
-const RatingMember = ({ _user }) => {
+const RatingMember = ({ _user, onSelectButton }) => {
   const [meetingDetail, setMeetingDetail] = useState<MeetDetail>();
+  const [selectdButton, setSelectButton] = useState(0);
+
+  const changeColor = (buttonNumber) => {
+    setSelectButton(buttonNumber);
+    onSelectButton(buttonNumber);
+  };
 
   useEffect(() => {
     callApi("GET", "/api/meet/7")
@@ -69,7 +79,7 @@ const RatingMember = ({ _user }) => {
         setMeetingDetail(res.data);
       })
       .catch((e) => {
-        console.log(e);
+        // console.log(e);
       });
   }, []);
 
@@ -77,7 +87,7 @@ const RatingMember = ({ _user }) => {
     // div width: 100%로 해서 가운데 정렬
     <div
       style={{
-        width: "90%",
+        width: "100%",
         margin: "0 auto",
       }}
     >
@@ -88,11 +98,28 @@ const RatingMember = ({ _user }) => {
           <MemberDescription>{_user.intro}</MemberDescription>
         </MemberText>
       </MemberProfile>
-      <ButtonContainer>
-        <RaatingButton>좋아요</RaatingButton>
-        <RaatingButton>보통</RaatingButton>
-        <RaatingButton>아쉬워요</RaatingButton>
-      </ButtonContainer>
+
+      <RadioContainer>
+        <RadioButton
+          selected={selectdButton === 1}
+          onClick={() => changeColor(1)}
+        >
+          좋아요
+        </RadioButton>
+        <RadioButton
+          selected={selectdButton === 2}
+          onClick={() => changeColor(2)}
+        >
+          보통이에요
+        </RadioButton>
+
+        <RadioButton
+          selected={selectdButton === 3}
+          onClick={() => changeColor(3)}
+        >
+          아쉬워요
+        </RadioButton>
+      </RadioContainer>
     </div>
   );
 };

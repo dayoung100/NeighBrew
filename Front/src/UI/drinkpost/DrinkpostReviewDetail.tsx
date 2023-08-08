@@ -15,6 +15,18 @@ const LikeAndComment = styled.div`
 
 const Description = styled.div`
   text-align: start;
+  margin-top: 1rem;
+  white-space: pre-wrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  &.show {
+    display: block;
+    max-height: none;
+    overflow: auto;
+    -webkit-line-clamp: unset;
+  }
 `;
 
 const WholeDiv = styled.div`
@@ -23,6 +35,8 @@ const WholeDiv = styled.div`
 
 const ImageDiv = styled.div`
   background-color: var(--c-lightgray);
+  background-repeat: no-repeat;
+  background-size: cover;
   border-radius: 30px;
   width: 100%;
   height: 36vh;
@@ -92,6 +106,23 @@ const UserImg = styled.img`
   margin-right: 1rem;
 `;
 
+const MoreButton = styled.div`
+  max-height: 2rem;
+  line-height: 2rem;
+  border: none;
+
+  background: rgb(2, 0, 36);
+  background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 18%
+  );
+  &.hide {
+    display: none;
+  }
+`;
+
 const DrinkpostReviewDetail = () => {
   const LikeIcon = likeIcon();
   const CommentIcon = commentIcon();
@@ -99,6 +130,10 @@ const DrinkpostReviewDetail = () => {
   const [review, setReview] = useState<Review>();
   const [drink, setDrink] = useState<Drink>();
   const [following, setFollowing] = useState(0);
+  const [showMore, setShowMore] = useState(false);
+  const toggleShowMore = () => {
+    setShowMore(!showMore);
+  };
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -197,7 +232,7 @@ const DrinkpostReviewDetail = () => {
             {following === 0 ? "팔로우" : "언팔로우"}
           </FollowDiv>
         </Usercard>
-        <ImageDiv></ImageDiv>
+        <ImageDiv style={{ backgroundImage: `url(${review?.img})` }}></ImageDiv>
         <LikeAndComment>
           <div>
             {LikeIcon} {review?.likeCount}
@@ -207,9 +242,17 @@ const DrinkpostReviewDetail = () => {
             {CommentIcon} {review?.drinkReviewId}
           </div>
         </LikeAndComment>
-        <Description></Description>
+        <Description className={showMore ? "show" : ""}>{review?.content}</Description>
+        {review?.content.split("\n").length > 4 && (
+          <MoreButton
+            onClick={toggleShowMore}
+            className={showMore ? "hide" : ""}
+            style={{ textAlign: "start" }}
+          >
+            ...더보기
+          </MoreButton>
+        )}
         <hr />
-        <div className="CommentList"></div>
       </WholeDiv>
     </>
   );

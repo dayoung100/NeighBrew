@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 const Button = styled.button<{ now: number; choosebutton: number }>`
   width: 40%;
   display: inline-block;
-  height: 3rem;
+  height: 4rem;
   background-color: white;
   border: none;
   margin: 0.5rem auto 2px auto;

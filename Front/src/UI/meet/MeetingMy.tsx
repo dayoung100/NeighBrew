@@ -43,12 +43,10 @@ const meetingMy = () => {
 
   //api 호출
   useEffect(() => {
-    if (userId !== 0) {
-      const promise = callApi("get", `api/meet/mymeet/${userId}`);
-      promise.then((res) => {
-        setMeetData(res.data); //받아온 데이터로 meetData 세팅
-      });
-    }
+    const promise = callApi("get", `api/meet/mymeet/${userId}`);
+    promise.then((res) => {
+      setMeetData(res.data); //받아온 데이터로 meetData 세팅
+    });
   }, [userId]);
 
   //create, apply, attend 모임 갱신
@@ -62,15 +60,15 @@ const meetingMy = () => {
     <div style={{ background: "var(--c-lightgray)", padding: "1rem" }}>
       <MeetingDiv>
         <MeetTitle>내가 주최 중인 모임</MeetTitle>
-        <MeetingListItem data={hostMeet} />
+        {hostMeet.length > 0 && <MeetingListItem data={hostMeet} />}
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>내가 참여 중인 모임</MeetTitle>
-        <MeetingListItem data={guestMeet} />
+        {guestMeet.length > 0 && <MeetingListItem data={guestMeet} />}
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>내가 신청한 모임</MeetTitle>
-        <MeetingListItem data={applyMeet} isWaiting={true} />
+        {applyMeet.length > 0 && <MeetingListItem data={applyMeet} />}
       </MeetingDiv>
     </div>
   );

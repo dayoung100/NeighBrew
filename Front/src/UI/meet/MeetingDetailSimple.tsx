@@ -1,8 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { callApi } from "../../utils/api";
 import { Meeting, User } from "../../Type/types";
+import defaultImg from "../../assets/defaultImg.png";
+import { callApi } from "../../utils/api";
 
 const InnerText = styled.div<{ $widthRem: number }>`
   width: ${(props) => props.$widthRem}rem;
@@ -36,6 +37,9 @@ const initialUser = {
  * ListInfoItem에 props로 전달되어 content 내부에 들어감
  */
 const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
+  //TODO: meetMy에서는 hostId만을 가져와서 host 변환이 필요함
+  // -> 수정하는게 나은가?
+  const [host, setHost] = useState(initialUser);
   //날짜와 시간 변환 함수
   function formateDate(dateData: string) {
     const date = new Date(dateData);
@@ -52,13 +56,20 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
   const hasAgeLimit =
     (meetData.minAge ?? 0) > 0 || (meetData.maxAge ?? 0) > 0 ? true : false;
   const hasLiverLimit = (meetData.minLiverPoint ?? 0) > 0 ? true : false;
-  const [host, setHost] = useState<User>(initialUser);
 
   useEffect(() => {
-    const promise = callApi("get", `/api/user/${meetData.hostId}`);
-    promise.then((res) => {
-      setHost(res.data);
-    });
+    if (meetData.host) {
+      setHost(meetData.host);
+      host.profile =
+        meetData.host.profile === "no image"
+          ? defaultImg
+          : meetData.host.profile;
+    } else {
+      const promise = callApi("get", `api/user/${meetData.hostId}`);
+      promise.then((res) => {
+        setHost(res.data);
+      });
+    }
   }, [meetData]);
 
   return (

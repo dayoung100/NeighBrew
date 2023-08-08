@@ -10,6 +10,7 @@ import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 �
 import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import LoginImg from "../../assets/Login/Login.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import { registerServiceWorker } from "../../serviceWorker.js";
 
 const ImgDiv = styled.div`
   width: 20%;
@@ -79,6 +80,7 @@ const WhiteSection = styled.div`
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
   useEffect(() => {
     if (localStorage.getItem("token") != null) {
       callApi("post", "api/user/refresh-token", {
@@ -132,6 +134,60 @@ const Login = () => {
   useEffect(() => {
     localStorage.setItem("chooseMenu", "0");
   }, []);
+
+  // useEffect(() => {
+  //   registerServiceWorker();
+
+  //   // 웹 푸시 알림 보내기
+  //   const sendPushNotification = async () => {
+  //     if ("PushManager" in window && "serviceWorker" in navigator) {
+  //       try {
+  //         const registration = await navigator.serviceWorker.ready;
+  //         const subscription = await registration.pushManager.subscribe({
+  //           userVisibleOnly: true,
+  //           applicationServerKey:
+  //             "BNNIll2m9BAaOc7s_AJCWgtkUVs8jZh226He056wEi95Wn8uuyrXeOTa4CGyl1WK26d9shkhCeK7YFKEguT4xOE",
+  //         });
+
+  //         // 서버로 구독 정보 전송 (옵션)
+  //         // fetch('/subscribe', {
+  //         //   method: 'POST',
+  //         //   body: JSON.stringify(subscription),
+  //         //   headers: {
+  //         //     'Content-Type': 'application/json',
+  //         //   },
+  //         // });
+  //       } catch (error) {
+  //         console.error("Error subscribing to push notifications:", error);
+  //       }
+  //     }
+  //   };
+
+  //   sendPushNotification();
+  // }, []);
+
+  const notify = () => {
+    // alert("승인함");
+    if (!("Notification" in window)) {
+      alert("승인안함");
+    } else if (Notification.permission === "granted") {
+      const notification = new Notification("알림 테스트");
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          const notification = new Notification("알림 테스트");
+        }
+      });
+    }
+  };
+  const adapt = () => {
+    notify();
+  };
+  useEffect(() => {
+    setTimeout(() => {
+      adapt();
+    }, 2000);
+  });
   return (
     <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
       <OrangeSection>
