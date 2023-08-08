@@ -85,3 +85,12 @@ export interface Followers {
   follower: User[];
   following: User[];
 }
+
+// 유저 평가 타입
+export interface Evaluation {
+  ratedUser: number;
+  reviewer: number;
+  meetId: number;
+  evaluation: string;
+  description: string;
+}
