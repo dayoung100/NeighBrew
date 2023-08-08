@@ -4,10 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.Enum.PushType;
-import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.entity.ChatDmMessage;
 import com.ssafy.backend.entity.ChatDmRoom;
-import com.ssafy.backend.entity.ChatMessage;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.ChatDmMessageRepository;
 import com.ssafy.backend.repository.ChatDmRoomRepository;
@@ -37,20 +35,21 @@ public class ChatDmService {
     //DM 목록 조회
 
     //public Map<String, Object> findChatDmRoomsByUserId(Long userId) {
-        //Map<String, Object> result = new HashMap<>();
+    //Map<String, Object> result = new HashMap<>();
     public List<ChatDmRoom> findChatDmRoomsByUserId(Long userId) {
-        List<ChatDmRoom> dmList =  chatDmRoomRepository.findChatDmRoomById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+        List<ChatDmRoom> dmList = chatDmRoomRepository.findChatDmRoomById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
 
         return dmList;
     }
-    public Map<String, Object>  findDmMessagesByRoomId(Long user1Id, Long user2Id) {
+
+    public Map<String, Object> findDmMessagesByRoomId(Long user1Id, Long user2Id) {
         Map<String, Object> result = new HashMap<>();
         log.info("{}와{}의 메세지 가져오기", user1Id, user2Id);
 
         Optional<ChatDmRoom> dmRoom = chatDmRoomRepository.findByUser1_UserIdAndUser2_UserId(user1Id, user2Id);
-        if(dmRoom.isPresent()){
-            result.put("messages", chatDmMessageRepository.findByChatDmRoom_ChatDmRoomId(dmRoom.get().getChatDmRoomId()).orElseThrow(()-> new IllegalArgumentException("채팅방 정보가 올바르지 않습니다.")));
-        }else {
+        if (dmRoom.isPresent()) {
+            result.put("messages", chatDmMessageRepository.findByChatDmRoom_ChatDmRoomId(dmRoom.get().getChatDmRoomId()).orElseThrow(() -> new IllegalArgumentException("채팅방 정보가 올바르지 않습니다.")));
+        } else {
             result.put("messages", new ArrayList<>());
         }
         result.put("user1", userRepository.findById(user1Id));
@@ -86,7 +85,7 @@ public class ChatDmService {
                 .build()));
 
         //작성자가 누구인지에 따라 다르게 동작을 수행시킨다.
-        if(senderId == user1Id) return saveMessageAndPush(chatDmRoom, user1, user2, message);
+        if (senderId == user1Id) return saveMessageAndPush(chatDmRoom, user1, user2, message);
         else return saveMessageAndPush(chatDmRoom, user2, user1, message);
     }
 
@@ -131,7 +130,7 @@ public class ChatDmService {
         return mapper.writeValueAsString(result);
     }
 
-    public Map<String, Object> saveMessageAndPush(ChatDmRoom chatDmRoom, User sender, User receiver, String message){
+    public Map<String, Object> saveMessageAndPush(ChatDmRoom chatDmRoom, User sender, User receiver, String message) {
         //채팅 메세지를 저장
         chatDmMessageRepository.save(ChatDmMessage.builder()
                 .chatDmRoom(chatDmRoom)
@@ -142,14 +141,13 @@ public class ChatDmService {
 
         //받은 메세지 내용은 그대로 돌려준다
         Map<String, Object> result = new HashMap<>();
-        result.put("dmRoomId", chatDmRoom.getChatDmRoomId());
-        result.put("userId", sender.getUserId());
-        result.put("user", sender);
         result.put("message", message);
+        result.put("userId", sender.getUserId());
+        result.put("user", sender.toChatDto());
 
         //PushService.send(User sender, User receiver, PushType pushType, String content, String url)
         String pushContent = sender.getNickname() + "님께서 메세지를 보내셨습니다.\n" + message;
-        pushService.send(sender, receiver, PushType.CHAT, pushContent, neighbrewUrl + "/dmurl");;
+        pushService.send(sender, receiver, PushType.CHAT, pushContent, neighbrewUrl + "/dmurl");
         return result;
     }
 }
