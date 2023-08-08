@@ -1,5 +1,7 @@
 package com.ssafy.backend.entity;
 
+import com.ssafy.backend.Enum.DmVisible;
+import com.ssafy.backend.Enum.PushType;
 import lombok.*;
 
 import javax.persistence.*;
