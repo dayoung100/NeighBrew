@@ -1,6 +1,7 @@
 package com.ssafy.backend.entity;
 
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
+import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.dto.UserUpdateDto;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,7 +33,6 @@ public class User {
 
     @Column(nullable = false, length = 20)
     private String name;
-
 
 
     private LocalDate birth;
@@ -106,11 +106,24 @@ public class User {
     }
 
     public void updateImg(String url) {
-            this.profile = url;
+        this.profile = url;
     }
 
     public void updateLiverPoint(Float newLiverPoint) {
         this.liverPoint = newLiverPoint;
+    }
+
+    public UserDto toUserDto() {
+        return UserDto.builder()
+                .userId(userId)
+                .email(email)
+                .nickname(nickname)
+                .name(name)
+                .birth(birth)
+                .intro(intro)
+                .liverPoint(liverPoint)
+                .profile(profile)
+                .build();
     }
 
 
