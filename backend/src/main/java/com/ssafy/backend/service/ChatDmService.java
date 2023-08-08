@@ -120,7 +120,7 @@ public class ChatDmService {
         chatDmMessageRepository.save(ChatDmMessage.builder()
                 .message(leaveUser.getNickname() + "님이 채팅방을 나갔습니다.")
                 .createdAt(LocalDateTime.now())
-                .user(null)
+                .user(leaveUser)
                 .build());
 
         //채팅방을 나갔다는 메세지를 전송한다.

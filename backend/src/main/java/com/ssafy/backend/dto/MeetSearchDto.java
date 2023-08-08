@@ -2,21 +2,23 @@ package com.ssafy.backend.dto;
 
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.Meet;
-import com.ssafy.backend.entity.Tag;
-import lombok.*;
+import com.ssafy.backend.entity.User;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @ToString
-public class MeetDto {
+public class MeetSearchDto {
     private Long meetId;
     private String meetName;
     private String description;
-    private Long hostId;
+    private UserDto host;
     private Integer nowParticipants;
     private Integer maxParticipants;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -32,14 +34,14 @@ public class MeetDto {
     private String imgSrc;
     private Long chatRoomId;
 
-    public MeetDto() {}
+    public MeetSearchDto() {}
 
     @Builder
-    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
+    public MeetSearchDto(Long meetId, String meetName, String description, UserDto host, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
         this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;
-        this.hostId = hostId;
+        this.host = host;
         this.nowParticipants = nowParticipants;
         this.maxParticipants = maxParticipants;
         this.meetDate = meetDate;
@@ -53,23 +55,5 @@ public class MeetDto {
         this.drink = drink;
         this.imgSrc = imgSrc;
         this.chatRoomId = chatRoomId;
-    }
-
-    public Meet toEntity(){
-        return Meet.builder()
-                .meetName(this.meetName)
-                .description(this.description)
-                .nowParticipants(this.nowParticipants)
-                .maxParticipants(this.maxParticipants)
-                .meetDate(this.meetDate)
-                .sido(this.sido)
-                .gugun(this.gugun)
-                .dong(this.dong)
-                .minAge(this.minAge)
-                .maxAge(this.maxAge)
-                .minLiverPoint(this.minLiverPoint)
-                .drink(this.drink)
-                .imgSrc(this.imgSrc)
-                .build();
     }
 }
