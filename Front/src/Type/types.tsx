@@ -39,7 +39,8 @@ export interface Meeting {
   meetId: number;
   meetName: string;
   description: string;
-  hostId: number;
+  host?: User;
+  hostId?: number;
   nowParticipants: number;
   maxParticipants: number;
   meetDate: string;
