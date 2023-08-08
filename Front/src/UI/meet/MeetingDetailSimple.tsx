@@ -1,7 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { callApi } from "../../utils/api";
 import { Meeting, User } from "../../Type/types";
 
 const InnerText = styled.div<{ $widthRem: number }>`
@@ -52,15 +50,6 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
   const hasAgeLimit =
     (meetData.minAge ?? 0) > 0 || (meetData.maxAge ?? 0) > 0 ? true : false;
   const hasLiverLimit = (meetData.minLiverPoint ?? 0) > 0 ? true : false;
-  const [host, setHost] = useState<User>(initialUser);
-
-  useEffect(() => {
-    if (meetData.meetId === undefined || meetData.meetId === null) return;
-    const promise = callApi("get", `/api/user/${meetData.hostId}`);
-    promise.then((res) => {
-      setHost(res.data);
-    });
-  }, [meetData]);
 
   return (
     <div style={{ fontFamily: "Noto Sans KR", fontSize: "10px" }}>
@@ -76,8 +65,8 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
       </div>
       <InnerText $widthRem={12}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <UserProfileImg src={host.profile} />
-          <div>{host.nickname}</div>
+          <UserProfileImg src={meetData.host.profile} />
+          <div>{meetData.host.nickname}</div>
         </div>
       </InnerText>
       <div style={{ display: "flex" }}>

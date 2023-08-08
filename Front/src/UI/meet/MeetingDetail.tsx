@@ -95,12 +95,23 @@ const MeetTitle = styled.div`
   margin-top: 1.5rem;
 `;
 
+const initialUser = {
+  userId: 0,
+  email: "",
+  nickname: "",
+  name: "",
+  liverPoint: 0,
+  profile: "",
+  follower: 0,
+  following: 0,
+};
+
 const initialData: MeetDetail = {
   meetDto: {
     meetId: 0,
     meetName: "",
     description: "",
-    hostId: 0,
+    host: initialUser,
     nowParticipants: 0,
     maxParticipants: 0,
     meetDate: "0000-01-01T00:00:00",
@@ -122,17 +133,6 @@ const initialData: MeetDetail = {
   statuses: [],
 };
 
-// const initialUser = {
-//   userId: 0,
-//   email: "",
-//   nickname: "",
-//   name: "",
-//   liverPoint: 0,
-//   profile: "",
-//   follower: 0,
-//   following: 0,
-// };
-
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
@@ -141,7 +141,8 @@ const MeetingDetail = () => {
   const [userId, setUserId] = useState(0); //현재 유저의 userId
   const [userStatus, setUserStatus] = useState("");
   const bgImg =
-    meetDetailData.meetDto.imgSrc == null || meetDetailData.meetDto.imgSrc == ""
+    meetDetailData.meetDto.imgSrc == null ||
+    meetDetailData.meetDto.imgSrc == "no image"
       ? "/src/assets/meetDefaultImg.jpg"
       : meetDetailData.meetDto.imgSrc;
 
