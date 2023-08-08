@@ -7,7 +7,7 @@ import { useState } from "react";
 const Card = styled.div`
   flex-direction: column;
   display: flex;
-  width: 28vw;
+  width: 30vw;
   height: 230px;
   margin: 10px 2px 10px 2px;
   border-radius: 14px;
@@ -19,7 +19,6 @@ const Card = styled.div`
 const CardImage = styled.img`
   width: 110%;
   height: 150%;
-  margin: 1rem;
 `;
 
 const TopTag = styled.div`

@@ -4,21 +4,12 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { callApi } from "../../utils/api";
-<<<<<<< HEAD
 import naverLogin from "../../assets/Login/naverLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import LoginImg from "../../assets/Login/Login.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-=======
-import naverLogin from '../../assets/Login/naverLogin.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import kakaoLogin from '../../assets/Login/kakaoLogin.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import googleLogin from '../../assets/Login/googleLogin.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import NeighBrew from '../../assets/Login/NeighBrew.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import icon from '../../assets/Login/icon.png'; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-
->>>>>>> c5f4f57493acd127775b5c88ac4cb5b671d3d4e5
 
 const ImgDiv = styled.div`
   width: 20%;
