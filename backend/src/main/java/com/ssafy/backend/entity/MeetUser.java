@@ -30,12 +30,6 @@ public class MeetUser {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public MeetUserDto toDto(){
-        return MeetUserDto.builder()
-                .meetDto(this.meet.toDto())
-                .build();
-    }
-
     public MeetUser() {
     }
 

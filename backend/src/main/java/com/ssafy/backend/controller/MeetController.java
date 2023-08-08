@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Map;
 import java.util.Optional;
@@ -68,10 +69,20 @@ public class MeetController {
                                       MeetDto meetDto,
                                       Long drinkId,
                                       @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException {
-        if (userId == null) return ResponseEntity.badRequest().body("유저 정보가 입력되지 않았습니다.");
+        if (meetDto.getMeetName() == null) return ResponseEntity.badRequest().body("모임 이름이 등록되지 않았습니다.");
+        if (meetDto.getMeetDate() == null) return ResponseEntity.badRequest().body("모임 날짜 정보가 누락되었습니다.");
+        if (meetDto.getMeetDate().toLocalDate() == null) return ResponseEntity.badRequest().body("모임 날짜가 입력되지 않았습니다.");
+        if (meetDto.getMeetDate().toLocalTime() == null) return ResponseEntity.badRequest().body("모임 시간이 입력되지 않았습니다.");
+        if (meetDto.getMaxParticipants() == null)
+            return ResponseEntity.badRequest().body("모임 최대 인원 수용 정보가 입력되지 않았습니다.");
+        if (meetDto.getMaxParticipants() > 8) return ResponseEntity.badRequest().body("모임 최대 인원 수용치를 초과했습니다.");
         if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
-
+        if (meetDto.getMinAge() < 20) return ResponseEntity.badRequest().body("모임 최소나이를 다시 입력해 주세요.");
+        if (meetDto.getMinAge() >= 200) return ResponseEntity.badRequest().body("모임 최대 나이를 다시 입력해 주세요.");
+        if (meetDto.getMeetDate().toLocalDate().isBefore(LocalDate.now())
+                || meetDto.getMeetDate().toLocalTime().isBefore(LocalTime.now()))
+            return ResponseEntity.badRequest().body("모임 시간이 지났습니다. 다시 한 번 입력해 주세요.");
         try {
             Meet createdMeet = null;
 
@@ -104,7 +115,8 @@ public class MeetController {
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
         if (meetDto.getMinAge() < 20) return ResponseEntity.badRequest().body("모임 최소나이를 다시 입력해 주세요.");
         if (meetDto.getMinAge() >= 200) return ResponseEntity.badRequest().body("모임 최대 나이를 다시 입력해 주세요.");
-        if (meetDto.getMeetDate().toLocalTime().isBefore(LocalTime.now()))
+        if (meetDto.getMeetDate().toLocalDate().isBefore(LocalDate.now())
+                || meetDto.getMeetDate().toLocalTime().isBefore(LocalTime.now()))
             return ResponseEntity.badRequest().body("모임 시간이 지났습니다. 다시 한 번 입력해 주세요.");
 
 

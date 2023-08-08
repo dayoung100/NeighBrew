@@ -46,9 +46,10 @@ public class DrinkReviewController {
     }
 
     @PostMapping("/guard")
-    public ResponseEntity<?> createDrinkReview(Long userId,
+    public ResponseEntity<?> createDrinkReview(HttpServletRequest request,
                                                DrinkReviewDto drinkReviewDto,
                                                @RequestPart(value = "image", required = false)Optional<MultipartFile> multipartFile) {
+        String userId = (String) request.getAttribute("userId");
         drinkReviewDto.setUserId(Long.valueOf(userId));
         try{
             if(multipartFile.isPresent())
