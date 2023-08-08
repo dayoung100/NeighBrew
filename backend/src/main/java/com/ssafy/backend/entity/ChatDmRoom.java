@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,9 @@ public class ChatDmRoom {
     @OneToOne
     @JoinColumn(name="user2_id")
     private User user2;
+
+//    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+//    private LocalDateTime leaveTime;
 
     @Builder
     public ChatDmRoom(User user1, User user2) {

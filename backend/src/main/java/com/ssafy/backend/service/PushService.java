@@ -40,7 +40,7 @@ public class PushService {
 
         // 503 에러가 발생하지 않도록 더미 데이터를 보내 연결을 유지한다.
         String eventId = makeTimeIncludeId(userId); //개별 알림 이벤트를 식별하기 위한 값
-        sendEventToClient(sseEmitter, eventId, sseEmitterId, "EventStream Created. [userId= " + userId + "]");
+        sendEventToClient(sseEmitter, eventId, sseEmitterId, "sse","EventStream Created. [userId= " + userId + "]");
 
         //클라이언트가 미수신한 Event목록이 있을 경우 전송해 event 유실을 예방한다.
         if (!lastEventId.isEmpty()) {
@@ -61,15 +61,15 @@ public class PushService {
         //lastEventId 보다 크면 서버와 연결이 끊겼을 때 생성된 이벤트 이므로 클라이언트에게 보내준다.
         eventCaches.entrySet().stream()
                 .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-                .forEach(entry -> sendEventToClient(emitter, entry.getKey(), emitterId, entry.getValue()));
+                .forEach(entry -> sendEventToClient(emitter, entry.getKey(), emitterId, PushType.LOSTDATA.name(), entry.getValue()));
     }
 
     //SseEmitter 객체를 사용하여 SSE를 클라이언트에게 전송하는 역할
-    private void sendEventToClient(SseEmitter sseEmmitter, String eventId, String sseEmitterId, Object data) {
+    private void sendEventToClient(SseEmitter sseEmmitter, String eventId, String sseEmitterId, String eventName, Object data) {
         try {
             sseEmmitter.send(SseEmitter.event()
                     .id(eventId) //이벤트 고유 식별자
-                    .name("sse") //이벤트 이름 지정
+                    .name(eventName) //이벤트 이름 지정
                     .data(data)); //이벤트로 전송할 데이터 설정
         } catch (IOException e) {
             emitterRepository.deleteById(sseEmitterId);
@@ -91,7 +91,7 @@ public class PushService {
                     (key, emitter) -> {
                         log.info("전송 key {} ", key );
                         emitterRepository.saveEventCache(key, push.toDto());//데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
-                        sendEventToClient(emitter, eventId, key, push.toDto());//데이터를 receiver에게 전송
+                        sendEventToClient(emitter, eventId, key, pushType.name(), push.toDto());//데이터를 receiver에게 전송
                     }
             );
         }catch (Exception e){
