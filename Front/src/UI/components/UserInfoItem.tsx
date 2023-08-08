@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { User } from "../../Type/types";
+import defaultImg from "../../assets/defaultImg.png";
 
 const UserProfileImg = styled.div<{ src: string }>`
   background: url(${(props) => props.src}) no-repeat center;
@@ -10,10 +12,7 @@ const UserProfileImg = styled.div<{ src: string }>`
 `;
 
 type UserInfoItemProps = {
-  userId: number; //유저 아이디
-  name: string; //유저 닉네임
-  intro: string; //유저 한마디
-  imgSrc: string; //유저 프로필 이미지 경로
+  user: User; // 유저객체
   isMaster?: boolean; //유저가 모임의 주최자인지 아닌지
   width?: number; //텍스트 영역이 가질 너비(단위rem)
 };
@@ -21,10 +20,7 @@ type UserInfoItemProps = {
 /**
  * 유저의 이름과 한마디만을 포함해 보여주는 요소.
  * 모임, 팔팔 목록 등 각종 유저 목록에 이용 됨
- * @property {number} userId 유저 아이디
- * @property {string} name 유저 닉네임
- * @property {string} intro 유저 한마디
- * @property {string} imgSrc 유저 프로필 이미지 경로
+ * @property {User} user //유저 객체
  * @property {boolean} isMaster [Optional] 유저가 모임의 주최자인지 아닌지
  * @property {number} width [Optional] 텍스트 영역이 가질 너비(단위rem, 기본 15)
  * @todo userId를 받으면 name, intro, imgSrc는 props로 안받아도 될듯?!
@@ -41,9 +37,9 @@ const UserInfoItem = (props: UserInfoItemProps) => {
   return (
     <div
       style={{ display: "flex", marginTop: "0.5rem" }}
-      onClick={() => GotoUserDetailHandler(props.userId)}
+      onClick={() => GotoUserDetailHandler(props.user.userId)}
     >
-      <UserProfileImg src={props.imgSrc} />
+      <UserProfileImg src={props.user.profile ?? defaultImg} />
       <div style={{ margin: "auto 0 auto 0.5rem" }}>
         <div
           style={{
@@ -52,7 +48,7 @@ const UserInfoItem = (props: UserInfoItemProps) => {
           }}
         >
           <div style={{ fontFamily: "JejuGothic", fontSize: "15px" }}>
-            {props.name}
+            {props.user.nickname}
           </div>
           {props.isMaster && <img src="/src/assets/star.svg" />}
         </div>
@@ -68,7 +64,7 @@ const UserInfoItem = (props: UserInfoItemProps) => {
             textAlign: "left",
           }}
         >
-          {props.intro}
+          {props.user.intro}
         </div>
       </div>
     </div>

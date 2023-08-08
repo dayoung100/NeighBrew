@@ -421,15 +421,7 @@ const MeetingDetail = () => {
         <div style={{ margin: "0 0.5rem" }}>
           {memberList.map((member, index) => {
             return (
-              <UserInfoItem
-                key={index}
-                userId={member.userId}
-                name={member.nickname}
-                intro={member.intro}
-                imgSrc={member.profile}
-                isMaster={index === 0}
-                width={15}
-              />
+              <UserInfoItem user={member} isMaster={index === 0} width={15} />
             );
           })}
         </div>
