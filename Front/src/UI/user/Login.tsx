@@ -9,6 +9,7 @@ import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가�
 import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import LoginImg from "../../assets/Login/Login.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 
 const ImgDiv = styled.div`
   width: 20%;
@@ -82,7 +83,7 @@ const Login = () => {
     if (localStorage.getItem("token") != null) {
       callApi("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
-      }).then((res) => {
+      }).then(res => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
         navigate("/meet");
@@ -94,11 +95,11 @@ const Login = () => {
       method: "get",
       url: "api/auth/login/kakao",
     })
-      .then((res) => {
+      .then(res => {
         const url = res.data.URL;
         window.location.href = url;
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
@@ -107,11 +108,11 @@ const Login = () => {
       method: "get",
       url: "api/auth/login/naver",
     })
-      .then((res) => {
+      .then(res => {
         const url = res.data.URL;
         window.location.href = url;
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
@@ -120,11 +121,11 @@ const Login = () => {
       method: "get",
       url: "api/auth/login/google",
     })
-      .then((res) => {
+      .then(res => {
         const url = res.data.URL;
         window.location.href = url;
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
@@ -132,9 +133,7 @@ const Login = () => {
     localStorage.setItem("chooseMenu", "0");
   }, []);
   return (
-    <div
-      style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-    >
+    <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
       <OrangeSection>
         <div style={{ marginBottom: "3rem" }}>
           <img src={NeighBrew} style={{ marginTop: "5rem" }} />
@@ -175,10 +174,7 @@ const Login = () => {
             top: "1rem",
           }}
         >
-          <Div
-            onClick={KakaologinHandler}
-            style={{ cursor: "pointer", marginTop: "" }}
-          >
+          <Div onClick={KakaologinHandler} style={{ cursor: "pointer", marginTop: "" }}>
             <Img src={kakaoLogin} />
           </Div>
 

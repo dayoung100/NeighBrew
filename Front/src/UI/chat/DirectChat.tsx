@@ -205,15 +205,14 @@ const DirectChat = () => {
       client.current!.subscribe(`/pub/dm/${user1}/${user2}`, res => {
         console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
-        console.log(receivedMessage);
         setMessages((prevMessages: any) => [
           ...prevMessages,
           {
             message: receivedMessage.message,
             userId: receivedMessage.userId,
             user: {
-              userId: receivedMessage.userId,
-              nickname: receivedMessage.userNickname,
+              userId: receivedMessage.user.userId,
+              nickname: receivedMessage.user.userNickname,
             },
             createdAt:
               new Date().getHours() +
@@ -238,7 +237,7 @@ const DirectChat = () => {
       client.current.send(
         `/sub/dm/${user1}/${user2}`,
         {},
-        JSON.stringify({ message: message, userId, userNickname: "닉네임" })
+        JSON.stringify({ message: message, senderId: userId, userNickname: "닉네임" })
       );
       setMessage("");
       scroll();
@@ -253,7 +252,7 @@ const DirectChat = () => {
           JSON.stringify({
             message: message,
             senderId: userId,
-            // userNickname: "닉네임",
+            userNickname: "닉네임",
           })
         );
         setMessage("");
