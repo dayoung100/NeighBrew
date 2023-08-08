@@ -32,7 +32,7 @@ const WhiteModal = {
     borderRadius: "15px",
     background: "white",
     textAlign: "center",
-    fontFamily: "SeoulNamsan",
+    fontFamily: "NanumSquareNeo",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",

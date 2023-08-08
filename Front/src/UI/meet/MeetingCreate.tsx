@@ -4,7 +4,7 @@
 모임 이름, 주종 카테고리, 술 검색, 위치, 시간, 조건, 설명, 이미지 첨부 가능
 */
 import { useState, useRef, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NavbarSimple from "../navbar/NavbarSimple";
 import styled, { css } from "styled-components";
 import DrinkCategory from "../drinkCategory/DrinkCategory";
@@ -21,14 +21,14 @@ import Modal from "react-modal";
 
 const Title = styled.div`
   font-family: "JejuGothic";
-  font-size: 20px;
+  font-size: 24px;
   text-align: left;
   margin-bottom: 0.5rem;
 `;
 
 const SubTitle = styled.div`
-  font-family: SeoulNamsan;
-  font-size: 14px;
+  font-family: "NanumSquareNeo";
+  font-size: 16px;
   text-align: left;
 `;
 
@@ -40,7 +40,7 @@ const ReselectBtn = styled.div`
   background: var(--c-lightgray);
   border-radius: 10px;
   width: 3rem;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   font-size: 15px;
   padding: 0.5rem;
   margin: 0.5rem 0 0 auto;
@@ -53,8 +53,8 @@ const Input = styled.input`
   padding: 2% 0;
   border: none;
   border-bottom: 1px solid var(--c-gray);
-  font-family: "SeoulNamsan";
-  font-size: 14px;
+  font-family: "NanumSquareNeo";
+  font-size: 16px;
   outline: none;
   &::placeholder {
     color: var(--c-gray);
@@ -74,7 +74,8 @@ const DropdownInput = styled.select`
   padding: 1% 3%;
   border: none;
   border-bottom: 1px solid var(--c-gray);
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
+  font-size: 16px;
   outline: none;
   -webkit-appearance: none; /* 화살표 없애기 for chrome*/
   -moz-appearance: none; /* 화살표 없애기 for firefox*/
@@ -90,28 +91,27 @@ const SearchResultDiv = styled.div`
   flex-direction: column;
 `;
 
-const CloseBtn = styled.div`
+const CloseDiv = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  background: var(--c-yellow);
-  width: 5rem;
-  margin: auto auto;
-  padding: 2% 5%;
-  border-radius: 20px;
-  font-family: "SeoulNamsan";
-  font-size: 7px;
+  justify-content: flex-end;
+  position: sticky;
+  bottom: 0;
+  height: 3rem;
+  z-index: 3;
+  padding: 0 1rem;
+  font-family: "NanumSquareNeo";
 `;
 
 const DateAndTimeInputStyle = css`
   color: var(--c-black);
   width: 45%;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   text-align: right;
   border: none;
   border-bottom: 1px solid var(--c-gray);
   background: white;
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
 `;
 
@@ -136,6 +136,12 @@ const CateDiv = styled.div`
   }
 `;
 
+const LimitDiv = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+`;
+
 const InfoTextArea = styled.textarea`
   width: 90%;
   height: 10rem;
@@ -144,7 +150,7 @@ const InfoTextArea = styled.textarea`
   border: 1px solid var(--c-gray);
   border-radius: 15px;
   outline: none;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   font-size: 14px;
   resize: none;
 `;
@@ -152,8 +158,8 @@ const InfoTextArea = styled.textarea`
 const ErrorDiv = styled.div`
   color: red;
   text-align: left;
-  font-family: "SeoulNamsan";
-  font-size: 15px;
+  font-family: "NanumSquareNeo";
+  font-size: 14px;
   padding: 0.5rem;
 `;
 
@@ -169,7 +175,7 @@ const WhiteModal = {
     borderRadius: "15px",
     background: "white",
     textAlign: "center",
-    fontFamily: "SeoulNamsan",
+    fontFamily: "NanumSquareNeo",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -571,7 +577,7 @@ const MeetingCreate = () => {
                           style={{
                             textAlign: "center",
                             paddingTop: "2rem",
-                            fontFamily: "SeoulNamsan",
+                            fontFamily: "NanumSquareNeo",
                           }}
                         >
                           검색 결과가 없습니다.
@@ -587,18 +593,9 @@ const MeetingCreate = () => {
                         ))
                       )}
                     </div>
-                    <div
-                      style={{
-                        position: "sticky",
-                        bottom: "0",
-                        height: "3rem",
-                        zIndex: "3",
-                      }}
-                    >
-                      <CloseBtn onClick={() => setIsSearchFocused(false)}>
-                        닫기
-                      </CloseBtn>
-                    </div>
+                    <CloseDiv onClick={() => setIsSearchFocused(false)}>
+                      ▲닫기
+                    </CloseDiv>
                   </SearchResultDiv>
                 )}
               </div>
@@ -631,8 +628,6 @@ const MeetingCreate = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              fontFamily: "SeoulNamsan",
-              fontSize: "14px",
             }}
           >
             <Title>위치</Title>
@@ -718,15 +713,9 @@ const MeetingCreate = () => {
             </ErrorDiv>
           )}
         </QuestionDiv>
-        <QuestionDiv style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>
+        <QuestionDiv style={{ fontFamily: "NanumSquareNeo", fontSize: "16px" }}>
           <Title>조건</Title>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "0.5rem",
-            }}
-          >
+          <LimitDiv>
             <SubTitle>최대 인원</SubTitle>
             <InputShort
               value={maxParticipants}
@@ -742,14 +731,8 @@ const MeetingCreate = () => {
             {!participantsCheck() && btnClicked && (
               <ErrorDiv>📌필수 입력사항입니다.(8명 이내)</ErrorDiv>
             )}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "0.5rem",
-            }}
-          >
+          </LimitDiv>
+          <LimitDiv>
             <img src="/src/assets/liverIcon.svg" />
             <SubTitle>간수치</SubTitle>
             <InputShort
@@ -761,14 +744,8 @@ const MeetingCreate = () => {
             {!liverLimitCheck() && btnClicked && (
               <ErrorDiv>📌100 IU/L 이하</ErrorDiv>
             )}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "0.5rem",
-            }}
-          >
+          </LimitDiv>
+          <LimitDiv>
             <img src="/src/assets/age.svg" />
             <SubTitle>나이</SubTitle>
             <InputShort
@@ -783,7 +760,7 @@ const MeetingCreate = () => {
               onChange={(e) => setMaxAge(parseInt(e.target.value))}
             />
             세 미만
-          </div>
+          </LimitDiv>
           {!ageCheck() && btnClicked && (
             <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>
           )}

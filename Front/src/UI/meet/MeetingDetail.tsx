@@ -12,7 +12,6 @@ import PeopleNumInfo from "./PeopleNumInfo";
 import ListInfoItem from "../components/ListInfoItem";
 import UserInfoItem from "../components/UserInfoItem";
 import FooterBigBtn from "../footer/FooterBigBtn";
-import backgroundImg from "../../assets/ForTest/backgroundImg.jpg";
 import { callApi } from "../../utils/api";
 import { MeetDetail, User } from "../../Type/types";
 
@@ -31,8 +30,8 @@ const Tag = styled.div`
   align-items: center;
   background: var(--c-yellow);
   padding: 1.5% 2%;
-  font-family: "SeoulNamsan";
-  font-size: 7px;
+  font-family: "NanumSquareNeo";
+  font-size: 12px;
   border-radius: 10px;
   color: var(--c-black);
   &::before {
@@ -75,7 +74,7 @@ const MeetPosDateDiv = styled.div`
   align-items: center;
   justify-content: space-around;
   position: absolute;
-  top: -3rem;
+  top: -2rem;
   left: 50%;
   transform: translate(-50%, 0%);
   z-index: 2;
@@ -85,7 +84,7 @@ const MeetPosDateDiv = styled.div`
   border-radius: 20px;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.07);
   padding: 1rem;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   font-size: 16px;
 `;
 
@@ -123,16 +122,16 @@ const initialData: MeetDetail = {
   statuses: [],
 };
 
-const initialUser = {
-  userId: 0,
-  email: "",
-  nickname: "",
-  name: "",
-  liverPoint: 0,
-  profile: "",
-  follower: 0,
-  following: 0,
-};
+// const initialUser = {
+//   userId: 0,
+//   email: "",
+//   nickname: "",
+//   name: "",
+//   liverPoint: 0,
+//   profile: "",
+//   follower: 0,
+//   following: 0,
+// };
 
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
@@ -142,8 +141,7 @@ const MeetingDetail = () => {
   const [userId, setUserId] = useState(0); //현재 유저의 userId
   const [userStatus, setUserStatus] = useState("");
   const bgImg =
-    meetDetailData.meetDto.imgSrc === "" ||
-    meetDetailData.meetDto.imgSrc == null
+    meetDetailData.meetDto.imgSrc == null || meetDetailData.meetDto.imgSrc == ""
       ? "/src/assets/meetDefaultImg.jpg"
       : meetDetailData.meetDto.imgSrc;
 
@@ -307,8 +305,8 @@ const MeetingDetail = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontFamily: "SeoulNamsan",
-              fontSize: "15px",
+              fontFamily: "NanumSquareNeo",
+              fontSize: "16px",
             }}
           >
             <div>주최자: </div>
@@ -346,8 +344,8 @@ const MeetingDetail = () => {
           style={{
             display: "flex",
             justifyContent: "space-evenly",
-            fontSize: "13px",
-            fontFamily: "Noto Sans KR",
+            fontSize: "14px",
+            fontFamily: "NanumSquareNeo",
           }}
         >
           {(meetDetailData.meetDto.minLiverPoint ?? 0) > 0 && (
@@ -392,9 +390,10 @@ const MeetingDetail = () => {
         <div
           style={{
             color: "var(--c-black)",
-            fontFamily: "Noto Sans KR",
-            fontSize: "15px",
-            textAlign: "left",
+            fontFamily: "NanumSquareNeo",
+            fontSize: "16px",
+            textAlign: "justify",
+            lineHeight: "1.6rem",
             marginTop: "0.5rem",
             marginBottom: "2rem",
             whiteSpace: "pre-line",
