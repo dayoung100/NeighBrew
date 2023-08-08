@@ -357,7 +357,12 @@ const ChatRoom = () => {
         <div>
           {users.map((user, i) => {
             return (
-              <UserDiv key={i}>
+              <UserDiv
+                key={i}
+                // onClick={() => {
+                //   navigate(`/myPage/${user.userId}`);
+                // }}
+              >
                 <ImgDiv>
                   <Img src={user.profile == "no image" ? temgif : user.profile}></Img>
                 </ImgDiv>

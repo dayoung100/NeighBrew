@@ -5,6 +5,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Chat from "./Chat";
+import ChatDM from "./ChatDM";
 import { meetingicon, directMessage } from "../../assets/AllIcon";
 import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
@@ -25,8 +26,10 @@ const ChatList = () => {
   const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
   const navigate = useNavigate();
   const chatRoomDetail = (roomId: number) => {
-    console.log(roomId);
     navigate(`/chatList/${roomId}`);
+  };
+  const chatDMRoomDetail = (user1: number, user2: number) => {
+    navigate(`/directchat/${user1}/${user2}`);
   };
   const directMessageIcon = directMessage(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
 
@@ -89,17 +92,27 @@ const ChatList = () => {
         </Button>
       </div>
       <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)", minHeight: "940px" }}>
-        {chatList.map(chatRoom => {
-          return (
-            <Chat
-              key={chatRoom.chatRoomId}
-              chooseChat={chooseChat}
-              chatRoomName={chatRoom.chatRoomName}
-              chatRoomId={chatRoom.chatRoomId}
-              chatRoomDetail={chatRoomDetail}
-            />
-          );
-        })}
+        {chooseChat === 0
+          ? chatList.map(chatRoom => {
+              return (
+                <Chat
+                  key={chatRoom.chatRoomId}
+                  chatRoomName={chatRoom.chatRoomName}
+                  chatRoomId={chatRoom.chatRoomId}
+                  chatRoomDetail={chatRoomDetail}
+                />
+              );
+            })
+          : chatList.map(chatRoom => {
+              return (
+                <ChatDM
+                  key={chatRoom.chatRoomId}
+                  chatRoomDetail={chatDMRoomDetail}
+                  user1={chatRoom.user1}
+                  user2={chatRoom.user2}
+                />
+              );
+            })}
       </div>
       {/* <div style={{ height: "80px" }}></div> */}
       <footer>

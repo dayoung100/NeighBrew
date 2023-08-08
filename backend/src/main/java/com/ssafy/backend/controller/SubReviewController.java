@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 @RestController
-@RequestMapping("/subreview")
+@RequestMapping("/api/subreview")
 @RequiredArgsConstructor
 @Slf4j
 public class SubReviewController {

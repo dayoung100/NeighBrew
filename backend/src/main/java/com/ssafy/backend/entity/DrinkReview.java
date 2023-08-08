@@ -41,7 +41,6 @@ public class DrinkReview {
 
     @PrePersist
     public void prePersist() {
-        this.img = "no image";
         this.likeCount = 0;
     }
 

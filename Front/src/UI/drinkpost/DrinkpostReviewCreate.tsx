@@ -87,10 +87,12 @@ const DrinkpostReviewCreate = () => {
   const reviewHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setReview(e.target.value);
   };
+  const myId = localStorage.getItem("myId");
   const [imgFile, setImgFile] = useState(null);
   const imgRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    console.log(myId);
     callApi("get", `api/drink/${drinkId}`)
       .then(res => {
         setDrink(res.data);
@@ -111,6 +113,7 @@ const DrinkpostReviewCreate = () => {
   const reviewSubmit = () => {
     const file = imgRef.current.files[0];
     const formData = new FormData();
+
     formData.append("drinkId", drinkId);
     formData.append("content", review);
     formData.append("image", file);
@@ -133,7 +136,7 @@ const DrinkpostReviewCreate = () => {
         console.log(res.data);
         navigate(`/drinkpost/${drinkId}`);
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
 
     // callApi("post", "api/drinkreview/guard", {
     //   myInfo: myInfo.userId,

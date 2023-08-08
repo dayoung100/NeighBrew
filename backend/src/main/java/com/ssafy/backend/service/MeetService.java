@@ -5,6 +5,7 @@ import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.Enum.UploadType;
 import com.ssafy.backend.dto.MeetDto;
+import com.ssafy.backend.dto.MeetSearchDto;
 import com.ssafy.backend.dto.MeetUserDto;
 import com.ssafy.backend.entity.*;
 import com.ssafy.backend.repository.*;
@@ -25,10 +26,8 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 public class MeetService {
-
     private final MeetRepository meetRepository;
     private final MeetUserRepository meetUserRepository;
-
 
     private final S3Service s3Service;
     private final UserService userService;
@@ -42,16 +41,15 @@ public class MeetService {
     private final ChatRoomUserService chatRoomUserService;
     private final ChatMessageService chatMessageService;
 
-    public List<MeetDto> findAll(Pageable pageable) {
-        Page<Meet> list = meetRepository.findAllByOrderByCreatedAtDesc(pageable);
-
-        List<MeetDto> dtos = new ArrayList<>();
-        for (Meet meet : list) {
-            dtos.add(MeetDto.builder()
-                    .meetId(meet.getMeetId())
+    public List<MeetSearchDto> findAll(Pageable pageable) {
+        Page<Meet> data = meetRepository.findAllByOrderByCreatedAtDesc(pageable);
+        List<MeetSearchDto> result = new ArrayList<>();
+        for (Meet meet : data) {
+            result.add(MeetSearchDto.builder().
+                    meetId(meet.getMeetId())
                     .meetName(meet.getMeetName())
                     .description(meet.getDescription())
-                    .hostId(meet.getHostId())
+                    .host(meet.getHost().toUserDto())
                     .nowParticipants(meet.getNowParticipants())
                     .maxParticipants(meet.getMaxParticipants())
                     .meetDate(meet.getMeetDate())
@@ -64,9 +62,37 @@ public class MeetService {
                     .minLiverPoint(meet.getMinLiverPoint())
                     .drink(meet.getDrink())
                     .imgSrc(meet.getImgSrc())
+                    .chatRoomId(meet.getChatRoom().getChatRoomId())
                     .build());
         }
-        return dtos;
+        return result;
+    }
+
+    public List<MeetSearchDto> findByTagId(Long tagId, Pageable pageable) {
+        Page<Meet> data = meetRepository.findByTag_TagIdOrderByCreatedAtDesc(tagId, pageable);
+        List<MeetSearchDto> result = new ArrayList<>();
+        for (Meet meet : data) {
+            result.add(MeetSearchDto.builder().
+                    meetId(meet.getMeetId())
+                    .meetName(meet.getMeetName())
+                    .description(meet.getDescription())
+                    .host(meet.getHost().toUserDto())
+                    .nowParticipants(meet.getNowParticipants())
+                    .maxParticipants(meet.getMaxParticipants())
+                    .meetDate(meet.getMeetDate())
+                    .tagId(meet.getTag().getTagId())
+                    .sido(meet.getSido())
+                    .gugun(meet.getGugun())
+                    .dong(meet.getDong())
+                    .minAge(meet.getMinAge())
+                    .maxAge(meet.getMaxAge())
+                    .minLiverPoint(meet.getMinLiverPoint())
+                    .drink(meet.getDrink())
+                    .imgSrc(meet.getImgSrc())
+                    .chatRoomId(meet.getChatRoom().getChatRoomId())
+                    .build());
+        }
+        return result;
     }
 
     public MeetUserDto findMeetUserByMeetId(Long meetId) throws NoSuchFieldException {
@@ -112,10 +138,9 @@ public class MeetService {
         meetDto.setNowParticipants(1);
         log.info("모임 생성 : {} ", meetDto);
 
-
         if (multipartFile != null) {
             if (!multipartFile.isEmpty()) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-        }
+        }else meetDto.setImgSrc("no image");
 
         ChatRoom createChatRoom = chatRoomService.save(ChatRoom.builder()
                 .chatRoomName(meetDto.getMeetName() + "모임의 채팅방")
@@ -123,6 +148,7 @@ public class MeetService {
 
 
         Meet meet = meetDto.toEntity();
+        meet.setHost(userService.findByUserId(meetDto.getHostId()));
         meet.setTag(tagService.findById(meetDto.getTagId()));
         meet.setDrink(drinkService.findById(drinkId));
         meet.setChatRoom(createChatRoom);
@@ -142,7 +168,7 @@ public class MeetService {
 
         chatMessageService.save(ChatMessage.builder()
                 .chatRoom(createChatRoom)
-                .user(null)
+                .user(hostUser)
                 .message("채팅방이 생성되었습니다.")
                 .createdAt(LocalDateTime.now())
                 .build());
@@ -203,10 +229,9 @@ public class MeetService {
         log.info("meetId : {}인 모임 삭제", meetId);
 
         Meet deleteMeet = findByMeetId(meetId);
-        User host = userService.findByUserId(hostId);
-
+        log.info("모임장 : {}, 삭제하려는 유저 : {}", deleteMeet.getHost().getUserId(), hostId);
         //유효성 검사
-        if (deleteMeet.getHostId().equals(hostId))
+        if (!deleteMeet.getHost().getUserId().equals(hostId))
             throw new IllegalArgumentException("방장이 아니면 방을 삭제할 수 없습니다.");
 
         MeetUserDto meetUser = findMeetUserByMeetId(meetId);
@@ -225,8 +250,8 @@ public class MeetService {
             if (user.getUserId().equals(hostId)) continue; //방장에게는 알림을 전송하지 않는다.
 
             StringBuilder pushMessage = new StringBuilder();
-            pushMessage.append(host.getName() + "님 께서 생성한 모임").append("(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
-            pushService.send(host, user, PushType.DELETEMEET, pushMessage.toString(), "");
+            pushMessage.append(deleteMeet.getHost().getName() + "님 께서 생성한 모임").append("(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
+            pushService.send(deleteMeet.getHost(), user, PushType.DELETEMEET, pushMessage.toString(), "");
         }
 
     }
@@ -274,7 +299,7 @@ public class MeetService {
         //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
         //푸시알림 로그 삭제
-        pushService.deletePushLog(PushType.MEETACCESS, userId, meet.getHostId());
+        pushService.deletePushLog(PushType.MEETACCESS, userId, meet.getHost().getUserId());
 
     }
 
@@ -297,10 +322,10 @@ public class MeetService {
     public String manageMeet(Long userId, Long meetId, boolean applyResult) {
         log.info("{}유저 {}모임 신청 관리 : 결과 {}", userId, meetId, applyResult);
 
-        Meet manageMentMeet = findByMeetId(meetId);
+        Meet managementMeet = findByMeetId(meetId);
 
         //Host유저와 관리할유저 리스트 반환(1개의 쿼리를 사용 하기 위함) 0번 : 호스트, 1번 : 관리할 유저
-        User host = userService.findByUserId(manageMentMeet.getHostId());
+        User host = managementMeet.getHost();
         User manageUser = userService.findByUserId(userId);
 
         if (applyResult) {//신청 결과가 true
@@ -312,18 +337,18 @@ public class MeetService {
             //채팅방에 참여 시킨다
             chatRoomUserService.save(ChatRoomUser.builder()
                     .user(manageUser)
-                    .chatRoom(manageMentMeet.getChatRoom())
+                    .chatRoom(managementMeet.getChatRoom())
                     .build());
 
             chatMessageService.save(ChatMessage.builder()
-                    .chatRoom(manageMentMeet.getChatRoom())
+                    .chatRoom(managementMeet.getChatRoom())
                     .user(null)
                     .message(manageUser.getName() + "님이 모임에 참여하셨습니다.")
                     .createdAt(LocalDateTime.now())
                     .build());
 
             StringBuilder pushMessage = new StringBuilder();
-            pushMessage.append("회원님께서 모임(").append(manageMentMeet.getMeetName()).append(")참여 되셨습니다.\n 즐거운 시간 되세요.");
+            pushMessage.append("회원님께서 모임(").append(managementMeet.getMeetName()).append(")참여 되셨습니다.\n 즐거운 시간 되세요.");
             pushService.send(host, manageUser, PushType.MEETACCESS, pushMessage.toString(), "http://i9b310.p.ssafy.");
 
             return userId + "유저 " + meetId + "모임 신청 승인";
@@ -333,7 +358,7 @@ public class MeetService {
             //유저에게 push 알림 전송
 
             StringBuilder pushMessage = new StringBuilder();
-            pushMessage.append("회원님께서 모임(").append(manageMentMeet.getMeetName()).append(")참여에 거절당했습니다.");
+            pushMessage.append("회원님께서 모임(").append(managementMeet.getMeetName()).append(")참여에 거절당했습니다.");
             pushService.send(host, manageUser, PushType.MEETREJECT, pushMessage.toString(), "");
 
             return userId + "유저 " + meetId + "모임 신청 거절";
@@ -346,5 +371,4 @@ public class MeetService {
 
         meetRepository.save(findMeet);
     }
-
 }

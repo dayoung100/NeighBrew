@@ -1,5 +1,6 @@
 package com.ssafy.backend.controller;
 
+import com.amazonaws.Response;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.service.*;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Map;
 import java.util.Optional;
@@ -23,14 +25,19 @@ import java.util.Optional;
 public class MeetController {
     private final MeetService meetService;
 
-    //모든 모임에 대해 출력
+    //태그별로 데이터 조회
     @GetMapping()
-    public ResponseEntity<?> getAllMeet(Pageable pageable) {
-        //pageable 디폴트 10개로 설정
-        if (pageable.getPageSize() == 20) pageable = Pageable.ofSize(10);
-        log.info("모든 모임 상세 출력");
-        log.info("pageable : {}", pageable);
-        return ResponseEntity.ok(meetService.findAll(pageable));
+    public ResponseEntity<?> getTagMeet(@RequestParam(name="tagId", required = false, defaultValue = "0") Long tagId,
+                                        Pageable pageable){
+        if( tagId > 7L || tagId < 0L) return ResponseEntity.badRequest().body("태그ID가 존재하지 않습니다.");
+
+        if(pageable.getPageSize() == 20) pageable = Pageable.ofSize(10);
+        try{
+            if(tagId == 0L) return ResponseEntity.ok(meetService.findAll(pageable));
+            return ResponseEntity.ok(meetService.findByTagId(tagId, pageable));
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("모임 조회중 문제가 발생했습니다.\n" + e.getMessage());
+        }
     }
 
     // meetId에 해당하는 모임 상세 정보 조회
@@ -62,10 +69,20 @@ public class MeetController {
                                       MeetDto meetDto,
                                       Long drinkId,
                                       @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException {
-        if (userId == null) return ResponseEntity.badRequest().body("유저 정보가 입력되지 않았습니다.");
+        if (meetDto.getMeetName() == null) return ResponseEntity.badRequest().body("모임 이름이 등록되지 않았습니다.");
+        if (meetDto.getMeetDate() == null) return ResponseEntity.badRequest().body("모임 날짜 정보가 누락되었습니다.");
+        if (meetDto.getMeetDate().toLocalDate() == null) return ResponseEntity.badRequest().body("모임 날짜가 입력되지 않았습니다.");
+        if (meetDto.getMeetDate().toLocalTime() == null) return ResponseEntity.badRequest().body("모임 시간이 입력되지 않았습니다.");
+        if (meetDto.getMaxParticipants() == null)
+            return ResponseEntity.badRequest().body("모임 최대 인원 수용 정보가 입력되지 않았습니다.");
+        if (meetDto.getMaxParticipants() > 8) return ResponseEntity.badRequest().body("모임 최대 인원 수용치를 초과했습니다.");
         if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
-
+        if (meetDto.getMinAge() < 20) return ResponseEntity.badRequest().body("모임 최소나이를 다시 입력해 주세요.");
+        if (meetDto.getMinAge() >= 200) return ResponseEntity.badRequest().body("모임 최대 나이를 다시 입력해 주세요.");
+        if (meetDto.getMeetDate().toLocalDate().isBefore(LocalDate.now())
+                || meetDto.getMeetDate().toLocalTime().isBefore(LocalTime.now()))
+            return ResponseEntity.badRequest().body("모임 시간이 지났습니다. 다시 한 번 입력해 주세요.");
         try {
             Meet createdMeet = null;
 
@@ -98,7 +115,8 @@ public class MeetController {
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
         if (meetDto.getMinAge() < 20) return ResponseEntity.badRequest().body("모임 최소나이를 다시 입력해 주세요.");
         if (meetDto.getMinAge() >= 200) return ResponseEntity.badRequest().body("모임 최대 나이를 다시 입력해 주세요.");
-        if (meetDto.getMeetDate().toLocalTime().isBefore(LocalTime.now()))
+        if (meetDto.getMeetDate().toLocalDate().isBefore(LocalDate.now())
+                || meetDto.getMeetDate().toLocalTime().isBefore(LocalTime.now()))
             return ResponseEntity.badRequest().body("모임 시간이 지났습니다. 다시 한 번 입력해 주세요.");
 
 

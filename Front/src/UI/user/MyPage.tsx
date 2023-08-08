@@ -14,6 +14,7 @@ import Modal from "react-modal";
 import { User } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import DrinkpostMain from "./DrinkPostUseInUser";
+import defaultImg from "../../assets/defaultImg.png";
 import ImageInput from "../components/ImageInput";
 import axios from "axios";
 
@@ -140,6 +141,7 @@ const MyPage = () => {
     userInfo();
     followers();
     myDrinks();
+    localStorage.setItem("chooseMenu", "3");
   }, []);
 
   const [imgFile, setImgFile] = useState(null);
@@ -218,9 +220,11 @@ const MyPage = () => {
     }
   };
 
-  // DM 보내기
+  // DM 창으로 이동
   const directMessageHandler = () => {
-    navigate("/directchat/" + localStorage.getItem("myId") + "/" + userid);
+    if (userid != localStorage.getItem("myId")) {
+      navigate("/directchat/" + localStorage.getItem("myId") + "/" + userid);
+    }
   };
 
   return (
@@ -238,7 +242,7 @@ const MyPage = () => {
         <UserDiv>
           <FlexDivRow>
             <ImgDiv>
-              <Img src={userData.profile == "no image" ? temgif : userData.profile}></Img>
+              <Img src={userData.profile == "no image" ? defaultImg : userData.profile}></Img>
             </ImgDiv>
             <UserImgDiv>
               <p style={{ marginBottom: "0.5rem" }}>{userData!.liverPoint} IU/L</p>

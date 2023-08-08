@@ -17,9 +17,9 @@ const Card = styled.div`
 `;
 
 const CardImage = styled.img`
-  width: 45px;
-  height: 80%;
-  margin: 10px;
+  width: 110%;
+  height: 150%;
+  margin: 1rem;
 `;
 
 const TopTag = styled.div`
@@ -53,7 +53,7 @@ const NameCard = styled.div`
   margin: 5px 5px 5px 5px;
   padding: 5px 0px 5px 0px;
   font-size: 12px;
-  width: 85%;
+  width: 92%;
   height: 7%;
   display: flex;
   justify-content: center;
@@ -92,7 +92,7 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
     }
   };
 
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(8);
   const moveToDrinkDetailHandler = () => {
     navigate(`/drinkpost/${drink.drinkId}`);
   };
