@@ -25,10 +25,8 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 public class MeetService {
-
     private final MeetRepository meetRepository;
     private final MeetUserRepository meetUserRepository;
-
 
     private final S3Service s3Service;
     private final UserService userService;
@@ -42,31 +40,11 @@ public class MeetService {
     private final ChatRoomUserService chatRoomUserService;
     private final ChatMessageService chatMessageService;
 
-    public List<MeetDto> findAll(Pageable pageable) {
-        Page<Meet> list = meetRepository.findAllByOrderByCreatedAtDesc(pageable);
-
-        List<MeetDto> dtos = new ArrayList<>();
-        for (Meet meet : list) {
-            dtos.add(MeetDto.builder()
-                    .meetId(meet.getMeetId())
-                    .meetName(meet.getMeetName())
-                    .description(meet.getDescription())
-                    .hostId(meet.getHostId())
-                    .nowParticipants(meet.getNowParticipants())
-                    .maxParticipants(meet.getMaxParticipants())
-                    .meetDate(meet.getMeetDate())
-                    .tagId(meet.getTag().getTagId())
-                    .sido(meet.getSido())
-                    .gugun(meet.getGugun())
-                    .dong(meet.getDong())
-                    .minAge(meet.getMinAge())
-                    .maxAge(meet.getMaxAge())
-                    .minLiverPoint(meet.getMinLiverPoint())
-                    .drink(meet.getDrink())
-                    .imgSrc(meet.getImgSrc())
-                    .build());
-        }
-        return dtos;
+    public Page<MeetDto> findAll(Pageable pageable) {
+        return meetRepository.findAllByOrderByCreatedAtDesc(pageable);
+    }
+    public Page<MeetDto> findByTagId(Long tagId, Pageable pageable) {
+        return meetRepository.findAllMeetDtosOrderByCreatedAtDesc(tagId, pageable);
     }
 
     public MeetUserDto findMeetUserByMeetId(Long meetId) throws NoSuchFieldException {
@@ -346,5 +324,4 @@ public class MeetService {
 
         meetRepository.save(findMeet);
     }
-
 }

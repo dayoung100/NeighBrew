@@ -3,15 +3,14 @@ package com.ssafy.backend.dto;
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class DrinkReviewDto {
     private Long userId;
     private Long drinkId;
@@ -22,8 +21,8 @@ public class DrinkReviewDto {
         return DrinkReview.builder()
                 .user(user)
                 .drink(drink)
-                .content(content)
-                .img(img)
+                .content(this.content)
+                .img(this.img)
                 .build();
     }
 }
