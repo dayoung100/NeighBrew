@@ -192,7 +192,6 @@ const initialData: MeetDetail = {
     meetId: 0,
     meetName: "",
     description: "",
-    hostId: 0,
     nowParticipants: 0,
     maxParticipants: 8,
     meetDate: "9999-01-01T00:00:00",
