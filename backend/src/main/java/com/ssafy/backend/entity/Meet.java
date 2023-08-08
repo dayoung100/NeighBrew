@@ -141,7 +141,7 @@ public class Meet {
                 .build();
     }
 
-    public MeetSearchDto toUpdateDto() {
+    public MeetSearchDto toSearchDto() {
         return MeetSearchDto.builder()
                 .meetId(this.meetId)
                 .meetName(this.meetName)
