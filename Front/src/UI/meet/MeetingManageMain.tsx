@@ -177,7 +177,7 @@ const MeetingManageMain = () => {
       </Modal>
       <Modal
         isOpen={errorModalOn}
-        onRequestClose={() => setDeleteModalOn(false)}
+        onRequestClose={() => setErrorModalOn(false)}
         style={WhiteModal}
       >
         {errMsg}
