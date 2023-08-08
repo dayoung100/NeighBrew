@@ -26,13 +26,11 @@ public class MeetController {
 
     //태그별로 데이터 조회
     @GetMapping()
-    public ResponseEntity<?> getTagMeet(@RequestParam Long tagId,
+    public ResponseEntity<?> getTagMeet(@RequestParam(name="tagId", required = false, defaultValue = "0") Long tagId,
                                         Pageable pageable){
         if( tagId > 7L || tagId < 0L) return ResponseEntity.badRequest().body("태그ID가 존재하지 않습니다.");
 
         if(pageable.getPageSize() == 20) pageable = Pageable.ofSize(10);
-        log.info("{}에 해당하는 모임 10개 출력 + {}",pageable);
-
         try{
             if(tagId == 0L) return ResponseEntity.ok(meetService.findAll(pageable));
             return ResponseEntity.ok(meetService.findByTagId(tagId, pageable));
