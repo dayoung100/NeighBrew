@@ -1,6 +1,5 @@
 package com.ssafy.backend.service;
 
-
 import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.Enum.UploadType;
@@ -13,9 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -40,59 +39,17 @@ public class MeetService {
     private final ChatRoomService chatRoomService;
     private final ChatRoomUserService chatRoomUserService;
     private final ChatMessageService chatMessageService;
+    private final ModelMapper modelMapper;
 
-    public List<MeetSearchDto> findAll(Pageable pageable) {
-        Page<Meet> data = meetRepository.findAllByOrderByCreatedAtDesc(pageable);
-        List<MeetSearchDto> result = new ArrayList<>();
-        for (Meet meet : data) {
-            result.add(MeetSearchDto.builder().
-                    meetId(meet.getMeetId())
-                    .meetName(meet.getMeetName())
-                    .description(meet.getDescription())
-                    .host(meet.getHost().toUserDto())
-                    .nowParticipants(meet.getNowParticipants())
-                    .maxParticipants(meet.getMaxParticipants())
-                    .meetDate(meet.getMeetDate())
-                    .tagId(meet.getTag().getTagId())
-                    .sido(meet.getSido())
-                    .gugun(meet.getGugun())
-                    .dong(meet.getDong())
-                    .minAge(meet.getMinAge())
-                    .maxAge(meet.getMaxAge())
-                    .minLiverPoint(meet.getMinLiverPoint())
-                    .drink(meet.getDrink())
-                    .imgSrc(meet.getImgSrc())
-                    .chatRoomId(meet.getChatRoom().getChatRoomId())
-                    .build());
-        }
-        return result;
+    public Page<MeetSearchDto> findAll(Pageable pageable) {
+        Page<Meet> meetPage = meetRepository.findAllByOrderByCreatedAtDesc(pageable);
+
+        return meetPage.map(meet -> modelMapper.map(meet, MeetSearchDto.class));
     }
 
-    public List<MeetSearchDto> findByTagId(Long tagId, Pageable pageable) {
+    public Page<MeetSearchDto> findByTagId(Long tagId, Pageable pageable) {
         Page<Meet> data = meetRepository.findByTag_TagIdOrderByCreatedAtDesc(tagId, pageable);
-        List<MeetSearchDto> result = new ArrayList<>();
-        for (Meet meet : data) {
-            result.add(MeetSearchDto.builder().
-                    meetId(meet.getMeetId())
-                    .meetName(meet.getMeetName())
-                    .description(meet.getDescription())
-                    .host(meet.getHost().toUserDto())
-                    .nowParticipants(meet.getNowParticipants())
-                    .maxParticipants(meet.getMaxParticipants())
-                    .meetDate(meet.getMeetDate())
-                    .tagId(meet.getTag().getTagId())
-                    .sido(meet.getSido())
-                    .gugun(meet.getGugun())
-                    .dong(meet.getDong())
-                    .minAge(meet.getMinAge())
-                    .maxAge(meet.getMaxAge())
-                    .minLiverPoint(meet.getMinLiverPoint())
-                    .drink(meet.getDrink())
-                    .imgSrc(meet.getImgSrc())
-                    .chatRoomId(meet.getChatRoom().getChatRoomId())
-                    .build());
-        }
-        return result;
+        return data.map(meet -> modelMapper.map(meet, MeetSearchDto.class));
     }
 
     public MeetUserDto findMeetUserByMeetId(Long meetId) throws NoSuchFieldException {

@@ -29,6 +29,7 @@ public class MeetController {
     @GetMapping()
     public ResponseEntity<?> getTagMeet(@RequestParam(name="tagId", required = false, defaultValue = "0") Long tagId,
                                         Pageable pageable){
+        log.info("{}", pageable.toString());
         if( tagId > 7L || tagId < 0L) return ResponseEntity.badRequest().body("태그ID가 존재하지 않습니다.");
 
         if(pageable.getPageSize() == 20) pageable = Pageable.ofSize(10);
