@@ -40,29 +40,25 @@ const Img = styled.img`
 `;
 
 const Chat = (props: {
-  chooseChat: number;
   chatRoomId: number;
   chatRoomName: string;
   chatRoomDetail(roomId: number): void;
 }) => {
   const navigate = useNavigate();
   const [user, setUsers] = useState([]);
-  const moveToChatRoomHandler = () => {
-    navigate(`/chatList/${props.chatRoomId}`);
-  };
   useEffect(() => {
-    // callApi("GET", `/api/chatroom/${props.chatRoomId}/users`)
-    //   .then(res => {
-    //     setUsers(res.data);
-    //   })
-    //   .catch(e => {
-    //     console.error(e);
-    //   });
+    callApi("GET", `/api/chatroom/${props.chatRoomId}/users`)
+      .then(res => {
+        setUsers(res.data);
+      })
+      .catch(e => {
+        console.error(e);
+      });
   }, []);
   return (
     <ChatDiv onClick={() => props.chatRoomDetail(props.chatRoomId)}>
       <ImgDiv>
-        <Img src={props.chooseChat == 0 ? tempimg : temimg}></Img>
+        <Img src={temimg}></Img>
       </ImgDiv>
       <div style={{}}>
         <div style={{ textAlign: "left" }}>

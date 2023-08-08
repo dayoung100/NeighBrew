@@ -238,7 +238,7 @@ const DirectChat = () => {
       client.current.send(
         `/sub/dm/${user1}/${user2}`,
         {},
-        JSON.stringify({ message: message, userId, user: { userId: userId } })
+        JSON.stringify({ message: message, userId, userNickname: "닉네임" })
       );
       setMessage("");
       scroll();
@@ -250,7 +250,11 @@ const DirectChat = () => {
         client.current.send(
           `/sub/dm/${user1}/${user2}`,
           {},
-          JSON.stringify({ message: message, senderId: userId, userNickname: "닉네임" })
+          JSON.stringify({
+            message: message,
+            senderId: userId,
+            // userNickname: "닉네임",
+          })
         );
         setMessage("");
         scroll();
@@ -270,7 +274,12 @@ const DirectChat = () => {
     callApi("GET", `/api/dm/message/${user1}/${user2}`)
       .then(res => {
         console.log(res.data);
-        setChatRoomName(res.data.messages[0].chatDmRoom.chatDmRoomName);
+        setUsers([res.data.user1, res.data.user2]);
+        setChatRoomName(
+          res.data.user1.userId == localStorage.getItem("myId")
+            ? res.data.user2.nickname
+            : res.data.user1.nickname
+        );
         setMessages(res.data.messages);
       })
       .catch(e => {
@@ -340,7 +349,7 @@ const DirectChat = () => {
             <>
               {chatRoomName}
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
-                &nbsp;&nbsp;&nbsp;&nbsp;4
+                &nbsp;&nbsp;&nbsp;&nbsp;2
               </span>
             </>
           </span>
@@ -368,7 +377,7 @@ const DirectChat = () => {
         <div>
           {users.map((user, i) => {
             return (
-              <UserDiv key={i}>
+              <UserDiv key={i} onClick={() => navigate(`/myPage/${user.userId}`)}>
                 <ImgDiv>
                   <Img src={user.profile == "no image" ? temgif : user.profile}></Img>
                 </ImgDiv>
