@@ -19,8 +19,8 @@ const meetingFind = () => {
   const [meetAllData, setMeetAllData] = useState<Meeting[]>([]);
   //필터링 한 후 모임 정보
   const [meetData, setMeetData] = useState<Meeting[]>([]);
-  //페이징 적용, 새로 받아오는 모임 정보(끝에 도달했는지 확인용)
-  const [meetNewData, setMeetNewData] = useState<Meeting[]>([]);
+  //페이징 적용, 예정된 전체 페이지 수
+  const [totalPage, setTotalPage] = useState(0);
   const [throttle, setThrottle] = useState(false);
 
   //TODO: 무한 스크롤 로직
@@ -36,16 +36,18 @@ const meetingFind = () => {
   };
 
   const { setTarget } = useIntersectionObserver({ onIntersect });
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   useEffect(() => {
     console.log("page:" + page);
     const promise = callApi(
       "get",
-      `api/meet?page=${page}&size=10&tagId=${selectedCategory}`
+      `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`
     );
     promise.then((res) => {
-      setMeetNewData(res.data);
-      setMeetAllData((prev) => [...prev, ...res.data]); //받아온 데이터로 meetAllData 세팅
+      console.dir(res.data.content);
+      // setMeetNewData(res.data.content);
+      setTotalPage(res.data.totalPages);
+      setMeetAllData((prev) => [...prev, ...res.data.content]); //받아온 데이터로 meetAllData 세팅
     });
   }, [page]);
 
@@ -183,12 +185,6 @@ const meetingFind = () => {
     setMeetData(filterData);
   }, [selectedCategory, sido, gugun, dong, startDate, endDate, inputText]);
 
-  //확인용
-  useEffect(() => {
-    console.dir(meetData);
-    console.log(selectedCategory);
-  }, [meetData, selectedCategory]);
-
   return (
     //TODO: 날짜 세팅에 props 설정
     //TODO: 검색창 인풋에 props 설정
@@ -256,9 +252,9 @@ const meetingFind = () => {
             </FilterDiv>
           )}
         </div>
-        {meetData.length >= 1 && <MeetingListItem data={meetData} />}
-        {meetData.length < 1 && <div style={{ minHeight: "100vh" }}></div>}
-        {!throttle && meetNewData.length > 0 && (
+        {meetData.length > 0 && <MeetingListItem data={meetData} />}
+        {meetData.length === 0 && <div style={{ minHeight: "100vh" }}></div>}
+        {!throttle && page <= totalPage && (
           <div
             ref={setTarget}
             style={{
