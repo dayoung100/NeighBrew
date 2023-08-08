@@ -205,6 +205,7 @@ const DirectChat = () => {
       client.current!.subscribe(`/pub/dm/${user1}/${user2}`, res => {
         console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
+        console.log(receivedMessage);
         setMessages((prevMessages: any) => [
           ...prevMessages,
           {
@@ -212,7 +213,7 @@ const DirectChat = () => {
             userId: receivedMessage.userId,
             user: {
               userId: receivedMessage.user.userId,
-              nickname: receivedMessage.user.userNickname,
+              nickname: receivedMessage.user.nickname,
             },
             createdAt:
               new Date().getHours() +
@@ -284,14 +285,6 @@ const DirectChat = () => {
       .catch(e => {
         console.error(e);
       });
-
-    // callApi("GET", `/api/chatroom/${id}`)
-    //   .then(res => {
-    //     setUsers(res.data);
-    //   })
-    //   .catch(e => {
-    //     console.error(e);
-    //   });
   }, []);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
@@ -323,6 +316,9 @@ const DirectChat = () => {
     ismodal ? setIsmodal(false) : setIsmodal(true);
   };
 
+  const outChatHandler = () => {
+    callApi("post", `/pub/dm/{user1id}/{user2Id}/leave`);
+  };
   return (
     <div ref={rapperDiv}>
       <header>

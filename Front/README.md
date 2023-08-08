@@ -47,7 +47,7 @@ export default defineConfig({
 ```
 
 - 설정하고 실행하면 됨 (추후 삭제예정)
-- ngrok http https://localhost:5173 으로 실행
+- ngrok http 5173 으로 실행
 
 ### prettier 설정
 
