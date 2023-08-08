@@ -53,7 +53,7 @@ const ReviewList = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin: 0px 10px 0px 10px;
+  margin: 0px 10px 80px 10px;
 `;
 
 // 리뷰 카드
@@ -80,7 +80,7 @@ const drinkpostMain = () => {
   };
 
   useEffect(() => {
-    callApi("get", "api/drinkreview/likes").then((res) => {
+    callApi("get", "api/drinkreview/likes").then(res => {
       console.log(res.data);
       setReviewList(res.data);
     });
@@ -102,14 +102,9 @@ const drinkpostMain = () => {
           </h3>
         </MdsDiv>
         <DarkWood></DarkWood>
-        <div
-          style={{ margin: "30px 30px 30px 30px" }}
-          onClick={clickTotalDrink}
-        >
+        <div style={{ margin: "30px 30px 30px 30px" }} onClick={clickTotalDrink}>
           <Total>
-            <p style={{ marginBottom: "3%", marginRight: "5%" }}>
-              모든 술 보기 {toForward}
-            </p>
+            <p style={{ marginBottom: "3%", marginRight: "5%" }}>모든 술 보기 {toForward}</p>
           </Total>
         </div>
         <div style={{ margin: "0px 5vw 0px 5vw" }}>
@@ -117,13 +112,8 @@ const drinkpostMain = () => {
             <h3>후기 모아보기</h3>
           </div>
           <ReviewList>
-            {reviewList.map((review) => {
-              return (
-                <ReviewItem
-                  key={review.drinkReviewId}
-                  review={review}
-                ></ReviewItem>
-              );
+            {reviewList.map(review => {
+              return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
             })}
           </ReviewList>
         </div>

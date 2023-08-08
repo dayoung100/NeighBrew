@@ -16,7 +16,7 @@ const ReviewCard = styled.div`
 `;
 
 const ReviewImg = styled.div`
-  background-image: url(${defaultBeerImage});
+  background-color: var(--c-lightgray);
   background-size: cover;
   background-repeat: no-repeat;
   border-radius: 12px;
@@ -54,7 +54,8 @@ const UserImg = styled.img`
 // 길이가 길면 ...으로 표시
 // MoreButton을 누르면 글이 전체로 표시
 const DescriptionP = styled.p`
-  font-size: 0.7375rem;
+  white-space: pre-wrap;
+  font-size: 0.8rem;
   margin-left: 1vw;
   margin-right: 1vw;
   margin-top: 1vh;
@@ -118,14 +119,14 @@ const ReviewItem = ({ review }: { review: Review }) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then((res) => {
+    }).then(res => {
       setLike(res.data);
     });
   }, [token, review.drinkReviewId]);
 
   useEffect(() => {
     callApi("GET", `api/drinkreview/review/${review.drinkReviewId}`)
-      .then((res) => {
+      .then(res => {
         setLikeCount(res.data.likeCount);
       })
       .catch(() => {});
@@ -140,9 +141,9 @@ const ReviewItem = ({ review }: { review: Review }) => {
       },
     }).then(() => {
       if (!like) {
-        setLikeCount((prev) => prev + 1);
+        setLikeCount(prev => prev + 1);
       } else {
-        setLikeCount((prev) => prev - 1);
+        setLikeCount(prev => prev - 1);
       }
     });
     setLike(!like);
@@ -151,7 +152,10 @@ const ReviewItem = ({ review }: { review: Review }) => {
   return (
     <>
       <ReviewCard>
-        <ReviewImg onClick={toReviewDetail}></ReviewImg>
+        <ReviewImg
+          style={{ backgroundImage: `url(${review.img})` }}
+          onClick={toReviewDetail}
+        ></ReviewImg>
         <div style={{ width: "100%" }}>
           <UserCard>
             <div style={{ display: "flex" }}>
