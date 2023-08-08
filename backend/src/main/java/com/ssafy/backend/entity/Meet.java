@@ -1,7 +1,7 @@
 package com.ssafy.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.backend.dto.MeetDto;
+import com.ssafy.backend.dto.MeetSearchDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,8 +24,12 @@ public class Meet {
     @Lob
     private String description;
 
-    @Column(nullable = false)
-    private Long hostId;
+    //    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private User host;
+    @ManyToOne
+    @JoinColumn(name = "hostId", referencedColumnName = "userId")
+    private User host;
 
     //현재 참여 인원
     @Column(nullable = false, columnDefinition = "int default 1")
@@ -75,7 +79,7 @@ public class Meet {
     private ChatRoom chatRoom;
 
     @Builder
-    public Meet(Long meetId, String meetName, String description, Long hostId,
+    public Meet(Long meetId, String meetName, String description, User host,
                 Integer nowParticipants, Integer maxParticipants,
                 LocalDateTime meetDate, Tag tag, String sido, String gugun,
                 String dong, Integer minAge, Integer maxAge, Float minLiverPoint,
@@ -83,7 +87,7 @@ public class Meet {
         this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;
-        this.hostId = hostId;
+        this.host = host;
         this.nowParticipants = nowParticipants;
         this.maxParticipants = maxParticipants;
         this.meetDate = meetDate;
@@ -120,7 +124,29 @@ public class Meet {
                 .meetId(this.meetId)
                 .meetName(this.meetName)
                 .description(this.description)
-                .hostId(this.hostId)
+                .hostId(this.host.getUserId())
+                .nowParticipants(nowParticipants)
+                .maxParticipants(maxParticipants)
+                .meetDate(this.meetDate)
+                .tagId(this.tag.getTagId())
+                .sido(this.sido)
+                .gugun(this.gugun)
+                .dong(this.dong)
+                .minAge(this.minAge)
+                .maxAge(this.maxAge)
+                .minLiverPoint(this.minLiverPoint)
+                .drink(this.drink)
+                .imgSrc(this.imgSrc)
+                .chatRoomId(this.chatRoom.getChatRoomId())
+                .build();
+    }
+
+    public MeetSearchDto toUpdateDto() {
+        return MeetSearchDto.builder()
+                .meetId(this.meetId)
+                .meetName(this.meetName)
+                .description(this.description)
+                .host(this.host.toUserDto())
                 .nowParticipants(nowParticipants)
                 .maxParticipants(maxParticipants)
                 .meetDate(this.meetDate)
