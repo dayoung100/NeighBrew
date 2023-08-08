@@ -55,6 +55,7 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
   const [host, setHost] = useState<User>(initialUser);
 
   useEffect(() => {
+    if (meetData.meetId === undefined || meetData.meetId === null) return;
     const promise = callApi("get", `/api/user/${meetData.hostId}`);
     promise.then((res) => {
       setHost(res.data);
