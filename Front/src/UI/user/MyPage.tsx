@@ -17,7 +17,7 @@ import DrinkpostMain from "./DrinkPostUseInUser";
 import defaultImg from "../../assets/defaultImg.png";
 import ImageInput from "../components/ImageInput";
 import axios from "axios";
-
+import { ToastContainer, toast } from "react-toastify";
 const MyPage = () => {
   const [userData, setUserData] = useState<User>({
     birth: "생년월일",
@@ -42,6 +42,7 @@ const MyPage = () => {
   const [intro, setIntro] = useState("");
   const [birth, setBirth] = useState("");
   const navigate = useNavigate();
+
   // 팔로우 하기
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/guard/${userid}`)
@@ -227,8 +228,36 @@ const MyPage = () => {
     }
   };
 
+  const useNotification = (title, options) => {
+    if (!("Notification" in window)) {
+      return;
+    }
+
+    const fireNotif = () => {
+      /* 권한 요청 부분 */
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            /* 권한을 요청받고 nofi를 생성해주는 부분 */
+            new Notification(title, options);
+          } else {
+            return;
+          }
+        });
+      } else {
+        /* 권한이 있을때 바로 noti 생성해주는 부분 */
+        new Notification(title, options);
+      }
+    };
+    return fireNotif;
+  };
+  const triggerNotif = useNotification("NeighBrew", {
+    body: "알림 테스트 입니다",
+  });
+
   return (
     <>
+      <button onClick={triggerNotif}>알림 테스트</button>
       <header>
         <Navbar modalHandler={modalHandler} userid={parseInt(userid)} />
       </header>

@@ -148,7 +148,12 @@ const Login = () => {
       <WhiteSection>
         {/* 아이콘을 위치시킬 영역 */}
         <ImgDivIcon
-          style={{ position: "relative", top: "-4rem", zIndex: 1, borderRadius: "5rem 5rem 0 0" }}
+          style={{
+            position: "relative",
+            top: "-4rem",
+            zIndex: 1,
+            borderRadius: "5rem 5rem 0 0",
+          }}
         >
           <img src={icon} />
         </ImgDivIcon>

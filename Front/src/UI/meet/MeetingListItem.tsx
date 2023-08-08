@@ -43,7 +43,7 @@ const MeetingListItem = ({ data, isWaiting = false }: MeetingListItemProps) => {
         const meetId = meeting.meetId;
         const tagName = getTagName(meeting.tagId);
         const bgImg =
-          meeting.imgSrc === "" || meeting.imgSrc == null
+          meeting.imgSrc === "no image" || meeting.imgSrc == null
             ? "/src/assets/meetDefaultImg.jpg"
             : meeting.imgSrc;
 

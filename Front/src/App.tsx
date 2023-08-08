@@ -28,6 +28,12 @@ import DrinkpostMain from "./UI/drinkpost/DrinkpostMain";
 import DrinkpostReviewDetail from "./UI/drinkpost/DrinkpostReviewDetail";
 import DirectChat from "./UI/chat/DirectChat";
 import SearchUser from "./UI/user/SearchUser";
+import RatingCreate from "./UI/meetrate/RatingCreate";
+
+import React from "react";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const navigate = useNavigate();
@@ -42,6 +48,7 @@ function App() {
 
   return (
     <>
+      <ToastContainer />
       <Routes>
         <Route
           path="/"
@@ -83,6 +90,8 @@ function App() {
         ></Route>
         <Route path="/drinkpost/total" element={<DrinkpostTotal></DrinkpostTotal>}></Route>
         <Route path="/test" element={<Test></Test>}></Route>
+
+        <Route path="/rating" element={<RatingCreate></RatingCreate>}></Route>
 
         <Route
           path="/drinkpost/:drinkId/:reviewId"

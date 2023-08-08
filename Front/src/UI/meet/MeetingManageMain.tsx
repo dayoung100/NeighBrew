@@ -32,7 +32,7 @@ const WhiteModal = {
     borderRadius: "15px",
     background: "white",
     textAlign: "center",
-    fontFamily: "SeoulNamsan",
+    fontFamily: "NanumSquareNeo",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",
@@ -43,8 +43,8 @@ const WhiteModal = {
 const initialData: Meeting = {
   meetId: 0,
   meetName: "",
-  description: "",
   hostId: 0,
+  description: "",
   nowParticipants: 0,
   maxParticipants: 8,
   meetDate: "0000-01-01T00:00:00",
@@ -59,6 +59,8 @@ const MeetingManageMain = () => {
   const navigate = useNavigate();
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
   const [deleteModalOn, setDeleteModalOn] = useState(false);
+  const [errorModalOn, setErrorModalOn] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
   const [meetData, setMeetData] = useState<Meeting>(initialData);
 
   const GotoMeetInfoManage = (meetId: number) => {
@@ -67,6 +69,10 @@ const MeetingManageMain = () => {
 
   const GotoMemberManage = (meetId: number) => {
     navigate(`/meet/${meetId}/manage/member`);
+  };
+
+  const GoMeetMainHandler = () => {
+    navigate(`/meet`);
   };
 
   useEffect(() => {
@@ -82,6 +88,21 @@ const MeetingManageMain = () => {
       setMeetData(res.data.meetDto)
     );
   }, [meetId]);
+
+  //모임 삭제 요청
+  const DeleteMeeting = async () => {
+    const promise = callApi("delete", `api/meet/delete/${meetId}`, {
+      userId: parseInt(localStorage.getItem("myId")),
+    });
+    promise
+      .then((res) => {
+        GoMeetMainHandler();
+      })
+      .catch((e) => {
+        setErrMsg(e.response.data);
+        setErrorModalOn(true);
+      });
+  };
 
   return (
     <div style={{ fontFamily: "JejuGothic" }}>
@@ -134,6 +155,7 @@ const MeetingManageMain = () => {
         >
           <div
             onClick={() => {
+              DeleteMeeting();
               console.log("삭제 완료");
               setDeleteModalOn(false);
             }}
@@ -152,6 +174,13 @@ const MeetingManageMain = () => {
             아니오
           </div>
         </div>
+      </Modal>
+      <Modal
+        isOpen={errorModalOn}
+        onRequestClose={() => setErrorModalOn(false)}
+        style={WhiteModal}
+      >
+        {errMsg}
       </Modal>
       <Footer />
     </div>

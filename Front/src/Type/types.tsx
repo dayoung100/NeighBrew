@@ -39,7 +39,8 @@ export interface Meeting {
   meetId: number;
   meetName: string;
   description: string;
-  hostId: number;
+  host?: User;
+  hostId?: number;
   nowParticipants: number;
   maxParticipants: number;
   meetDate: string;
@@ -83,4 +84,13 @@ export interface Followers {
   followerId: number; // 그냥 pk임
   follower: User[];
   following: User[];
+}
+
+// 유저 평가 타입
+export interface Evaluation {
+  ratedUser: number;
+  reviewer: number;
+  meetId: number;
+  evaluation: string;
+  description: string;
 }

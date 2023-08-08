@@ -103,10 +103,10 @@ const ChatList = () => {
                 />
               );
             })
-          : chatList.map(chatRoom => {
+          : chatList.map((chatRoom, i) => {
               return (
                 <ChatDM
-                  key={chatRoom.chatRoomId}
+                  key={i}
                   chatRoomDetail={chatDMRoomDetail}
                   user1={chatRoom.user1}
                   user2={chatRoom.user2}
