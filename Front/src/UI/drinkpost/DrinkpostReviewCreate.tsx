@@ -136,7 +136,7 @@ const DrinkpostReviewCreate = () => {
         console.log(res.data);
         navigate(`/drinkpost/${drinkId}`);
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
 
     // callApi("post", "api/drinkreview/guard", {
     //   myInfo: myInfo.userId,
