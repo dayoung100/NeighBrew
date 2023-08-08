@@ -1,7 +1,5 @@
 package com.ssafy.backend.repository;
 
-import com.ssafy.backend.dto.MeetDto;
-import com.ssafy.backend.dto.MeetSearchDto;
 import com.ssafy.backend.entity.Meet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
