@@ -3,7 +3,6 @@ package com.ssafy.backend.controller;
 import com.ssafy.backend.Enum.UploadType;
 import com.ssafy.backend.authentication.application.LoginResponse;
 import com.ssafy.backend.dto.UserDto;
-import com.ssafy.backend.dto.UserSearchDto;
 import com.ssafy.backend.dto.UserUpdateDto;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.service.S3Service;

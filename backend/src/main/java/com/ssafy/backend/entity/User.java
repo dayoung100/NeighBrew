@@ -1,6 +1,7 @@
 package com.ssafy.backend.entity;
 
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
+import com.ssafy.backend.dto.UserChatDto;
 import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.dto.UserUpdateDto;
 import lombok.*;
@@ -10,7 +11,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -126,5 +126,15 @@ public class User {
                 .build();
     }
 
-
+    public UserChatDto toChatDto(){
+        return UserChatDto.builder()
+                .userId(userId)
+                .email(email)
+                .nickname(nickname)
+                .name(name)
+                .intro(intro)
+                .liverPoint(liverPoint)
+                .profile(profile)
+                .build();
+    }
 }
