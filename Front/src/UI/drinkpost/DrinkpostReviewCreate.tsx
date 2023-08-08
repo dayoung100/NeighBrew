@@ -17,13 +17,14 @@ const Navdiv = styled.div`
 `;
 
 const CreateBody = styled.div`
-  border: 2px solid black;
+  width: 100%;
 `;
 
 const InputDiv = styled.div`
-  margin-left: 36px;
+  margin-left: 2rem;
   text-align: start;
   margin-bottom: 30px;
+  margin-right: 2rem;
 `;
 
 const ImageDiv = styled.div`
@@ -40,6 +41,18 @@ const Input = styled.input`
   outline: none;
   &:focus {
     border-bottom: 2px solid #000000;
+  }
+`;
+
+const LongTextInput = styled.textarea`
+  border: 1px solid var(--c-gray);
+  width: 100%;
+  height: 30vh;
+  font-size: 1rem;
+  border-radius: 8px;
+  resize: none;
+  &:focus {
+    border: 2px solid var(--c-black);
   }
 `;
 
@@ -84,7 +97,7 @@ const DrinkpostReviewCreate = () => {
   const [drink, setDrink] = useState<Drink>();
   const [review, setReview] = useState("");
   const [myInfo, setMyInfo] = useState<User>();
-  const reviewHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const reviewHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReview(e.target.value);
   };
   const myId = localStorage.getItem("myId");
@@ -121,22 +134,19 @@ const DrinkpostReviewCreate = () => {
       alert("뭐라도 입력해봐.");
       return;
     }
-    formData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
 
     axios
-      .post("api/drinkreview/guard", formData, {
+      .post("/api/drinkreview/guard", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "multipart/form-data",
         },
       })
       .then(res => {
         console.log(res.data);
         navigate(`/drinkpost/${drinkId}`);
       })
-      .catch(err => console.error(err));
+      .catch(err => console.log(err));
 
     // callApi("post", "api/drinkreview/guard", {
     //   myInfo: myInfo.userId,
@@ -185,7 +195,7 @@ const DrinkpostReviewCreate = () => {
         return response.data;
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
       throw error;
     }
   };
@@ -229,12 +239,19 @@ const DrinkpostReviewCreate = () => {
               <b>후기 작성</b>
             </label>
           </div>
-          <Input
+          {/* <Input
             id="review"
             placeholder="후기 글을 작성해주세요."
             onChange={reviewHandler}
             autoFocus
-          ></Input>
+          ></Input> */}
+          <LongTextInput
+            id="review"
+            value={review}
+            placeholder="후기 글을 작성해주세요."
+            onChange={reviewHandler}
+            autoFocus
+          ></LongTextInput>
         </InputDiv>
         <div style={{ marginLeft: "36px" }}>
           <QuestionDiv style={{ textAlign: "left" }}>
@@ -257,7 +274,15 @@ const DrinkpostReviewCreate = () => {
           </QuestionDiv>
         </div>
 
-        <div onClick={reviewSubmit} style={{ marginTop: "80%" }}>
+        <div
+          onClick={reviewSubmit}
+          style={{
+            position: "fixed",
+            bottom: "40px",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
           <img src={createButton} alt="" />
         </div>
       </CreateBody>
