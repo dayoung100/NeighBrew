@@ -30,6 +30,11 @@ import DirectChat from "./UI/chat/DirectChat";
 import SearchUser from "./UI/user/SearchUser";
 import RatingCreate from "./UI/meetrate/RatingCreate";
 
+import React from "react";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
   const navigate = useNavigate();
   const [isLodaing, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
@@ -43,6 +48,7 @@ function App() {
 
   return (
     <>
+      <ToastContainer />
       <Routes>
         <Route
           path="/"
@@ -59,63 +65,30 @@ function App() {
         <Route path="/meet" element={<MeetingMain />}></Route>
         <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>
         <Route path="/meet/create" element={<MeetingCreate />}></Route>
-        <Route
-          path="/meet/:meetId/manage"
-          element={<MeetingManageMain />}
-        ></Route>
-        <Route
-          path="/meet/:meetId/manage/member"
-          element={<MeetingMemberManage />}
-        ></Route>
-        <Route
-          path="/meet/:meetId/manage/info"
-          element={<MeetingInfoManage />}
-        ></Route>
+        <Route path="/meet/:meetId/manage" element={<MeetingManageMain />}></Route>
+        <Route path="/meet/:meetId/manage/member" element={<MeetingMemberManage />}></Route>
+        <Route path="/meet/:meetId/manage/info" element={<MeetingInfoManage />}></Route>
 
         <Route path="/myPage/:userid" element={<Mypage></Mypage>}></Route>
-        <Route
-          path="/myPage/follower/:userid"
-          element={<Follower></Follower>}
-        ></Route>
-        <Route
-          path="/myPage/follow/:userid"
-          element={<Follow></Follow>}
-        ></Route>
+        <Route path="/myPage/follower/:userid" element={<Follower></Follower>}></Route>
+        <Route path="/myPage/follow/:userid" element={<Follow></Follow>}></Route>
         <Route path="/usersearch" element={<SearchUser></SearchUser>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:id" element={<ChatRoom></ChatRoom>} />
-        <Route
-          path="/directchat/:senderId/:receiverId"
-          element={<DirectChat></DirectChat>}
-        ></Route>
+        <Route path="/directchat/:senderId/:receiverId" element={<DirectChat></DirectChat>}></Route>
 
         <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
         <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
-        <Route
-          path="/google/:str"
-          element={<GoogleLogin></GoogleLogin>}
-        ></Route>
+        <Route path="/google/:str" element={<GoogleLogin></GoogleLogin>}></Route>
 
-        <Route
-          path="/drinkpost/:drinkId"
-          element={<DrinkpostDetail></DrinkpostDetail>}
-        ></Route>
-        <Route
-          path="/drinkpost/create"
-          element={<DrinkpostCreate></DrinkpostCreate>}
-        ></Route>
-        <Route
-          path="/drinkpost/search"
-          element={<DrinkpostSearch></DrinkpostSearch>}
-        ></Route>
+        <Route path="/drinkpost/:drinkId" element={<DrinkpostDetail></DrinkpostDetail>}></Route>
+        <Route path="/drinkpost/create" element={<DrinkpostCreate></DrinkpostCreate>}></Route>
+        <Route path="/drinkpost/search" element={<DrinkpostSearch></DrinkpostSearch>}></Route>
         <Route
           path="/drinkpost/:drinkId/review/create"
           element={<DrinkpostReviewCreate></DrinkpostReviewCreate>}
         ></Route>
-        <Route
-          path="/drinkpost/total"
-          element={<DrinkpostTotal></DrinkpostTotal>}
-        ></Route>
+        <Route path="/drinkpost/total" element={<DrinkpostTotal></DrinkpostTotal>}></Route>
         <Route path="/test" element={<Test></Test>}></Route>
 
         <Route path="/rating" element={<RatingCreate></RatingCreate>}></Route>
