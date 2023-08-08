@@ -359,9 +359,9 @@ const ChatRoom = () => {
             return (
               <UserDiv
                 key={i}
-                // onClick={() => {
-                //   navigate(`/myPage/${user.userId}`);
-                // }}
+                onClick={() => {
+                  navigate(`/myPage/${user.userId}`);
+                }}
               >
                 <ImgDiv>
                   <Img src={user.profile == "no image" ? temgif : user.profile}></Img>

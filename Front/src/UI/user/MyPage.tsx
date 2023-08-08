@@ -17,7 +17,7 @@ import DrinkpostMain from "./DrinkPostUseInUser";
 import defaultImg from "../../assets/defaultImg.png";
 import ImageInput from "../components/ImageInput";
 import axios from "axios";
-
+import { ToastContainer, toast } from "react-toastify";
 const MyPage = () => {
   const [userData, setUserData] = useState<User>({
     birth: "생년월일",
@@ -42,6 +42,7 @@ const MyPage = () => {
   const [intro, setIntro] = useState("");
   const [birth, setBirth] = useState("");
   const navigate = useNavigate();
+
   // 팔로우 하기
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/guard/${userid}`)
@@ -226,9 +227,10 @@ const MyPage = () => {
       navigate("/directchat/" + localStorage.getItem("myId") + "/" + userid);
     }
   };
-
+  const notify = () => toast("Wow so easy!");
   return (
     <>
+      <button onClick={notify}>알림 테스트</button>
       <header>
         <Navbar modalHandler={modalHandler} userid={parseInt(userid)} />
       </header>

@@ -12,6 +12,7 @@
 - ngrok // 테스트용, 추후 삭제 예정
 - @stomp/stompjs
 - sockjs-client
+- react-toastify
 
 ### ngrok 사용법
 
@@ -22,8 +23,10 @@
 -
 
 ### PWA 설치 테스트 하는법
-- npm install @vitejs/plugin-basic-ssl 
+
+- npm install @vitejs/plugin-basic-ssl
 - vite.config.ts
+
 ```
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
@@ -38,8 +41,10 @@ export default defineConfig({
   },
 });
 ```
+
 - 설정하고 실행하면 됨 (추후 삭제예정)
 - ngrok http https://localhost:5173 으로 실행
+
 ### prettier 설정
 
 ```

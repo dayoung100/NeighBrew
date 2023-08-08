@@ -19,37 +19,6 @@ const Test = () => {
       })
       .catch(err => console.log(err));
   };
-  //   const client = useRef<CompatClient>();
-
-  //   const connect = () => {
-  //     client.current = Stomp.over(() => {
-  //       const sock = new SockJS("http://i9b310.p.ssafy.io/ws");
-  //       return sock;
-  //     });
-  //     client.current.connect({}, frame => {
-  //       client.current?.subscribe("/sub/chat/8", message => {
-  //         console.log(message);
-  //       });
-  //     });
-  //   };
-  //   const sendHandler = () => {
-  //     client.current.send(
-  //       "/sub/chat/8/sendMessage",
-  //       {},
-  //       JSON.stringify({
-  //         message: message,
-  //         userId: localStorage.getItem("myId"),
-  //       })
-  //     );
-  //     setMessages("");
-  //   };
-  //   window.onload = function () {
-  //     connect();
-  //   };
-
-  //   window.onbeforeunload = function () {
-  //     disconnect();
-  //   };
   const [message, setMessages] = useState("");
   const inputHandler = e => {
     e.preventDefault();
@@ -59,7 +28,6 @@ const Test = () => {
     <div>
       <h1>Test</h1>
       <input type="text" onChange={inputHandler} />
-      {/* <button onClick={sendHandler}>제출</button> */}
       <button onClick={followHandler}>TESt</button>
     </div>
   );
