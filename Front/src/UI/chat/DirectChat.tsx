@@ -202,7 +202,7 @@ const DirectChat = () => {
       console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
 
       // 웹소켓 이벤트 핸들러 설정
-      client.current!.subscribe(`/pub/dm/${user1}/${user2}/sendMessage`, res => {
+      client.current!.subscribe(`/pub/dm/${user1}/${user2}`, res => {
         console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
         console.log(receivedMessage);
@@ -236,9 +236,9 @@ const DirectChat = () => {
   ) => {
     if (e.type == "click") {
       client.current.send(
-        `/pub/dm/${user1}/${user2}/sendMessage`,
+        `/sub/dm/${user1}/${user2}`,
         {},
-        JSON.stringify({ message: message, userId, user: { userId: userId } })
+        JSON.stringify({ message: message, userId, userNickname: "닉네임" })
       );
       setMessage("");
       scroll();
@@ -248,9 +248,13 @@ const DirectChat = () => {
         // 백엔드에 메시지 전송
         console.log(client);
         client.current.send(
-          `/pub/dm/${user1}/${user2}/sendMessage`,
+          `/sub/dm/${user1}/${user2}`,
           {},
-          JSON.stringify({ message: message, userId, user: { userId: userId } })
+          JSON.stringify({
+            message: message,
+            senderId: userId,
+            // userNickname: "닉네임",
+          })
         );
         setMessage("");
         scroll();
@@ -263,17 +267,26 @@ const DirectChat = () => {
 
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
+    if (parseInt(user1) > parseInt(user2)) {
+      user1 = receiverId;
+      user2 = senderId;
+    }
     callApi("GET", `/api/dm/message/${user1}/${user2}`)
       .then(res => {
         console.log(res.data);
-        setChatRoomName(res.data[0].chatRoom.chatRoomName);
-        setMessages(res.data);
+        setUsers([res.data.user1, res.data.user2]);
+        setChatRoomName(
+          res.data.user1.userId == localStorage.getItem("myId")
+            ? res.data.user2.nickname
+            : res.data.user1.nickname
+        );
+        setMessages(res.data.messages);
       })
       .catch(e => {
         console.error(e);
       });
 
-    // callApi("GET", `/api/chatroom/${id}/users`)
+    // callApi("GET", `/api/chatroom/${id}`)
     //   .then(res => {
     //     setUsers(res.data);
     //   })
@@ -336,7 +349,7 @@ const DirectChat = () => {
             <>
               {chatRoomName}
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
-                &nbsp;&nbsp;&nbsp;&nbsp;4
+                &nbsp;&nbsp;&nbsp;&nbsp;2
               </span>
             </>
           </span>
@@ -364,11 +377,11 @@ const DirectChat = () => {
         <div>
           {users.map((user, i) => {
             return (
-              <UserDiv key={i}>
+              <UserDiv key={i} onClick={() => navigate(`/myPage/${user.userId}`)}>
                 <ImgDiv>
                   <Img src={user.profile == "no image" ? temgif : user.profile}></Img>
                 </ImgDiv>
-                {/* <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p> */}
+                <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
               </UserDiv>
             );
           })}
@@ -410,11 +423,11 @@ const DirectChat = () => {
                 </ChatMyBox>
               ) : (
                 <ChatOtherBox>
-                  {/* <ChatUserName>
+                  <ChatUserName>
                     {message.user?.nickname.includes("@")
                       ? message.user.nickname.split("@")[0]
                       : message.user.nickname}
-                  </ChatUserName> */}
+                  </ChatUserName>
                   <ChatOtherMsg>
                     <OtherChat>{message.message}</OtherChat>
                     <ChatTime>
