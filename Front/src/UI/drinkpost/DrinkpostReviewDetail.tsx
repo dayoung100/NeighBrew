@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { likeIcon, commentIcon, sendIcon } from "./../../assets/AllIcon";
 import CommentItem from "./../components/CommentItem";
 import plusButton from "../../assets/plusButton.svg";
+import NavbarSimple from "../navbar/NavbarSimple";
 
 const LikeAndComment = styled.div`
   display: flex;
