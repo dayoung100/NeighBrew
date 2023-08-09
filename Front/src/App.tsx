@@ -33,35 +33,38 @@ import RatingCreate from "./UI/meetrate/RatingCreate";
 function App() {
   const navigate = useNavigate();
   const [isLodaing, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
-
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(true);
       console.log(isLodaing);
     }, 3000);
   }, []);
+
+  const userid = localStorage.getItem("myId");
   useEffect(() => {
-    const handleStorageChange = (event) => {
-      if (event.key === "myId") {
-        event = new EventSource(
-          `http://i9b310.p.ssafy.io/api/push/connect/${userid}`,
-          {
-            withCredentials: true,
-          }
-        );
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
+    const event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
+      withCredentials: true,
+    });
+    event.addEventListener("open", e => {
+      console.log("연결완료");
+    });
+    event.addEventListener("sse", e => {
+      console.log(e.data);
+    });
+    event.addEventListener("FOLLOW", e => {
+      console.log(JSON.parse(e.data));
+    });
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      event.close();
+      event.removeEventListener("open", () => {});
+      event.removeEventListener("sse", () => {});
+      event.removeEventListener("FOLLOW", () => {});
     };
-  }, []);
+  }, [userid]);
+
   useEffect(() => {
     subscribe();
-  });
-  const userid = localStorage.getItem("myId");
+  }, []);
   const subscribe = () => {
     if (!("Notification" in window)) {
       // 브라우저가 Notification API를 지원하는지 확인한다.
@@ -87,6 +90,7 @@ function App() {
       });
     }
   };
+<<<<<<< Updated upstream
   // 수정된 코드
   useEffect(() => {
     const event = new EventSource(
@@ -110,6 +114,22 @@ function App() {
       event.close();
     };
   }, []); // dependency array가 빈 배열로 설정됨
+=======
+  useEffect(() => {
+    const event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
+      withCredentials: true,
+    });
+    event.addEventListener("open", e => {
+      console.log("연결완료");
+    });
+    event.addEventListener("sse", e => {
+      console.log(e.data);
+    });
+    event.addEventListener("FOLLOW", e => {
+      console.log(JSON.parse(e.data));
+    });
+  }, []);
+>>>>>>> Stashed changes
   return (
     <>
       <Routes>

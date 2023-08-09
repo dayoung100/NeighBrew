@@ -90,6 +90,9 @@ const MyPage = () => {
       .then(() => {
         setBirth(userData.birth == null ? "2003-01-01" : userData.birth);
       })
+      .then(() => {
+        myDrinks();
+      })
       .catch(err => console.log(err));
   };
   const refresh = () => {
@@ -137,7 +140,6 @@ const MyPage = () => {
     refresh();
     userInfo();
     followers();
-    myDrinks();
     localStorage.setItem("chooseMenu", "3");
   }, []);
 

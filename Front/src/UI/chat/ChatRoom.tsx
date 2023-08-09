@@ -410,8 +410,8 @@ const ChatRoom = () => {
                 <ChatOtherBox>
                   <ChatUserName>
                     {message.user?.nickname.includes("@")
-                      ? message.user.nickname.split("@")[0]
-                      : message.user.nickname}
+                      ? message.user?.nickname.split("@")[0]
+                      : message.user?.nickname}
                   </ChatUserName>
                   <ChatOtherMsg>
                     <OtherChat>{message.message}</OtherChat>
