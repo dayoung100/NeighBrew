@@ -34,9 +34,9 @@ public class PushController {
     @GetMapping(value = "/follow/{userId}", produces = "text/event-stream")
     public void pushFollow(@PathVariable Long userId) {
         log.info("왔나");
-        User hb = userRepository.findByUserId(18L).orElseThrow();
+        User hb = userRepository.findByUserId(userId).orElseThrow();
         User wk = userRepository.findByUserId(19L).orElseThrow();
-        pushService.send(wk, hb, PushType.FOLLOW, "유저 2님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
+        pushService.send(wk, hb, PushType.FOLLOW, wk.getName()+"님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
     }
 }
 /* 원격 서버 헤더를 가지고 오고 싶을 경우 origin에 응답해야함
