@@ -1,12 +1,9 @@
-import Navbar from "../navbar/Navbar";
-// import Footer from "../footer/Footer";
 import { useNavigate, useParams } from "react-router-dom";
 import whiskeyImage from "../../assets/whiskeyImage.png";
 import ReviewItem from "../components/ReviewItem";
 import styled from "styled-components";
 import reviewIcon from "../../assets/reviewIcon.svg";
 import { arrowLeftIcon } from "../../assets/AllIcon";
-import sirenIcon from "../../assets/sirenIcon.svg";
 import { callApi } from "../../utils/api";
 import { useState, useEffect, useRef } from "react";
 import { Drink, Review } from "../../Type/types";
@@ -53,66 +50,51 @@ const ImageInfo = styled.div`
   bottom: -12px;
 `;
 
-const CreateReviewDiv = styled.div`
-  display: flex;
-  justify-content: space-between;
-  border: 1px solid var(--c-gray);
-  border-radius: 12px;
-  margin: 30px;
-`;
-
 const NavbarBackIcon = styled.div`
   margin-left: 1rem;
   margin-top: 1rem;
 `;
 
-const CreateReviewButton = styled.div`
-  background-color: var(--c-yellow);
-  border-radius: 12px;
-  width: 30%;
-  height: 100%;
-  margin: 3px 15px 3px 15px;
-  font-size: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const IconAndTextDiv = styled.div`
-  margin: 10px 15px 10px 15px;
-  display: flex;
-  align-items: center;
-  width: 30%;
-`;
-
 const DescriptionP = styled.p`
   margin-top: 20px;
   text-align: start;
-  /* 추가하기 */
-  display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  max-height: 150px;
+  transition: max-height 0.3s ease-in-out;
+
+  // 늘리기
   &.show {
     display: block;
-    max-height: none;
+    max-height: 800px;
     overflow: auto;
     -webkit-line-clamp: unset;
+  }
+
+  // 줄이기
+  &.hide {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 150px; /* 여기에 max-height 추가 */
   }
 `;
 
 const MoreButton = styled.div`
-  max-height: 2rem;
-  line-height: 2rem;
   border: none;
+  display: inline-flex; /* flex를 유지하면서 inline 형태로 만들어 줍니다. */
+  justify-content: flex-end;
+  padding: 0px 0px;
+  color: var(--c-gray);
+  border-radius: 0.5rem;
+  margin-top: 20px;
+  margin-bottom: 0.625rem;
 
-  background: rgb(2, 0, 36);
-  background: linear-gradient(
-    90deg,
-    rgba(2, 0, 36, 1) 0%,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 1) 18%
-  );
+  &:hover {
+    background-color: #e0e0e0;
+  }
+
   &.hide {
     display: none;
   }
@@ -157,22 +139,22 @@ const DrinkpostDetail = () => {
   // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         setDetail(res.data);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
     // callApi("get", reviewUrl)
     // .then(res=> )
   }, []);
 
   useEffect(() => {
     callApi("get", `api/drinkreview/${drinkId}`)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
-        setReviewList(prev => [...prev, ...res.data.content]);
+        setReviewList((prev) => [...prev, ...res.data.content]);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, []);
 
   const transImage = (img: string) => {
@@ -207,18 +189,28 @@ const DrinkpostDetail = () => {
   return (
     <>
       <DrinkThumbnail>
-        <NavbarBackIcon onClick={() => navigate("/drinkpost/")}>{ArrowLeftIcon}</NavbarBackIcon>
+        <NavbarBackIcon onClick={() => navigate("/drinkpost/")}>
+          {ArrowLeftIcon}
+        </NavbarBackIcon>
       </DrinkThumbnail>
       <WholeDiv>
         <InfoDiv>
           <SimpleInfo>
             <div style={{ textAlign: "center", marginLeft: "10vw" }}>
-              <h3 style={{ marginRight: "2vw", textAlign: "start" }}>{detail?.name}</h3>
+              <h3 style={{ marginRight: "2vw", textAlign: "start" }}>
+                {detail?.name}
+              </h3>
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <b style={{ marginRight: "2vw" }}>주종</b>
                 {getTagNameMk2(detail?.tagId)}
               </div>
-              <div style={{ paddingTop: "1vh", display: "flex", justifyContent: "flex-start" }}>
+              <div
+                style={{
+                  paddingTop: "1vh",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                }}
+              >
                 <b style={{ marginRight: "2vw" }}>도수 </b>
                 {detail?.degree}%
               </div>
@@ -254,15 +246,26 @@ const DrinkpostDetail = () => {
             <hr />
             {detail?.description}
           </DescriptionP>
-          {detail?.description.split("\n").length > 4 && (
+          {/* 늘리기 줄이기 토글 */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
             <MoreButton
-              onClick={toggleShowMore}
               className={showMore ? "hide" : ""}
-              style={{ textAlign: "start" }}
+              onClick={toggleShowMore}
             >
-              ...더보기
+              더보기
             </MoreButton>
-          )}
+            <MoreButton
+              className={showMore ? "" : "hide"}
+              onClick={toggleShowMore}
+            >
+              줄이기
+            </MoreButton>
+          </div>
         </div>
 
         <div className="reviewBox">
@@ -277,8 +280,13 @@ const DrinkpostDetail = () => {
               justifyContent: "space-between",
             }}
           >
-            {reviewList.map(review => {
-              return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
+            {reviewList.map((review) => {
+              return (
+                <ReviewItem
+                  key={review.drinkReviewId}
+                  review={review}
+                ></ReviewItem>
+              );
             })}
           </div>
         </div>

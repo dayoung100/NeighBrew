@@ -150,11 +150,11 @@ const DrinkpostReviewDetail = () => {
 
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         setDrink(res.data);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
 
     callApi("get", `api/subreview/list/${reviewId}`)
       .then(res => {
@@ -164,7 +164,10 @@ const DrinkpostReviewDetail = () => {
       .catch(err => console.error(err));
 
     async function summonReview() {
-      const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
+      const response1 = await callApi(
+        "get",
+        `api/drinkreview/review/${reviewId}`
+      );
       setReview(response1.data);
       const userId = response1.data.user.userId;
       const response2 = await callApi("get", `api/follow/follower/${userId}`);
@@ -196,14 +199,14 @@ const DrinkpostReviewDetail = () => {
 
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/guard/${review?.user.userId}`)
-      .then(res => {
+      .then((res) => {
         followers();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
 
   const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
+    callApi("get", `api/follow/follower/${review?.user.userId}`).then((res) => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -253,19 +256,24 @@ const DrinkpostReviewDetail = () => {
   return (
     <>
       <WholeDiv>
-        <h2>{drink?.name}</h2>
+        <NavbarSimple title={drink?.name}></NavbarSimple>
         <Usercard>
-          <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
+          <div
+            onClick={toProfileHandler}
+            style={{ display: "flex", alignItems: "center" }}
+          >
             <div>
               <UserImg src={review?.user.profile}></UserImg>
             </div>
-            {/* <ProfileDiv></ProfileDiv> */}
             <div>
               <b>{review?.user.nickname}</b>
             </div>
           </div>
           <FollowDiv
-            style={{ backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)" }}
+            style={{
+              backgroundColor:
+                following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+            }}
             onClick={followHandler}
           >
             {following === 0 ? "팔로우" : "언팔로우"}
@@ -281,7 +289,9 @@ const DrinkpostReviewDetail = () => {
             {CommentIcon} {subReviewList.length}
           </div>
         </LikeAndComment>
-        <Description className={showMore ? "show" : ""}>{review?.content}</Description>
+        <Description className={showMore ? "show" : ""}>
+          {review?.content}
+        </Description>
         {review?.content.split("\n").length > 4 && (
           <MoreButton
             onClick={toggleShowMore}

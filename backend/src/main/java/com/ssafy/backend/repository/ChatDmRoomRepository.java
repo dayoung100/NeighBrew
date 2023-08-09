@@ -23,15 +23,5 @@ public interface ChatDmRoomRepository extends JpaRepository<ChatDmRoom, Long> {
     @Query("select cdr from ChatDmRoom cdr where cdr.user1.userId = :userId or cdr.user2.userId = :userId")
     Optional<List<ChatDmRoom>> findChatDmRoomById(@Param("userId") Long userId);
 
-    @Transactional
-    @Modifying
-    @Query("UPDATE ChatDmRoom c SET c.user1 = NULL WHERE c.chatDmRoomId = :roomId")
-    void removeUser1FromChatRoom(@Param("roomId") Long roomId);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE ChatDmRoom c SET c.user2 = NULL WHERE c.chatDmRoomId = :roomId")
-    void removeUser2FromChatRoom(@Param("roomId") Long roomId);
-
     Optional<ChatDmRoom> findByUser1_UserIdAndUser2_UserId(Long user1Id, Long user2Id);
 }

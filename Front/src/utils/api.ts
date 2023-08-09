@@ -5,22 +5,22 @@ const api = axios.create({
 });
 // 요청 인터셉터: 토큰을 헤더에 추가
 api.interceptors.request.use(
-  (config) => {
+  config => {
     const token = localStorage.getItem("token");
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  error => Promise.reject(error)
 );
 
 // 응답 인터셉터: 토큰 만료 시 재요청 or 로그인 페이지로 리디렉션
 api.interceptors.response.use(
-  (response) => {
+  response => {
     return response;
   },
-  async (err) => {
+  async err => {
     const originalRequest = err.config;
     if (err.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -58,5 +58,24 @@ export const callApi = async (method: string, url: string, body: any = {}) => {
     url: url,
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     data: body,
+  });
+};
+
+// 알림 관련 함수
+export const noti = (message: string, type: string, url: string) => {
+  navigator.serviceWorker.ready.then(registration => {
+    const notiAlarm = registration.showNotification("알림", {
+      body: "pinyin + '\n' + means",
+      actions: [
+        {
+          title: "화면보기",
+          action: "goTab",
+        },
+        {
+          title: "닫기",
+          action: "close",
+        },
+      ],
+    });
   });
 };

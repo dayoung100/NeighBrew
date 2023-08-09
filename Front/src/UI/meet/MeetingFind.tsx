@@ -19,9 +19,15 @@ const meetingFind = () => {
   const [meetAllData, setMeetAllData] = useState<Meeting[]>([]);
   //필터링 한 후 모임 정보
   const [meetData, setMeetData] = useState<Meeting[]>([]);
-  //페이징 적용, 새로 받아오는 모임 정보(끝에 도달했는지 확인용)
-  const [meetNewData, setMeetNewData] = useState<Meeting[]>([]);
+  const [page, setPage] = useState(0); //페이징용, 0에서 시작
+  const [totalPage, setTotalPage] = useState(0); //페이징용, 예정된 전체 페이지 수
   const [throttle, setThrottle] = useState(false);
+
+  //주종 카테고리 선택
+  const [selectedCategory, setSelectedCategory] = useState(0);
+  const getDrinkCategory = (tagId: number) => {
+    setSelectedCategory(tagId);
+  };
 
   //TODO: 무한 스크롤 로직
   const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
@@ -36,19 +42,31 @@ const meetingFind = () => {
   };
 
   const { setTarget } = useIntersectionObserver({ onIntersect });
-  const [page, setPage] = useState(0);
+
   useEffect(() => {
     console.log("page:" + page);
-    const promise = callApi("get", `api/meet?page=${page}&size=10`);
+    const promise = callApi(
+      "get",
+      `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`
+    );
     promise.then((res) => {
-      setMeetNewData(res.data);
-      setMeetAllData((prev) => [...prev, ...res.data]); //받아온 데이터로 meetAllData 세팅
+      setTotalPage(res.data.totalPages);
+      setMeetAllData((prev) => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
     });
   }, [page]);
 
   useEffect(() => {
-    setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
-  }, [meetAllData]);
+    setPage(0);
+    setTotalPage(1);
+    const promise = callApi(
+      "get",
+      `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`
+    );
+    promise.then((res) => {
+      setTotalPage(res.data.totalPages);
+      setMeetAllData(res.data.content); //받아온 데이터로 meetAllData 초기화
+    });
+  }, [selectedCategory]);
 
   useEffect(() => {
     window.scrollTo({
@@ -56,12 +74,6 @@ const meetingFind = () => {
       behavior: "smooth",
     });
   }, []);
-
-  //주종 카테고리 선택
-  const [selectedCategory, setSelectedCategory] = useState(0);
-  const getDrinkCategory = (tagId: number) => {
-    setSelectedCategory(tagId);
-  };
 
   //필터 애니메이션 관련
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -158,8 +170,7 @@ const meetingFind = () => {
     return data.drink.name === inputText;
   };
 
-  //전체 필터
-  useEffect(() => {
+  const Filtering = () => {
     //전체 목록 중에 필터링 적용
     const filterData = meetAllData.reduce((acc, cur) => {
       //교집합만 push
@@ -178,6 +189,16 @@ const meetingFind = () => {
     }, []);
     //필터링 후 모임들을 meetData에
     setMeetData(filterData);
+  };
+
+  useEffect(() => {
+    setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
+    Filtering();
+  }, [meetAllData]);
+
+  //전체 필터
+  useEffect(() => {
+    Filtering();
   }, [selectedCategory, sido, gugun, dong, startDate, endDate, inputText]);
 
   return (
@@ -247,9 +268,9 @@ const meetingFind = () => {
             </FilterDiv>
           )}
         </div>
-        {meetData.length >= 10 && <MeetingListItem data={meetData} />}
-        {meetData.length < 10 && <div style={{ minHeight: "100vh" }}></div>}
-        {!throttle && meetNewData.length > 0 && (
+        {meetData.length > 0 && <MeetingListItem data={meetData} />}
+        {meetData.length === 0 && <div style={{ minHeight: "100vh" }}></div>}
+        {!throttle && page < totalPage && (
           <div
             ref={setTarget}
             style={{

@@ -4,7 +4,7 @@
 모임 이름, 주종 카테고리, 술 검색, 위치, 시간, 조건, 설명, 이미지 첨부 가능
 */
 import { useState, useRef, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NavbarSimple from "../navbar/NavbarSimple";
 import styled, { css } from "styled-components";
 import DrinkCategory from "../drinkCategory/DrinkCategory";
@@ -21,14 +21,14 @@ import Modal from "react-modal";
 
 const Title = styled.div`
   font-family: "JejuGothic";
-  font-size: 20px;
+  font-size: 24px;
   text-align: left;
   margin-bottom: 0.5rem;
 `;
 
 const SubTitle = styled.div`
-  font-family: SeoulNamsan;
-  font-size: 14px;
+  font-family: "NanumSquareNeo";
+  font-size: 16px;
   text-align: left;
 `;
 
@@ -40,7 +40,7 @@ const ReselectBtn = styled.div`
   background: var(--c-lightgray);
   border-radius: 10px;
   width: 3rem;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   font-size: 15px;
   padding: 0.5rem;
   margin: 0.5rem 0 0 auto;
@@ -53,8 +53,8 @@ const Input = styled.input`
   padding: 2% 0;
   border: none;
   border-bottom: 1px solid var(--c-gray);
-  font-family: "SeoulNamsan";
-  font-size: 14px;
+  font-family: "NanumSquareNeo";
+  font-size: 16px;
   outline: none;
   &::placeholder {
     color: var(--c-gray);
@@ -74,7 +74,8 @@ const DropdownInput = styled.select`
   padding: 1% 3%;
   border: none;
   border-bottom: 1px solid var(--c-gray);
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
+  font-size: 16px;
   outline: none;
   -webkit-appearance: none; /* 화살표 없애기 for chrome*/
   -moz-appearance: none; /* 화살표 없애기 for firefox*/
@@ -90,28 +91,27 @@ const SearchResultDiv = styled.div`
   flex-direction: column;
 `;
 
-const AddBtn = styled.div`
+const OnOffBtn = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  background: var(--c-yellow);
-  width: 5rem;
-  margin: auto auto;
-  padding: 2% 5%;
-  border-radius: 20px;
-  font-family: "SeoulNamsan";
-  font-size: 7px;
+  justify-content: flex-end;
+  position: sticky;
+  bottom: 0;
+  height: 3rem;
+  z-index: 3;
+  padding: 0 1rem;
+  font-family: "NanumSquareNeo";
 `;
 
 const DateAndTimeInputStyle = css`
   color: var(--c-black);
   width: 45%;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   text-align: right;
   border: none;
   border-bottom: 1px solid var(--c-gray);
   background: white;
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
 `;
 
@@ -136,6 +136,12 @@ const CateDiv = styled.div`
   }
 `;
 
+const LimitDiv = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+`;
+
 const InfoTextArea = styled.textarea`
   width: 90%;
   height: 10rem;
@@ -144,7 +150,7 @@ const InfoTextArea = styled.textarea`
   border: 1px solid var(--c-gray);
   border-radius: 15px;
   outline: none;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   font-size: 14px;
   resize: none;
 `;
@@ -152,8 +158,8 @@ const InfoTextArea = styled.textarea`
 const ErrorDiv = styled.div`
   color: red;
   text-align: left;
-  font-family: "SeoulNamsan";
-  font-size: 15px;
+  font-family: "NanumSquareNeo";
+  font-size: 14px;
   padding: 0.5rem;
 `;
 
@@ -169,7 +175,7 @@ const WhiteModal = {
     borderRadius: "15px",
     background: "white",
     textAlign: "center",
-    fontFamily: "SeoulNamsan",
+    fontFamily: "NanumSquareNeo",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -186,7 +192,6 @@ const initialData: MeetDetail = {
     meetId: 0,
     meetName: "",
     description: "",
-    hostId: 0,
     nowParticipants: 0,
     maxParticipants: 8,
     meetDate: "9999-01-01T00:00:00",
@@ -252,25 +257,8 @@ const MeetingCreate = () => {
   const [inputText, setInputText] = useState(""); //검색창에 입력된 텍스트
   const [searchResultList, setSearchResultList] = useState<Drink[]>([]); //주류 검색 결과 리스트
 
-  //입력 확인 또는 검증용
-  const [titleOK, setTitleOK] = useState(false);
-  const [drinkOK, setDrinkOK] = useState(false);
-  const [positionOK, setPositionOK] = useState(false);
-  const [timeOK, setTimeOK] = useState(false);
-  const [numOK, setNumOK] = useState(false);
-  const [liverOK, setLiverOK] = useState(false);
-  const [ageOK, setAgeOK] = useState(false);
-  const [fileOK, setFileOK] = useState(false);
-  const validArray = [
-    titleOK,
-    drinkOK,
-    positionOK,
-    timeOK,
-    numOK,
-    liverOK,
-    ageOK,
-    fileOK,
-  ];
+  //생성 버튼 클릭했는지 - 버튼 한번이라도 클릭 시에만 빨간 가이드 글씨 오픈
+  const [btnClicked, setBtnClicked] = useState(false);
 
   //모임의 정보 초기 세팅
   useEffect(() => {
@@ -326,80 +314,61 @@ const MeetingCreate = () => {
 
   //////////////api 호출 전 각종 데이터 검증//////////////
   //제목: 필수 입력/15자 이내
-  useEffect(() => {
-    if (meetTitle === "" || meetTitle == null || meetTitle.length > 15) {
-      setTitleOK(false);
-    } else setTitleOK(true);
-  }, [meetTitle]);
+  const titleCheck = () => {
+    return !(meetTitle === "" || meetTitle == null || meetTitle.length > 15);
+  };
 
   //술: 필수 입력
-  useEffect(() => {
-    if (selectedDrink.drinkId === 0) {
-      setDrinkOK(false);
-    } else setDrinkOK(true);
-  }, [selectedDrink]);
+  const drinkCheck = () => {
+    return !(selectedDrink.drinkId === 0);
+  };
 
   //위치: 필수 입력
-  useEffect(() => {
-    if (sido === "" || gugun === "" || dong === "") {
-      setPositionOK(false);
-    } else setPositionOK(true);
-  }, [sido, gugun, dong]);
+  const positionCheck = () => {
+    return !(sido === "" || gugun === "" || dong === "");
+  };
 
   //날짜: 필수 입력/현재 시점 이후로
-  useEffect(() => {
-    if (
-      date === "" ||
-      time === "" ||
-      new Date(`${date}T${time}:00`) <
-        new Date(`${localDate()}T${localTime()}:00`)
-    ) {
-      setTimeOK(false);
-    } else setTimeOK(true);
-  }, [date, time]);
+  const timeCheck = () => {
+    return !(date === "" || time === "" || isDateTimeBeforeNow(date, time));
+  };
 
   //최대인원: 필수 입력/최대 8명
-  useEffect(() => {
-    if (maxParticipants === 0 || maxParticipants > 8) {
-      setNumOK(false);
-    } else setNumOK(true);
-  }, [maxParticipants]);
-
-  useEffect(() => {
-    if (maxParticipants === 0 || maxParticipants > 8) {
-      setNumOK(false);
-    } else setNumOK(true);
-  }, [maxParticipants]);
+  const participantsCheck = () => {
+    return !(maxParticipants === 0 || maxParticipants > 8);
+  };
 
   //간수치: 100이하
-  useEffect(() => {
-    if (liverLimit > 100) {
-      setLiverOK(false);
-    } else setLiverOK(true);
-  }, [liverLimit]);
+  const liverLimitCheck = () => {
+    return !(liverLimit > 100);
+  };
 
   //나이: 최소나이는 20세 이상/나이는 200이하
-  useEffect(() => {
-    if (minAge < 20 || maxAge > 200) {
-      setAgeOK(false);
-    } else setAgeOK(true);
-  }, [minAge, maxAge]);
+  const ageCheck = () => {
+    return !(minAge < 20 || maxAge > 200);
+  };
 
-  //이미지: 이미지타입/이미지크기
-  useEffect(() => {
-    if (
+  //이미지: 이미지타입/이미지크기(5MB)
+  const imgcheck = () => {
+    return !(
       file &&
       (file.size > 1024 * 1024 * 5 || !file.type.startsWith("image/"))
-    ) {
-      setFileOK(false);
-    } else setFileOK(true);
-  }, [file]);
+    );
+  };
   //////////////api 호출 전 각종 데이터 검증//////////////
 
   //필수 입력값 검증(위 내용 외에 추가로 모달창 오픈)
   const checkRequiredValue = () => {
     //빨간글씨가 하나라도 있으면 모달 오픈
-    let isValid = validArray.every((el) => el);
+    let isValid =
+      titleCheck() &&
+      drinkCheck() &&
+      positionCheck() &&
+      timeCheck() &&
+      participantsCheck() &&
+      liverLimitCheck() &&
+      ageCheck() &&
+      imgcheck();
     if (!isValid) {
       setErrorMsg("입력값을 확인해주세요.");
       return false;
@@ -426,6 +395,7 @@ const MeetingCreate = () => {
 
   //수정 완료 버튼 클릭 api
   const updateMeeting = async () => {
+    setBtnClicked(true);
     //api 요청 전에 확인
     //입력 값들이 적절한가?
     if (!checkRequiredValue()) {
@@ -522,7 +492,7 @@ const MeetingCreate = () => {
     return date;
   };
 
-  //현재 시간을 받아오기
+  // //현재 시간을 받아오기(UTC9)
   const localTime = () => {
     const time = new Date(
       new Date().getTime() - new Date().getTimezoneOffset() * 60000
@@ -530,6 +500,18 @@ const MeetingCreate = () => {
       .toISOString()
       .slice(11, 16);
     return time;
+  };
+
+  //날짜와 시간 입력 시 현재 날짜, 시간보다 이전인지를 반환(UTC0)
+  const isDateTimeBeforeNow = (date, time) => {
+    try {
+      const targetDateTime = new Date(`${date}T${time}:00`);
+      const currentDateTime = new Date();
+      return targetDateTime < currentDateTime;
+    } catch (error) {
+      console.error("Error:", error);
+      return false;
+    }
   };
 
   return (
@@ -545,7 +527,7 @@ const MeetingCreate = () => {
             value={meetTitle}
             onChange={(e) => setMeetTitle(e.target.value)}
           />
-          {!titleOK && (
+          {!titleCheck() && btnClicked && (
             <ErrorDiv>📌모임 이름은 필수로 입력해야합니다.(15자 이내)</ErrorDiv>
           )}
         </QuestionDiv>
@@ -575,7 +557,7 @@ const MeetingCreate = () => {
                     }}
                   />
                 </div>
-                {!isSearchFocused && !drinkOK && (
+                {!isSearchFocused && btnClicked && !drinkCheck() && (
                   <ErrorDiv>
                     📌한 가지의 주류를 필수적으로 입력해야합니다.
                   </ErrorDiv>
@@ -594,7 +576,7 @@ const MeetingCreate = () => {
                           style={{
                             textAlign: "center",
                             paddingTop: "2rem",
-                            fontFamily: "SeoulNamsan",
+                            fontFamily: "NanumSquareNeo",
                           }}
                         >
                           검색 결과가 없습니다.
@@ -610,19 +592,9 @@ const MeetingCreate = () => {
                         ))
                       )}
                     </div>
-                    <div
-                      style={{
-                        position: "sticky",
-                        bottom: "0",
-                        height: "3rem",
-                        zIndex: "3",
-                      }}
-                    >
-                      <AddBtn>
-                        <img src="/src/assets/plusButton.svg" width="13rem" />
-                        <div>문서 추가하기</div>
-                      </AddBtn>
-                    </div>
+                    <OnOffBtn onClick={() => setIsSearchFocused(false)}>
+                      ▲닫기
+                    </OnOffBtn>
                   </SearchResultDiv>
                 )}
               </div>
@@ -655,8 +627,6 @@ const MeetingCreate = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              fontFamily: "SeoulNamsan",
-              fontSize: "14px",
             }}
           >
             <Title>위치</Title>
@@ -664,6 +634,9 @@ const MeetingCreate = () => {
               value={sido}
               onChange={(e) => setSido(e.target.value)}
             >
+              <option value="-" key="-">
+                -
+              </option>
               <option value="대전" key="대전">
                 대전
               </option>
@@ -679,6 +652,9 @@ const MeetingCreate = () => {
               value={gugun}
               onChange={(e) => setGugun(e.target.value)}
             >
+              <option value="-" key="-">
+                -
+              </option>
               <option value="유성" key="유성">
                 유성
               </option>
@@ -694,6 +670,9 @@ const MeetingCreate = () => {
               value={dong}
               onChange={(e) => setDong(e.target.value)}
             >
+              <option value="-" key="-">
+                -
+              </option>
               <option value="덕명" key="덕명">
                 덕명
               </option>
@@ -706,7 +685,9 @@ const MeetingCreate = () => {
             </DropdownInput>
             동
           </div>
-          {!positionOK && <ErrorDiv>📌위치는 필수 입력 사항입니다.</ErrorDiv>}
+          {!positionCheck() && btnClicked && (
+            <ErrorDiv>📌위치는 필수 입력 사항입니다.</ErrorDiv>
+          )}
         </QuestionDiv>
         <QuestionDiv>
           <Title>시간</Title>
@@ -724,22 +705,16 @@ const MeetingCreate = () => {
               required
             />
           </div>
-          {!timeOK && (
+          {!timeCheck() && btnClicked && (
             <ErrorDiv>
               <div>📌날짜와 시간은 필수 입력 사항입니다.</div>
               <div>(현재 날짜와 시간 이후로만 입력 가능)</div>
             </ErrorDiv>
           )}
         </QuestionDiv>
-        <QuestionDiv style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>
+        <QuestionDiv style={{ fontFamily: "NanumSquareNeo", fontSize: "16px" }}>
           <Title>조건</Title>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "0.5rem",
-            }}
-          >
+          <LimitDiv>
             <SubTitle>최대 인원</SubTitle>
             <InputShort
               value={maxParticipants}
@@ -751,15 +726,12 @@ const MeetingCreate = () => {
                 )
               }
             />
-            명{!numOK && <ErrorDiv>📌필수 입력사항입니다.(8명 이내)</ErrorDiv>}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "0.5rem",
-            }}
-          >
+            명
+            {!participantsCheck() && btnClicked && (
+              <ErrorDiv>📌필수 입력사항입니다.(8명 이내)</ErrorDiv>
+            )}
+          </LimitDiv>
+          <LimitDiv>
             <img src="/src/assets/liverIcon.svg" />
             <SubTitle>간수치</SubTitle>
             <InputShort
@@ -768,15 +740,11 @@ const MeetingCreate = () => {
               onChange={(e) => setLiverLimit(parseInt(e.target.value))}
             />
             IU/L이상
-            {!liverOK && <ErrorDiv>📌100 IU/L 이하</ErrorDiv>}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "0.5rem",
-            }}
-          >
+            {!liverLimitCheck() && btnClicked && (
+              <ErrorDiv>📌100 IU/L 이하</ErrorDiv>
+            )}
+          </LimitDiv>
+          <LimitDiv>
             <img src="/src/assets/age.svg" />
             <SubTitle>나이</SubTitle>
             <InputShort
@@ -791,8 +759,10 @@ const MeetingCreate = () => {
               onChange={(e) => setMaxAge(parseInt(e.target.value))}
             />
             세 미만
-          </div>
-          {!ageOK && <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>}
+          </LimitDiv>
+          {!ageCheck() && btnClicked && (
+            <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>
+          )}
         </QuestionDiv>
         <QuestionDiv>
           <Title>설명</Title>
@@ -804,7 +774,7 @@ const MeetingCreate = () => {
         </QuestionDiv>
         <div>
           <ImageInput key={imgSrc} getFunc={setFile} imgSrc={imgSrc} />
-          {!fileOK && (
+          {!imgcheck() && btnClicked && (
             <ErrorDiv>📌이미지만 업로드 가능합니다.(5MB 이하)</ErrorDiv>
           )}
         </div>

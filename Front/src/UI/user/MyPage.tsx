@@ -3,10 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { meetingicon, brewery } from "../../assets/AllIcon";
-import temgif from "../../assets/tempgif.gif";
 import bottle from "../../assets/bottle.png";
 import liver from "../../assets/liver.png";
-import siren from "../../assets/siren.png";
 import Navbar from "./Navbar";
 import MeetingMy from "./MeetingMyUseInUser";
 import Footer from "../footer/Footer";
@@ -15,9 +13,7 @@ import { User } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import DrinkpostMain from "./DrinkPostUseInUser";
 import defaultImg from "../../assets/defaultImg.png";
-import ImageInput from "../components/ImageInput";
 import axios from "axios";
-
 const MyPage = () => {
   const [userData, setUserData] = useState<User>({
     birth: "생년월일",
@@ -42,6 +38,7 @@ const MyPage = () => {
   const [intro, setIntro] = useState("");
   const [birth, setBirth] = useState("");
   const navigate = useNavigate();
+
   // 팔로우 하기
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/guard/${userid}`)
@@ -571,7 +568,6 @@ const BottleDiv = styled.div<{}>`
   /* height: 100%; */
   overflow: hidden;
   background-image: linear-gradient(to top, #d5a002 50%, #ececec 50%);
-  /* background-size: ${props => "50% " + (props.liverpoint + 80) + "%"}; */
   background-size: 20% 80%;
   animation: fillAnimation 5s forwards;
   @keyframes fillAnimation {
