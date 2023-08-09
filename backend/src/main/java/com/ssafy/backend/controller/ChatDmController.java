@@ -27,20 +27,15 @@ public class ChatDmController {
     }
 
     //dm 방 별로 메세지들을 가져온다.
-    @PostMapping("/message/{user1Id}/{user2Id}")
-    public ResponseEntity<?> getDmMessages(//RequestBody String requestUser,
-                                           //HttpServletRequest request,
-                                           @RequestBody Map<String, Long> request,
+    @GetMapping("/message/{requestUser}/{user1Id}/{user2Id}")
+    public ResponseEntity<?> getDmMessages(@PathVariable Long requestUser,
                                            @PathVariable Long user1Id,
                                            @PathVariable Long user2Id) {
-
-        //String requestUser = (String) request.getAttribute("requestUser");
-        Long requestUser =  request.get("requestUser");
         log.info("request유저{} : {}와{}의 메세지 가져오기", requestUser, user1Id, user2Id);
         try{
             return user1Id.compareTo(user2Id) < 0
-            ? ResponseEntity.ok(chatDmService.findDmMessagesByRoomId(Long.valueOf(requestUser), user1Id, user2Id))
-            : ResponseEntity.ok(chatDmService.findDmMessagesByRoomId(Long.valueOf(requestUser), user2Id, user1Id));
+            ? ResponseEntity.ok(chatDmService.findDmMessagesByRoomId(requestUser, user1Id, user2Id))
+            : ResponseEntity.ok(chatDmService.findDmMessagesByRoomId(requestUser, user2Id, user1Id));
         }catch(Exception e){
             return ResponseEntity.badRequest().body("메세지 정보를 호출하던 중 에러가 발생했습니다.\n" + e.getMessage());
         }
