@@ -51,8 +51,9 @@ const LongTextInput = styled.textarea`
   font-size: 1rem;
   border-radius: 8px;
   resize: none;
+  outline: none;
   &:focus {
-    border: 2px solid var(--c-black);
+    border: 2px solid black;
   }
 `;
 

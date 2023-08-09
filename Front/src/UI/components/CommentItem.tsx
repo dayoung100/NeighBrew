@@ -1,8 +1,12 @@
 import styled from "styled-components";
+import { SubReview, User } from "../../Type/types";
+import { useState, useEffect } from "react";
+import { callApi } from "../../utils/api";
+import { useNavigate } from "react-router-dom";
 
 const WholeDiv = styled.div`
   display: flex;
-  margin: 0px 24px 0px 24px;
+  margin-top: 1vh;
 `;
 
 const ProfileDiv = styled.div`
@@ -23,7 +27,19 @@ const NameAndContent = styled.div`
   width: 88%;
 `;
 
-const commentItem = () => {
+const commentItem = ({ subReview }: { subReview: SubReview }) => {
+  const [user, setUser] = useState<User>();
+  const navigate = useNavigate();
+  const toProfileHandler = () => {
+    navigate;
+  };
+  useEffect(() => {
+    callApi("get", `api/user/${subReview.userId}`)
+      .then(res => {
+        setUser(res.data);
+      })
+      .catch(err => console.error(err));
+  }, []);
   return (
     <>
       <WholeDiv>
@@ -32,12 +48,9 @@ const commentItem = () => {
         </ProfileDiv>
         <NameAndContent>
           <div>
-            <b>회원명</b>
+            <b>{user?.nickname}</b>
           </div>
-          <div>
-            설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명
-            설명설명설명설명설명설명설명설명설명설명설명설명
-          </div>
+          <div>{subReview.content}</div>
         </NameAndContent>
       </WholeDiv>
     </>
