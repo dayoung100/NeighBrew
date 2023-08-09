@@ -20,7 +20,7 @@ public class ChatDmController {
     @GetMapping("/list/{userId}")
     public ResponseEntity<?> getUserDmRooms(@PathVariable Long userId) {
         try{
-            return ResponseEntity.ok(chatDmService.findChatDmRoomsByUserId(userId));
+            return ResponseEntity.ok(chatDmService.findMyDmList(userId));
         }catch(Exception e){
             return ResponseEntity.badRequest().body("DM 정보를 호출하던 중 에러가 발생했습니다.\n" + e.getMessage());
         }
