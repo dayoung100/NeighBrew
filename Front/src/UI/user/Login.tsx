@@ -133,65 +133,25 @@ const Login = () => {
   };
   useEffect(() => {
     localStorage.setItem("chooseMenu", "0");
-    subscribe();
   }, []);
-  const subscribe = () => {
-    if (!("Notification" in window)) {
-      // 브라우저가 Notification API를 지원하는지 확인한다.
-      alert("알림을 지원하지 않는 데스크탑 브라우저입니다");
-      return;
-    }
 
-    if (Notification.permission === "granted") {
-      // 이미 알림 권한이 허가됐는지 확인한다.
-      // 그렇다면, 알림을 표시한다.
-      const notification = new Notification("안녕하세요!");
-      return;
-    }
-
-    // 알림 권한이 거부된 상태는 아니라면
-    if (Notification.permission !== "denied") {
-      // 사용자에게 알림 권한 승인을 요청한다
-      Notification.requestPermission().then(permission => {
-        // 사용자가 승인하면, 알림을 표시한다
-        if (permission === "granted") {
-          const notification = new Notification("알림이 구독되었습니다");
-        }
-      });
-    }
-  };
-  const noti = (message: string) => {
-    navigator.serviceWorker.ready.then(registration => {
-      const notiAlarm = registration.showNotification("알림", {
-        body: "pinyin + '\n' + means",
-        actions: [
-          {
-            title: "화면보기",
-            action: "goTab",
-          },
-          {
-            title: "닫기",
-            action: "close",
-          },
-        ],
-      });
-    });
-  };
-  // const noti = navigator.serviceWorker.ready.then(function (registration) {
-  //   const notiAlarm = registration.showNotification("알림", {
-  //     body: "pinyin + '\n' + means",
-  //     actions: [
-  //       {
-  //         title: "화면보기",
-  //         action: "goTab",
-  //       },
-  //       {
-  //         title: "닫기",
-  //         action: "close",
-  //       },
-  //     ],
+  // const noti = (message: string) => {
+  //   navigator.serviceWorker.ready.then(registration => {
+  //     const notiAlarm = registration.showNotification("알림", {
+  //       body: "pinyin + '\n' + means",
+  //       actions: [
+  //         {
+  //           title: "화면보기",
+  //           action: "goTab",
+  //         },
+  //         {
+  //           title: "닫기",
+  //           action: "close",
+  //         },
+  //       ],
+  //     });
   //   });
-  // });
+  // };
 
   const followHandler = async () => {
     const api = await callApi("get", `api/push/follow/18`)
@@ -202,14 +162,6 @@ const Login = () => {
   };
   return (
     <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
-      <button onClick={subscribe}>adwad</button>
-      <button
-        onClick={() => {
-          noti("알림 테스트");
-        }}
-      >
-        awdawdawd
-      </button>
       <OrangeSection>
         <div style={{ marginBottom: "3rem" }}>
           <img src={NeighBrew} style={{ marginTop: "5rem" }} />
