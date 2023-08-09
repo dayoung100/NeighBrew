@@ -96,13 +96,19 @@ public class ChatDmService {
         Long leaveUserId = jsonNode.get("leaveUserId").asLong();
 
         ChatDmRoom findDmRoom = chatDmRoomRepository.findByUser1_UserIdAndUser2_UserId(user1Id, user2Id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방 입니다."));
+
+        User user1 = userRepository.findById(user1Id)
+                .orElseThrow(() -> new IllegalArgumentException("user1 does not exist."));
+        User user2 = userRepository.findById(user2Id)
+                .orElseThrow(() -> new IllegalArgumentException("user2 does not exist."));
+
         User leaveUser = userRepository.findByUserId(leaveUserId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 입니다."));
 
         //유저 정보가 채팅방에 유저가 1명 남은 상태에서 다시 접근하면 모든 데이터를 지운다.
         if (findDmRoom.getUser1() == null || findDmRoom.getUser2() == null) {
+            log.info("dmRoom과 Message 전부 제거합니다.");
             // DM 테이블 제거
             chatDmRoomRepository.deleteById(findDmRoom.getChatDmRoomId());
-
             //DM 채팅방에 해당하는 모든 Message 삭제
             chatDmMessageRepository.deleteByChatDmRoom_ChatDmRoomId(findDmRoom.getChatDmRoomId());
             //둘 다 나가면 반환 되는 메세지는 없다.
@@ -124,8 +130,8 @@ public class ChatDmService {
 
         //채팅방을 나갔다는 메세지를 전송한다.
         Map<String, Object> result = new HashMap<>();
-        result.put("userId", null);
-        result.put("user", null);
+        result.put("userId", leaveUserId);
+        result.put("user", leaveUser.toChatDto());
         result.put("message", leaveUser.getNickname() + "님이 채팅방을 나갔습니다.");
         return mapper.writeValueAsString(result);
     }

@@ -3,19 +3,22 @@ import SockJS from "sockjs-client";
 import { CompatClient, Stomp, Client } from "@stomp/stompjs";
 import { useState, useRef } from "react";
 const Test = () => {
-  const event = new EventSource("http://i9b310.p.ssafy.io/api/push/connect/11", {
-    withCredentials: true,
-  });
-  event.addEventListener("open", e => {
-    console.log("연결완료");
-  });
-  event.addEventListener("sse", e => {
-    console.log(e.data);
-  });
+  // const event = new EventSource("http://i9b310.p.ssafy.io/api/push/connect/18", {
+  //   withCredentials: true,
+  // });
+  // event.addEventListener("open", e => {
+  //   console.log("연결완료");
+  // });
+  // event.addEventListener("sse", e => {
+  //   console.log(e.data);
+  // });
+  // event.addEventListener("FOLLOW", e => {
+  //   console.log(JSON.parse(e.data));
+  // });
   const followHandler = async () => {
-    const api = await callApi("post", `api/follow/guard/11`)
+    const api = await callApi("get", `api/push/follow/18`)
       .then(res => {
-        // console.log(res.data);
+        console.log(res.data);
       })
       .catch(err => console.log(err));
   };

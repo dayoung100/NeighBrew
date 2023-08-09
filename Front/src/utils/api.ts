@@ -60,3 +60,22 @@ export const callApi = async (method: string, url: string, body: any = {}) => {
     data: body,
   });
 };
+
+// 알림 관련 함수
+export const noti = (message: string, type: string, url: string) => {
+  navigator.serviceWorker.ready.then(registration => {
+    const notiAlarm = registration.showNotification("알림", {
+      body: "pinyin + '\n' + means",
+      actions: [
+        {
+          title: "화면보기",
+          action: "goTab",
+        },
+        {
+          title: "닫기",
+          action: "close",
+        },
+      ],
+    });
+  });
+};

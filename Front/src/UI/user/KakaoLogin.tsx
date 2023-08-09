@@ -16,7 +16,7 @@ const KakaoLogin = () => {
         localStorage.setItem("refreshToken", res.data.refreshToken);
       })
       .then(async () => {
-        await callApi("get", "api/user/guard/myinfo")
+        await callApi("get", "/api/user/guard/myinfo")
           .then(res => {
             localStorage.setItem("myId", JSON.stringify(res.data.userId));
             console.log(res.data);
@@ -31,6 +31,6 @@ const KakaoLogin = () => {
   useEffect(() => {
     KakaologinHandler();
   }, []);
-  return <div>로그인 창입니다 로딩 기다려</div>;
+  return <div>로딩중입니다.</div>;
 };
 export default KakaoLogin;

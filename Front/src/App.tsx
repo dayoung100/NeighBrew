@@ -30,11 +30,6 @@ import DirectChat from "./UI/chat/DirectChat";
 import SearchUser from "./UI/user/SearchUser";
 import RatingCreate from "./UI/meetrate/RatingCreate";
 
-import React from "react";
-
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
 function App() {
   const navigate = useNavigate();
   const [isLodaing, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
@@ -45,10 +40,65 @@ function App() {
       console.log(isLodaing);
     }, 3000);
   }, []);
+  useEffect(() => {
+    const handleStorageChange = event => {
+      if (event.key === "myId") {
+        event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
+          withCredentials: true,
+        });
+      }
+    };
 
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+  useEffect(() => {
+    subscribe();
+  });
+  const userid = localStorage.getItem("myId");
+  const subscribe = () => {
+    if (!("Notification" in window)) {
+      // 브라우저가 Notification API를 지원하는지 확인한다.
+      alert("알림을 지원하지 않는 데스크탑 브라우저입니다");
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      // 이미 알림 권한이 허가됐는지 확인한다.
+      // 그렇다면, 알림을 표시한다.
+      // const notification = new Notification("안녕하세요!");
+      return;
+    }
+
+    // 알림 권한이 거부된 상태는 아니라면
+    if (Notification.permission !== "denied") {
+      // 사용자에게 알림 권한 승인을 요청한다
+      Notification.requestPermission().then(permission => {
+        // 사용자가 승인하면, 알림을 표시한다
+        if (permission === "granted") {
+          const notification = new Notification("알림을 허용하셨습니다.");
+        }
+      });
+    }
+  };
+  const event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
+    withCredentials: true,
+  });
+
+  event.addEventListener("open", e => {
+    console.log("연결완료");
+  });
+  event.addEventListener("sse", e => {
+    console.log(e.data);
+  });
+  event.addEventListener("FOLLOW", e => {
+    console.log(JSON.parse(e.data));
+  });
   return (
     <>
-      <ToastContainer />
       <Routes>
         <Route
           path="/"

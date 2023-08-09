@@ -136,7 +136,7 @@ public class MeetService {
         for (Follow fw : followers) {
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append(hostUser.getName()).append("님께서 회원님께서 모임(").append(createdMeet.getMeetName()).append(")을 생성했습니다.");
-            pushService.send(hostUser, fw.getFollower(), PushType.CREATEMEET, pushMessage.toString(), "이동할 url");
+            pushService.send(hostUser, fw.getFollower(), PushType.MEETCREATED, pushMessage.toString(), "이동할 url");
         }
 
         return createdMeet;
@@ -176,7 +176,7 @@ public class MeetService {
 
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append("모임( ").append(meetDto.getMeetName()).append(")의 내용이 수정되었습니다. 확인해 주세요.");
-            pushService.send(host, user, PushType.MODIFIDEMEET, pushMessage.toString(), "https://i9b310.p.ssafy.io");
+            pushService.send(host, user, PushType.MEETMODIFIDE, pushMessage.toString(), "https://i9b310.p.ssafy.io");
         }
 
     }
@@ -208,12 +208,11 @@ public class MeetService {
 
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append(deleteMeet.getHost().getName() + "님 께서 생성한 모임").append("(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
-            pushService.send(deleteMeet.getHost(), user, PushType.DELETEMEET, pushMessage.toString(), "");
+            pushService.send(deleteMeet.getHost(), user, PushType.MEETDELETED, pushMessage.toString(), "");
         }
 
     }
 
-    @Transactional
     public void applyMeet(Long userId, Long meetId) throws NoSuchFieldException {
         log.info("모임 신청할 정보를 출력한다. : {}, {}", userId, meetId);
 
