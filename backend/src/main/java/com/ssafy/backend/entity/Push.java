@@ -28,8 +28,8 @@ public class Push{
     @Lob
     private String content;
 
-    @Column(name= "content_id", nullable = false)
-    private Long contentId;
+//    @Column(name= "content_id", nullable = false)
+//    private Long contentId;
 
     @Lob
     private String url;
