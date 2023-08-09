@@ -60,7 +60,7 @@ function App() {
     }
   };
 
-  const event = new EventSource("http://i9b310.p.ssafy.io/api/push/connect/11", {
+  const event = new EventSource("https://i9b310.p.ssafy.io/api/push/connect/11", {
     withCredentials: true,
   });
   event.addEventListener("open", e => {
