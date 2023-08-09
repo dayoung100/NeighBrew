@@ -45,10 +45,36 @@ function App() {
       console.log(isLodaing);
     }, 3000);
   }, []);
+  const notify = (message: string) => {
+    // alert("승인함");
+    if (!("Notification" in window)) {
+      alert("승인안함");
+    } else if (Notification.permission === "granted") {
+      const notification = new Notification(message);
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          const notification = new Notification(message);
+        }
+      });
+    }
+  };
 
+  const event = new EventSource("http://i9b310.p.ssafy.io/api/push/connect/11", {
+    withCredentials: true,
+  });
+  event.addEventListener("open", e => {
+    console.log("연결완료");
+  });
+  event.addEventListener("sse", e => {
+    console.log(e.data);
+  });
+  event.addEventListener("FOLLOW", e => {
+    notify(JSON.parse(e.data).content);
+    console.log(JSON.parse(e.data));
+  });
   return (
     <>
-      <ToastContainer />
       <Routes>
         <Route
           path="/"
