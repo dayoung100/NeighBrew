@@ -14,15 +14,22 @@ const ItemDiv = styled.div`
   margin: 0 auto;
   padding: 0.5rem;
   border-bottom: 0.5px solid var(--c-gray);
-  font-family: "SeoulNamsan";
-  font-size: 12px;
+  font-family: "NanumSquareNeo";
+  font-size: 14px;
+`;
+
+const Desc = styled.div`
+  text-align: left;
+  margin-right: 0.5rem;
+  width: 14rem;
 `;
 
 const Tag = styled.div`
   background: var(--c-yellow);
-  padding: 1.5% 7%;
+  padding: 1.5% 3%;
   font-size: 7px;
   border-radius: 10px;
+  width: 3rem;
 `;
 
 //TODO: 어차피 리스트의 객체를 갖고 돌릴꺼니까 getFunc없어도 될듯
@@ -30,7 +37,6 @@ const Tag = styled.div`
 type OneLineListItemProps = {
   content: string; //항목의 이름
   tag: string; //항목이 해당하는 태그(주종, 좋아요/보통/아쉬워요 등)
-  getFunc?: any; //getter 함수. 이 컴포넌트를 클릭시 해당하는 후기나 주류의 정보를 넘겨줌
 };
 
 /**
@@ -38,12 +44,11 @@ type OneLineListItemProps = {
  * 요소 별 구분을 위한 밑줄이 포함되어 있음
  * @property {string} content 항목의 이름
  * @property {string} tag 항목이 해당하는 태그(주종, 좋아요/보통/아쉬워요 등)
- * @property {any} getFunc getter 함수. 이 컴포넌트를 클릭시 해당하는 후기나 주류의 정보를 넘겨줌
  */
 const OneLineListItem = (props: OneLineListItemProps) => {
   return (
     <ItemDiv onClick={() => {}}>
-      <div>{props.content}</div>
+      <Desc>{props.content}</Desc>
       <Tag>{props.tag}</Tag>
     </ItemDiv>
   );

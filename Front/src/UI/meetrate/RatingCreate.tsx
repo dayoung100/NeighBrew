@@ -2,7 +2,9 @@ import { styled } from "styled-components";
 import RatingMember from "./RatingMember";
 import { callApi } from "../../utils/api";
 import { useEffect, useState } from "react";
-import { Evaluation, MeetDetail, User } from "../../Type/types";
+import { useNavigate, useParams } from "react-router-dom";
+import { User } from "../../Type/types";
+import NavbarSimple from "../navbar/NavbarSimple";
 
 const PageName = styled.div`
   font-size: 20px;
@@ -21,7 +23,7 @@ const MemberContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-top: 32px;
+  padding-top: 1rem;
 `;
 
 // 가운데 정렬
@@ -30,7 +32,7 @@ const MemberInfo = styled.div`
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
 `;
 
@@ -52,38 +54,73 @@ const RatingButton = styled.button`
   margin-top: 50px;
 `;
 
-const PostHandler = () => {
-  callApi("POST", "/api/evaluation/guard").then((res) => {
-    console.log(res);
-  });
-};
-
 const RatingCreate = () => {
-  const [meetingDetail, setMeetingDetail] = useState<MeetDetail>();
+  //네비게이터 : 모임 관리 페이지로 이동, 뒤로가기 기능
+  const navigate = useNavigate();
+  const GoMainHandler = () => {
+    navigate(`/`);
+  };
+
   const [users, setUsers] = useState<User[]>();
-  const [evaluation, setEvaluation] = useState<Evaluation[]>();
-  const [selectedButtons, setSelectedButtons] = useState({}); // 사용자별로 선택된 버튼 값을 저장
-  const userId = parseInt(localStorage.getItem("myId"));
+  // const [evaluation, setEvaluation] = useState<Evaluation[]>();
+  const [selectedValues, setSelectedValues] = useState([]); // 사용자별로 선택된 버튼 값을 저장
+  const [meetTitle, setMeetTitle] = useState("");
+  const myId = parseInt(localStorage.getItem("myId"));
+  const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
+
   const evaluationType = {
     1: "GOOD",
     2: "MID",
     3: "BAD",
   };
 
+  const PostHandler = (rateValue) => {
+    callApi("POST", "/api/evaluation/guard", {
+      ratedUser: myId,
+      reviewer: rateValue.userId,
+      meetId: meetId,
+      evaluationType: evaluationType[rateValue.evaluationType],
+      description: rateValue.description,
+    })
+      .then((res) => {
+        console.log(res);
+        GoMainHandler();
+      })
+      .catch((e) => console.log(e));
+  };
 
-  const handleSelectedButton = (userId: number, buttonNumber: number) => {
-    // 사용자 ID와 선택된 버튼 번호를 인자로 받음
-    setSelectedButtons({
-      ...selectedButtons,
-      [userId]: buttonNumber, // 해당 사용자의 선택된 버튼 값을 저장
-    });
+  const handleSelectedButton = (
+    userId: number,
+    buttonNumber: number,
+    desc: string
+  ) => {
+    const newEvaluation = {
+      userId: userId,
+      evaluationType: buttonNumber,
+      description: desc,
+    };
+    const existingIndex = selectedValues.findIndex(
+      (item) => item.userId === userId
+    );
+    //이전에 평가하지 않은 유저를 평가했을 때
+    if (existingIndex === -1) {
+      setSelectedValues((prevValues) => [...prevValues, newEvaluation]);
+    } else {
+      // 같은 userId가 이미 존재하면 해당 객체 업데이트
+      const updatedValues = [...selectedValues];
+      updatedValues[existingIndex] = newEvaluation;
+      setSelectedValues(updatedValues);
+    }
   };
 
   useEffect(() => {
-    callApi("GET", "/api/meet/7")
+    callApi("GET", `/api/meet/${meetId}`)
       .then((res) => {
-        setMeetingDetail(res.data);
-        return res.data.users.filter((user: User) => user.userId !== userId);
+        setMeetTitle(res.data.meetDto.meetName);
+        return res.data.users.filter(
+          (user: User, index) =>
+            user.userId !== myId && res.data.statuses[index] !== "APPLY"
+        );
       })
       .then((users) => {
         setUsers(users);
@@ -91,37 +128,39 @@ const RatingCreate = () => {
       .catch((e) => {});
   }, []);
 
-  // 각 사용자의 선택된 버튼 값을 저장하는 함수
   return (
-    <div
-      style={{
-        paddingTop: "50px",
-        paddingBottom: "50px",
-        paddingLeft: "30px",
-        paddingRight: "30px",
-      }}
-    >
-      <PageName>이번 모임은 어떠셨나요?</PageName>
-      <Title>모임의 제목이 들어갑니다</Title>
-      <MemberContainer>
-        <MemberInfo>모임 참여 멤버 {users?.length}</MemberInfo>
-        {users?.map((user: User) => (
-          <RatingMember
-            key={user.userId}
-            _user={user}
-            onSelectButton={(buttonNumber) =>
-              handleSelectedButton(user.userId, buttonNumber)
-            }
-          />
-        ))}
-      </MemberContainer>
-      <RatingButton
-        onClick={() => {
-          PostHandler();
+    <div>
+      <NavbarSimple title="이번 모임은 어떠셨나요?" />
+      <div
+        style={{
+          paddingBottom: "50px",
+          paddingLeft: "30px",
+          paddingRight: "30px",
         }}
       >
-        등록하기
-      </RatingButton>
+        <Title>{meetTitle}</Title>
+        <MemberContainer>
+          <MemberInfo>함께했던 멤버들은</MemberInfo>
+          {users?.map((user: User) => (
+            <RatingMember
+              key={user.userId}
+              _user={user}
+              onSelectButton={(buttonNumber, desc) =>
+                handleSelectedButton(user.userId, buttonNumber, desc)
+              }
+            />
+          ))}
+        </MemberContainer>
+        <RatingButton
+          onClick={() => {
+            selectedValues.map((rateValue) => {
+              PostHandler(rateValue);
+            });
+          }}
+        >
+          등록하기
+        </RatingButton>
+      </div>
     </div>
   );
 };

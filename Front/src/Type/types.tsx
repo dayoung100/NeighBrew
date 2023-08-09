@@ -86,7 +86,7 @@ export interface Followers {
   following: User[];
 }
 
-// 유저 평가 타입
+// 유저 평가 타입 : 현재 사용 안함
 export interface Evaluation {
   ratedUser: number;
   reviewer: number;
