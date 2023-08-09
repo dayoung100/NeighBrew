@@ -9,6 +9,7 @@ import MeetingMy from "./MeetingMy";
 import MeetingFind from "./MeetingFind";
 import NavbarWithoutSearch from "../navbar/NavbarWithoutSearch";
 import Footer from "../footer/Footer";
+import { callApi } from "../../utils/api";
 
 const TopMenu = styled.div`
   height: 2rem;
@@ -63,6 +64,7 @@ const meetingMain = () => {
   };
 
   useEffect(() => {
+    callApi("POST", "api/user/refresh-token");
     localStorage.setItem("chooseMenu", "0");
   }, []);
 

@@ -213,7 +213,6 @@ public class MeetService {
 
     }
 
-    @Transactional
     public void applyMeet(Long userId, Long meetId) throws NoSuchFieldException {
         log.info("모임 신청할 정보를 출력한다. : {}, {}", userId, meetId);
 
