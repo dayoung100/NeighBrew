@@ -72,8 +72,8 @@ public class MeetService {
         return meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
     }
 
-    public Map<String, List<MeetDto>> findByUserId(Long userId) {
-        Map<String, List<MeetDto>> userMeets = new HashMap<>();
+    public Map<String, List<MeetSearchDto>> findByUserId(Long userId) {
+        Map<String, List<MeetSearchDto>> userMeets = new HashMap<>();
         userMeets.put(Status.APPLY.name(), new ArrayList<>());
         userMeets.put(Status.GUEST.name(), new ArrayList<>());
         userMeets.put(Status.HOST.name(), new ArrayList<>());
@@ -82,11 +82,9 @@ public class MeetService {
 
         for (MeetUser mu : meetUsers) {
             Status status = mu.getStatus();
-
             if (status != Status.FINISH)
-                userMeets.get(status.name()).add(mu.getMeet().toDto());
+                userMeets.get(status.name()).add(mu.getMeet().toSearchDto());
         }
-
         return userMeets;
     }
 
@@ -252,6 +250,10 @@ public class MeetService {
 
         if (applyUserStatus != Status.APPLY) throw new IllegalArgumentException("가입신청중인 유저만 모임 신청을 취소할 수 있습니다.");
 
+        //신청 취소할 경우 참여자 수 -1로 변경
+        meet.setNowParticipants(meet.getNowParticipants()-1);
+        meetRepository.save(meet);
+
         //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
         //푸시알림 로그 삭제
@@ -259,6 +261,7 @@ public class MeetService {
 
     }
 
+    @Transactional
     public void exitMeet(Long userId, Long meetId) {
         log.info("유저 {}가 모임({})에서 나간다.", userId, meetId);
 
@@ -272,6 +275,11 @@ public class MeetService {
 
         //chat_room_user도 사라진다.
         Meet nowMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 모임 정보입니다."));
+
+        //모임에서 나갈 경우 참여자 수 -1로 변경
+        nowMeet.setNowParticipants(nowMeet.getNowParticipants()-1);
+        meetRepository.save(nowMeet);
+
         chatRoomService.deleteExistUser(nowMeet.getChatRoom(), userId);
     }
 
