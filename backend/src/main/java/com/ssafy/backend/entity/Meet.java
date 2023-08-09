@@ -51,8 +51,6 @@ public class Meet {
     private String sido;
     @Column(nullable = false)
     private String gugun;
-    @Column(nullable = false)
-    private String dong;
 
     private Integer minAge;
     private Integer maxAge;
@@ -81,8 +79,7 @@ public class Meet {
     @Builder
     public Meet(Long meetId, String meetName, String description, User host,
                 Integer nowParticipants, Integer maxParticipants,
-                LocalDateTime meetDate, Tag tag, String sido, String gugun,
-                String dong, Integer minAge, Integer maxAge, Float minLiverPoint,
+                LocalDateTime meetDate, Tag tag, String sido, String gugun, Integer minAge, Integer maxAge, Float minLiverPoint,
                 Drink drink, String imgSrc) {
         this.meetId = meetId;
         this.meetName = meetName;
@@ -94,7 +91,6 @@ public class Meet {
         this.tag = tag;
         this.sido = sido;
         this.gugun = gugun;
-        this.dong = dong;
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.minLiverPoint = minLiverPoint;
@@ -110,7 +106,6 @@ public class Meet {
         this.tag = meet.getTag();
         this.sido = meet.getSido();
         this.gugun = meet.getGugun();
-        this.dong = meet.getDong();
         this.minAge = meet.getMinAge();
         this.maxAge = meet.getMaxAge();
         this.minLiverPoint = meet.getMinLiverPoint();
@@ -131,7 +126,6 @@ public class Meet {
                 .tagId(this.tag.getTagId())
                 .sido(this.sido)
                 .gugun(this.gugun)
-                .dong(this.dong)
                 .minAge(this.minAge)
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)
@@ -153,7 +147,6 @@ public class Meet {
                 .tagId(this.tag.getTagId())
                 .sido(this.sido)
                 .gugun(this.gugun)
-                .dong(this.dong)
                 .minAge(this.minAge)
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)
