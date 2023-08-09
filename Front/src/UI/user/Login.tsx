@@ -9,8 +9,11 @@ import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가�
 import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+<<<<<<< Updated upstream
 import LoginImg from "../../assets/Login/Login.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import { registerServiceWorker } from "../../serviceWorker.js";
+=======
+>>>>>>> Stashed changes
 
 const ImgDiv = styled.div`
   width: 20%;
@@ -95,7 +98,7 @@ const Login = () => {
   const KakaologinHandler = async () => {
     axios({
       method: "get",
-      url: "api/auth/login/kakao",
+      url: "http://localhost:8080/api/auth/login/kakao",
     })
       .then(res => {
         const url = res.data.URL;
@@ -134,6 +137,7 @@ const Login = () => {
   useEffect(() => {
     localStorage.setItem("chooseMenu", "0");
   }, []);
+<<<<<<< Updated upstream
 
   // useEffect(() => {
   //   registerServiceWorker();
@@ -176,6 +180,10 @@ const Login = () => {
   return (
     <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
       <button onClick={followHandler}>테스트</button>
+=======
+  return (
+    <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+>>>>>>> Stashed changes
       <OrangeSection>
         <div style={{ marginBottom: "3rem" }}>
           <img src={NeighBrew} style={{ marginTop: "5rem" }} />

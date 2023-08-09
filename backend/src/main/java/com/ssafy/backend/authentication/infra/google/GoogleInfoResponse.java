@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.Getter;
-import org.apache.catalina.connector.Response;
+
+import java.util.UUID;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true) // 필요한 데이터만 가져옴
