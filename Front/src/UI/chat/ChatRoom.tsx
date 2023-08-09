@@ -181,6 +181,7 @@ const ChatRoom = () => {
   const userId = parseInt(localStorage.getItem("myId"));
   const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState("");
+  const [chatRoomId, setChatRoomId] = useState(0);
   const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
@@ -192,13 +193,10 @@ const ChatRoom = () => {
     });
 
     client.current.connect({}, () => {
-      console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
 
       // 웹소켓 이벤트 핸들러 설정
       client.current!.subscribe(`/pub/room/${id}`, res => {
-        console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
-        console.log(receivedMessage);
         setMessages((prevMessages: any) => [
           ...prevMessages,
           {
@@ -239,7 +237,6 @@ const ChatRoom = () => {
       if (e.code === "Enter" || e.keyCode === 13) {
         if (message === "") return;
         // 백엔드에 메시지 전송
-        console.log(client);
         client.current.send(
           `/sub/chat/${id}/sendMessage`,
           {},
@@ -258,8 +255,8 @@ const ChatRoom = () => {
   useEffect(() => {
     callApi("GET", `api/chatMessage/${id}/messages`)
       .then(res => {
-        console.log(res.data);
         setChatRoomName(res.data[0].chatRoom.chatRoomName);
+        setChatRoomId(res.data[0].chatRoom.chatRoomId);
         setMessages(res.data);
       })
       .catch(e => {
@@ -303,7 +300,10 @@ const ChatRoom = () => {
   const chaterInfoHandler = () => {
     ismodal ? setIsmodal(false) : setIsmodal(true);
   };
-
+  const leaveRoom = () => {
+    navigate("/chatList");
+    client.current.send(`/sub/room/${chatRoomId}/leave`, {}, JSON.stringify({ userId }));
+  };
   return (
     <div ref={rapperDiv}>
       <header>
@@ -329,7 +329,7 @@ const ChatRoom = () => {
             <>
               {chatRoomName}
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
-                &nbsp;&nbsp;&nbsp;&nbsp;4
+                &nbsp;&nbsp;&nbsp;&nbsp;{users.length}
               </span>
             </>
           </span>
@@ -373,7 +373,7 @@ const ChatRoom = () => {
         </div>
         <div style={{ position: "fixed", top: "80%" }}>
           {/* <button onClick={OutRoomHandler}>채팅방 나가기</button> */}
-          <img src={exitImg} alt="" />
+          <img src={exitImg} alt="" onClick={leaveRoom} />
         </div>
       </RightModal>
       <div
@@ -410,8 +410,8 @@ const ChatRoom = () => {
                 <ChatOtherBox>
                   <ChatUserName>
                     {message.user?.nickname.includes("@")
-                      ? message.user.nickname.split("@")[0]
-                      : message.user.nickname}
+                      ? message.user?.nickname.split("@")[0]
+                      : message.user?.nickname}
                   </ChatUserName>
                   <ChatOtherMsg>
                     <OtherChat>{message.message}</OtherChat>

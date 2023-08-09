@@ -1,9 +1,12 @@
-import { Review, Drink, User } from "../../Type/types";
+import { Review, Drink, SubReview } from "../../Type/types";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { callApi } from "../../utils/api";
 import styled from "styled-components";
-import { likeIcon, commentIcon } from "./../../assets/AllIcon";
+import { likeIcon, commentIcon, sendIcon } from "./../../assets/AllIcon";
+import CommentItem from "./../components/CommentItem";
+import plusButton from "../../assets/plusButton.svg";
+import NavbarSimple from "../navbar/NavbarSimple";
 
 const LikeAndComment = styled.div`
   display: flex;
@@ -60,45 +63,6 @@ const FollowDiv = styled.div`
   align-items: center;
 `;
 
-// const ProfileDiv = styled.div`
-//   width: 12%;
-//   aspect-ratio: 1/1;
-//   border-radius: 30px;
-//   background-color: var(--c-lightgray);
-//   margin-right: 4%;
-// `;
-
-// {
-//   content: "리뷰",
-//   drink: {
-//     degree: 0,
-//     description: "술 설명",
-//     drinkId: 0,
-//     image: "술 설명",
-//     name: "술 이름",
-//     tagId: 0,
-//   },
-//   drinkReviewId: 0,
-//   img: "이미지",
-//   user: {
-//     userId: 0,
-//     email: "이메일",
-//     nickname: "닉네임",
-//     name: "이름",
-//     birth: "생년월일",
-//     intro: "한줄",
-//     liverPoint: 0,
-//     profile: "프로필",
-//     follower: 0,
-//     following: 0,
-//     createdAt: "생성일",
-//     updatedAt: "수정일",
-//     oauthProvider: "오어스프로바이더",
-//     drinkcount: 1,
-//   },
-//   likeCount: 0,
-// }
-
 const UserImg = styled.img`
   width: 2.5rem;
   height: 2.5rem;
@@ -123,14 +87,63 @@ const MoreButton = styled.div`
   }
 `;
 
+const SubReviewCreateDiv = styled.div`
+  background-color: var(--c-lightgray);
+  border-radius: 20px;
+  text-align: start;
+  height: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const RoundBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 10%;
+
+  background: var(--c-yellow);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100px;
+  z-index: 10;
+
+  @media (max-width: 430px) {
+    right: 5%;
+  }
+  @media (min-width: 431px) {
+    left: 350px;
+  }
+`;
+
+const SubReviewInput = styled.input`
+  border: none;
+  width: 80%;
+  /* border-bottom: 1px solid var(--c-black); */
+  background-color: var(--c-lightgray);
+  font-size: 1.2rem;
+  outline: none;
+  &:focus {
+    border: none;
+    /* border-bottom: 2px solid black; */
+  }
+`;
+
 const DrinkpostReviewDetail = () => {
   const LikeIcon = likeIcon();
   const CommentIcon = commentIcon();
+  const SendIcon = sendIcon();
   const { drinkId, reviewId } = useParams();
   const [review, setReview] = useState<Review>();
   const [drink, setDrink] = useState<Drink>();
   const [following, setFollowing] = useState(0);
   const [showMore, setShowMore] = useState(false);
+  const [isSubReview, setIsSubReview] = useState(false);
+  const [subReviewList, setSubReviewList] = useState<SubReview[]>([]);
+  const [comment, setComment] = useState("");
+  const [postable, setPostable] = useState(false);
   const toggleShowMore = () => {
     setShowMore(!showMore);
   };
@@ -138,14 +151,24 @@ const DrinkpostReviewDetail = () => {
 
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         setDrink(res.data);
+      })
+      .catch((err) => console.error(err));
+
+    callApi("get", `api/subreview/list/${reviewId}`)
+      .then(res => {
+        console.log(res.data);
+        setSubReviewList(prev => [...prev, ...res.data]);
       })
       .catch(err => console.error(err));
 
     async function summonReview() {
-      const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
+      const response1 = await callApi(
+        "get",
+        `api/drinkreview/review/${reviewId}`
+      );
       setReview(response1.data);
       const userId = response1.data.user.userId;
       const response2 = await callApi("get", `api/follow/follower/${userId}`);
@@ -177,14 +200,14 @@ const DrinkpostReviewDetail = () => {
 
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/guard/${review?.user.userId}`)
-      .then(res => {
+      .then((res) => {
         followers();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
 
   const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
+    callApi("get", `api/follow/follower/${review?.user.userId}`).then((res) => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -207,6 +230,26 @@ const DrinkpostReviewDetail = () => {
     navigate(`/myPage/${review?.user.userId}`);
   };
 
+  const commentHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setComment(e.target.value);
+    setPostable(e.target.value.trim() !== "");
+  };
+
+  const submitHandler = () => {
+    if (postable === false) {
+      return;
+    }
+    setComment("");
+    callApi("post", "api/subreview/guard/write", {
+      content: comment.trim(),
+      drinkReviewId: reviewId,
+    })
+      .then(res => {
+        console.log(res.data);
+        setSubReviewList(prev => [...prev, res.data]);
+      })
+      .catch(err => console.error(err));
+  };
   // useEffect(() => {
   //   callApi("get", ``);
   // });
@@ -214,19 +257,24 @@ const DrinkpostReviewDetail = () => {
   return (
     <>
       <WholeDiv>
-        <h2>{drink?.name}</h2>
+        <NavbarSimple title={drink?.name}></NavbarSimple>
         <Usercard>
-          <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
+          <div
+            onClick={toProfileHandler}
+            style={{ display: "flex", alignItems: "center" }}
+          >
             <div>
               <UserImg src={review?.user.profile}></UserImg>
             </div>
-            {/* <ProfileDiv></ProfileDiv> */}
             <div>
               <b>{review?.user.nickname}</b>
             </div>
           </div>
           <FollowDiv
-            style={{ backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)" }}
+            style={{
+              backgroundColor:
+                following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+            }}
             onClick={followHandler}
           >
             {following === 0 ? "팔로우" : "언팔로우"}
@@ -238,11 +286,13 @@ const DrinkpostReviewDetail = () => {
             {LikeIcon} {review?.likeCount}
           </div>
 
-          <div>
-            {CommentIcon} {review?.drinkReviewId}
+          <div onClick={() => setIsSubReview(!isSubReview)}>
+            {CommentIcon} {subReviewList.length}
           </div>
         </LikeAndComment>
-        <Description className={showMore ? "show" : ""}>{review?.content}</Description>
+        <Description className={showMore ? "show" : ""}>
+          {review?.content}
+        </Description>
         {review?.content.split("\n").length > 4 && (
           <MoreButton
             onClick={toggleShowMore}
@@ -253,6 +303,30 @@ const DrinkpostReviewDetail = () => {
           </MoreButton>
         )}
         <hr />
+        {isSubReview && (
+          <SubReviewCreateDiv>
+            <SubReviewInput
+              id="subreview"
+              placeholder="댓글을 남겨주세요."
+              onChange={commentHandler}
+              value={comment}
+            ></SubReviewInput>
+            <div
+              onClick={submitHandler}
+              style={{ height: "100%", display: "flex", alignItems: "center" }}
+            >
+              <p style={{ color: postable ? "#329BD6" : "#000000" }}>Post</p>
+            </div>
+          </SubReviewCreateDiv>
+        )}
+        <div className="subReviewList">
+          {subReviewList.map((subReview, i) => {
+            return <CommentItem key={i} subReview={subReview}></CommentItem>;
+          })}
+        </div>
+        <RoundBtn onClick={() => setIsSubReview(!isSubReview)}>
+          <img src={plusButton} width="25rem" />
+        </RoundBtn>
       </WholeDiv>
     </>
   );

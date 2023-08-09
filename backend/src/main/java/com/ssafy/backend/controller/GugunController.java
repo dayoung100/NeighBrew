@@ -16,7 +16,7 @@ import java.util.List;
 public class GugunController {
     private final GugunService gugunService;
 
-    @GetMapping("/guguns/{sidoCode}")
+    @GetMapping("/{sidoCode}")
     public List<Gugun> getGugunsBySidoCode(@PathVariable Integer sidoCode) {
         return gugunService.getGugunsBySidoCode(sidoCode);
     }
