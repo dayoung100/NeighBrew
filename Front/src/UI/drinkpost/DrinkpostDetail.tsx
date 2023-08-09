@@ -8,6 +8,7 @@ import { callApi } from "../../utils/api";
 import { useState, useEffect, useRef } from "react";
 import { Drink, Review } from "../../Type/types";
 import backgroundImg from "../../assets/mdsimg.png";
+import plusButton from "../../assets/plusButton.svg";
 
 const WholeDiv = styled.div`
   border-radius: 30px 30px 0px 0px;
@@ -96,6 +97,27 @@ const MoreButton = styled.div`
 
   &.hide {
     display: none;
+  }
+`;
+
+const RoundBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 10%;
+
+  background: var(--c-yellow);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100px;
+  z-index: 10;
+
+  @media (max-width: 430px) {
+    right: 5%;
+  }
+  @media (min-width: 431px) {
+    left: 350px;
   }
 `;
 
@@ -215,11 +237,7 @@ const DrinkpostDetail = () => {
             </div>
           </SimpleInfo>
           <ImageInfo>
-            <img
-              src={transImage(detail?.image)}
-              alt=""
-              style={{ width: "34vh", height: "48vh" }}
-            />
+            <img src={transImage(detail?.image)} alt="" style={{ width: "28vh", height: "40vh" }} />
           </ImageInfo>
         </InfoDiv>
 
@@ -272,6 +290,9 @@ const DrinkpostDetail = () => {
             })}
           </div>
         </div>
+        <RoundBtn onClick={() => navigate(`/drinkpost/${drinkId}/review/create`)}>
+          <img src={plusButton} width="25rem" />
+        </RoundBtn>
       </WholeDiv>
       {/* <Footer></Footer> */}
     </>
