@@ -77,4 +77,10 @@ public class DrinkController {
         log.info("drinkUpdateDto: {}", drinkUpdateDto);
         return ResponseEntity.ok(drinkService.updateDrink(drinkId, drinkUpdateDto));
     }
+
+    //MD'S PICK 3개 랜덤으로 꺼내줌
+    @GetMapping("/mdPick")
+    public ResponseEntity<?> mdPick() throws IllegalArgumentException {
+        return ResponseEntity.ok(drinkService.pickRandomDrinks());
+    }
 }
