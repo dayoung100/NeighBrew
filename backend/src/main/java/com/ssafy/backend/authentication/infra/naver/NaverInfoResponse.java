@@ -8,6 +8,8 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.Getter;
 
+import java.util.UUID;
+
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NaverInfoResponse implements OAuthInfoResponse {
@@ -51,4 +53,6 @@ public class NaverInfoResponse implements OAuthInfoResponse {
     public OAuthProvider getOAuthProvider() {
         return OAuthProvider.NAVER;
     }
+
+
 }

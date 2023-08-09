@@ -9,7 +9,6 @@ import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가�
 import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import LoginImg from "../../assets/Login/Login.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import { registerServiceWorker } from "../../serviceWorker.js";
 
 const ImgDiv = styled.div`
@@ -95,7 +94,7 @@ const Login = () => {
   const KakaologinHandler = async () => {
     axios({
       method: "get",
-      url: "api/auth/login/kakao",
+      url: "/api/auth/login/kakao",
     })
       .then(res => {
         const url = res.data.URL;
@@ -176,6 +175,7 @@ const Login = () => {
   return (
     <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
       <button onClick={followHandler}>테스트</button>
+
       <OrangeSection>
         <div style={{ marginBottom: "3rem" }}>
           <img src={NeighBrew} style={{ marginTop: "5rem" }} />
