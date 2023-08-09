@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -53,20 +55,44 @@ public class OAuthLoginService {
 
     // 해당 이메일로 user의 id를 반환
     private Long findOrCreateUser(OAuthInfoResponse oAuthInfoResponse) {
+        log.info(oAuthInfoResponse.getEmail());
+        log.info(oAuthInfoResponse.getNickname());
+        log.info(oAuthInfoResponse.getName());
+
         return userRepository.findByEmail(oAuthInfoResponse.getEmail())
                 .map(User::getUserId)
                 .orElseGet(() -> newUser(oAuthInfoResponse));
     }
 
     private Long newUser(OAuthInfoResponse oAuthInfoResponse) {
-        User user = User.builder()
-                .email(oAuthInfoResponse.getEmail())
-                .name(oAuthInfoResponse.getName())
-                .nickname(oAuthInfoResponse.getNickname())
-                .oAuthProvider(oAuthInfoResponse.getOAuthProvider())
-                .build();
+        if (oAuthInfoResponse.getEmail() == null) {
+            String uuid = String.valueOf(UUID.randomUUID()).substring(0, 7);
 
-        return userRepository.save(user).getUserId();
+            User user = User.builder()
+                    .email(oAuthInfoResponse.getName())
+                    .name(oAuthInfoResponse.getName())
+                    .nickname(oAuthInfoResponse.getName() + uuid)
+                    .oAuthProvider(oAuthInfoResponse.getOAuthProvider())
+                    .build();
+            return userRepository.save(user).getUserId();
+
+        }else{
+            User user = User.builder()
+                    .email(oAuthInfoResponse.getEmail())
+                    .name(oAuthInfoResponse.getName())
+                    .nickname(oAuthInfoResponse.getNickname())
+                    .oAuthProvider(oAuthInfoResponse.getOAuthProvider())
+                    .build();
+            return userRepository.save(user).getUserId();
+
+        }
+
+
+
+
+
+
+
     }
 
 
