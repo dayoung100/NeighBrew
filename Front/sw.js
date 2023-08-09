@@ -12,6 +12,16 @@ self.addEventListener("fetch", e => {
   console.log("[Service Worker] fetched resource " + e.request.url);
 });
 
+// navigator.serviceWorker
+//   .register("sw.js")
+//   .then(function (registration) {
+//     console.log("Service worker successfully registered.");
+//     return registration;
+//   })
+//   .catch(function (err) {
+//     console.error("Unable to register service worker.", err);
+//   });
+
 // self.addEventListener("push", event => {
 //   const options = {
 //     body: event.data.text(),
