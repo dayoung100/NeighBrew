@@ -16,7 +16,7 @@ const KakaoLogin = () => {
         localStorage.setItem("refreshToken", res.data.refreshToken);
       })
       .then(async () => {
-        await callApi("get", "api/user/guard/myinfo")
+        await callApi("get", "/api/user/guard/myinfo")
           .then(res => {
             localStorage.setItem("myId", JSON.stringify(res.data.userId));
             console.log(res.data);
