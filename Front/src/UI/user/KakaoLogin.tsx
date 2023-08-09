@@ -8,7 +8,7 @@ const KakaoLogin = () => {
   const KakaologinHandler = async () => {
     const code = location.search.split("=")[1];
     axios
-      .post("http://localhost:8080/api/auth/kakao", {
+      .post("/api/auth/kakao", {
         authorizationCode: code,
       })
       .then(res => {
@@ -16,7 +16,7 @@ const KakaoLogin = () => {
         localStorage.setItem("refreshToken", res.data.refreshToken);
       })
       .then(async () => {
-        await callApi("get", "http://localhost:8080/api/user/guard/myinfo")
+        await callApi("get", "/api/user/guard/myinfo")
           .then(res => {
             localStorage.setItem("myId", JSON.stringify(res.data.userId));
             console.log(res.data);
