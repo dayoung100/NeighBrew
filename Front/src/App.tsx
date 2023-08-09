@@ -40,24 +40,54 @@ function App() {
       console.log(isLodaing);
     }, 3000);
   }, []);
-  const notify = (message: string) => {
-    // alert("승인함");
+  useEffect(() => {
+    const handleStorageChange = event => {
+      if (event.key === "myId") {
+        event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
+          withCredentials: true,
+        });
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+  useEffect(() => {
+    subscribe();
+  });
+  const userid = localStorage.getItem("myId");
+  const subscribe = () => {
     if (!("Notification" in window)) {
-      alert("승인안함");
-    } else if (Notification.permission === "granted") {
-      const notification = new Notification(message);
-    } else if (Notification.permission !== "denied") {
+      // 브라우저가 Notification API를 지원하는지 확인한다.
+      alert("알림을 지원하지 않는 데스크탑 브라우저입니다");
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      // 이미 알림 권한이 허가됐는지 확인한다.
+      // 그렇다면, 알림을 표시한다.
+      // const notification = new Notification("안녕하세요!");
+      return;
+    }
+
+    // 알림 권한이 거부된 상태는 아니라면
+    if (Notification.permission !== "denied") {
+      // 사용자에게 알림 권한 승인을 요청한다
       Notification.requestPermission().then(permission => {
+        // 사용자가 승인하면, 알림을 표시한다
         if (permission === "granted") {
-          const notification = new Notification(message);
+          const notification = new Notification("알림을 허용하셨습니다.");
         }
       });
     }
   };
-
-  const event = new EventSource("https://i9b310.p.ssafy.io/api/push/connect/11", {
+  const event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
     withCredentials: true,
   });
+
   event.addEventListener("open", e => {
     console.log("연결완료");
   });
@@ -65,7 +95,6 @@ function App() {
     console.log(e.data);
   });
   event.addEventListener("FOLLOW", e => {
-    notify(JSON.parse(e.data).content);
     console.log(JSON.parse(e.data));
   });
   return (

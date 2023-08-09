@@ -134,36 +134,23 @@ const Login = () => {
     localStorage.setItem("chooseMenu", "0");
   }, []);
 
-  // useEffect(() => {
-  //   registerServiceWorker();
-
-  //   // 웹 푸시 알림 보내기
-  //   const sendPushNotification = async () => {
-  //     if ("PushManager" in window && "serviceWorker" in navigator) {
-  //       try {
-  //         const registration = await navigator.serviceWorker.ready;
-  //         const subscription = await registration.pushManager.subscribe({
-  //           userVisibleOnly: true,
-  //           applicationServerKey:
-  //             "BNNIll2m9BAaOc7s_AJCWgtkUVs8jZh226He056wEi95Wn8uuyrXeOTa4CGyl1WK26d9shkhCeK7YFKEguT4xOE",
-  //         });
-
-  //         // 서버로 구독 정보 전송 (옵션)
-  //         // fetch('/subscribe', {
-  //         //   method: 'POST',
-  //         //   body: JSON.stringify(subscription),
-  //         //   headers: {
-  //         //     'Content-Type': 'application/json',
-  //         //   },
-  //         // });
-  //       } catch (error) {
-  //         console.error("Error subscribing to push notifications:", error);
-  //       }
-  //     }
-  //   };
-
-  //   sendPushNotification();
-  // }, []);
+  // const noti = (message: string) => {
+  //   navigator.serviceWorker.ready.then(registration => {
+  //     const notiAlarm = registration.showNotification("알림", {
+  //       body: "pinyin + '\n' + means",
+  //       actions: [
+  //         {
+  //           title: "화면보기",
+  //           action: "goTab",
+  //         },
+  //         {
+  //           title: "닫기",
+  //           action: "close",
+  //         },
+  //       ],
+  //     });
+  //   });
+  // };
 
   const followHandler = async () => {
     const api = await callApi("get", `api/push/follow/18`)
