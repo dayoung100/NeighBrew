@@ -192,13 +192,10 @@ const ChatRoom = () => {
     });
 
     client.current.connect({}, () => {
-      console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
 
       // 웹소켓 이벤트 핸들러 설정
       client.current!.subscribe(`/pub/room/${id}`, res => {
-        console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
-        console.log(receivedMessage);
         setMessages((prevMessages: any) => [
           ...prevMessages,
           {
@@ -239,7 +236,6 @@ const ChatRoom = () => {
       if (e.code === "Enter" || e.keyCode === 13) {
         if (message === "") return;
         // 백엔드에 메시지 전송
-        console.log(client);
         client.current.send(
           `/sub/chat/${id}/sendMessage`,
           {},
@@ -258,7 +254,6 @@ const ChatRoom = () => {
   useEffect(() => {
     callApi("GET", `api/chatMessage/${id}/messages`)
       .then(res => {
-        console.log(res.data);
         setChatRoomName(res.data[0].chatRoom.chatRoomName);
         setMessages(res.data);
       })
