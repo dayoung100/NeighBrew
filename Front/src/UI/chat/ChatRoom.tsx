@@ -181,6 +181,7 @@ const ChatRoom = () => {
   const userId = parseInt(localStorage.getItem("myId"));
   const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState("");
+  const [chatRoomId, setChatRoomId] = useState(0);
   const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
@@ -255,6 +256,7 @@ const ChatRoom = () => {
     callApi("GET", `api/chatMessage/${id}/messages`)
       .then(res => {
         setChatRoomName(res.data[0].chatRoom.chatRoomName);
+        setChatRoomId(res.data[0].chatRoom.chatRoomId);
         setMessages(res.data);
       })
       .catch(e => {
@@ -298,7 +300,10 @@ const ChatRoom = () => {
   const chaterInfoHandler = () => {
     ismodal ? setIsmodal(false) : setIsmodal(true);
   };
-
+  const leaveRoom = () => {
+    navigate("/chatList");
+    client.current.send(`/sub/room/${chatRoomId}/leave`, {}, JSON.stringify({ userId }));
+  };
   return (
     <div ref={rapperDiv}>
       <header>
@@ -324,7 +329,7 @@ const ChatRoom = () => {
             <>
               {chatRoomName}
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
-                &nbsp;&nbsp;&nbsp;&nbsp;4
+                &nbsp;&nbsp;&nbsp;&nbsp;{users.length}
               </span>
             </>
           </span>
@@ -368,7 +373,7 @@ const ChatRoom = () => {
         </div>
         <div style={{ position: "fixed", top: "80%" }}>
           {/* <button onClick={OutRoomHandler}>채팅방 나가기</button> */}
-          <img src={exitImg} alt="" />
+          <img src={exitImg} alt="" onClick={leaveRoom} />
         </div>
       </RightModal>
       <div
