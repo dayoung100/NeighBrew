@@ -33,10 +33,7 @@ public class ChatDmService {
     private String neighbrewUrl;
 
     //DM 목록 조회
-
-    //public Map<String, Object> findChatDmRoomsByUserId(Long userId) {
-    //Map<String, Object> result = new HashMap<>();
-    public List<ChatDmRoom> findChatDmRoomsByUserId(Long userId) {
+    public List<ChatDmRoom> findMyDmList(Long userId) {
         List<ChatDmRoom> dmList = chatDmRoomRepository.findChatDmRoomById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
 
         List<ChatDmRoom> result = new ArrayList<>();
@@ -44,12 +41,12 @@ public class ChatDmService {
             //떠난 기록이 있을 경우 내 목록에서 제외한다.
             if(cdr.getUser1().getUserId() == userId){
                 if(cdr.getUser1AttendTime() != null) result.add(cdr);
-            }else{
+            }else if (cdr.getUser2().getUserId() == userId){
                 if(cdr.getUser2AttendTime() != null) result.add(cdr);
             }
         }
 
-        return dmList;
+        return result;
     }
 
     public Map<String, Object> findDmMessagesByRoomId(Long requestUser, Long user1Id, Long user2Id) {
