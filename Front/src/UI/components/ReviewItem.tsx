@@ -211,11 +211,6 @@ const ReviewItem = ({ review }: { review: Review }) => {
           </UserCard>
           <div style={{ textAlign: "start" }}>
             <DescriptionP className={showMore ? "show" : ""}>{review?.content}</DescriptionP>
-            {/* {review?.content.length > 100 && (
-              <MoreButton onClick={toggleShowMore} className={showMore ? "hide" : ""}>
-                ...더보기
-              </MoreButton> */}
-            {/* )} */}
           </div>
         </div>
       </ReviewCard>

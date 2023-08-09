@@ -84,3 +84,11 @@ export interface Followers {
   follower: User[];
   following: User[];
 }
+
+export interface SubReview {
+  subReviewId: number;
+  content: string;
+  createdAt: string;
+  drinkReview: Review;
+  userId: number;
+}

@@ -9,10 +9,32 @@ import DrinkpostCreateButton from "./DrinkpostCreateButton";
 import { useNavigate } from "react-router-dom";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
+import plusButton from "../../assets/plusButton.svg";
 
 const ShowcaseBody = styled.div`
   font-size: 14px;
   margin-left: 1vw;
+`;
+
+const RoundBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 10%;
+
+  background: var(--c-yellow);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100px;
+  z-index: 10;
+
+  @media (max-width: 430px) {
+    right: 5%;
+  }
+  @media (min-width: 431px) {
+    left: 350px;
+  }
 `;
 
 // 무한 스크롤
@@ -83,7 +105,10 @@ const drinkpostTotal = () => {
           }}
         ></div>
       </ShowcaseBody>
-      <DrinkpostCreateButton></DrinkpostCreateButton>
+      <RoundBtn>
+        <img src={plusButton} width="25rem" />
+      </RoundBtn>
+      {/* <DrinkpostCreateButton></DrinkpostCreateButton> */}
       <Footer></Footer>
     </>
   );
