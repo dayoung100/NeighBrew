@@ -82,7 +82,7 @@ function App() {
     // 알림 권한이 거부된 상태는 아니라면
     if (Notification.permission !== "denied") {
       // 사용자에게 알림 권한 승인을 요청한다
-      Notification.requestPermission().then((permission) => {
+      Notification.requestPermission().then(permission => {
         // 사용자가 승인하면, 알림을 표시한다
         if (permission === "granted") {
           const notification = new Notification("알림을 허용하셨습니다.");
@@ -90,46 +90,7 @@ function App() {
       });
     }
   };
-<<<<<<< Updated upstream
-  // 수정된 코드
-  useEffect(() => {
-    const event = new EventSource(
-      `http://i9b310.p.ssafy.io/api/push/connect/${userid}`,
-      {
-        withCredentials: true,
-      }
-    );
 
-    event.addEventListener("open", (e) => {
-      console.log("연결완료");
-    });
-    event.addEventListener("sse", (e) => {
-      console.log(e.data);
-    });
-    event.addEventListener("FOLLOW", (e) => {
-      console.log(JSON.parse(e.data));
-    });
-
-    return () => {
-      event.close();
-    };
-  }, []); // dependency array가 빈 배열로 설정됨
-=======
-  useEffect(() => {
-    const event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
-      withCredentials: true,
-    });
-    event.addEventListener("open", e => {
-      console.log("연결완료");
-    });
-    event.addEventListener("sse", e => {
-      console.log(e.data);
-    });
-    event.addEventListener("FOLLOW", e => {
-      console.log(JSON.parse(e.data));
-    });
-  }, []);
->>>>>>> Stashed changes
   return (
     <>
       <Routes>
@@ -148,69 +109,33 @@ function App() {
         <Route path="/meet" element={<MeetingMain />}></Route>
         <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>
         <Route path="/meet/create" element={<MeetingCreate />}></Route>
-        <Route
-          path="/meet/:meetId/manage"
-          element={<MeetingManageMain />}
-        ></Route>
-        <Route
-          path="/meet/:meetId/manage/member"
-          element={<MeetingMemberManage />}
-        ></Route>
-        <Route
-          path="/meet/:meetId/manage/info"
-          element={<MeetingInfoManage />}
-        ></Route>
+        <Route path="/meet/:meetId/manage" element={<MeetingManageMain />}></Route>
+        <Route path="/meet/:meetId/manage/member" element={<MeetingMemberManage />}></Route>
+        <Route path="/meet/:meetId/manage/info" element={<MeetingInfoManage />}></Route>
 
         <Route path="/myPage/:userid" element={<Mypage></Mypage>}></Route>
-        <Route
-          path="/myPage/follower/:userid"
-          element={<Follower></Follower>}
-        ></Route>
-        <Route
-          path="/myPage/follow/:userid"
-          element={<Follow></Follow>}
-        ></Route>
+        <Route path="/myPage/follower/:userid" element={<Follower></Follower>}></Route>
+        <Route path="/myPage/follow/:userid" element={<Follow></Follow>}></Route>
         <Route path="/usersearch" element={<SearchUser></SearchUser>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:id" element={<ChatRoom></ChatRoom>} />
-        <Route
-          path="/directchat/:senderId/:receiverId"
-          element={<DirectChat></DirectChat>}
-        ></Route>
+        <Route path="/directchat/:senderId/:receiverId" element={<DirectChat></DirectChat>}></Route>
 
         <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
         <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
-        <Route
-          path="/google/:str"
-          element={<GoogleLogin></GoogleLogin>}
-        ></Route>
+        <Route path="/google/:str" element={<GoogleLogin></GoogleLogin>}></Route>
 
-        <Route
-          path="/drinkpost/:drinkId"
-          element={<DrinkpostDetail></DrinkpostDetail>}
-        ></Route>
-        <Route
-          path="/drinkpost/create"
-          element={<DrinkpostCreate></DrinkpostCreate>}
-        ></Route>
-        <Route
-          path="/drinkpost/search"
-          element={<DrinkpostSearch></DrinkpostSearch>}
-        ></Route>
+        <Route path="/drinkpost/:drinkId" element={<DrinkpostDetail></DrinkpostDetail>}></Route>
+        <Route path="/drinkpost/create" element={<DrinkpostCreate></DrinkpostCreate>}></Route>
+        <Route path="/drinkpost/search" element={<DrinkpostSearch></DrinkpostSearch>}></Route>
         <Route
           path="/drinkpost/:drinkId/review/create"
           element={<DrinkpostReviewCreate></DrinkpostReviewCreate>}
         ></Route>
-        <Route
-          path="/drinkpost/total"
-          element={<DrinkpostTotal></DrinkpostTotal>}
-        ></Route>
+        <Route path="/drinkpost/total" element={<DrinkpostTotal></DrinkpostTotal>}></Route>
         <Route path="/test" element={<Test></Test>}></Route>
 
-        <Route
-          path="/rating/:meetId"
-          element={<RatingCreate></RatingCreate>}
-        ></Route>
+        <Route path="/rating/:meetId" element={<RatingCreate></RatingCreate>}></Route>
 
         <Route
           path="/drinkpost/:drinkId/:reviewId"
