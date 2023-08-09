@@ -161,8 +161,6 @@ const Login = () => {
   };
   return (
     <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
-      <button onClick={followHandler}>테스트</button>
-
       <OrangeSection>
         <div style={{ marginBottom: "3rem" }}>
           <img src={NeighBrew} style={{ marginTop: "5rem" }} />
