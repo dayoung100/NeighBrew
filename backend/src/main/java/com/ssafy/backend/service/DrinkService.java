@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,5 +76,22 @@ public class DrinkService {
                 .map(DrinkReview::getDrink)
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+
+    public List<Drink> pickRandomDrinks() {
+        List<Drink> allDrinks = drinkRepository.findAll(); // 전체 술 리스트 가져오기
+        List<Drink> randomDrinks = new ArrayList<>(); // 랜덤하게 선택된 술들을 담을 리스트
+
+        int numToPick = Math.min(3, allDrinks.size()); // 최대 3개까지 선택하되, 실제 술 리스트 크기보다 작거나 같아야 함
+        List<Drink> shuffledDrinks = new ArrayList<>(allDrinks); // 술 리스트를 복사하여 셔플할 리스트 생성
+
+        Collections.shuffle(shuffledDrinks, new Random()); // 슐 리스트를 셔플하여 랜덤한 순서로 섞기
+
+        for (int i = 0; i < numToPick; i++) {
+            randomDrinks.add(shuffledDrinks.get(i)); // 셔플된 리스트에서 앞에서부터 술 선택하여 결과 리스트에 추가
+        }
+
+        return randomDrinks;
     }
 }
