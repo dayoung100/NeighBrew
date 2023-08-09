@@ -31,6 +31,6 @@ const KakaoLogin = () => {
   useEffect(() => {
     KakaologinHandler();
   }, []);
-  return <div>로그인 창입니다 로딩 기다려</div>;
+  return <div>로딩중입니다.</div>;
 };
 export default KakaoLogin;

@@ -166,30 +166,16 @@ const Login = () => {
   //   sendPushNotification();
   // }, []);
 
-  const notify = () => {
-    // alert("승인함");
-    if (!("Notification" in window)) {
-      alert("승인안함");
-    } else if (Notification.permission === "granted") {
-      const notification = new Notification("알림 테스트");
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          const notification = new Notification("알림 테스트");
-        }
-      });
-    }
+  const followHandler = async () => {
+    const api = await callApi("get", `api/push/follow/18`)
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => console.log(err));
   };
-  const adapt = () => {
-    notify();
-  };
-  useEffect(() => {
-    setTimeout(() => {
-      adapt();
-    }, 2000);
-  });
   return (
     <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+      <button onClick={followHandler}>테스트</button>
       <OrangeSection>
         <div style={{ marginBottom: "3rem" }}>
           <img src={NeighBrew} style={{ marginTop: "5rem" }} />
