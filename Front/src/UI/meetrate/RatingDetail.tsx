@@ -57,7 +57,10 @@ const OffBtn = styled(OnOffBtn)`
   height: 3rem;
 `;
 
-const RatingDetail = (props: { ratingNum: number }) => {
+const RatingDetail = (props: {
+  ratingNum: number;
+  getFunc(desc: string): void;
+}) => {
   const [listOpen, setListOpen] = useState(true); //세부 선택 창이 열렸는가?
   const [selectedDetail, setSelectedDetail] = useState(""); //선택된 세부 의견
 
@@ -67,9 +70,14 @@ const RatingDetail = (props: { ratingNum: number }) => {
       setSelectedDetail(""); //초기화
     }
     if (props.ratingNum === 1 || props.ratingNum === 3) {
+      setSelectedDetail(""); //초기화
       setListOpen(true);
     }
   }, [props.ratingNum]);
+
+  useEffect(() => {
+    props.getFunc(selectedDetail);
+  }, [selectedDetail]);
 
   const goodList = [
     { id: 1, content: "시간약속을 잘 지켜요" },
@@ -136,9 +144,21 @@ const RatingDetail = (props: { ratingNum: number }) => {
         <CloseDiv>
           <CloseTitle>세부</CloseTitle>
           <CloseDesc>{selectedDetail}</CloseDesc>
-          {selectedDetail && (
-            <OnBtn onClick={() => setListOpen(true)}>▼열기</OnBtn>
-          )}
+          {(props.ratingNum === 1 || props.ratingNum === 3) &&
+            !selectedDetail && (
+              <OnBtn onClick={() => setListOpen(true)}>▼열기</OnBtn>
+            )}
+          {(props.ratingNum === 1 || props.ratingNum === 3) &&
+            selectedDetail && (
+              <OnBtn
+                onClick={() => {
+                  setSelectedDetail("");
+                  setListOpen(true);
+                }}
+              >
+                ❌취소
+              </OnBtn>
+            )}
         </CloseDiv>
       )}
     </div>

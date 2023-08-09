@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 import { MeetDetail } from "../../Type/types";
 import { useEffect, useState } from "react";
 import { callApi } from "../../utils/api";
+import RatingDetail from "./RatingDetail";
 
 const MemberProfile = styled.div`
   display: flex;
@@ -44,8 +45,8 @@ const RadioContainer = styled.div`
   flex-direction: row;
   justify-content: space-around;
   width: 100%;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  /* margin-top: 20px; */
+  margin-bottom: 10px;
 `;
 
 // 라디오 버튼
@@ -66,29 +67,19 @@ const RadioButton = styled.button<{ selected: boolean }>`
 
 const RatingMember = ({ _user, onSelectButton }) => {
   const [meetingDetail, setMeetingDetail] = useState<MeetDetail>();
-  const [selectdButton, setSelectButton] = useState(0);
-
-  const changeColor = (buttonNumber) => {
-    setSelectButton(buttonNumber);
-    onSelectButton(buttonNumber);
-  };
+  const [selectedButton, setSelectButton] = useState(0);
+  const [selectedDesc, setSelectedDesc] = useState("");
 
   useEffect(() => {
-    callApi("GET", "/api/meet/7")
-      .then((res) => {
-        setMeetingDetail(res.data);
-      })
-      .catch((e) => {
-        // console.log(e);
-      });
-  }, []);
+    onSelectButton(selectedButton, selectedDesc); //부모로 전달
+  }, [selectedButton, selectedDesc]);
 
   return (
     // div width: 100%로 해서 가운데 정렬
     <div
       style={{
         width: "100%",
-        margin: "0 auto",
+        margin: "0 auto 1rem auto",
       }}
     >
       <MemberProfile>
@@ -101,25 +92,29 @@ const RatingMember = ({ _user, onSelectButton }) => {
 
       <RadioContainer>
         <RadioButton
-          selected={selectdButton === 1}
-          onClick={() => changeColor(1)}
+          selected={selectedButton === 1}
+          onClick={() => setSelectButton(1)}
         >
           좋아요
         </RadioButton>
         <RadioButton
-          selected={selectdButton === 2}
-          onClick={() => changeColor(2)}
+          selected={selectedButton === 2}
+          onClick={() => setSelectButton(2)}
         >
           보통이에요
         </RadioButton>
 
         <RadioButton
-          selected={selectdButton === 3}
-          onClick={() => changeColor(3)}
+          selected={selectedButton === 3}
+          onClick={() => setSelectButton(3)}
         >
           아쉬워요
         </RadioButton>
       </RadioContainer>
+      <RatingDetail
+        ratingNum={selectedButton}
+        getFunc={(desc) => setSelectedDesc(desc)}
+      />
     </div>
   );
 };
