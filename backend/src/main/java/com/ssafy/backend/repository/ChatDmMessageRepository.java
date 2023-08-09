@@ -17,5 +17,5 @@ public interface ChatDmMessageRepository extends JpaRepository<ChatDmMessage, Lo
 
     void deleteByChatDmRoom_ChatDmRoomId(Long dmRoomId);
 
-    List<ChatDmMessage> findByChatDmRoom_ChatDmRoomIdAndCreatedAtAfter(Long chatDmRoomId, LocalDateTime attendTime);
+    List<ChatDmMessage> findByChatDmRoom_ChatDmRoomIdAndCreatedAtBetween(Long chatDmRoomId, LocalDateTime start, LocalDateTime end);
 }

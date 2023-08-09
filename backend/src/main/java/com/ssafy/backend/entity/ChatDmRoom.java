@@ -38,6 +38,10 @@ public class ChatDmRoom {
     @Setter
     private LocalDateTime user2AttendTime;
 
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
+    @Setter
+    private LocalDateTime lastMessageTime;
+
     @Builder
     public ChatDmRoom(User user1, User user2) {
         this.chatDmRoomName = user1.getName() + "&" + user2.getName();
