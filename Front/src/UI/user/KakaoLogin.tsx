@@ -22,7 +22,7 @@ const KakaoLogin = () => {
             console.log(res.data);
           })
           .catch(err => console.log(err));
-        // await navigate("/meet");
+        await navigate("/meet");
       })
       .catch(err => {
         console.log(err);
