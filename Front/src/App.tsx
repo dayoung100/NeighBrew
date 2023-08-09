@@ -30,11 +30,6 @@ import DirectChat from "./UI/chat/DirectChat";
 import SearchUser from "./UI/user/SearchUser";
 import RatingCreate from "./UI/meetrate/RatingCreate";
 
-import React from "react";
-
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
 function App() {
   const navigate = useNavigate();
   const [isLodaing, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
@@ -45,34 +40,21 @@ function App() {
       console.log(isLodaing);
     }, 3000);
   }, []);
-  const notify = (message: string) => {
-    // alert("승인함");
-    if (!("Notification" in window)) {
-      alert("승인안함");
-    } else if (Notification.permission === "granted") {
-      const notification = new Notification(message);
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          const notification = new Notification(message);
-        }
-      });
-    }
-  };
+  // const notify = (message: string) => {
+  //   // alert("승인함");
+  //   if (!("Notification" in window)) {
+  //     alert("승인안함");
+  //   } else if (Notification.permission === "granted") {
+  //     const notification = new Notification(message);
+  //   } else if (Notification.permission !== "denied") {
+  //     Notification.requestPermission().then(permission => {
+  //       if (permission === "granted") {
+  //         const notification = new Notification(message);
+  //       }
+  //     });
+  //   }
+  // };
 
-  const event = new EventSource("https://i9b310.p.ssafy.io/api/push/connect/11", {
-    withCredentials: true,
-  });
-  event.addEventListener("open", e => {
-    console.log("연결완료");
-  });
-  event.addEventListener("sse", e => {
-    console.log(e.data);
-  });
-  event.addEventListener("FOLLOW", e => {
-    notify(JSON.parse(e.data).content);
-    console.log(JSON.parse(e.data));
-  });
   return (
     <>
       <Routes>
