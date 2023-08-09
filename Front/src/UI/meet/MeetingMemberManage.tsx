@@ -69,7 +69,6 @@ const initialData: MeetDetail = {
     tagId: 0,
     sido: "-",
     gugun: "-",
-    dong: "-",
     drink: {
       degree: 0,
       description: "",

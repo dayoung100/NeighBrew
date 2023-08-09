@@ -51,7 +51,6 @@ const initialData: Meeting = {
   tagId: 0,
   sido: "-",
   gugun: "-",
-  dong: "-",
   imgSrc: "",
 };
 

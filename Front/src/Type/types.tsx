@@ -47,7 +47,6 @@ export interface Meeting {
   tagId: number;
   sido: string;
   gugun: string;
-  dong: string;
   minAge?: number;
   maxAge?: number;
   minLiverPoint?: number;

@@ -198,7 +198,6 @@ const initialData: MeetDetail = {
     tagId: 1,
     sido: "",
     gugun: "",
-    dong: "",
     minAge: 20,
     drink: {
       degree: 0,
@@ -267,7 +266,6 @@ const MeetingCreate = () => {
     setSelectedDrink(initialData.meetDto.drink); //주류아이디
     setSido(initialData.meetDto.sido); //시도
     setGugun(initialData.meetDto.gugun); //구군
-    setDong(initialData.meetDto.dong); //동
     setDate(formateDate(`${localDate()}T${localTime()}:00`)); //날짜
     setTime(formateTime(`${localDate()}T${localTime()}:00`)); //시간
     setMaxParticipants(initialData.meetDto.maxParticipants); //최대인원

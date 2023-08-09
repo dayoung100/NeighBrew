@@ -118,7 +118,6 @@ const initialData: MeetDetail = {
     tagId: 0,
     sido: "-",
     gugun: "-",
-    dong: "-",
     drink: {
       degree: 0,
       description: "",
@@ -332,8 +331,8 @@ const MeetingDetail = () => {
         <MeetPosDateDiv>
           <div>
             <img src="/src/assets/mapPinColor.svg" width="20rem" />
-            <div>{`${meetDetailData.meetDto.sido}시`}</div>
-            <div>{`${meetDetailData.meetDto.gugun}  ${meetDetailData.meetDto.dong}`}</div>
+            <div>{`${meetDetailData.meetDto.sido}`}</div>
+            <div>{`${meetDetailData.meetDto.gugun}`}</div>
           </div>
           <div>
             <img src="/src/assets/calendarColor.svg" width="20rem" />

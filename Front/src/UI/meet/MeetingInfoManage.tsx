@@ -192,7 +192,6 @@ const initialData: MeetDetail = {
     tagId: 0,
     sido: "",
     gugun: "",
-    dong: "",
     drink: {
       degree: 0,
       description: "",
@@ -241,7 +240,6 @@ const MeetingInfoManage = () => {
   const [selectedDrink, setSelectedDrink] = useState<Drink>(initialDrinkData); //주류
   const [sido, setSido] = useState(""); //시도
   const [gugun, setGugun] = useState(""); //구군
-  const [dong, setDong] = useState(""); //동
   const [date, setDate] = useState(""); //날짜
   const [time, setTime] = useState(""); //시간
   const [maxParticipants, setMaxParticipants] = useState(8); //최대인원
@@ -277,7 +275,6 @@ const MeetingInfoManage = () => {
     setSelectedDrink(meetData.meetDto.drink); //주류아이디
     setSido(meetData.meetDto.sido); //시도
     setGugun(meetData.meetDto.gugun); //구군
-    setDong(meetData.meetDto.dong); //동
     setDate(formateDate(meetData.meetDto.meetDate)); //날짜
     setTime(formateTime(meetData.meetDto.meetDate)); //시간
     setMaxParticipants(meetData.meetDto.maxParticipants); //최대인원
@@ -352,7 +349,7 @@ const MeetingInfoManage = () => {
 
   //위치: 필수 입력
   const positionCheck = () => {
-    return !(sido === "" || gugun === "" || dong === "");
+    return !(sido === "" || gugun === "");
   };
 
   //날짜: 필수 입력/현재 시점 이후로
@@ -445,7 +442,6 @@ const MeetingInfoManage = () => {
     f.append("tagId", selectedCategory.toString());
     f.append("sido", sido);
     f.append("gugun", gugun);
-    f.append("dong", dong);
     f.append(
       "drinkId",
       selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
@@ -685,21 +681,6 @@ const MeetingInfoManage = () => {
               </option>
             </DropdownInput>
             구
-            <DropdownInput
-              value={dong}
-              onChange={(e) => setDong(e.target.value)}
-            >
-              <option value="덕명" key="덕명">
-                덕명
-              </option>
-              <option value="봉명" key="봉명">
-                봉명
-              </option>
-              <option value="change  Dong" key="change  Dong">
-                change Dong
-              </option>
-            </DropdownInput>
-            동
           </div>
           {!positionCheck() && btnClicked && (
             <ErrorDiv>📌위치는 필수 입력 사항입니다.</ErrorDiv>

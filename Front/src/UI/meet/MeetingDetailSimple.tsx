@@ -51,7 +51,7 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
     return `${month}월 ${day}일 ${hour}시 ${minute}분`;
   }
 
-  const position = `${meetData.sido} ${meetData.gugun} ${meetData.dong}`;
+  const position = `${meetData.sido} ${meetData.gugun}`;
   const formattedDate = formateDate(meetData.meetDate);
   const hasAgeLimit =
     (meetData.minAge ?? 0) > 0 || (meetData.maxAge ?? 0) > 0 ? true : false;
