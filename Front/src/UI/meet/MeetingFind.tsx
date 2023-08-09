@@ -12,17 +12,8 @@ import MeetingListItem from "./MeetingListItem";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Meeting } from "../../Type/types";
+import { initialSido, initialGugun } from "../common";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
-
-const initialSido = {
-  sidoCode: 0,
-  sidoName: "-",
-};
-
-const initialGugun = {
-  gugunCode: 0,
-  gugunName: "-",
-};
 
 const meetingFind = () => {
   //받아온 모임 정보 리스트(전체)

@@ -17,6 +17,12 @@ import { MeetDetail } from "../../Type/types";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
+import {
+  initialMeetDetail,
+  initialDrink,
+  initialSido,
+  initialGugun,
+} from "../common";
 import Modal from "react-modal";
 
 const Title = styled.div`
@@ -186,42 +192,6 @@ const WhiteModal = {
   },
 };
 
-//TODO: 초기값을 context api로 만들던가 해서 공유하기
-const initialData: MeetDetail = {
-  meetDto: {
-    meetId: 0,
-    meetName: "",
-    description: "",
-    nowParticipants: 0,
-    maxParticipants: 8,
-    meetDate: "9999-01-01T00:00:00",
-    tagId: 1,
-    sido: "",
-    gugun: "",
-    minAge: 20,
-    drink: {
-      degree: 0,
-      description: "",
-      drinkId: 0,
-      image: "",
-      name: "",
-      tagId: 0,
-    },
-    imgSrc: "",
-  },
-  users: [],
-  statuses: [],
-};
-
-const initialDrinkData: Drink = {
-  degree: 0,
-  description: "",
-  drinkId: 0,
-  image: "",
-  name: "",
-  tagId: 0,
-};
-
 const MeetingCreate = () => {
   //네비게이터: 모임 수정 후 모임 상세로 이동, 주류 추가 페이지로 이동
   const navigate = useNavigate();
@@ -232,16 +202,17 @@ const MeetingCreate = () => {
   const [isModalOn, setIsModalOn] = useState(false);
   const [errorMsg, setErrorMsg] = useState(""); //모달에 띄울 에러메시지
 
-  //미팅 및 유저 정보
+  //모임 및 유저 정보
   const [userId, setUserId] = useState(0); //현재 유저의 userId
+  const [sidoList, setSidoList] = useState([initialSido]);
+  const [gugunList, setGugunList] = useState([initialGugun]);
 
   //폼에 들어갈 state들
   const [meetTitle, setMeetTitle] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState(0); //주종카테고리
-  const [selectedDrink, setSelectedDrink] = useState<Drink>(initialDrinkData); //주류
-  const [sido, setSido] = useState(""); //시도
-  const [gugun, setGugun] = useState(""); //구군
-  const [dong, setDong] = useState(""); //동
+  const [selectedDrink, setSelectedDrink] = useState<Drink>(initialDrink); //주류
+  const [sido, setSido] = useState(initialSido); //시도
+  const [gugun, setGugun] = useState(initialGugun); //구군
   const [date, setDate] = useState(""); //날짜
   const [time, setTime] = useState(""); //시간
   const [maxParticipants, setMaxParticipants] = useState(8); //최대인원
@@ -261,26 +232,37 @@ const MeetingCreate = () => {
 
   //모임의 정보 초기 세팅
   useEffect(() => {
-    setMeetTitle(initialData.meetDto.meetName);
-    setSelectedCategory(initialData.meetDto.tagId); //주종카테고리
-    setSelectedDrink(initialData.meetDto.drink); //주류아이디
-    setSido(initialData.meetDto.sido); //시도
-    setGugun(initialData.meetDto.gugun); //구군
+    setMeetTitle(initialMeetDetail.meetDto.meetName);
+    setSelectedCategory(initialMeetDetail.meetDto.tagId); //주종카테고리
+    setSelectedDrink(initialMeetDetail.meetDto.drink); //주류아이디
+    setSido(initialSido); //시도
+    setGugun(initialGugun); //구군
     setDate(formateDate(`${localDate()}T${localTime()}:00`)); //날짜
     setTime(formateTime(`${localDate()}T${localTime()}:00`)); //시간
-    setMaxParticipants(initialData.meetDto.maxParticipants); //최대인원
-    setLiverLimit(initialData.meetDto.minLiverPoint); //간수치 제한
-    setMinAge(initialData.meetDto.minAge); //최소 나이
-    setMaxAge(initialData.meetDto.maxAge); //최대 나이
-    setMeetDesc(initialData.meetDto.description); //모임 소개
-    setImgSrc(initialData.meetDto.imgSrc); //이미지 경로
+    setMaxParticipants(initialMeetDetail.meetDto.maxParticipants); //최대인원
+    setLiverLimit(initialMeetDetail.meetDto.minLiverPoint); //간수치 제한
+    setMinAge(initialMeetDetail.meetDto.minAge); //최소 나이
+    setMaxAge(initialMeetDetail.meetDto.maxAge); //최대 나이
+    setMeetDesc(initialMeetDetail.meetDto.description); //모임 소개
+    setImgSrc(initialMeetDetail.meetDto.imgSrc); //이미지 경로
     //로컬 스토리지에서 userId 가져오기
     setUserId(parseInt(localStorage.getItem("myId")));
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
+    //시도 정보 미리 받아와 세팅하기
+    callApi("get", "api/sido").then((res) => {
+      setSidoList([initialSido, ...res.data]);
+    });
   }, []);
+
+  //선택한 시도에 따라 구군 fetch
+  useEffect(() => {
+    callApi("get", `api/gugun/${sido.sidoCode}`).then((res) => {
+      setGugunList([initialGugun, ...res.data]);
+    });
+  }, [sido]);
 
   //inputText로 술장 검색 api
   useEffect(() => {
@@ -295,7 +277,7 @@ const MeetingCreate = () => {
 
   //카테고리 변경 시 주류 검색 결과 및 조건 초기화
   useEffect(() => {
-    setSelectedDrink(initialDrinkData);
+    setSelectedDrink(initialDrink);
     setInputText("");
   }, [selectedCategory]);
 
@@ -323,7 +305,7 @@ const MeetingCreate = () => {
 
   //위치: 필수 입력
   const positionCheck = () => {
-    return !(sido === "" || gugun === "" || dong === "");
+    return !(sido.sidoCode === 0 || gugun.gugunCode === 0);
   };
 
   //날짜: 필수 입력/현재 시점 이후로
@@ -408,9 +390,8 @@ const MeetingCreate = () => {
     f.append("maxParticipants", maxParticipants.toString());
     f.append("meetDate", `${date}T${time}:00`);
     f.append("tagId", selectedCategory.toString());
-    f.append("sido", sido);
-    f.append("gugun", gugun);
-    f.append("dong", dong);
+    f.append("sido", sido.sidoName);
+    f.append("gugun", gugun.gugunName);
     f.append(
       "drinkId",
       selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
@@ -610,7 +591,7 @@ const MeetingCreate = () => {
                 />
                 <ReselectBtn
                   onClick={() => {
-                    setSelectedDrink(initialDrinkData);
+                    setSelectedDrink(initialDrink);
                   }}
                 >
                   재선택
@@ -629,59 +610,43 @@ const MeetingCreate = () => {
           >
             <Title>위치</Title>
             <DropdownInput
-              value={sido}
-              onChange={(e) => setSido(e.target.value)}
+              onChange={(e) => {
+                const selectedValue = e.target.value;
+                const selectedSido = sidoList.find(
+                  (item) => item.sidoName === selectedValue
+                );
+                setSido(selectedSido);
+              }}
+              value={sido.sidoName}
             >
-              <option value="-" key="-">
-                -
-              </option>
-              <option value="대전" key="대전">
-                대전
-              </option>
-              <option value="서울" key="서울">
-                서울
-              </option>
-              <option value="change Sido" key="change Sido">
-                change Sido
-              </option>
+              {sidoList.map((siItem) => {
+                return (
+                  <option value={siItem.sidoName} key={siItem.sidoCode}>
+                    {siItem.sidoName}
+                  </option>
+                );
+              })}
             </DropdownInput>
-            시
+            시/도
             <DropdownInput
-              value={gugun}
-              onChange={(e) => setGugun(e.target.value)}
+              onChange={(e) => {
+                const selectedValue = e.target.value;
+                const selectedGugun = gugunList.find(
+                  (item) => item.gugunName === selectedValue
+                );
+                setGugun(selectedGugun);
+              }}
+              value={gugun.gugunName}
             >
-              <option value="-" key="-">
-                -
-              </option>
-              <option value="유성" key="유성">
-                유성
-              </option>
-              <option value="동구" key="동구">
-                동구
-              </option>
-              <option value="change  Gugun" key="change  Gugun">
-                change Gugun
-              </option>
+              {gugunList.map((guItem) => {
+                return (
+                  <option value={guItem.gugunName} key={guItem.gugunCode}>
+                    {guItem.gugunName}
+                  </option>
+                );
+              })}
             </DropdownInput>
-            구
-            <DropdownInput
-              value={dong}
-              onChange={(e) => setDong(e.target.value)}
-            >
-              <option value="-" key="-">
-                -
-              </option>
-              <option value="덕명" key="덕명">
-                덕명
-              </option>
-              <option value="봉명" key="봉명">
-                봉명
-              </option>
-              <option value="change  Dong" key="change  Dong">
-                change Dong
-              </option>
-            </DropdownInput>
-            동
+            구/군
           </div>
           {!positionCheck() && btnClicked && (
             <ErrorDiv>📌위치는 필수 입력 사항입니다.</ErrorDiv>
