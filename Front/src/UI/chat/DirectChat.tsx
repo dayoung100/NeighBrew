@@ -238,7 +238,7 @@ const DirectChat = () => {
       client.current.send(
         `/sub/dm/${user1}/${user2}`,
         {},
-        JSON.stringify({ message: message, senderId: userId, userNickname: "닉네임" })
+        JSON.stringify({ message: message, senderId: userId, nickname: "닉네임" })
       );
       setMessage("");
       scroll();
@@ -253,7 +253,7 @@ const DirectChat = () => {
           JSON.stringify({
             message: message,
             senderId: userId,
-            userNickname: "닉네임",
+            nickname: "닉네임",
           })
         );
         setMessage("");
