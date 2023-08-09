@@ -64,7 +64,7 @@ public class EvaluationService {
 
         int totalUsers = meetUsers.size() -1 ; // 본인제외
         if (totalUsers <= 1) {
-            throw new IllegalArgumentException("평가를 위한 유저 수가 부족합니다.");
+            throw new IllegalArgumentException("평가 가능한 유저가 없습니다.");
         }
 
         float score = 0;
