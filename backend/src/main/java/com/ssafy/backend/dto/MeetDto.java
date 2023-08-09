@@ -24,7 +24,6 @@ public class MeetDto {
     private Long tagId;
     private String sido;
     private String gugun;
-    private String dong;
     private Integer minAge;
     private Integer maxAge;
     private Float minLiverPoint;
@@ -35,7 +34,7 @@ public class MeetDto {
     public MeetDto() {}
 
     @Builder
-    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun, String dong, Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
+    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun,Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
         this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;
@@ -46,7 +45,6 @@ public class MeetDto {
         this.tagId = tagId;
         this.sido = sido;
         this.gugun = gugun;
-        this.dong = dong;
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.minLiverPoint = minLiverPoint;
@@ -64,7 +62,6 @@ public class MeetDto {
                 .meetDate(this.meetDate)
                 .sido(this.sido)
                 .gugun(this.gugun)
-                .dong(this.dong)
                 .minAge(this.minAge)
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)
