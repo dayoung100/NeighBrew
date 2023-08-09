@@ -41,11 +41,14 @@ function App() {
     }, 3000);
   }, []);
   useEffect(() => {
-    const handleStorageChange = event => {
+    const handleStorageChange = (event) => {
       if (event.key === "myId") {
-        event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
-          withCredentials: true,
-        });
+        event = new EventSource(
+          `http://i9b310.p.ssafy.io/api/push/connect/${userid}`,
+          {
+            withCredentials: true,
+          }
+        );
       }
     };
 
@@ -76,7 +79,7 @@ function App() {
     // 알림 권한이 거부된 상태는 아니라면
     if (Notification.permission !== "denied") {
       // 사용자에게 알림 권한 승인을 요청한다
-      Notification.requestPermission().then(permission => {
+      Notification.requestPermission().then((permission) => {
         // 사용자가 승인하면, 알림을 표시한다
         if (permission === "granted") {
           const notification = new Notification("알림을 허용하셨습니다.");
@@ -84,19 +87,29 @@ function App() {
       });
     }
   };
-  const event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
-    withCredentials: true,
-  });
+  // 수정된 코드
+  useEffect(() => {
+    const event = new EventSource(
+      `http://i9b310.p.ssafy.io/api/push/connect/${userid}`,
+      {
+        withCredentials: true,
+      }
+    );
 
-  event.addEventListener("open", e => {
-    console.log("연결완료");
-  });
-  event.addEventListener("sse", e => {
-    console.log(e.data);
-  });
-  event.addEventListener("FOLLOW", e => {
-    console.log(JSON.parse(e.data));
-  });
+    event.addEventListener("open", (e) => {
+      console.log("연결완료");
+    });
+    event.addEventListener("sse", (e) => {
+      console.log(e.data);
+    });
+    event.addEventListener("FOLLOW", (e) => {
+      console.log(JSON.parse(e.data));
+    });
+
+    return () => {
+      event.close();
+    };
+  }, []); // dependency array가 빈 배열로 설정됨
   return (
     <>
       <Routes>
