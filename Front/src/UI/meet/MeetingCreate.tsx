@@ -91,7 +91,7 @@ const SearchResultDiv = styled.div`
   flex-direction: column;
 `;
 
-const CloseDiv = styled.div`
+const OnOffBtn = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -592,9 +592,9 @@ const MeetingCreate = () => {
                         ))
                       )}
                     </div>
-                    <CloseDiv onClick={() => setIsSearchFocused(false)}>
+                    <OnOffBtn onClick={() => setIsSearchFocused(false)}>
                       ▲닫기
-                    </CloseDiv>
+                    </OnOffBtn>
                   </SearchResultDiv>
                 )}
               </div>
