@@ -271,7 +271,7 @@ const DirectChat = () => {
       user1 = receiverId;
       user2 = senderId;
     }
-    callApi("GET", `/api/dm/message/${user1}/${user2}`)
+    callApi("get", `/api/dm/message/${localStorage.getItem("myId")}/${user1}/${user2}`)
       .then(res => {
         console.log(res.data);
         setUsers([res.data.user1, res.data.user2]);
@@ -317,7 +317,14 @@ const DirectChat = () => {
   };
 
   const outChatHandler = () => {
-    callApi("post", `/pub/dm/{user1id}/{user2Id}/leave`);
+    client.current.send(
+      `/sub/dm/${user1}/${user2}/leave`,
+      {},
+      JSON.stringify({
+        leaveUserId: localStorage.getItem("myId"),
+      })
+    );
+    navigate("/chatList");
   };
   return (
     <div ref={rapperDiv}>
@@ -383,7 +390,7 @@ const DirectChat = () => {
         </div>
         <div style={{ position: "fixed", top: "80%" }}>
           {/* <button onClick={OutRoomHandler}>채팅방 나가기</button> */}
-          <img src={exitImg} alt="" />
+          <img src={exitImg} alt="" onClick={outChatHandler} />
         </div>
       </RightModal>
       <div
