@@ -42,7 +42,7 @@ function App() {
 
   const userid = localStorage.getItem("myId");
   useEffect(() => {
-    const event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
+    const event = new EventSource(`https://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
       withCredentials: true,
     });
     event.addEventListener("open", e => {
