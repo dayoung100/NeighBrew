@@ -9,10 +9,7 @@ import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가�
 import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-<<<<<<< Updated upstream
 import { registerServiceWorker } from "../../serviceWorker.js";
-=======
->>>>>>> Stashed changes
 
 const ImgDiv = styled.div`
   width: 20%;
@@ -87,7 +84,7 @@ const Login = () => {
     if (localStorage.getItem("token") != null) {
       callApi("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
-      }).then(res => {
+      }).then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
         navigate("/meet");
@@ -97,17 +94,13 @@ const Login = () => {
   const KakaologinHandler = async () => {
     axios({
       method: "get",
-<<<<<<< Updated upstream
       url: "/api/auth/login/kakao",
-=======
-      url: "http://localhost:8080/api/auth/login/kakao",
->>>>>>> Stashed changes
     })
-      .then(res => {
+      .then((res) => {
         const url = res.data.URL;
         window.location.href = url;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
@@ -116,11 +109,11 @@ const Login = () => {
       method: "get",
       url: "api/auth/login/naver",
     })
-      .then(res => {
+      .then((res) => {
         const url = res.data.URL;
         window.location.href = url;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
@@ -129,18 +122,17 @@ const Login = () => {
       method: "get",
       url: "api/auth/login/google",
     })
-      .then(res => {
+      .then((res) => {
         const url = res.data.URL;
         window.location.href = url;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
   useEffect(() => {
     localStorage.setItem("chooseMenu", "0");
   }, []);
-<<<<<<< Updated upstream
 
   // const noti = (message: string) => {
   //   navigator.serviceWorker.ready.then(registration => {
@@ -162,15 +154,15 @@ const Login = () => {
 
   const followHandler = async () => {
     const api = await callApi("get", `api/push/follow/18`)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
-=======
->>>>>>> Stashed changes
   return (
-    <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+    <div
+      style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+    >
       <OrangeSection>
         <div style={{ marginBottom: "3rem" }}>
           <img src={NeighBrew} style={{ marginTop: "5rem" }} />
@@ -211,7 +203,10 @@ const Login = () => {
             top: "1rem",
           }}
         >
-          <Div onClick={KakaologinHandler} style={{ cursor: "pointer", marginTop: "" }}>
+          <Div
+            onClick={KakaologinHandler}
+            style={{ cursor: "pointer", marginTop: "" }}
+          >
             <Img src={kakaoLogin} />
           </Div>
 
