@@ -189,7 +189,7 @@ const DrinkpostDetail = () => {
   return (
     <>
       <DrinkThumbnail>
-        <NavbarBackIcon onClick={() => navigate("/drinkpost/")}>{ArrowLeftIcon}</NavbarBackIcon>
+        <NavbarBackIcon onClick={() => navigate(-1)}>{ArrowLeftIcon}</NavbarBackIcon>
       </DrinkThumbnail>
       <WholeDiv>
         <InfoDiv>
@@ -214,7 +214,7 @@ const DrinkpostDetail = () => {
             <div
               onClick={toReviewCreate}
               style={{
-                width: "24vw",
+                width: "28vw",
                 height: "8vh",
                 backgroundColor: "var(--c-yellow)",
                 display: "flex",

@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { likeIcon, commentIcon, sendIcon } from "./../../assets/AllIcon";
 import CommentItem from "./../components/CommentItem";
 import defaultImg from "../../assets/defaultImg.png";
+import fancyDrinkImage from "../../assets/fancydrinkImage.jpg";
 
 const LikeAndComment = styled.div`
   display: flex;
@@ -128,6 +129,16 @@ const DrinkpostReviewDetail = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(reviewId);
+    callApi("get", `api/subreview/list/${reviewId}`)
+      .then(res => {
+        console.log(res.data);
+        setSubReviewList([...res.data]);
+      })
+      .catch(err => console.error(err));
+  }, []);
+
+  useEffect(() => {
     // 제목에 술 이름이 들어가기 때문에 술 정보 요청
     callApi("get", `api/drink/${drinkId}`)
       .then(res => {
@@ -137,12 +148,6 @@ const DrinkpostReviewDetail = () => {
       .catch(err => console.error(err));
 
     // 후기에 대한 댓글 리스트 요청
-    callApi("get", `api/subreview/list/${reviewId}`)
-      .then(res => {
-        console.log(res.data);
-        setSubReviewList(prev => [...prev, ...res.data]);
-      })
-      .catch(err => console.error(err));
 
     async function summonReview() {
       // 술 상세 후기 조회 요청
@@ -222,6 +227,7 @@ const DrinkpostReviewDetail = () => {
       return;
     }
     setComment("");
+
     callApi("post", "api/subreview/guard/write", {
       content: comment.trim(),
       drinkReviewId: reviewId,
@@ -259,7 +265,11 @@ const DrinkpostReviewDetail = () => {
             {following === 0 ? "팔로우" : "언팔로우"}
           </FollowDiv>
         </Usercard>
-        <ImageDiv style={{ backgroundImage: `url(${review?.img})` }}></ImageDiv>
+        <ImageDiv
+          style={{
+            backgroundImage: `url(${review?.img !== "no image" ? review?.img : fancyDrinkImage})`,
+          }}
+        ></ImageDiv>
         <LikeAndComment>
           <div>
             {LikeIcon} {review?.likeCount}

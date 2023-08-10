@@ -30,16 +30,25 @@ const NameAndContent = styled.div`
 const commentItem = ({ subReview }: { subReview: SubReview }) => {
   const [user, setUser] = useState<User>();
   const navigate = useNavigate();
-  const toProfileHandler = () => {
-    navigate;
+  console.log(subReview);
+  // const toProfileHandler = () => {
+  //   navigate;
+  // };
+  const getCommentUser = () => {
+    if (subReview.userId !== undefined) {
+      callApi("get", `api/user/${subReview.userId}`).then(res => setUser(res.data));
+    }
   };
   useEffect(() => {
-    callApi("get", `api/user/${subReview.userId}`)
-      .then(res => {
-        setUser(res.data);
-      })
-      .catch(err => console.error(err));
+    getCommentUser();
+
+    // callApi("get", `api/user/${subReview.userId}`)
+    //   .then(res => {
+    //     setUser(res.data);
+    //   })
+    //   .catch(err => console.error(err));
   }, []);
+
   return (
     <>
       <WholeDiv>
@@ -48,7 +57,7 @@ const commentItem = ({ subReview }: { subReview: SubReview }) => {
         </ProfileDiv>
         <NameAndContent>
           <div>
-            <b>{user?.nickname}</b>
+            <b>{user !== undefined ? user.nickname : "loading"}</b>
           </div>
           <div>{subReview.content}</div>
         </NameAndContent>
