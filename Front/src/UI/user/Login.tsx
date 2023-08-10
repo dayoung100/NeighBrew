@@ -84,7 +84,7 @@ const Login = () => {
     if (localStorage.getItem("token") != null) {
       callApi("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
-      }).then((res) => {
+      }).then(res => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
         navigate("/meet");
@@ -96,11 +96,11 @@ const Login = () => {
       method: "get",
       url: "/api/auth/login/kakao",
     })
-      .then((res) => {
+      .then(res => {
         const url = res.data.URL;
         window.location.href = url;
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
@@ -109,11 +109,11 @@ const Login = () => {
       method: "get",
       url: "api/auth/login/naver",
     })
-      .then((res) => {
+      .then(res => {
         const url = res.data.URL;
         window.location.href = url;
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
@@ -122,11 +122,11 @@ const Login = () => {
       method: "get",
       url: "api/auth/login/google",
     })
-      .then((res) => {
+      .then(res => {
         const url = res.data.URL;
         window.location.href = url;
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
@@ -134,35 +134,15 @@ const Login = () => {
     localStorage.setItem("chooseMenu", "0");
   }, []);
 
-  // const noti = (message: string) => {
-  //   navigator.serviceWorker.ready.then(registration => {
-  //     const notiAlarm = registration.showNotification("알림", {
-  //       body: "pinyin + '\n' + means",
-  //       actions: [
-  //         {
-  //           title: "화면보기",
-  //           action: "goTab",
-  //         },
-  //         {
-  //           title: "닫기",
-  //           action: "close",
-  //         },
-  //       ],
-  //     });
-  //   });
-  // };
-
   const followHandler = async () => {
     const api = await callApi("get", `api/push/follow/18`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
   };
   return (
-    <div
-      style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-    >
+    <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
       <OrangeSection>
         <div style={{ marginBottom: "3rem" }}>
           <img src={NeighBrew} style={{ marginTop: "5rem" }} />
@@ -203,10 +183,7 @@ const Login = () => {
             top: "1rem",
           }}
         >
-          <Div
-            onClick={KakaologinHandler}
-            style={{ cursor: "pointer", marginTop: "" }}
-          >
+          <Div onClick={KakaologinHandler} style={{ cursor: "pointer", marginTop: "" }}>
             <Img src={kakaoLogin} />
           </Div>
 
