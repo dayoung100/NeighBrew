@@ -69,7 +69,7 @@ public class SubReviewService {
 
         //send(User sender, User receiver, PushType pushType, String content, String url) {
         String pushContent = user.getNickname() + "님께서 " + drinkReview.getContent().substring(0, 10) + "... 리뷰에 댓글을 남기셨습니다.";
-        pushService.send(drinkReview.getUser(), user, PushType.COMMNET, pushContent, "이동할 URL");
+        pushService.send(drinkReview.getUser(), user, PushType.REVIEWLIKE, pushContent, "이동할 URL");
         return subReviewRepository.save(subReview);
     }
 

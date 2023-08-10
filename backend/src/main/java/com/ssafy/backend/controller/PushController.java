@@ -39,8 +39,4 @@ public class PushController {
         pushService.send(wk, hb, PushType.FOLLOW, wk.getName()+"님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
     }
 
-    @GetMapping("/log/{userId}")
-    public void ResponseEntity<?> getMyNoti(@PathVariable Long){
-
-    }
 }
