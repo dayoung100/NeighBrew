@@ -319,7 +319,7 @@ const DrinkpostReviewDetail = () => {
             <div>
               {CommentIcon}
             </div>
-            <div style="margin: 0 1vh; ">
+            <div>
               {subReviewList.length}
             </div>
           </LikeAndCommentDiv>
