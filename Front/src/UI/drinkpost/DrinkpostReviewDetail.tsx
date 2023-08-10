@@ -308,7 +308,8 @@ const DrinkpostReviewDetail = () => {
                         <div>
                             {LikeIcon}
                         </div>
-                      <div style="margin: 0 1vh; ">
+                        <div>
+                      {/*<div style="margin: 0 1vh; ">*/}
                         {review?.likeCount}
                         </div>
                     </LikeAndCommentDiv>
@@ -316,7 +317,8 @@ const DrinkpostReviewDetail = () => {
                         <div>
                             {CommentIcon}
                         </div>
-                        <div style="margin: 0 1vh; "> 
+                        {/*<div style="margin: 0 1vh; "> */}
+                        <div>
                             {subReviewList.length}
                         </div>
                     </LikeAndCommentDiv>
