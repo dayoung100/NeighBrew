@@ -13,6 +13,7 @@ import Footer from "../footer/Footer";
 import UserInfoItem from "../components/UserInfoItem";
 import { callApi } from "../../utils/api";
 import { MeetDetail, User } from "../../Type/types";
+import { initialMeetDetail, initialUser, WhiteModal } from "../common";
 
 const SubTitle = styled.div`
   font-size: 20px;
@@ -39,64 +40,9 @@ const NoBtn = styled(BtnSmall)`
   background: #f28f79;
 `;
 
-const WhiteModal = {
-  content: {
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "15rem",
-    height: "6rem",
-    padding: "0.5rem 1rem",
-    borderRadius: "15px",
-    background: "white",
-    textAlign: "center",
-    fontFamily: "NanumSquareNeo",
-  },
-  overlay: {
-    background: "rgba(0, 0, 0, 0.5)",
-    zIndex: "11",
-  },
-};
-
-const initialData: MeetDetail = {
-  meetDto: {
-    meetId: 0,
-    meetName: "",
-    description: "",
-    nowParticipants: 0,
-    maxParticipants: 0,
-    meetDate: "0000-01-01T00:00:00",
-    tagId: 0,
-    sido: "-",
-    gugun: "-",
-    drink: {
-      degree: 0,
-      description: "",
-      drinkId: 0,
-      image: "",
-      name: "",
-      tagId: 0,
-    },
-    imgSrc: "",
-  },
-  users: [],
-  statuses: [],
-};
-
-const initialUser = {
-  userId: 0,
-  email: "",
-  nickname: "",
-  name: "",
-  liverPoint: 0,
-  profile: "",
-  follower: 0,
-  following: 0,
-};
-
 const MeetingMemberManage = () => {
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
-  const [meetData, setMeetData] = useState<MeetDetail>(initialData);
+  const [meetData, setMeetData] = useState<MeetDetail>(initialMeetDetail);
   const [memberList, setMemberList] = useState<User[]>([]);
   const [applicantList, setApplicantList] = useState<User[]>([]);
   const [modalOn, setModalOn] = useState(false);

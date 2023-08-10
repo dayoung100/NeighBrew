@@ -13,6 +13,7 @@ import ListInfoItem from "../components/ListInfoItem";
 import UserInfoItem from "../components/UserInfoItem";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import { callApi } from "../../utils/api";
+import { initialMeetDetail } from "../common";
 import { MeetDetail, User } from "../../Type/types";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
@@ -95,47 +96,11 @@ const MeetTitle = styled.div`
   margin-top: 1.5rem;
 `;
 
-const initialUser = {
-  userId: 0,
-  email: "",
-  nickname: "",
-  name: "",
-  liverPoint: 0,
-  profile: "",
-  follower: 0,
-  following: 0,
-};
-
-const initialData: MeetDetail = {
-  meetDto: {
-    meetId: 0,
-    meetName: "",
-    description: "",
-    host: initialUser,
-    nowParticipants: 0,
-    maxParticipants: 0,
-    meetDate: "0000-01-01T00:00:00",
-    tagId: 0,
-    sido: "-",
-    gugun: "-",
-    drink: {
-      degree: 0,
-      description: "",
-      drinkId: 0,
-      image: "",
-      name: "",
-      tagId: 0,
-    },
-    imgSrc: "",
-  },
-  users: [],
-  statuses: [],
-};
-
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
-  const [meetDetailData, setMeetDetailData] = useState<MeetDetail>(initialData); //모임 데이터
+  const [meetDetailData, setMeetDetailData] =
+    useState<MeetDetail>(initialMeetDetail); //모임 데이터
   const [memberList, setMemberList] = useState<User[]>([]); //참여자 리스트
   const [userId, setUserId] = useState(0); //현재 유저의 userId
   const [userStatus, setUserStatus] = useState("");

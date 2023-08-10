@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Meeting, User } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 import { callApi } from "../../utils/api";
+import { initialUser } from "../common";
 
 const InnerText = styled.div<{ $widthRem: number }>`
   width: ${(props) => props.$widthRem}rem;
@@ -20,17 +21,6 @@ const UserProfileImg = styled.div<{ src: string }>`
   border-radius: 100px;
   margin-right: 0.2rem;
 `;
-
-const initialUser = {
-  userId: 0,
-  email: "",
-  nickname: "",
-  name: "",
-  liverPoint: 0,
-  profile: "",
-  follower: 0,
-  following: 0,
-};
 
 /**
  * 모임 리스트에 모임에 대한 간략 정보를 출력하는 부분.

@@ -11,6 +11,7 @@ import NavbarSimple from "../navbar/NavbarSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
 import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
+import { initialMeet, WhiteModal } from "../common";
 import { Meeting } from "../../Type/types";
 
 const BigBtn = styled.div`
@@ -21,46 +22,13 @@ const BigBtn = styled.div`
   padding: 1rem;
 `;
 
-const WhiteModal = {
-  content: {
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "15rem",
-    height: "6rem",
-    padding: "0.5rem 1rem",
-    borderRadius: "15px",
-    background: "white",
-    textAlign: "center",
-    fontFamily: "NanumSquareNeo",
-  },
-  overlay: {
-    background: "rgba(0, 0, 0, 0.5)",
-    zIndex: "11",
-  },
-};
-
-const initialData: Meeting = {
-  meetId: 0,
-  meetName: "",
-  hostId: 0,
-  description: "",
-  nowParticipants: 0,
-  maxParticipants: 8,
-  meetDate: "0000-01-01T00:00:00",
-  tagId: 0,
-  sido: "-",
-  gugun: "-",
-  imgSrc: "",
-};
-
 const MeetingManageMain = () => {
   const navigate = useNavigate();
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
   const [deleteModalOn, setDeleteModalOn] = useState(false);
   const [errorModalOn, setErrorModalOn] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  const [meetData, setMeetData] = useState<Meeting>(initialData);
+  const [meetData, setMeetData] = useState<Meeting>(initialMeet);
 
   const GotoMeetInfoManage = (meetId: number) => {
     navigate(`/meet/${meetId}/manage/info`);
