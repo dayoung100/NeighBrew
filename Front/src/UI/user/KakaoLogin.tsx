@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { callApi } from "../../utils/api";
 const KakaoLogin = () => {
   const navigate = useNavigate();
@@ -8,7 +8,7 @@ const KakaoLogin = () => {
   const KakaologinHandler = async () => {
     const code = location.search.split("=")[1];
     axios
-      .post("http://localhost:8080/api/auth/kakao", {
+      .post("/api/auth/kakao", {
         authorizationCode: code,
       })
       .then((res) => {
@@ -22,7 +22,7 @@ const KakaoLogin = () => {
             console.log(res.data);
           })
           .catch((err) => console.log(err));
-        // await navigate("/meet");
+        await navigate("/meet");
       })
       .catch((err) => {
         console.log(err);
