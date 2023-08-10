@@ -105,7 +105,7 @@ const drinkpostTotal = () => {
           }}
         ></div>
       </ShowcaseBody>
-      <RoundBtn>
+      <RoundBtn onClick={() => navigate("/drinkpost/create")}>
         <img src={plusButton} width="25rem" />
       </RoundBtn>
       {/* <DrinkpostCreateButton></DrinkpostCreateButton> */}

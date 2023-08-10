@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import whiskeyImage from "../../assets/whiskeyImage.png";
+import whiskeyImage from "../../assets/whiskey2.svg";
 import { useNavigate } from "react-router-dom";
 import { Drink } from "../../Type/types";
 import { useState } from "react";
