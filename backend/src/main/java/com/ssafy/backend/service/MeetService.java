@@ -1,5 +1,6 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.Enum.MeetStatus;
 import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.Enum.UploadType;
@@ -7,14 +8,15 @@ import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetSearchDto;
 import com.ssafy.backend.dto.MeetUserDto;
 import com.ssafy.backend.entity.*;
-import com.ssafy.backend.repository.*;
+import com.ssafy.backend.repository.MeetRepository;
+import com.ssafy.backend.repository.MeetUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -95,7 +97,7 @@ public class MeetService {
 
         if (multipartFile != null) {
             if (!multipartFile.isEmpty()) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-        }else meetDto.setImgSrc("no image");
+        } else meetDto.setImgSrc("no image");
 
         ChatRoom createChatRoom = chatRoomService.save(ChatRoom.builder()
                 .chatRoomName(meetDto.getMeetName() + "모임의 채팅방")
@@ -251,7 +253,7 @@ public class MeetService {
         if (applyUserStatus != Status.APPLY) throw new IllegalArgumentException("가입신청중인 유저만 모임 신청을 취소할 수 있습니다.");
 
         //신청 취소할 경우 참여자 수 -1로 변경
-        meet.setNowParticipants(meet.getNowParticipants()-1);
+        meet.setNowParticipants(meet.getNowParticipants() - 1);
         meetRepository.save(meet);
 
         //모임-유저테이블에서 해당 정보 삭제
@@ -277,7 +279,7 @@ public class MeetService {
         Meet nowMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 모임 정보입니다."));
 
         //모임에서 나갈 경우 참여자 수 -1로 변경
-        nowMeet.setNowParticipants(nowMeet.getNowParticipants()-1);
+        nowMeet.setNowParticipants(nowMeet.getNowParticipants() - 1);
         meetRepository.save(nowMeet);
 
         chatRoomService.deleteExistUser(nowMeet.getChatRoom(), userId);
@@ -334,5 +336,16 @@ public class MeetService {
         findMeet.setNowParticipants(findMeet.getNowParticipants() + 1);
 
         meetRepository.save(findMeet);
+    }
+
+    public void checkMeetStatus() {
+        List<Meet> meetList = meetRepository.findMeetByMeetDateBefore();
+        List<Meet> updateMeetList = new ArrayList<>();
+        for (Meet meet : meetList) {
+            meet.setMeetStatus(MeetStatus.END);
+            updateMeetList.add(meet);
+        }
+
+        if (!updateMeetList.isEmpty()) meetRepository.saveAll(updateMeetList);
     }
 }

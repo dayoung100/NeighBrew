@@ -2,6 +2,7 @@ package com.ssafy.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @SpringBootApplication(
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
                 org.springframework.cloud.aws.autoconfigure.context.ContextRegionProviderAutoConfiguration.class
         }
 )
+@EnableScheduling
 public class BackendApplication {
 
     public static void main(String[] args) {
