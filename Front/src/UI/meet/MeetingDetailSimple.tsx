@@ -1,10 +1,7 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Meeting, User } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
-import { callApi } from "../../utils/api";
-import { initialUser } from "../common";
 
 const InnerText = styled.div<{ $widthRem: number }>`
   width: ${(props) => props.$widthRem}rem;
@@ -27,10 +24,6 @@ const UserProfileImg = styled.div<{ src: string }>`
  * ListInfoItem에 props로 전달되어 content 내부에 들어감
  */
 const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
-  //TODO: meetMy에서는 hostId만을 가져와서 host 변환이 필요함
-  // -> 수정하는게 나은가?
-  const [host, setHost] = useState(initialUser);
-  //날짜와 시간 변환 함수
   function formateDate(dateData: string) {
     const date = new Date(dateData);
     const month = date.getMonth() + 1;
@@ -47,21 +40,6 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
     (meetData.minAge ?? 0) > 0 || (meetData.maxAge ?? 0) > 0 ? true : false;
   const hasLiverLimit = (meetData.minLiverPoint ?? 0) > 0 ? true : false;
 
-  useEffect(() => {
-    if (meetData.host) {
-      setHost(meetData.host);
-      host.profile =
-        meetData.host.profile === "no image"
-          ? defaultImg
-          : meetData.host.profile;
-    } else {
-      const promise = callApi("get", `api/user/${meetData.hostId}`);
-      promise.then((res) => {
-        setHost(res.data);
-      });
-    }
-  }, [meetData]);
-
   return (
     <div style={{ fontFamily: "Noto Sans KR", fontSize: "10px" }}>
       <div style={{ display: "flex" }}>
@@ -76,8 +54,8 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
       </div>
       <InnerText $widthRem={12}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <UserProfileImg src={host.profile} />
-          <div>{host.nickname}</div>
+          <UserProfileImg src={meetData.host.profile ?? defaultImg} />
+          <div>{meetData.host.nickname}</div>
         </div>
       </InnerText>
       <div style={{ display: "flex" }}>

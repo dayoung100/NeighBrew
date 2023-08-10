@@ -22,6 +22,7 @@ import {
   initialDrink,
   initialSido,
   initialGugun,
+  WhiteModal,
 } from "../common";
 import Modal from "react-modal";
 
@@ -162,29 +163,6 @@ const ErrorDiv = styled.div`
   padding: 0.5rem;
 `;
 
-//TODO: 모달 디자인이니까 공통 변수로 빼는게 나을 듯??
-const WhiteModal = {
-  content: {
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "15rem",
-    height: "6rem",
-    padding: "0.5rem 1rem",
-    borderRadius: "15px",
-    background: "white",
-    textAlign: "center",
-    fontFamily: "SeoulNamsan",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  overlay: {
-    background: "rgba(0, 0, 0, 0.5)",
-    zIndex: "11",
-  },
-};
-
 const MeetingInfoManage = () => {
   //네비게이터: 모임 수정 후 모임 상세로 이동, 주류 추가 페이지로 이동
   const navigate = useNavigate();
@@ -295,6 +273,10 @@ const MeetingInfoManage = () => {
         }
       });
   }, [sido]);
+
+  useEffect(() => {
+    console.dir(gugun);
+  }, [gugun]);
 
   //inputText로 술장 검색 api
   useEffect(() => {
