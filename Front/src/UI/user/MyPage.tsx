@@ -92,6 +92,7 @@ const MyPage = () => {
       })
       .then(() => {
         myDrinks();
+        followers();
       })
       .catch(err => console.log(err));
   };
@@ -139,7 +140,6 @@ const MyPage = () => {
     });
     refresh();
     userInfo();
-    followers();
     localStorage.setItem("chooseMenu", "3");
   }, []);
 

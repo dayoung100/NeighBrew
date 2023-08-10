@@ -1,5 +1,6 @@
 package com.ssafy.backend.entity;
 
+import com.ssafy.backend.Enum.MeetStatus;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetSearchDto;
 import lombok.*;
@@ -75,6 +76,9 @@ public class Meet {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
+
+    @Enumerated(EnumType.STRING)
+    private MeetStatus meetStatus;
 
     @Builder
     public Meet(Long meetId, String meetName, String description, User host,
