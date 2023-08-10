@@ -1,8 +1,6 @@
 package com.ssafy.backend.dto;
 
-import com.ssafy.backend.entity.Drink;
-import com.ssafy.backend.entity.Meet;
-import com.ssafy.backend.entity.Tag;
+import com.ssafy.backend.entity.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -22,8 +20,8 @@ public class MeetDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime meetDate;
     private Long tagId;
-    private String sido;
-    private String gugun;
+    private Integer sidoCode;
+    private Integer gugunCode;
     private Integer minAge;
     private Integer maxAge;
     private Float minLiverPoint;
@@ -34,7 +32,7 @@ public class MeetDto {
     public MeetDto() {}
 
     @Builder
-    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun,Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
+    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, Integer sidoCode, Integer gugunCode,Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
         this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;
@@ -43,8 +41,8 @@ public class MeetDto {
         this.maxParticipants = maxParticipants;
         this.meetDate = meetDate;
         this.tagId = tagId;
-        this.sido = sido;
-        this.gugun = gugun;
+        this.sidoCode = sidoCode;
+        this.gugunCode = gugunCode;
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.minLiverPoint = minLiverPoint;
@@ -60,8 +58,8 @@ public class MeetDto {
                 .nowParticipants(this.nowParticipants)
                 .maxParticipants(this.maxParticipants)
                 .meetDate(this.meetDate)
-                .sido(this.sido)
-                .gugun(this.gugun)
+                .sidoCode(this.sidoCode)
+                .gugunCode(this.gugunCode)
                 .minAge(this.minAge)
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)
