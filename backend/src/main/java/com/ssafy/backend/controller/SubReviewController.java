@@ -4,7 +4,6 @@ import com.ssafy.backend.dto.SubReviewDto;
 import com.ssafy.backend.service.SubReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +18,9 @@ public class SubReviewController {
     private final SubReviewService subReviewService;
 
     // 리뷰의 댓글을 조회하는 API
-    // pagenation을 위해 page, size를 파라미터로 받는다.
     @GetMapping("/list/{reviewId}")
-    public ResponseEntity<?> getSubReviewList(@PathVariable Long reviewId, Pageable pageable) {
-        return ResponseEntity.ok().body(subReviewService.getSubReviewList(reviewId, pageable));
+    public ResponseEntity<?> getSubReviewList(@PathVariable Long reviewId) {
+        return ResponseEntity.ok().body(subReviewService.getSubReviewList(reviewId));
     }
 
 
