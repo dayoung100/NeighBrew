@@ -5,8 +5,7 @@ import { callApi } from "../../utils/api";
 import styled from "styled-components";
 import { likeIcon, commentIcon, sendIcon } from "./../../assets/AllIcon";
 import CommentItem from "./../components/CommentItem";
-import plusButton from "../../assets/plusButton.svg";
-import NavbarSimple from "../navbar/NavbarSimple";
+import defaultImg from "../../assets/defaultImg.png";
 
 const LikeAndComment = styled.div`
   display: flex;
@@ -97,27 +96,6 @@ const SubReviewCreateDiv = styled.div`
   align-items: center;
 `;
 
-const RoundBtn = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  bottom: 10%;
-
-  background: var(--c-yellow);
-  width: 4rem;
-  height: 4rem;
-  border-radius: 100px;
-  z-index: 10;
-
-  @media (max-width: 430px) {
-    right: 5%;
-  }
-  @media (min-width: 431px) {
-    left: 350px;
-  }
-`;
-
 const SubReviewInput = styled.input`
   border: none;
   width: 80%;
@@ -150,13 +128,15 @@ const DrinkpostReviewDetail = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // 제목에 술 이름이 들어가기 때문에 술 정보 요청
     callApi("get", `api/drink/${drinkId}`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
         setDrink(res.data);
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
 
+    // 후기에 대한 댓글 리스트 요청
     callApi("get", `api/subreview/list/${reviewId}`)
       .then(res => {
         console.log(res.data);
@@ -165,12 +145,13 @@ const DrinkpostReviewDetail = () => {
       .catch(err => console.error(err));
 
     async function summonReview() {
-      const response1 = await callApi(
-        "get",
-        `api/drinkreview/review/${reviewId}`
-      );
+      // 술 상세 후기 조회 요청
+      const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
       setReview(response1.data);
+      console.log(response1.data);
       const userId = response1.data.user.userId;
+      // 후기 쓴 사람에 대한 follow 요청
+      // 술 상세 후기 조회 이후에 이루어져야 함.
       const response2 = await callApi("get", `api/follow/follower/${userId}`);
       if (response2.data.length == 0) {
         setFollowing(0);
@@ -200,14 +181,14 @@ const DrinkpostReviewDetail = () => {
 
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/guard/${review?.user.userId}`)
-      .then((res) => {
+      .then(res => {
         followers();
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
   };
 
   const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then((res) => {
+    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -235,6 +216,7 @@ const DrinkpostReviewDetail = () => {
     setPostable(e.target.value.trim() !== "");
   };
 
+  // 술 후기에 대한 댓글 제출하는 함수.
   const submitHandler = () => {
     if (postable === false) {
       return;
@@ -257,24 +239,21 @@ const DrinkpostReviewDetail = () => {
   return (
     <>
       <WholeDiv>
-        <NavbarSimple title={drink?.name}></NavbarSimple>
+        <h2>{drink?.name}</h2>
         <Usercard>
-          <div
-            onClick={toProfileHandler}
-            style={{ display: "flex", alignItems: "center" }}
-          >
+          <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
             <div>
-              <UserImg src={review?.user.profile}></UserImg>
+              <UserImg
+                src={review?.user.profile !== "no image" ? review?.user.profile : defaultImg}
+              ></UserImg>
             </div>
+            {/* <ProfileDiv></ProfileDiv> */}
             <div>
               <b>{review?.user.nickname}</b>
             </div>
           </div>
           <FollowDiv
-            style={{
-              backgroundColor:
-                following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
-            }}
+            style={{ backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)" }}
             onClick={followHandler}
           >
             {following === 0 ? "팔로우" : "언팔로우"}
@@ -290,9 +269,7 @@ const DrinkpostReviewDetail = () => {
             {CommentIcon} {subReviewList.length}
           </div>
         </LikeAndComment>
-        <Description className={showMore ? "show" : ""}>
-          {review?.content}
-        </Description>
+        <Description className={showMore ? "show" : ""}>{review?.content}</Description>
         {review?.content.split("\n").length > 4 && (
           <MoreButton
             onClick={toggleShowMore}
@@ -324,9 +301,6 @@ const DrinkpostReviewDetail = () => {
             return <CommentItem key={i} subReview={subReview}></CommentItem>;
           })}
         </div>
-        <RoundBtn onClick={() => setIsSubReview(!isSubReview)}>
-          <img src={plusButton} width="25rem" />
-        </RoundBtn>
       </WholeDiv>
     </>
   );

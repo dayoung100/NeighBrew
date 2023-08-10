@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import whiskeyImage from "../../assets/whiskeyImage.png";
+import whiskeyImage from "../../assets/whiskey2.svg";
 import ReviewItem from "../components/ReviewItem";
 import styled from "styled-components";
 import reviewIcon from "../../assets/reviewIcon.svg";
@@ -139,22 +139,22 @@ const DrinkpostDetail = () => {
   // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
         setDetail(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
     // callApi("get", reviewUrl)
     // .then(res=> )
   }, []);
 
   useEffect(() => {
     callApi("get", `api/drinkreview/${drinkId}`)
-      .then((res) => {
+      .then(res => {
         console.log(res.data);
-        setReviewList((prev) => [...prev, ...res.data.content]);
+        setReviewList(prev => [...prev, ...res.data.content]);
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
   }, []);
 
   const transImage = (img: string) => {
@@ -189,17 +189,13 @@ const DrinkpostDetail = () => {
   return (
     <>
       <DrinkThumbnail>
-        <NavbarBackIcon onClick={() => navigate("/drinkpost/")}>
-          {ArrowLeftIcon}
-        </NavbarBackIcon>
+        <NavbarBackIcon onClick={() => navigate("/drinkpost/")}>{ArrowLeftIcon}</NavbarBackIcon>
       </DrinkThumbnail>
       <WholeDiv>
         <InfoDiv>
           <SimpleInfo>
             <div style={{ textAlign: "center", marginLeft: "10vw" }}>
-              <h3 style={{ marginRight: "2vw", textAlign: "start" }}>
-                {detail?.name}
-              </h3>
+              <h3 style={{ marginRight: "2vw", textAlign: "start" }}>{detail?.name}</h3>
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <b style={{ marginRight: "2vw" }}>주종</b>
                 {getTagNameMk2(detail?.tagId)}
@@ -253,16 +249,10 @@ const DrinkpostDetail = () => {
               justifyContent: "flex-end",
             }}
           >
-            <MoreButton
-              className={showMore ? "hide" : ""}
-              onClick={toggleShowMore}
-            >
+            <MoreButton className={showMore ? "hide" : ""} onClick={toggleShowMore}>
               더보기
             </MoreButton>
-            <MoreButton
-              className={showMore ? "" : "hide"}
-              onClick={toggleShowMore}
-            >
+            <MoreButton className={showMore ? "" : "hide"} onClick={toggleShowMore}>
               줄이기
             </MoreButton>
           </div>
@@ -280,13 +270,8 @@ const DrinkpostDetail = () => {
               justifyContent: "space-between",
             }}
           >
-            {reviewList.map((review) => {
-              return (
-                <ReviewItem
-                  key={review.drinkReviewId}
-                  review={review}
-                ></ReviewItem>
-              );
+            {reviewList.map(review => {
+              return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
             })}
           </div>
         </div>
