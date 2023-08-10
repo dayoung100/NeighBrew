@@ -80,7 +80,6 @@ export const WhiteModal = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "15rem",
-    // height: "6rem",
     padding: "0.5rem 1rem",
     borderRadius: "15px",
     background: "white",

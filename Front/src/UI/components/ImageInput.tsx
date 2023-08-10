@@ -27,6 +27,16 @@ const ImgInput = styled.div`
   }
 `;
 
+const ReselectBtn = styled.div`
+  background: var(--c-lightgray);
+  border-radius: 10px;
+  width: 3rem;
+  font-family: "NanumSquareNeo";
+  font-size: 15px;
+  padding: 0.5rem;
+  margin-left: 0.5rem;
+`;
+
 const ImageArea = styled.div<{ src: string }>`
   background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
@@ -49,15 +59,24 @@ const ImageInput = (props: ImageInputProps) => {
 
   //이미지 파일 업로드 시 미리보기
   const saveImgFile = () => {
-    const file = imgRef.current.files[0]; //파일 객체 부모로 전달
-    props.getFunc(file);
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        setImgFile(reader.result);
-      }
-    };
+    if (imgRef.current.files[0]) {
+      const file = imgRef.current.files[0]; //파일 객체 부모로 전달
+      props.getFunc(file);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setImgFile(reader.result);
+        }
+      };
+    } else props.getFunc(null);
+  };
+
+  //입력한 이미지 파일 제거
+  const resetImgFile = () => {
+    imgRef.current.value = null;
+    setImgFile(null); // 미리보기 초기화
+    saveImgFile(); //부모 객체로 전달
   };
 
   return (
@@ -79,6 +98,7 @@ const ImageInput = (props: ImageInputProps) => {
             ref={imgRef}
           />
         </ImgInput>
+        {imgFile && <ReselectBtn onClick={resetImgFile}>재선택</ReselectBtn>}
       </div>
       {imgFile && <ImageArea src={imgFile}></ImageArea>}
     </QuestionDiv>
