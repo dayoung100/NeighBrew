@@ -326,18 +326,18 @@ const DrinkpostReviewDetail = () => {
                 <Description>{review?.content}</Description>
                 <hr/>
                 <CommentBox>
-                    {/*<CommentInput*/}
-                    {/*  placeholder="댓글을 작성해주세요..."*/}
-                    {/*  value={comment}*/}
-                    {/*  onChange={commentHandler}*/}
-                    {/*/>*/}
-                    <StyleAutoTextArea
-                        minRows={1}
-                        maxRows={5}
-                        placeholder="댓글을 작성해주세요..."
-                        value={comment}
-                        onChange={commentHandler}
+                    <CommentInput
+                      placeholder="댓글을 작성해주세요..."
+                      value={comment}
+                      onChange={commentHandler}
                     />
+                    {/*<StyleAutoTextArea*/}
+                    {/*    minRows={1}*/}
+                    {/*    maxRows={5}*/}
+                    {/*    placeholder="댓글을 작성해주세요..."*/}
+                    {/*    value={comment}*/}
+                    {/*    onChange={commentHandler}*/}
+                    {/*/>*/}
                     <CommentButton onClick={submitHandler}>
                         <SendImg src={sendImage} alt=""/>
                     </CommentButton>
