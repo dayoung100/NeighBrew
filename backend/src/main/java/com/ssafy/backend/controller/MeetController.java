@@ -1,14 +1,13 @@
 package com.ssafy.backend.controller;
 
-import com.amazonaws.Response;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.entity.Meet;
-import com.ssafy.backend.service.*;
+import com.ssafy.backend.service.MeetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -83,7 +82,7 @@ public class MeetController {
         if (meetDto.getMinAge() < 20) return ResponseEntity.badRequest().body("모임 최소나이를 다시 입력해 주세요.");
         if (meetDto.getMinAge() >= 200) return ResponseEntity.badRequest().body("모임 최대 나이를 다시 입력해 주세요.");
         if (meetDto.getMeetDate().toLocalDate().isBefore(LocalDateTime.now().toLocalDate()))
-        return ResponseEntity.badRequest().body("모임 날짜가 지났습니다. 다시 한 번 입력해 주세요.");
+            return ResponseEntity.badRequest().body("모임 날짜가 지났습니다. 다시 한 번 입력해 주세요.");
         if (meetDto.getMeetDate().toLocalTime().isBefore(LocalDateTime.now().toLocalTime()))
             return ResponseEntity.badRequest().body("모임 시간이 지났습니다. 다시 한 번 입력해 주세요.");
 
@@ -209,5 +208,10 @@ public class MeetController {
         }
     }
 
+    // 1시간마다
+    @Scheduled(cron = "0 0 * * * *")
+    public void checkMeetStatus() {
+        meetService.checkMeetStatus();
+    }
 }
 
