@@ -187,7 +187,7 @@ const DrinkpostReviewCreate = () => {
       const formData = new FormData();
       formData.append("image", file);
       if (file !== undefined) {
-        const response = await axios.post(`http://i9b310.p.ssafy.io/api/img/upload`, formData, {
+        const response = await axios.post(`https://i9b310.p.ssafy.io/api/img/upload`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + localStorage.getItem("token"),
