@@ -22,6 +22,7 @@ import {
   initialDrink,
   initialSido,
   initialGugun,
+  WhiteModal,
 } from "../common";
 import Modal from "react-modal";
 
@@ -29,6 +30,7 @@ const Title = styled.div`
   font-family: "JejuGothic";
   font-size: 24px;
   text-align: left;
+  margin-top: 1rem;
   margin-bottom: 0.5rem;
 `;
 
@@ -74,7 +76,7 @@ const InputShort = styled(Input)`
 `;
 
 const DropdownInput = styled.select`
-  width: 4rem;
+  width: 5rem;
   background: white;
   text-align: right;
   padding: 1% 3%;
@@ -131,6 +133,7 @@ const TimeInput = styled.input.attrs({ type: "time" })`
 
 const CateDiv = styled.div`
   height: 10rem;
+  margin: 1rem 0 0.5rem 0;
   div {
     margin: 0;
   }
@@ -145,7 +148,7 @@ const CateDiv = styled.div`
 const LimitDiv = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.7rem;
 `;
 
 const InfoTextArea = styled.textarea`
@@ -168,29 +171,6 @@ const ErrorDiv = styled.div`
   font-size: 14px;
   padding: 0.5rem;
 `;
-
-//TODO: 모달 디자인이니까 공통 변수로 빼는게 나을 듯??
-const WhiteModal = {
-  content: {
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "15rem",
-    height: "6rem",
-    padding: "0.5rem 1rem",
-    borderRadius: "15px",
-    background: "white",
-    textAlign: "center",
-    fontFamily: "NanumSquareNeo",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  overlay: {
-    background: "rgba(0, 0, 0, 0.5)",
-    zIndex: "11",
-  },
-};
 
 const MeetingCreate = () => {
   //네비게이터: 모임 수정 후 모임 상세로 이동, 주류 추가 페이지로 이동
@@ -355,15 +335,15 @@ const MeetingCreate = () => {
       return false;
     }
     //최대인원수 < 1
-    if (1 > maxParticipants) {
-      setErrorMsg(`최대 인원수는 1명 이상이어야합니다.`);
-      return false;
-    }
-    //최소 나이 > 최대 나이 일때
-    if (maxAge && minAge > maxAge) {
-      setErrorMsg("최소 나이는 최대 나이보다 \n 클 수 없습니다.");
-      return false;
-    }
+    // if (1 > maxParticipants) {
+    //   setErrorMsg(`최대 인원수는 1명 이상이어야합니다.`);
+    //   return false;
+    // }
+    // //최소 나이 > 최대 나이 일때
+    // if (maxAge && minAge > maxAge) {
+    //   setErrorMsg("최소 나이는 최대 나이보다 \n 클 수 없습니다.");
+    //   return false;
+    // }
     return true;
   };
 
@@ -583,11 +563,16 @@ const MeetingCreate = () => {
               <div>
                 <ListInfoItem
                   title={selectedDrink.name}
-                  imgSrc="/src/assets/tempgif.gif"
+                  imgSrc={
+                    selectedDrink.image === "no image"
+                      ? "/src/assets/whiskeyImage.png"
+                      : selectedDrink.image
+                  }
                   tag={getTagName(selectedDrink.tagId)}
                   content={selectedDrink.description}
                   isWaiting={false}
                   outLine={true}
+                  isDrink={true}
                   routingFunc={null}
                 />
                 <ReselectBtn
@@ -756,7 +741,9 @@ const MeetingCreate = () => {
         onRequestClose={() => setIsModalOn(false)}
         style={WhiteModal}
       >
-        <div style={{ whiteSpace: "pre-line" }}>{errorMsg}</div>
+        <div style={{ whiteSpace: "pre-line", overflow: "auto" }}>
+          {errorMsg}
+        </div>
       </Modal>
     </div>
   );
