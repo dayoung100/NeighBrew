@@ -5,6 +5,7 @@ import com.ssafy.backend.dto.DrinkReviewDto;
 import com.ssafy.backend.dto.DrinkReviewUpdateDto;
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.DrinkReview;
+import com.ssafy.backend.entity.Push;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.DrinkRepository;
 import com.ssafy.backend.repository.DrinkReviewRepository;
@@ -28,6 +29,7 @@ public class DrinkReviewService {
     private final UserRepository userRepository;
     private final DrinkRepository drinkRepository;
     private final DrinkReviewRepository drinkReviewRepository;
+
     private final S3Service s3Service;
 
     public DrinkReview createDrinkReview(DrinkReviewDto request, MultipartFile multipartFile) throws IOException, IllegalArgumentException {

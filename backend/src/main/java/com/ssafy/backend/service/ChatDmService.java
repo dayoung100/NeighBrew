@@ -190,6 +190,7 @@ public class ChatDmService {
         result.put("userId", sender.getUserId());
         result.put("user", sender.toChatDto());
 
+        /* 채팅에 대한 Push알림은 잠시 막겠습니다.
         //PushService.send(User sender, User receiver, PushType pushType, String content, String url)
         String pushContent = sender.getNickname() + "님께서 메세지를 보내셨습니다.\n" + message;
         StringBuilder moveUrl = new StringBuilder();
@@ -197,6 +198,7 @@ public class ChatDmService {
                 .append("/" + sender.getUserId())
                 .append("/" + receiver.getUserId());
         pushService.send(sender, receiver, PushType.CHAT, pushContent, moveUrl.toString());
+        */
         return result;
     }
 }
