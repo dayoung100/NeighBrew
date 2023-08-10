@@ -212,19 +212,19 @@ const MeetingCreate = () => {
 
   //모임의 정보 초기 세팅
   useEffect(() => {
-    setMeetTitle(initialMeetDetail.meetDto.meetName);
-    setSelectedCategory(initialMeetDetail.meetDto.tagId); //주종카테고리
-    setSelectedDrink(initialMeetDetail.meetDto.drink); //주류아이디
+    setMeetTitle(initialMeetDetail.meet.meetName);
+    setSelectedCategory(initialMeetDetail.meet.tagId); //주종카테고리
+    setSelectedDrink(initialMeetDetail.meet.drink); //주류아이디
     setSido(initialSido); //시도
     setGugun(initialGugun); //구군
     setDate(formateDate(`${localDate()}T${localTime()}:00`)); //날짜
     setTime(formateTime(`${localDate()}T${localTime()}:00`)); //시간
-    setMaxParticipants(initialMeetDetail.meetDto.maxParticipants); //최대인원
-    setLiverLimit(initialMeetDetail.meetDto.minLiverPoint); //간수치 제한
-    setMinAge(initialMeetDetail.meetDto.minAge); //최소 나이
-    setMaxAge(initialMeetDetail.meetDto.maxAge); //최대 나이
-    setMeetDesc(initialMeetDetail.meetDto.description); //모임 소개
-    setImgSrc(initialMeetDetail.meetDto.imgSrc); //이미지 경로
+    setMaxParticipants(initialMeetDetail.meet.maxParticipants); //최대인원
+    setLiverLimit(initialMeetDetail.meet.minLiverPoint); //간수치 제한
+    setMinAge(initialMeetDetail.meet.minAge); //최소 나이
+    setMaxAge(initialMeetDetail.meet.maxAge); //최대 나이
+    setMeetDesc(initialMeetDetail.meet.description); //모임 소개
+    setImgSrc(initialMeetDetail.meet.imgSrc); //이미지 경로
     //로컬 스토리지에서 userId 가져오기
     setUserId(parseInt(localStorage.getItem("myId")));
     window.scrollTo({
@@ -286,7 +286,7 @@ const MeetingCreate = () => {
 
   //위치: 필수 입력(구군은 필수x, 세종시 때문에)
   const positionCheck = () => {
-    return !(sido.sidoCode === 0);
+    return !(sido.sidoCode === 0 || gugun.gugunCode === 0);
   };
 
   //날짜: 필수 입력/현재 시점 이후로
@@ -335,15 +335,15 @@ const MeetingCreate = () => {
       return false;
     }
     //최대인원수 < 1
-    // if (1 > maxParticipants) {
-    //   setErrorMsg(`최대 인원수는 1명 이상이어야합니다.`);
-    //   return false;
-    // }
-    // //최소 나이 > 최대 나이 일때
-    // if (maxAge && minAge > maxAge) {
-    //   setErrorMsg("최소 나이는 최대 나이보다 \n 클 수 없습니다.");
-    //   return false;
-    // }
+    if (1 > maxParticipants) {
+      setErrorMsg(`최대 인원수는 1명 이상이어야합니다.`);
+      return false;
+    }
+    //최소 나이 > 최대 나이 일때
+    if (maxAge && minAge > maxAge) {
+      setErrorMsg("최소 나이는 최대 나이보다 \n 클 수 없습니다.");
+      return false;
+    }
     return true;
   };
 
@@ -371,8 +371,8 @@ const MeetingCreate = () => {
     f.append("maxParticipants", maxParticipants.toString());
     f.append("meetDate", `${date}T${time}:00`);
     f.append("tagId", selectedCategory.toString());
-    f.append("sido", sido.sidoCode.toString());
-    f.append("gugun", gugun.gugunCode.toString());
+    f.append("sidoCode", sido.sidoCode.toString());
+    f.append("gugunCode", gugun.gugunCode.toString());
     f.append(
       "drinkId",
       selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
@@ -388,8 +388,9 @@ const MeetingCreate = () => {
       f.append("maxAge", maxAge.toString());
     }
     f.append("description", meetDesc);
-    f.append("image", file);
-
+    if (file) {
+      f.append("image", file);
+    }
     const promise = callApi("post", `/api/meet/create`, f);
     promise
       .then((res) => {

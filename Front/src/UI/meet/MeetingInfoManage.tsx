@@ -23,6 +23,7 @@ import {
   initialSido,
   initialGugun,
   WhiteModal,
+  ModalInner,
 } from "../common";
 import Modal from "react-modal";
 
@@ -233,52 +234,38 @@ const MeetingInfoManage = () => {
 
   //받아온 모임 정보로 state 초기값 설정
   useEffect(() => {
-    setMeetTitle(meetData.meetDto.meetName);
-    setSelectedCategory(meetData.meetDto.tagId); //주종카테고리
-    setSelectedDrink(meetData.meetDto.drink); //주류아이디
-    setSido({ sidoCode: 0, sidoName: meetData.meetDto.sido }); //시도
-    setGugun({ gugunCode: -1, gugunName: meetData.meetDto.gugun }); //구군(세팅된 것을 확인하기 위해 -1로 시작)
-    setDate(formateDate(meetData.meetDto.meetDate)); //날짜
-    setTime(formateTime(meetData.meetDto.meetDate)); //시간
-    setMaxParticipants(meetData.meetDto.maxParticipants); //최대인원
-    setLiverLimit(meetData.meetDto.minLiverPoint); //간수치 제한
-    setMinAge(meetData.meetDto.minAge); //최소 나이
-    setMaxAge(meetData.meetDto.maxAge); //최대 나이
-    setMeetDesc(meetData.meetDto.description); //모임 소개
-    setImgSrc(meetData.meetDto.imgSrc); //이미지 경로
+    setMeetTitle(meetData.meet.meetName);
+    setSelectedCategory(meetData.meet.tagId); //주종카테고리
+    setSelectedDrink(meetData.meet.drink); //주류아이디
+    setSido(meetData.meet.sido); //시도
+    setGugun(meetData.meet.gugun); //구군
+    setDate(formateDate(meetData.meet.meetDate)); //날짜
+    setTime(formateTime(meetData.meet.meetDate)); //시간
+    setMaxParticipants(meetData.meet.maxParticipants); //최대인원
+    setLiverLimit(meetData.meet.minLiverPoint); //간수치 제한
+    setMinAge(meetData.meet.minAge); //최소 나이
+    setMaxAge(meetData.meet.maxAge); //최대 나이
+    setMeetDesc(meetData.meet.description); //모임 소개
+    setImgSrc(meetData.meet.imgSrc); //이미지 경로
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   }, [meetData]);
 
-  //시도 리스트와 기존 데이터가 모두 세팅되면 시도 객체 다시 세팅
-  useEffect(() => {
-    if (meetData.meetDto.meetId === 0) return;
-    setSido(sidoList.find((item) => item.sidoName === meetData.meetDto.sido));
-  }, [sidoList, meetData]);
-
   //선택한 시도에 따라 구군 fetch
   useEffect(() => {
-    if (gugun.gugunCode !== -1) setGugun(initialGugun); //초기화
-    callApi("get", `api/gugun/${sido.sidoCode}`)
-      .then((res) => {
-        setGugunList([initialGugun, ...res.data]);
-      })
-      .then(() => {
-        if (gugun.gugunCode === -1) {
-          setGugun(
-            gugunList.find((item) => item.gugunName === meetData.meetDto.gugun)
-          );
-        }
-      });
+    //초기 모임 데이터 로딩은 제외하고, 구군 정보 초기화
+    if (gugun.sidoCode !== sido.sidoCode) {
+      setGugun(initialGugun); //초기화
+    }
+    callApi("get", `api/gugun/${sido.sidoCode}`).then((res) => {
+      setGugunList([initialGugun, ...res.data]);
+    });
   }, [sido]);
 
-  useEffect(() => {
-    console.dir(gugun);
-  }, [gugun]);
-
   //inputText로 술장 검색 api
+  //TODO: 검색 결과가 없을 때 처리
   useEffect(() => {
     const promise = callApi(
       "get",
@@ -294,8 +281,8 @@ const MeetingInfoManage = () => {
     //선택된 술이 원래의 술이고,
     //변경된 카테고리도 원래의 술이라면 -> 초기 로딩임 -> 초기화x
     if (
-      selectedDrink.drinkId === meetData.meetDto.drink.drinkId &&
-      selectedCategory === meetData.meetDto.tagId
+      selectedDrink.drinkId === meetData.meet.drink.drinkId &&
+      selectedCategory === meetData.meet.tagId
     )
       return;
     setSelectedDrink(initialDrink);
@@ -318,7 +305,7 @@ const MeetingInfoManage = () => {
   //권한이 없다면 메인 페이지로 이동시킴
   const checkIsHost = () => {
     let isValid: boolean = true;
-    if (userId !== meetData.meetDto.hostId) {
+    if (userId !== meetData.meet.host.userId) {
       isValid = false;
       setErrorMsg("모임 편집 권한이 없습니다.");
     }
@@ -338,7 +325,7 @@ const MeetingInfoManage = () => {
 
   //위치: 필수 입력
   const positionCheck = () => {
-    return !(sido.sidoCode === 0 || gugun.gugunCode < 0);
+    return !(sido.sidoCode === 0 || gugun.gugunCode === 0);
   };
 
   //날짜: 필수 입력/현재 시점 이후로
@@ -386,10 +373,15 @@ const MeetingInfoManage = () => {
       setErrorMsg("입력값을 확인해주세요.");
       return false;
     }
+    //최대인원수 < 1
+    if (1 > maxParticipants) {
+      setErrorMsg(`최대 인원수는 1명 이상이어야합니다.`);
+      return false;
+    }
     //모임 현재 인원수 > 최대인원수 일때
-    if (meetData.meetDto.nowParticipants > maxParticipants) {
+    if (meetData.meet.nowParticipants > maxParticipants) {
       setErrorMsg(
-        `최대 인원수는 현재 인원수보다 적어질 수 없습니다. \n 현재 인원수: ${meetData.meetDto.nowParticipants}`
+        `최대 인원수는 현재 인원수보다 적어질 수 없습니다. \n 현재 인원수: ${meetData.meet.nowParticipants}`
       );
       return false;
     }
@@ -429,8 +421,8 @@ const MeetingInfoManage = () => {
     f.append("maxParticipants", maxParticipants.toString());
     f.append("meetDate", `${date}T${time}:00`);
     f.append("tagId", selectedCategory.toString());
-    f.append("sido", sido.sidoCode.toString());
-    f.append("gugun", gugun.gugunCode.toString());
+    f.append("sidoCode", sido.sidoCode.toString());
+    f.append("gugunCode", gugun.gugunCode.toString());
     f.append(
       "drinkId",
       selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
@@ -458,6 +450,10 @@ const MeetingInfoManage = () => {
         setIsModalOn(true);
       });
   };
+
+  useEffect(() => {
+    console.dir(file);
+  }, [file]);
 
   //검색 결과 창 애니메이션 용
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -543,12 +539,13 @@ const MeetingInfoManage = () => {
           <Title>우리가 마실 것은</Title>
           <SubTitle>카테고리를 선택해주세요</SubTitle>
           <CateDiv>
-            <DrinkCategory
-              key={selectedCategory}
-              getFunc={getDrinkCategory}
-              selectedId={selectedCategory}
-              isSearch={false}
-            />
+            {selectedCategory !== 0 && (
+              <DrinkCategory
+                getFunc={getDrinkCategory}
+                selectedId={selectedCategory}
+                isSearch={false}
+              />
+            )}
           </CateDiv>
           <div ref={parent}>
             {selectedDrink.drinkId === 0 && (
@@ -611,11 +608,16 @@ const MeetingInfoManage = () => {
               <div>
                 <ListInfoItem
                   title={selectedDrink.name}
-                  imgSrc="/src/assets/tempgif.gif"
+                  imgSrc={
+                    selectedDrink.image === "no image"
+                      ? "/src/assets/whiskeyImage.png"
+                      : selectedDrink.image
+                  }
                   tag={getTagName(selectedDrink.tagId)}
                   content={selectedDrink.description}
                   isWaiting={false}
                   outLine={true}
+                  isDrink={true}
                   routingFunc={null}
                 />
                 <ReselectBtn
@@ -804,7 +806,7 @@ const MeetingInfoManage = () => {
         onRequestClose={() => setIsModalOn(false)}
         style={WhiteModal}
       >
-        <div style={{ whiteSpace: "pre-line" }}>{errorMsg}</div>
+        <ModalInner>{errorMsg}</ModalInner>
       </Modal>
       <Modal
         isOpen={isGotoMainModalOn}
@@ -814,7 +816,7 @@ const MeetingInfoManage = () => {
         }}
         style={WhiteModal}
       >
-        <div>{errorMsg}</div>
+        <ModalInner>{errorMsg}</ModalInner>
       </Modal>
     </div>
   );

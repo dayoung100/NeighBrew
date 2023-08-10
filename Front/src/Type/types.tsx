@@ -45,8 +45,15 @@ export interface Meeting {
   maxParticipants: number;
   meetDate: string;
   tagId: number;
-  sido: string;
-  gugun: string;
+  sido: {
+    sidoCode: number;
+    sidoName: string;
+  };
+  gugun: {
+    gugunCode: number;
+    gugunName: string;
+    sidoCode: number;
+  };
   minAge?: number;
   maxAge?: number;
   minLiverPoint?: number;
@@ -56,7 +63,7 @@ export interface Meeting {
 
 //미팅 상세 정보 type
 export type MeetDetail = {
-  meetDto: Meeting;
+  meet: Meeting;
   users: User[];
   statuses: [];
 };

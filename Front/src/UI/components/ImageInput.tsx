@@ -54,7 +54,9 @@ type ImageInputProps = {
 
 const ImageInput = (props: ImageInputProps) => {
   //파일 업로드 용
-  const [imgFile, setImgFile] = useState(props.imgSrc ?? "");
+  const [imgFile, setImgFile] = useState(
+    (props.imgSrc ?? "no image") === "no image" ? "" : props.imgSrc
+  );
   const imgRef = useRef<HTMLInputElement>(null);
 
   //이미지 파일 업로드 시 미리보기

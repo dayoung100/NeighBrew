@@ -121,14 +121,14 @@ const MeetingMemberManage = () => {
         <NavbarSimple title="모임 관리" />
       </header>
       <div style={{ fontSize: "32px", marginTop: "1rem" }}>
-        {meetData.meetDto.meetName}
+        {meetData.meet.meetName}
       </div>
       <div style={{ marginBottom: "7rem" }}>
         <SubTitle style={{ display: "flex", alignItems: "center" }}>
           <div>참여중</div>
           <PeopleNumInfo
-            now={meetData.meetDto.nowParticipants}
-            max={meetData.meetDto.maxParticipants}
+            now={meetData.meet.nowParticipants}
+            max={meetData.meet.maxParticipants}
             color="var(--c-black)"
             size={15}
           />

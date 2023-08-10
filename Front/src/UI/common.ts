@@ -1,4 +1,16 @@
 import { Meeting, MeetDetail, Drink, User } from "../Type/types";
+import styled from "styled-components";
+
+export const initialSido = {
+  sidoCode: 0,
+  sidoName: "-",
+};
+
+export const initialGugun = {
+  gugunCode: 0,
+  gugunName: "-",
+  sidoCode: 0,
+};
 
 export const initialMeet: Meeting = {
   meetId: 0,
@@ -9,13 +21,13 @@ export const initialMeet: Meeting = {
   maxParticipants: 8,
   meetDate: "0000-01-01T00:00:00",
   tagId: 0,
-  sido: "-",
-  gugun: "-",
+  sido: initialSido,
+  gugun: initialGugun,
   imgSrc: "",
 };
 
 export const initialMeetDetail: MeetDetail = {
-  meetDto: {
+  meet: {
     meetId: 0,
     meetName: "",
     description: "",
@@ -23,8 +35,8 @@ export const initialMeetDetail: MeetDetail = {
     maxParticipants: 8,
     meetDate: "9999-01-01T00:00:00",
     tagId: 1,
-    sido: "",
-    gugun: "",
+    sido: initialSido,
+    gugun: initialGugun,
     minAge: 20,
     drink: {
       degree: 0,
@@ -60,16 +72,6 @@ export const initialUser: User = {
   following: 0,
 };
 
-export const initialSido = {
-  sidoCode: 0,
-  sidoName: "-",
-};
-
-export const initialGugun = {
-  gugunCode: 0,
-  gugunName: "-",
-};
-
 //모달창 디자인
 export const WhiteModal = {
   content: {
@@ -94,3 +96,9 @@ export const WhiteModal = {
     zIndex: "11",
   },
 };
+
+//모달 안에 div
+export const ModalInner = styled.div`
+  white-space: pre-line;
+  overflow: auto;
+`;

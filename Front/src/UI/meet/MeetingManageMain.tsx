@@ -22,6 +22,24 @@ const BigBtn = styled.div`
   padding: 1rem;
 `;
 
+const ModalBtnDiv = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 10%;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+`;
+
+const ModalBtn = styled.div`
+  width: 5rem;
+  padding: 0.5rem;
+  margin: 0 0.5rem;
+  border-radius: 5px;
+  background: var(--c-yellow);
+`;
+
 const MeetingManageMain = () => {
   const navigate = useNavigate();
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
@@ -52,7 +70,7 @@ const MeetingManageMain = () => {
   //api 호출, 모임 이름 세팅
   useEffect(() => {
     callApi("get", `api/meet/${meetId}`).then((res) =>
-      setMeetData(res.data.meetDto)
+      setMeetData(res.data.meet)
     );
   }, [meetId]);
 
@@ -110,36 +128,29 @@ const MeetingManageMain = () => {
         onRequestClose={() => setDeleteModalOn(false)}
         style={WhiteModal}
       >
-        <div style={{ padding: "1rem 0" }}>
-          이 모임을 정말 삭제하시겠습니까?
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-          }}
-        >
-          <div
-            onClick={() => {
-              DeleteMeeting();
-              console.log("삭제 완료");
-              setDeleteModalOn(false);
-            }}
-            style={{ width: "7rem", padding: "0.5rem 0" }}
-          >
-            예
+        <div>
+          <div style={{ padding: "1rem 0 3rem 0" }}>
+            이 모임을 정말 삭제하시겠습니까?
           </div>
-          <div>|</div>
-          <div
-            onClick={() => {
-              console.log("삭제 취소");
-              setDeleteModalOn(false);
-            }}
-            style={{ width: "7rem", padding: "0.5rem 0" }}
-          >
-            아니오
-          </div>
+          <ModalBtnDiv>
+            <ModalBtn
+              onClick={() => {
+                DeleteMeeting();
+                console.log("삭제 완료");
+                setDeleteModalOn(false);
+              }}
+            >
+              예
+            </ModalBtn>
+            <ModalBtn
+              onClick={() => {
+                console.log("삭제 취소");
+                setDeleteModalOn(false);
+              }}
+            >
+              아니오
+            </ModalBtn>
+          </ModalBtnDiv>
         </div>
       </Modal>
       <Modal
