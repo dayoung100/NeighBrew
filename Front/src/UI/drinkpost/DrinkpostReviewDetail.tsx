@@ -16,9 +16,10 @@ const StyleAutoTextArea = styled(TextareaAutosize)`
   border: 0.5px solid #dfdfdf;
   background-color: #eeeeee;
   border-radius: 5px;
-  margin : 0.5rem 0;
+      margin: 0.5rem 0 0.5rem 0.5rem;
   padding: 0.3rem;
   overflow-y : auto;
+  
   
   // 글을 아래에 배치
   align-self: flex-end;
