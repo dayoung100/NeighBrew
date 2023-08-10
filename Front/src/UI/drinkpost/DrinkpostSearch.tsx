@@ -24,7 +24,6 @@ const ShowcaseBody = styled.div`
   font-size: 14px;
   display: flex;
   justify-content: center;
-  margin-left: 3vw;
 `;
 
 const DrinkpostSearch = () => {
