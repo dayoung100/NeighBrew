@@ -49,9 +49,9 @@ public class Meet {
 
 
     @Column(nullable = false)
-    private String sido;
+    private Integer sidoCode;
     @Column(nullable = false)
-    private String gugun;
+    private Integer gugunCode;
 
     private Integer minAge;
     private Integer maxAge;
@@ -83,7 +83,7 @@ public class Meet {
     @Builder
     public Meet(Long meetId, String meetName, String description, User host,
                 Integer nowParticipants, Integer maxParticipants,
-                LocalDateTime meetDate, Tag tag, String sido, String gugun, Integer minAge, Integer maxAge, Float minLiverPoint,
+                LocalDateTime meetDate, Tag tag, Integer sidoCode, Integer gugunCode, Integer minAge, Integer maxAge, Float minLiverPoint,
                 Drink drink, String imgSrc) {
         this.meetId = meetId;
         this.meetName = meetName;
@@ -93,8 +93,8 @@ public class Meet {
         this.maxParticipants = maxParticipants;
         this.meetDate = meetDate;
         this.tag = tag;
-        this.sido = sido;
-        this.gugun = gugun;
+        this.sidoCode = sidoCode;
+        this.gugunCode = gugunCode;
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.minLiverPoint = minLiverPoint;
@@ -108,8 +108,8 @@ public class Meet {
         this.maxParticipants = meet.getMaxParticipants();
         this.meetDate = meet.getMeetDate();
         this.tag = meet.getTag();
-        this.sido = meet.getSido();
-        this.gugun = meet.getGugun();
+        this.sidoCode = meet.getSidoCode();
+        this.gugunCode = meet.getGugunCode();
         this.minAge = meet.getMinAge();
         this.maxAge = meet.getMaxAge();
         this.minLiverPoint = meet.getMinLiverPoint();
@@ -128,8 +128,8 @@ public class Meet {
                 .maxParticipants(maxParticipants)
                 .meetDate(this.meetDate)
                 .tagId(this.tag.getTagId())
-                .sido(this.sido)
-                .gugun(this.gugun)
+                .sidoCode(this.sidoCode)
+                .gugunCode(this.gugunCode)
                 .minAge(this.minAge)
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)
@@ -139,7 +139,7 @@ public class Meet {
                 .build();
     }
 
-    public MeetSearchDto toSearchDto() {
+    public MeetSearchDto toSearchDto(Sido sido, Gugun gugun) {
         return MeetSearchDto.builder()
                 .meetId(this.meetId)
                 .meetName(this.meetName)
@@ -149,8 +149,8 @@ public class Meet {
                 .maxParticipants(maxParticipants)
                 .meetDate(this.meetDate)
                 .tagId(this.tag.getTagId())
-                .sido(this.sido)
-                .gugun(this.gugun)
+                .sido(sido)
+                .gugun(gugun)
                 .minAge(this.minAge)
                 .maxAge(this.maxAge)
                 .minLiverPoint(this.minLiverPoint)

@@ -1,7 +1,6 @@
 package com.ssafy.backend.dto;
 
 import com.ssafy.backend.Enum.Status;
-import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,9 +23,7 @@ public class MeetUserDto {
     private List<Status> statuses;
 
     @Builder
-    //public MeetUserDto(Long meetUserId, Meet meet) {
-    public MeetUserDto(Long meetUserId, MeetDto meetDto) {
-        //this.meetUserId = meetUserId;
+    public MeetUserDto(MeetDto meetDto) {
         this.meetDto = meetDto;
         this.users = new ArrayList<>();
         this.statuses = new ArrayList<>();

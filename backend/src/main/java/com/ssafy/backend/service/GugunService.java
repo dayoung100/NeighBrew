@@ -15,4 +15,8 @@ public class GugunService {
     public List<Gugun> getGugunsBySidoCode(Integer sidoCode) {
         return gugunRepository.findBySidoCode(sidoCode);
     }
+
+    public Gugun getGugun(Integer sidoCode, Integer gugunCode) {
+        return gugunRepository.findBySidoCodeAndGugunCode(sidoCode, gugunCode).orElseThrow(()-> new IllegalArgumentException("시도, 구군 데이터가 올바르지 않습니다."));
+    }
 }
