@@ -9,7 +9,10 @@ import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가�
 import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+<<<<<<< Updated upstream
 import { registerServiceWorker } from "../../serviceWorker.js";
+=======
+>>>>>>> Stashed changes
 
 const ImgDiv = styled.div`
   width: 20%;
@@ -94,7 +97,11 @@ const Login = () => {
   const KakaologinHandler = async () => {
     axios({
       method: "get",
+<<<<<<< Updated upstream
       url: "/api/auth/login/kakao",
+=======
+      url: "http://localhost:8080/api/auth/login/kakao",
+>>>>>>> Stashed changes
     })
       .then(res => {
         const url = res.data.URL;
@@ -133,6 +140,7 @@ const Login = () => {
   useEffect(() => {
     localStorage.setItem("chooseMenu", "0");
   }, []);
+<<<<<<< Updated upstream
 
   // const noti = (message: string) => {
   //   navigator.serviceWorker.ready.then(registration => {
@@ -159,6 +167,8 @@ const Login = () => {
       })
       .catch(err => console.log(err));
   };
+=======
+>>>>>>> Stashed changes
   return (
     <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
       <OrangeSection>
