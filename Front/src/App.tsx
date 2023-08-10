@@ -29,7 +29,7 @@ import DrinkpostReviewDetail from "./UI/drinkpost/DrinkpostReviewDetail";
 import DirectChat from "./UI/chat/DirectChat";
 import SearchUser from "./UI/user/SearchUser";
 import RatingCreate from "./UI/meetrate/RatingCreate";
-
+import logo from "./assets/logoNavbar.svg";
 function App() {
   const navigate = useNavigate();
   const [isLodaing, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
@@ -39,10 +39,25 @@ function App() {
       console.log(isLodaing);
     }, 3000);
   }, []);
+  // useEffect(() => {
+  //   function handleStorageChange(event) {
+  //     console.log(event);
+  //     if (event.key === "myId") {
+  //       setUserid(event.newValue);
+  //     }
+  //   }
+
+  //   window.addEventListener("storage", handleStorageChange);
+
+  //   return () => {
+  //     window.removeEventListener("storage", handleStorageChange);
+  //   };
+  // }, []);
 
   const userid = localStorage.getItem("myId");
+
   useEffect(() => {
-    const event = new EventSource(`https://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
+    const event = new EventSource(`http://i9b310.p.ssafy.io/api/push/connect/${userid}`, {
       withCredentials: true,
     });
     event.addEventListener("open", e => {
@@ -53,16 +68,17 @@ function App() {
     });
     event.addEventListener("FOLLOW", e => {
       console.log(JSON.parse(e.data));
-      noti("테스트");
+      noti(JSON.parse(e.data).content);
     });
+
     return () => {
       event.close();
       event.removeEventListener("open", () => {});
       event.removeEventListener("sse", () => {});
       event.removeEventListener("FOLLOW", () => {});
     };
-  }, [userid]);
-  //
+  });
+
   useEffect(() => {
     subscribe();
   }, []);
@@ -93,11 +109,12 @@ function App() {
   };
   const noti = (message: string) => {
     navigator.serviceWorker.ready.then(registration => {
-      const notiAlarm = registration.showNotification("알림", {
-        body: "pinyin + '\n' + means",
+      const notiAlarm = registration.showNotification("NeighBrew", {
+        body: message,
+        icon: logo,
         actions: [
           {
-            title: "화면보기",
+            title: "화면 이동",
             action: "goTab",
           },
           {
@@ -108,20 +125,6 @@ function App() {
       });
     });
   };
-  // const noti = navigator.serviceWorker.ready.then(function (registration) {
-  //   const notiAlarm = registration.showNotification("알림", {
-  //     body: "pinyin + '\n' + means",
-  //     actions: [
-  //       {
-  //         title: "화면보기",
-  //         action: "goTab",
-  //       },
-  //       {
-  //         title: "닫기",
-  //         action: "close",
-  //       },
-  //     ],
-  //   });
   return (
     <>
       <Routes>
