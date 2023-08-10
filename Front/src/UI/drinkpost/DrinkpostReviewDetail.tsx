@@ -56,7 +56,6 @@ const Description = styled.div`
 `;
 
 const WholeDiv = styled.div`
-  margin: 24px;
 `;
 
 const ImageDiv = styled.div`
@@ -114,7 +113,6 @@ const SubReviewInput = styled.input`
   }
 `;
 const CommentBox = styled.div`
-  dis
   position: fixed;
   bottom: 0;
   left: 0;
