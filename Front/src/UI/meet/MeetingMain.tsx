@@ -55,11 +55,9 @@ const RoundBtn = styled.div`
 const meetingMain = () => {
   const [selectedMenu, setSelectedMenu] = useState("find");
   const navigate = useNavigate();
-
   const GotoCreateHandler = () => {
     navigate(`/meet/create`);
   };
-
   useEffect(() => {
     callApi("POST", "api/user/refresh-token");
     localStorage.setItem("chooseMenu", "0");
