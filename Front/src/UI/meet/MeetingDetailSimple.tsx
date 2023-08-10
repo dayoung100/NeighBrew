@@ -1,9 +1,7 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Meeting, User } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
-import { callApi } from "../../utils/api";
 
 const InnerText = styled.div<{ $widthRem: number }>`
   width: ${(props) => props.$widthRem}rem;
@@ -21,26 +19,11 @@ const UserProfileImg = styled.div<{ src: string }>`
   margin-right: 0.2rem;
 `;
 
-const initialUser = {
-  userId: 0,
-  email: "",
-  nickname: "",
-  name: "",
-  liverPoint: 0,
-  profile: "",
-  follower: 0,
-  following: 0,
-};
-
 /**
  * 모임 리스트에 모임에 대한 간략 정보를 출력하는 부분.
  * ListInfoItem에 props로 전달되어 content 내부에 들어감
  */
 const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
-  //TODO: meetMy에서는 hostId만을 가져와서 host 변환이 필요함
-  // -> 수정하는게 나은가?
-  const [host, setHost] = useState(initialUser);
-  //날짜와 시간 변환 함수
   function formateDate(dateData: string) {
     const date = new Date(dateData);
     const month = date.getMonth() + 1;
@@ -51,26 +34,11 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
     return `${month}월 ${day}일 ${hour}시 ${minute}분`;
   }
 
-  const position = `${meetData.sido} ${meetData.gugun} ${meetData.dong}`;
+  const position = `${meetData.sido.sidoName} ${meetData.gugun.gugunName}`;
   const formattedDate = formateDate(meetData.meetDate);
   const hasAgeLimit =
     (meetData.minAge ?? 0) > 0 || (meetData.maxAge ?? 0) > 0 ? true : false;
   const hasLiverLimit = (meetData.minLiverPoint ?? 0) > 0 ? true : false;
-
-  useEffect(() => {
-    if (meetData.host) {
-      setHost(meetData.host);
-      host.profile =
-        meetData.host.profile === "no image"
-          ? defaultImg
-          : meetData.host.profile;
-    } else {
-      const promise = callApi("get", `api/user/${meetData.hostId}`);
-      promise.then((res) => {
-        setHost(res.data);
-      });
-    }
-  }, [meetData]);
 
   return (
     <div style={{ fontFamily: "Noto Sans KR", fontSize: "10px" }}>
@@ -86,8 +54,14 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
       </div>
       <InnerText $widthRem={12}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <UserProfileImg src={host.profile} />
-          <div>{host.nickname}</div>
+          <UserProfileImg
+            src={
+              meetData.host.profile === "no image"
+                ? defaultImg
+                : meetData.host.profile
+            }
+          />
+          <div>{meetData.host.nickname}</div>
         </div>
       </InnerText>
       <div style={{ display: "flex" }}>

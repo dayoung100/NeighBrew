@@ -29,7 +29,6 @@ const UserInfoItem = (props: UserInfoItemProps) => {
   const navigate = useNavigate();
   //   라우팅 링크는 추후 변경될 수 있음
   const GotoUserDetailHandler = (userId: number) => {
-    console.log("goto user detail page, userId is: ", userId);
     navigate(`/myPage/${userId}`);
   };
   const width = props.width ? props.width : 15;
@@ -39,7 +38,11 @@ const UserInfoItem = (props: UserInfoItemProps) => {
       style={{ display: "flex", marginTop: "0.5rem" }}
       onClick={() => GotoUserDetailHandler(props.user.userId)}
     >
-      <UserProfileImg src={props.user.profile ?? defaultImg} />
+      <UserProfileImg
+        src={
+          props.user.profile === "no image" ? defaultImg : props.user.profile
+        }
+      />
       <div style={{ margin: "auto 0 auto 0.5rem" }}>
         <div
           style={{
