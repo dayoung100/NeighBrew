@@ -2,6 +2,7 @@ package com.ssafy.backend.service;
 
 import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.dto.SubReviewDto;
+import com.ssafy.backend.dto.SubReviewResponseDto;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.entity.SubReview;
 import com.ssafy.backend.entity.User;
@@ -13,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,13 +26,15 @@ public class SubReviewService {
     private final PushService pushService;
 
     // 리뷰의 댓글을 조회하는 API
-    public List<SubReviewDto> getSubReviewList(Long reviewId) {
-        if (!drinkReviewRepository.existsById(reviewId)) {
-            throw new IllegalArgumentException("해당 리뷰가 존재하지 않습니다.");
-        }
-
-        List<SubReview> subReviews = subReviewRepository.findAllByDrinkReview_DrinkReviewId(reviewId);
-        return subReviews.stream().map(this::toSubReviewDto).collect(Collectors.toList());
+    public List<SubReviewResponseDto> findByDrinkReviewId(Long drinkReviewId) {
+        List<SubReview> subReviews = subReviewRepository.findByDrinkReview_DrinkReviewId(drinkReviewId);
+        return subReviews.stream()
+                .map(subReview -> SubReviewResponseDto.builder()
+                        .subReviewId(subReview.getSubReviewId())
+                        .content(subReview.getContent())
+                        .user(subReview.getUser())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private SubReviewDto toSubReviewDto(SubReview subReview) {
