@@ -12,10 +12,12 @@ import TextareaAutosize from 'react-textarea-autosize';
 
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
+  flex-basis : 90%;
   border: 0.5px solid #dfdfdf;
   background-color: #eeeeee;
   border-radius: 5px;
   margin : 0.5rem 0;
+  padding: 0.3rem;
   overflow-y : auto;
   
   // 글을 아래에 배치
@@ -29,6 +31,7 @@ const StyleAutoTextArea = styled(TextareaAutosize)`
 ;
 
 const LikeAndComment = styled.div`
+  margin : 0.5rem;
   display: flex;
   justify-content: left;
   width: 36%;
@@ -38,7 +41,7 @@ const LikeAndComment = styled.div`
 
 const Description = styled.div`
   text-align: start;
-  margin-top: 1rem;
+  margin : 0.5rem;
   white-space: pre-wrap;
   display: -webkit-box;
   -webkit-line-clamp: 4;
@@ -68,8 +71,9 @@ const ImageDiv = styled.div`
 const Usercard = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 4%;
+  margin : 0.5rem;
   justify-content: space-between;
+  
 `;
 
 const FollowDiv = styled.div`
@@ -111,19 +115,17 @@ const SubReviewInput = styled.input`
   }
 `;
 const CommentBox = styled.div`
+  dis
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 9999;
   background-color: #fff;
-  margin-top: 2rem;
-  display: grid;
-  grid-template-columns: 0.8fr 0.2fr;
-  padding: 2px 24px;
-  padding-top: 0px;
-  height: 60px;
+  display: flex;
+  flex-direction: row;
   width: 100%;
+  border-top: 0.5px solid #dfdfdf;
 `;
 
 const CommentInput = styled.input`
@@ -145,16 +147,18 @@ const CommentButton = styled.button`
   background-color: var(--c-blue);
   border: none;
   border-radius: 5px;
+  flex-basis: 10%;
 `;
 
 const SendImg = styled.img`
-  width: 18px;
-  height: 18px;
-  margin-left: 8px;
+  width: 23px;
+  height: 23px;
+  ;
 `;
 
 const SubReviewList = styled.div`
   padding-bottom: 4.5rem;
+  margin : 0.5rem
 `;
 
 const LikeAndCommentDiv = styled.div`
@@ -312,7 +316,7 @@ const DrinkpostReviewDetail = () => {
               {LikeIcon}
             </div>
             <div >
-              {review?.likeCount}x
+              {review?.likeCount}
             </div>
           </LikeAndCommentDiv>
           <LikeAndCommentDiv>
