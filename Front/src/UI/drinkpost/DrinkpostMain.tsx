@@ -7,9 +7,10 @@ import Navbar from "../navbar/NavbarForDrinkpost";
 import Footer from "../footer/Footer";
 import ReviewItem from "../components/ReviewItem";
 import { useState, useEffect } from "react";
-import { Review } from "../../Type/types";
+import { Drink, Review } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import { forwardIcon } from "../../assets/AllIcon";
+import MdsItem from "../components/mdsItem";
 
 const MdsDiv = styled.div`
   width: 96%;
@@ -78,11 +79,15 @@ const drinkpostMain = () => {
   const toDrinkSearch = () => {
     navigate("/drinkpost/search");
   };
+  const [threePick, setThreePick] = useState<Drink[]>([]);
 
   useEffect(() => {
     callApi("get", "api/drinkreview/likes").then(res => {
       console.log(res.data);
       setReviewList(res.data);
+    });
+    callApi("get", "api/drink/mdPick").then(res => {
+      setThreePick([...res.data]);
     });
   }, []);
 
@@ -100,6 +105,18 @@ const drinkpostMain = () => {
           >
             MD's Pick
           </h3>
+          <div
+            className=" mdspick"
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+              padding: "0px 100px 0px 100px",
+            }}
+          >
+            {threePick.map((pick, i) => {
+              return <MdsItem key={i} pick={pick}></MdsItem>;
+            })}
+          </div>
         </MdsDiv>
         <DarkWood></DarkWood>
         <div style={{ margin: "30px 30px 30px 30px" }} onClick={clickTotalDrink}>
