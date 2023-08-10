@@ -63,6 +63,7 @@ public class ChatRoomService {
                     .build();
 
             chatRoomUserRepository.save(chatRoomUser);
+
         }
         return room;
     }
