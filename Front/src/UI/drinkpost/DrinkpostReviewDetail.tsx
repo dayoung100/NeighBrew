@@ -7,8 +7,22 @@ import {callApi} from "../../utils/api";
 import {commentIcon, likeIcon} from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
-import TextareaAutosize from 'react-textarea-autosize';
-
+// import TextareaAutosize from 'react-textarea-autosize';
+//
+// const StyleAutoTextArea = styled(TextareaAutosize)`
+//   display: flex;
+//   border: 0.5px solid #D2D2D2;
+//   background-color: #d2d2d2;
+//   border-radius: 5px;
+//
+//   // 글을 아래에 배치
+//   align-self: flex-end;
+//   font-size: 1rem;
+//   &:focus {
+//     border: none;
+//   }
+// `
+// ;
 
 const LikeAndComment = styled.div`
   display: flex;
@@ -127,22 +141,6 @@ const CommentInput = styled.input`
 
   background-color: #d2d2d2;
 `;
-
-const StyleAutoTextArea = styled(TextareaAutosize)`
-  display: flex;
-  border: 0.5px solid #D2D2D2;
-  background-color: #d2d2d2;
-  border-radius: 5px;
-
-  // 글을 아래에 배치
-  align-self: flex-end;
-  font-size: 1rem;
-
-  &:focus {
-    border: none;
-  }
-`
-;
 
 const CommentButton = styled.button`
   background-color: var(--c-blue);
@@ -310,7 +308,8 @@ const DrinkpostReviewDetail = () => {
                         <div>
                             {LikeIcon}
                         </div>
-                      <div style="margin: 0 1vh; ">
+                        <div>
+                      {/*<div style="margin: 0 1vh; ">*/}
                         {review?.likeCount}
                         </div>
                     </LikeAndCommentDiv>
@@ -318,7 +317,8 @@ const DrinkpostReviewDetail = () => {
                         <div>
                             {CommentIcon}
                         </div>
-                        <div style="margin: 0 1vh; "> 
+                        {/*<div style="margin: 0 1vh; "> */}
+                        <div>
                             {subReviewList.length}
                         </div>
                     </LikeAndCommentDiv>
