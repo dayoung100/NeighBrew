@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { callApi } from "../../utils/api";
 const KakaoLogin = () => {
   const navigate = useNavigate();
