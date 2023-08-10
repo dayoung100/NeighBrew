@@ -1,6 +1,7 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.dto.SubReviewDto;
+import com.ssafy.backend.dto.SubReviewResponseDto;
 import com.ssafy.backend.service.SubReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/subreview")
@@ -19,8 +21,9 @@ public class SubReviewController {
 
     // 리뷰의 댓글을 조회하는 API
     @GetMapping("/list/{reviewId}")
-    public ResponseEntity<?> getSubReviewList(@PathVariable Long reviewId) {
-        return ResponseEntity.ok().body(subReviewService.getSubReviewList(reviewId));
+    public ResponseEntity<List<SubReviewResponseDto>> getSubReviewsWithUserByDrinkReviewId(@PathVariable Long reviewId) {
+        List<SubReviewResponseDto> subReviewResponseDto = subReviewService.findByDrinkReviewId(reviewId);
+        return ResponseEntity.ok(subReviewResponseDto);
     }
 
 

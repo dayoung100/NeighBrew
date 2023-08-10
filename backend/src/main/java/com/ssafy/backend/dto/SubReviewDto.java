@@ -1,5 +1,6 @@
 package com.ssafy.backend.dto;
 
+import com.ssafy.backend.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
