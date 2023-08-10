@@ -46,7 +46,7 @@ public class MeetController {
     public ResponseEntity<?> getMeetById(@PathVariable Long meetId) {
         log.info("모임 정보 상세 출력 : {} ", meetId);
         try {
-            return ResponseEntity.ok(meetService.findMeetUserByMeetId(meetId));
+            return ResponseEntity.ok(meetService.findMeetdetailByMeetId(meetId));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("모임 정보를 찾을 수 없습니다." + e.getMessage());
         }
@@ -95,6 +95,7 @@ public class MeetController {
 
             return ResponseEntity.ok(createdMeet);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("모임 생성에 실패했습니다." + e.getMessage());
         }
     }

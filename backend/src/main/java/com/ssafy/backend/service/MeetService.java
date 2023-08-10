@@ -12,6 +12,7 @@ import com.ssafy.backend.repository.MeetRepository;
 import com.ssafy.backend.repository.MeetUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.sql.OracleJoinFragment;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +38,8 @@ public class MeetService {
     private final FollowService followService;
     private final TagService tagService;
     private final DrinkService drinkService;
+    private final SidoService sidoService;
+    private final GugunService gugunService;
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomUserService chatRoomUserService;
@@ -44,20 +47,51 @@ public class MeetService {
     private final ModelMapper modelMapper;
 
     public Page<MeetSearchDto> findAll(Pageable pageable) {
-        Page<Meet> meetPage = meetRepository.findAllByOrderByCreatedAtDesc(pageable);
+        return getMeetSearchDtos(meetRepository.findAllByOrderByCreatedAtDesc(pageable));
+    }
+    public Page<MeetSearchDto> findByTagId(Long tagId, Pageable pageable) {
+        return getMeetSearchDtos(meetRepository.findByTag_TagIdOrderByCreatedAtDesc(tagId, pageable));
+    }
+    private Page<MeetSearchDto> getMeetSearchDtos(Page<Meet> data) {
+        return data.map(meet -> {
 
-        return meetPage.map(meet -> modelMapper.map(meet, MeetSearchDto.class));
+            MeetSearchDto meetSearchDto = modelMapper.map(meet, MeetSearchDto.class);
+            meetSearchDto.setSido(sidoService.findById(meet.getSidoCode()).orElseThrow(() -> new IllegalArgumentException("시도 정보를 찾을 수 없습니다.")));
+            meetSearchDto.setGugun(gugunService.getGugun(meet.getSidoCode(), meet.getGugunCode()));
+
+            return meetSearchDto;
+        });
     }
 
-    public Page<MeetSearchDto> findByTagId(Long tagId, Pageable pageable) {
-        Page<Meet> data = meetRepository.findByTag_TagIdOrderByCreatedAtDesc(tagId, pageable);
-        return data.map(meet -> modelMapper.map(meet, MeetSearchDto.class));
+    public Map<String, Object> findMeetdetailByMeetId(Long meetId) throws NoSuchFieldException {
+        Map<String, Object> result = new HashMap<>();
+        List<User> users = new ArrayList<>();
+        List<Status> statuses = new ArrayList<>();
+
+
+        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(NoSuchFieldException::new);
+        for(MeetUser mu : meetUsers){
+            users.add(mu.getUser());
+            statuses.add(mu.getStatus());
+        }
+
+        result.put("meet", findByMeetId(meetId));
+        result.put("users", users);
+        result.put("statuses", statuses);
+        return result;
+    }
+
+    public MeetSearchDto findByMeetId(Long meetId) {
+        Meet findMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
+        return findMeet.toSearchDto(sidoService.findById(findMeet.getSidoCode()).orElseThrow(()-> new IllegalArgumentException("올바르지 않은 정보 입니다.")),
+                gugunService.getGugun(findMeet.getSidoCode(), findMeet.getGugunCode()));
     }
 
     public MeetUserDto findMeetUserByMeetId(Long meetId) throws NoSuchFieldException {
         log.info("meetId : {}인 모임 정보 출력 ", meetId);
 
         List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(NoSuchFieldException::new);
+
         MeetUserDto meetUserDto = MeetUserDto.builder().build();
 
         if (meetUsers.size() != 0) {
@@ -70,10 +104,6 @@ public class MeetService {
         return meetUserDto;
     }
 
-    public Meet findByMeetId(Long meetId) {
-        return meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
-    }
-
     public Map<String, List<MeetSearchDto>> findByUserId(Long userId) {
         Map<String, List<MeetSearchDto>> userMeets = new HashMap<>();
         userMeets.put(Status.APPLY.name(), new ArrayList<>());
@@ -84,15 +114,18 @@ public class MeetService {
 
         for (MeetUser mu : meetUsers) {
             Status status = mu.getStatus();
-            if (status != Status.FINISH)
-                userMeets.get(status.name()).add(mu.getMeet().toSearchDto());
+            if (status != Status.FINISH){
+                Sido findSido = sidoService.findById(mu.getMeet().getSidoCode()).orElseThrow(()-> new IllegalArgumentException("올바른 시도 정보가 입력되지 않았습니다."));
+                Gugun findGugun = gugunService.getGugun(mu.getMeet().getSidoCode(), mu.getMeet().getGugunCode());
+
+                userMeets.get(status.name()).add(mu.getMeet().toSearchDto(findSido, findGugun));
+            }
         }
         return userMeets;
     }
 
     public Meet saveMeet(MeetDto meetDto, Long userId, Long drinkId, MultipartFile multipartFile) throws IOException {
         meetDto.setHostId(userId);
-        meetDto.setNowParticipants(1);
         log.info("모임 생성 : {} ", meetDto);
 
         if (multipartFile != null) {
@@ -103,12 +136,15 @@ public class MeetService {
                 .chatRoomName(meetDto.getMeetName() + "모임의 채팅방")
                 .build());
 
+        Sido findSido = sidoService.findById(meetDto.getSidoCode()).orElseThrow(()-> new IllegalArgumentException("올바른 시도 정보가 입력되지 않았습니다."));
+        Gugun findGugun = gugunService.getGugun(meetDto.getSidoCode(), meetDto.getGugunCode());
 
         Meet meet = meetDto.toEntity();
         meet.setHost(userService.findByUserId(meetDto.getHostId()));
         meet.setTag(tagService.findById(meetDto.getTagId()));
         meet.setDrink(drinkService.findById(drinkId));
         meet.setChatRoom(createChatRoom);
+        meet.setNowParticipants(1);
         Meet createdMeet = meetRepository.save(meet);
 
         User hostUser = userService.findByUserId(userId);
@@ -158,7 +194,6 @@ public class MeetService {
             } else meetDto.setImgSrc(prevMeetImgSrc);
         } else meetDto.setImgSrc(prevMeetImgSrc);
 
-
         //기존 데이터를 가져온 뒤 업데이트 한다.
         Meet updateMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
         updateMeet.update(meetDto.toEntity()); //업데이트한다.
@@ -169,14 +204,16 @@ public class MeetService {
         meetRepository.save(updateMeet);
 
         //모임이 수정되면 모임에 참여한 사람들에게 Push 알림을 보낸다.
-        MeetUserDto meetUser = findMeetUserByMeetId(meetId);
+        //MeetUserDto meetUser = findMeetUserByMeetId(meetId);
 
-        for (User user : meetUser.getUsers()) {
-            if (user.getUserId().equals(meetDto.getHostId())) continue; //방장에게는 알림을 전송하지 않는다.
+        List<MeetUser> meetUser = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(() -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
+
+        for (MeetUser user : meetUser) {
+            if (user.getUser().getUserId().equals(meetDto.getHostId())) continue; //방장에게는 알림을 전송하지 않는다.
 
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append("모임( ").append(meetDto.getMeetName()).append(")의 내용이 수정되었습니다. 확인해 주세요.");
-            pushService.send(host, user, PushType.MEETMODIFIDE, pushMessage.toString(), "https://i9b310.p.ssafy.io");
+            pushService.send(host, user.getUser(), PushType.MEETMODIFIDE, pushMessage.toString(), "https://i9b310.p.ssafy.io");
         }
 
     }
@@ -185,13 +222,14 @@ public class MeetService {
     public void deleteMeet(Long hostId, Long meetId) throws NoSuchFieldException {
         log.info("meetId : {}인 모임 삭제", meetId);
 
-        Meet deleteMeet = findByMeetId(meetId);
+        Meet deleteMeet = meetRepository.findById(meetId).orElseThrow(()->new IllegalArgumentException("미팅 정보를 찾을 수 없습니다."));
         log.info("모임장 : {}, 삭제하려는 유저 : {}", deleteMeet.getHost().getUserId(), hostId);
         //유효성 검사
         if (!deleteMeet.getHost().getUserId().equals(hostId))
             throw new IllegalArgumentException("방장이 아니면 방을 삭제할 수 없습니다.");
 
-        MeetUserDto meetUser = findMeetUserByMeetId(meetId);
+        //MeetUserDto meetUser = findMeetUserByMeetId(meetId);
+        List<MeetUser> meetUser = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(() -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
 
         //MeetUser 정보를 삭제한다.
         meetUserService.deleteMeetUser(deleteMeet);
@@ -203,12 +241,12 @@ public class MeetService {
         meetRepository.findById(meetId).ifPresent(meetRepository::delete);
 
         //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
-        for (User user : meetUser.getUsers()) {
-            if (user.getUserId().equals(hostId)) continue; //방장에게는 알림을 전송하지 않는다.
+        for (MeetUser user : meetUser) {
+            if (user.getUser().getUserId().equals(hostId)) continue; //방장에게는 알림을 전송하지 않는다.
 
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append(deleteMeet.getHost().getName() + "님 께서 생성한 모임").append("(").append(deleteMeet.getMeetName()).append(")이 삭제되었습니다.");
-            pushService.send(deleteMeet.getHost(), user, PushType.MEETDELETED, pushMessage.toString(), "");
+            pushService.send(deleteMeet.getHost(), user.getUser(), PushType.MEETDELETED, pushMessage.toString(), "");
         }
 
     }
@@ -245,7 +283,7 @@ public class MeetService {
     public void applyCancelMeet(Long userId, Long meetId) throws Exception {
         log.info("{}유저 {}모임 신청 취소 ", userId, meetId);
 
-        Meet meet = findByMeetId(meetId);
+        Meet meet = meetRepository.findById(meetId).orElseThrow(()->new IllegalArgumentException("미팅 정보를 찾을 수 없습니다."));
 
         Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
         log.info("현재 {}유저의 {}모임 신청 상태 : {}", userId, meetId, applyUserStatus);
@@ -288,7 +326,7 @@ public class MeetService {
     public String manageMeet(Long userId, Long meetId, boolean applyResult) {
         log.info("{}유저 {}모임 신청 관리 : 결과 {}", userId, meetId, applyResult);
 
-        Meet managementMeet = findByMeetId(meetId);
+        Meet managementMeet = meetRepository.findById(meetId).orElseThrow(()->new IllegalArgumentException("미팅 정보를 찾을 수 없습니다."));
 
         //Host유저와 관리할유저 리스트 반환(1개의 쿼리를 사용 하기 위함) 0번 : 호스트, 1번 : 관리할 유저
         User host = managementMeet.getHost();

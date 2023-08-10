@@ -1,8 +1,6 @@
 package com.ssafy.backend.dto;
 
-import com.ssafy.backend.entity.Drink;
-import com.ssafy.backend.entity.Meet;
-import com.ssafy.backend.entity.User;
+import com.ssafy.backend.entity.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,8 +22,8 @@ public class MeetSearchDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime meetDate;
     private Long tagId;
-    private String sido;
-    private String gugun;
+    private Sido sido;
+    private Gugun gugun;
     private Integer minAge;
     private Integer maxAge;
     private Float minLiverPoint;
@@ -36,7 +34,7 @@ public class MeetSearchDto {
     public MeetSearchDto() {}
 
     @Builder
-    public MeetSearchDto(Long meetId, String meetName, String description, UserDto host, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, String sido, String gugun, Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
+    public MeetSearchDto(Long meetId, String meetName, String description, UserDto host, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, Sido sido, Gugun gugun, Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
         this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;
