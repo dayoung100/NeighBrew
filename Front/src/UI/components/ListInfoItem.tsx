@@ -14,9 +14,9 @@ const ItemDiv = styled.div<{ $outline: boolean }>`
   border: ${(props) => (props.$outline ? "1px solid var(--c-gray)" : "none")};
 `;
 
-const ImageArea = styled.div<{ src: string }>`
+const ImageArea = styled.div<{ src: string; $isDrink: boolean }>`
   background: url(${(props) => props.src}) no-repeat center;
-  background-size: cover;
+  background-size: ${(props) => (props.$isDrink ? "contain" : "cover")};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -109,6 +109,7 @@ type ListInfoItemProps = {
   numberInfo?: any; //인원정보, 컴포넌트를 넣어도 됨
   isWaiting?: boolean; //신청대기중인 모임인지(아니라면 false)
   outLine?: boolean; //외곽선을 그릴 것인지 아닌지
+  isDrink?: boolean; //술정보를 담을 건지 아닌지
   routingFunc: any; //라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
 };
 
@@ -122,6 +123,7 @@ type ListInfoItemProps = {
  * @property {any} numberInfo 인원정보 또는 후기 수. 컴포넌트를 넣어도 됨
  * @property {boolean} isWaiting optional. 신청대기중인 모임인지(아니라면 false)
  * @property {boolean} outLine optional. 외곽선을 그릴 것인지 아닌지
+ * @property {boolean} isDrink optional. 술 정보인지 아닌지(모임인지) 기본값은 false
  * @property {any} routingFunc 라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
  */
 const ListInfoItem = (props: ListInfoItemProps) => {
@@ -132,7 +134,7 @@ const ListInfoItem = (props: ListInfoItemProps) => {
       onClick={() => props.routingFunc()}
     >
       <ItemDiv $outline={props.outLine ? props.outLine : false}>
-        <ImageArea src={props.imgSrc} />
+        <ImageArea src={props.imgSrc} $isDrink={props.isDrink ?? false} />
         <InfoArea>
           <InfoTitle>{props.title}</InfoTitle>
           <InfoContent>{props.content}</InfoContent>

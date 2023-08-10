@@ -15,13 +15,14 @@ import FooterBigBtn from "../footer/FooterBigBtn";
 import { callApi } from "../../utils/api";
 import { initialMeetDetail } from "../common";
 import { MeetDetail, User } from "../../Type/types";
+import defaultImg from "../../assets/defaultImg.png";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url(${(props) => props.$bgImgSrc}) no-repeat center;
   background-size: cover;
   width: 100%;
-  height: 30vh;
+  height: 33vh;
   color: white;
 `;
 
@@ -122,21 +123,26 @@ const MeetingDetail = () => {
     navigate(`/drinkpost/${drinkId}`);
   };
 
+  //api호출
+  const fetchMeetData = () => {
+    const promise = callApi("get", `api/meet/${meetId}`);
+    promise.then((res) => {
+      setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
+    });
+  };
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  }, []);
-
-  //api 호출
-  useEffect(() => {
-    const promise = callApi("get", `api/meet/${meetId}`);
-    promise.then((res) => {
-      setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
-    });
     //로컬 스토리지에서 userId 가져오기
     setUserId(parseInt(localStorage.getItem("myId")));
+  }, []);
+
+  //meetId가 생기면 api로 데이터 로드
+  useEffect(() => {
+    fetchMeetData();
   }, [meetId]);
 
   useEffect(() => {
@@ -165,8 +171,6 @@ const MeetingDetail = () => {
         setUserStatus("APPLY");
       })
       .catch((err) => console.log(err));
-
-    console.log("참여 신청했어요");
   }
 
   //신청 취소하기
@@ -186,10 +190,11 @@ const MeetingDetail = () => {
       userId: userId,
       meetId: meetId,
     });
-    promise.then((res) => {
-      setUserStatus("NONE");
-    });
-    console.log("모임을 나갔어요");
+    promise
+      .then((res) => {
+        setUserStatus("NONE");
+      })
+      .then(() => fetchMeetData());
   }
 
   //태그ID를 태그 이름으로 변환
@@ -277,7 +282,13 @@ const MeetingDetail = () => {
             <div>주최자: </div>
             {memberList[0] && (
               <div style={{ display: "flex", alignItems: "center" }}>
-                <UserProfileImg src={memberList[0].profile} />
+                <UserProfileImg
+                  src={
+                    memberList[0].profile === "no image"
+                      ? defaultImg
+                      : memberList[0].profile
+                  }
+                />
                 <div>{memberList[0].nickname}</div>
               </div>
             )}
@@ -287,7 +298,7 @@ const MeetingDetail = () => {
               now={meetDetailData.meetDto.nowParticipants}
               max={meetDetailData.meetDto.maxParticipants}
               color="white"
-              size={11}
+              size={15}
             />
           </div>
         </div>
@@ -343,10 +354,15 @@ const MeetingDetail = () => {
         <MeetTitle>우리가 마실 것은</MeetTitle>
         <ListInfoItem
           title={meetDetailData.meetDto.drink.name}
-          imgSrc="../src/assets/star.svg"
+          imgSrc={
+            meetDetailData.meetDto.drink.image === "no image"
+              ? "/src/assets/whiskeyImage.png"
+              : meetDetailData.meetDto.drink.image
+          }
           tag={getTagName(meetDetailData.meetDto.drink.tagId)}
           content={meetDetailData.meetDto.drink.description}
           outLine={false}
+          isDrink={true}
           routingFunc={() =>
             GotoDrinkPostHandler(meetDetailData.meetDto.drink.drinkId)
           }
@@ -378,14 +394,19 @@ const MeetingDetail = () => {
               now={meetDetailData.meetDto.nowParticipants}
               max={meetDetailData.meetDto.maxParticipants}
               color="var(--c-black)"
-              size={13}
+              size={15}
             />
           </div>
         </div>
         <div style={{ margin: "0 0.5rem" }}>
           {memberList.map((member, index) => {
             return (
-              <UserInfoItem user={member} isMaster={index === 0} width={15} />
+              <UserInfoItem
+                key={member.userId}
+                user={member}
+                isMaster={index === 0}
+                width={15}
+              />
             );
           })}
         </div>

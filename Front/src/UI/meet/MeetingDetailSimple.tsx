@@ -54,7 +54,13 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
       </div>
       <InnerText $widthRem={12}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <UserProfileImg src={meetData.host.profile ?? defaultImg} />
+          <UserProfileImg
+            src={
+              meetData.host.profile === "no image"
+                ? defaultImg
+                : meetData.host.profile
+            }
+          />
           <div>{meetData.host.nickname}</div>
         </div>
       </InnerText>
