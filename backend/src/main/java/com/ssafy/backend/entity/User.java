@@ -1,5 +1,6 @@
 package com.ssafy.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import com.ssafy.backend.dto.UserChatDto;
 import com.ssafy.backend.dto.UserDto;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -126,7 +127,7 @@ public class User {
                 .build();
     }
 
-    public UserChatDto toChatDto(){
+    public UserChatDto toChatDto() {
         return UserChatDto.builder()
                 .userId(userId)
                 .email(email)
