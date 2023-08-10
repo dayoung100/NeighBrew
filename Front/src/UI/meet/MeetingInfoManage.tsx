@@ -429,8 +429,8 @@ const MeetingInfoManage = () => {
     f.append("maxParticipants", maxParticipants.toString());
     f.append("meetDate", `${date}T${time}:00`);
     f.append("tagId", selectedCategory.toString());
-    f.append("sido", sido.sidoName);
-    f.append("gugun", gugun.gugunName);
+    f.append("sido", sido.sidoCode.toString());
+    f.append("gugun", gugun.gugunCode.toString());
     f.append(
       "drinkId",
       selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
