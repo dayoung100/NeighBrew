@@ -120,12 +120,15 @@ const meetingFind = () => {
   //시도 정보로 필터링
   const sidoFiltering = (data: Meeting) => {
     if (sido.sidoCode === 0) return true;
-    return data.sido === sido.sidoName;
+    return data.sido.sidoCode === sido.sidoCode;
   };
   //구군 정보로 필터링
   const gugunFiltering = (data: Meeting) => {
     if (gugun.gugunCode === 0) return true;
-    return data.gugun === gugun.gugunName;
+    return (
+      data.gugun.gugunCode === gugun.gugunCode &&
+      data.gugun.sidoCode === gugun.sidoCode
+    );
   };
   //날짜 정보로 필터링
   const dateFiltering = (data: Meeting) => {
