@@ -12,13 +12,16 @@ import TextareaAutosize from 'react-textarea-autosize';
 
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
-  border: 0.5px solid #D2D2D2;
-  background-color: #d2d2d2;
+  border: 0.5px solid #dfdfdf;
+  background-color: #eeeeee;
   border-radius: 5px;
-
+  margin : 0.5rem 0;
+  overflow-y : auto;
+  
   // 글을 아래에 배치
   align-self: flex-end;
   font-size: 1rem;
+      
   &:focus {
     border: none;
   }
@@ -152,6 +155,11 @@ const SendImg = styled.img`
 
 const SubReviewList = styled.div`
   padding-bottom: 4.5rem;
+`;
+
+const LikeAndCommentDiv = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 const DrinkpostReviewDetail = () => {
@@ -292,13 +300,29 @@ const DrinkpostReviewDetail = () => {
         </Usercard>
         <ImageDiv style={{ backgroundImage: `url(${review?.img})` }}></ImageDiv>
         <LikeAndComment>
-          <div>
-            {LikeIcon} {review?.likeCount}
-          </div>
+          {/*<div>*/}
+          {/*  {LikeIcon} {review?.likeCount}*/}
+          {/*</div>*/}
 
-          <div>
-            {CommentIcon} {subReviewList.length}
-          </div>
+          {/*<div>*/}
+          {/*  {CommentIcon} {subReviewList.length}*/}
+          {/*</div>*/}
+          <LikeAndCommentDiv>
+            <div>
+              {LikeIcon}
+            </div>
+            <div style="margin: 0 1vh; ">
+              {review?.likeCount}x
+            </div>
+          </LikeAndCommentDiv>
+          <LikeAndCommentDiv>
+            <div>
+              {CommentIcon}
+            </div>
+            <div style="margin: 0 1vh; ">
+              {subReviewList.length}
+            </div>
+          </LikeAndCommentDiv>
         </LikeAndComment>
         <Description>{review?.content}</Description>
         <hr />
@@ -308,7 +332,7 @@ const DrinkpostReviewDetail = () => {
             value={comment}
             onChange={commentHandler}
             minRows={1}
-            maxRows={5}
+            maxRows={4}
           />
           <CommentButton onClick={submitHandler}>
             <SendImg src={sendImage} alt="" />
