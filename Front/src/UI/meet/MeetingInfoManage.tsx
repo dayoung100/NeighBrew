@@ -17,6 +17,12 @@ import { MeetDetail } from "../../Type/types";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
+import {
+  initialMeetDetail,
+  initialDrink,
+  initialSido,
+  initialGugun,
+} from "../common";
 import Modal from "react-modal";
 
 const Title = styled.div`
@@ -179,42 +185,6 @@ const WhiteModal = {
   },
 };
 
-//TODO: 초기값을 context api로 만들던가 해서 공유하기
-const initialData: MeetDetail = {
-  meetDto: {
-    meetId: 0,
-    meetName: "",
-    hostId: 0,
-    description: "",
-    nowParticipants: 0,
-    maxParticipants: 0,
-    meetDate: "9999-01-01T00:00:00",
-    tagId: 0,
-    sido: "",
-    gugun: "",
-    drink: {
-      degree: 0,
-      description: "",
-      drinkId: 0,
-      image: "",
-      name: "",
-      tagId: 0,
-    },
-    imgSrc: "",
-  },
-  users: [],
-  statuses: [],
-};
-
-const initialDrinkData: Drink = {
-  degree: 0,
-  description: "",
-  drinkId: 0,
-  image: "",
-  name: "",
-  tagId: 0,
-};
-
 const MeetingInfoManage = () => {
   //네비게이터: 모임 수정 후 모임 상세로 이동, 주류 추가 페이지로 이동
   const navigate = useNavigate();
@@ -230,16 +200,16 @@ const MeetingInfoManage = () => {
   const [errorMsg, setErrorMsg] = useState(""); //모달에 띄울 에러메시지
 
   //미팅 기존 정보
-  const [meetData, setMeetData] = useState<MeetDetail>(initialData);
+  const [meetData, setMeetData] = useState<MeetDetail>(initialMeetDetail);
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
   const [userId, setUserId] = useState(0); //현재 유저의 userId
 
   //폼에 들어갈 state들
   const [meetTitle, setMeetTitle] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState(0); //주종카테고리
-  const [selectedDrink, setSelectedDrink] = useState<Drink>(initialDrinkData); //주류
-  const [sido, setSido] = useState(""); //시도
-  const [gugun, setGugun] = useState(""); //구군
+  const [selectedDrink, setSelectedDrink] = useState<Drink>(initialDrink); //주류
+  const [sido, setSido] = useState(initialSido); //시도
+  const [gugun, setGugun] = useState(initialGugun); //구군
   const [date, setDate] = useState(""); //날짜
   const [time, setTime] = useState(""); //시간
   const [maxParticipants, setMaxParticipants] = useState(8); //최대인원
@@ -254,9 +224,24 @@ const MeetingInfoManage = () => {
   const [inputText, setInputText] = useState(""); //검색창에 입력된 텍스트
   const [searchResultList, setSearchResultList] = useState<Drink[]>([]); //주류 검색 결과 리스트
 
-  //입력 확인 또는 검증용
+  //지역 관련 state
+  const [sidoList, setSidoList] = useState([initialSido]);
+  const [gugunList, setGugunList] = useState([initialGugun]);
+
   //생성 버튼 클릭했는지 - 버튼 한번이라도 클릭 시에만 빨간 가이드 글씨 오픈
   const [btnClicked, setBtnClicked] = useState(false);
+
+  //첫 로딩 시
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    //시도 정보 미리 받아와 세팅하기
+    callApi("get", "api/sido").then((res) => {
+      setSidoList([initialSido, ...res.data]);
+    });
+  }, []);
 
   //api 호출, 기존 모임의 정보 저장
   useEffect(() => {
@@ -273,8 +258,8 @@ const MeetingInfoManage = () => {
     setMeetTitle(meetData.meetDto.meetName);
     setSelectedCategory(meetData.meetDto.tagId); //주종카테고리
     setSelectedDrink(meetData.meetDto.drink); //주류아이디
-    setSido(meetData.meetDto.sido); //시도
-    setGugun(meetData.meetDto.gugun); //구군
+    setSido({ sidoCode: 0, sidoName: meetData.meetDto.sido }); //시도
+    setGugun({ gugunCode: -1, gugunName: meetData.meetDto.gugun }); //구군(세팅된 것을 확인하기 위해 -1로 시작)
     setDate(formateDate(meetData.meetDto.meetDate)); //날짜
     setTime(formateTime(meetData.meetDto.meetDate)); //시간
     setMaxParticipants(meetData.meetDto.maxParticipants); //최대인원
@@ -288,6 +273,28 @@ const MeetingInfoManage = () => {
       behavior: "smooth",
     });
   }, [meetData]);
+
+  //시도 리스트와 기존 데이터가 모두 세팅되면 시도 객체 다시 세팅
+  useEffect(() => {
+    if (meetData.meetDto.meetId === 0) return;
+    setSido(sidoList.find((item) => item.sidoName === meetData.meetDto.sido));
+  }, [sidoList, meetData]);
+
+  //선택한 시도에 따라 구군 fetch
+  useEffect(() => {
+    if (gugun.gugunCode !== -1) setGugun(initialGugun); //초기화
+    callApi("get", `api/gugun/${sido.sidoCode}`)
+      .then((res) => {
+        setGugunList([initialGugun, ...res.data]);
+      })
+      .then(() => {
+        if (gugun.gugunCode === -1) {
+          setGugun(
+            gugunList.find((item) => item.gugunName === meetData.meetDto.gugun)
+          );
+        }
+      });
+  }, [sido]);
 
   //inputText로 술장 검색 api
   useEffect(() => {
@@ -309,7 +316,7 @@ const MeetingInfoManage = () => {
       selectedCategory === meetData.meetDto.tagId
     )
       return;
-    setSelectedDrink(initialDrinkData);
+    setSelectedDrink(initialDrink);
     setInputText("");
   }, [selectedCategory]);
 
@@ -349,7 +356,7 @@ const MeetingInfoManage = () => {
 
   //위치: 필수 입력
   const positionCheck = () => {
-    return !(sido === "" || gugun === "");
+    return !(sido.sidoCode === 0 || gugun.gugunCode < 0);
   };
 
   //날짜: 필수 입력/현재 시점 이후로
@@ -440,8 +447,8 @@ const MeetingInfoManage = () => {
     f.append("maxParticipants", maxParticipants.toString());
     f.append("meetDate", `${date}T${time}:00`);
     f.append("tagId", selectedCategory.toString());
-    f.append("sido", sido);
-    f.append("gugun", gugun);
+    f.append("sido", sido.sidoName);
+    f.append("gugun", gugun.gugunName);
     f.append(
       "drinkId",
       selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
@@ -631,7 +638,7 @@ const MeetingInfoManage = () => {
                 />
                 <ReselectBtn
                   onClick={() => {
-                    setSelectedDrink(initialDrinkData);
+                    setSelectedDrink(initialDrink);
                   }}
                 >
                   재선택
@@ -652,35 +659,43 @@ const MeetingInfoManage = () => {
           >
             <Title>위치</Title>
             <DropdownInput
-              value={sido}
-              onChange={(e) => setSido(e.target.value)}
+              onChange={(e) => {
+                const selectedValue = e.target.value;
+                const selectedSido = sidoList.find(
+                  (item) => item.sidoName === selectedValue
+                );
+                setSido(selectedSido);
+              }}
+              value={sido.sidoName}
             >
-              <option value="대전" key="대전">
-                대전
-              </option>
-              <option value="서울" key="서울">
-                서울
-              </option>
-              <option value="change Sido" key="change Sido">
-                change Sido
-              </option>
+              {sidoList.map((siItem) => {
+                return (
+                  <option value={siItem.sidoName} key={siItem.sidoCode}>
+                    {siItem.sidoName}
+                  </option>
+                );
+              })}
             </DropdownInput>
-            시
+            시/도
             <DropdownInput
-              value={gugun}
-              onChange={(e) => setGugun(e.target.value)}
+              onChange={(e) => {
+                const selectedValue = e.target.value;
+                const selectedGugun = gugunList.find(
+                  (item) => item.gugunName === selectedValue
+                );
+                setGugun(selectedGugun);
+              }}
+              value={gugun.gugunName}
             >
-              <option value="유성" key="유성">
-                유성
-              </option>
-              <option value="동구" key="동구">
-                동구
-              </option>
-              <option value="change  Gugun" key="change  Gugun">
-                change Gugun
-              </option>
+              {gugunList.map((guItem) => {
+                return (
+                  <option value={guItem.gugunName} key={guItem.gugunCode}>
+                    {guItem.gugunName}
+                  </option>
+                );
+              })}
             </DropdownInput>
-            구
+            구/군
           </div>
           {!positionCheck() && btnClicked && (
             <ErrorDiv>📌위치는 필수 입력 사항입니다.</ErrorDiv>

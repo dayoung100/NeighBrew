@@ -259,6 +259,7 @@ const MeetingCreate = () => {
 
   //선택한 시도에 따라 구군 fetch
   useEffect(() => {
+    setGugun(initialGugun); //초기화
     callApi("get", `api/gugun/${sido.sidoCode}`).then((res) => {
       setGugunList([initialGugun, ...res.data]);
     });
