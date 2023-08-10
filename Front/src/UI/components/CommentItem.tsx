@@ -1,12 +1,10 @@
 import styled from "styled-components";
-import { SubReview, User } from "../../Type/types";
-import { useState, useEffect } from "react";
-import { callApi } from "../../utils/api";
-import { useNavigate } from "react-router-dom";
+import { forwardRef } from "react";
+import { SubReview } from "../../Type/types";
 
 const WholeDiv = styled.div`
   display: flex;
-  margin-top: 1vh;
+  margin-top: 1.5rem;
 `;
 
 const ProfileDiv = styled.div`
@@ -27,33 +25,33 @@ const NameAndContent = styled.div`
   width: 88%;
 `;
 
-const commentItem = ({ subReview }: { subReview: SubReview }) => {
-  const [user, setUser] = useState<User>();
-  const navigate = useNavigate();
-  const toProfileHandler = () => {
-    navigate;
-  };
-  useEffect(() => {
-    callApi("get", `api/user/${subReview.userId}`)
-      .then(res => {
-        setUser(res.data);
-      })
-      .catch(err => console.error(err));
-  }, []);
-  return (
-    <>
+type CommentItemProps = {
+  subReview: SubReview;
+};
+
+const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(
+  (props, ref) => {
+    const { subReview } = props;
+    return (
       <WholeDiv>
         <ProfileDiv>
-          <ProfileDiv2></ProfileDiv2>
+          <ProfileDiv2
+            style={{
+              backgroundImage: `url(${
+                subReview.user?.profile || "기본 이미지 URL"
+              })`,
+            }}
+          ></ProfileDiv2>
         </ProfileDiv>
         <NameAndContent>
           <div>
-            <b>{user?.nickname}</b>
+            <b>{subReview.user?.nickname}</b>
           </div>
           <div>{subReview.content}</div>
+          <div ref={ref}></div>
         </NameAndContent>
       </WholeDiv>
-    </>
-  );
-};
+    );
+  }
+);
 export default commentItem;
