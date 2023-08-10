@@ -1,23 +1,15 @@
-import { styled } from "styled-components";
-import SearchBox from "../components/SearchBox";
-import backIcon from "../../assets/backIcon.svg";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ListInfoItem from "../components/ListInfoItem";
-import { callApi } from "../../utils/api";
-import { searchNavIcon } from "../../assets/AllIcon";
+import { styled } from "styled-components";
 import { Drink } from "../../Type/types";
+import backIcon from "../../assets/backIcon.svg";
+import { callApi } from "../../utils/api";
+import SearchBox from "./../components/SearchBox";
 import DrinkCard from "./DrinkCard";
-
-import { useEffect, useState } from "react";
 
 const Body = styled.div`
   background-color: white;
   height: 800px;
-`;
-
-const SearchList = styled.div`
-  margin: 0px 10px 0px 10px;
-  padding-top: 10px;
 `;
 
 const SearchDiv = styled.div`
@@ -28,23 +20,6 @@ const SearchDiv = styled.div`
   padding: 0.5rem 1rem;
 `;
 
-const SearchDivInput = styled.input.attrs({ type: "text" })`
-  background: var(--c-lightgray);
-  color: var(--c-black);
-  font-family: "SeoulNamsan";
-  width: 80%;
-  border: none;
-  text-align: right;
-  outline: none;
-`;
-
-const SearchBtn = styled.button`
-  background-size: 100%;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: none;
-`;
-
 const ShowcaseBody = styled.div`
   font-size: 14px;
   display: flex;
@@ -53,61 +28,13 @@ const ShowcaseBody = styled.div`
 `;
 
 const DrinkpostSearch = () => {
-  const searchButton = searchNavIcon();
   const navigate = useNavigate();
-  const [searchWord, setSearchWord] = useState("");
-  const [sendSearch, setSendSearch] = useState(false);
   const [searchResult, setSearchResult] = useState<Drink[]>([]);
-
-  const searchHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setSearchWord(e.target.value);
-  };
-  const sendSearchHandler = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    console.log(e.code);
-    setSearchResult([]);
-    if (e.code === "Enter" || e.keyCode === 13) {
-      if (searchWord === "") return;
-      if (e.keyCode == 229) return;
-      // setSendSearch(prev => !prev);
-      let data: Drink[] = [];
-      await callApi("get", `api/drink/search?name=${searchWord}&size=10`).then(res => {
-        data = res.data.content;
-      });
-      await console.log(data);
-      await setSearchResult(prev => [...prev, ...data]);
-      console.log(searchResult);
-    }
-  };
-
-  const clickSearchHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setSearchResult([]);
-    if (searchWord === "") return;
-
-    let data: Drink[] = [];
-    await callApi("get", `api/drink/search?name=${searchWord}&size=10`).then(res => {
-      data = res.data.content;
+  const search = (drink: string) => {
+    callApi("GET", `api/drink/search?name=${drink}`).then((res) => {
+      setSearchResult(res.data.content);
     });
-    await console.log(data);
-    await setSearchResult(prev => [...prev, ...data]);
-    console.log(searchResult);
   };
-
-  function getTagName(tagId: number) {
-    const tag = [
-      { tagId: 0, tagName: "전체" },
-      { tagId: 1, tagName: "양주" },
-      { tagId: 2, tagName: "전통주" },
-      { tagId: 3, tagName: "전체" },
-      { tagId: 4, tagName: "사케" },
-      { tagId: 5, tagName: "와인" },
-      { tagId: 6, tagName: "수제맥주" },
-      { tagId: 7, tagName: "소주/맥주" },
-    ];
-    return tag[tagId].tagName;
-  }
 
   return (
     <>
@@ -124,18 +51,20 @@ const DrinkpostSearch = () => {
         </div>
         <div style={{ width: "85%" }}>
           <SearchDiv>
-            <SearchDivInput
-              type="text"
-              placeholder="술을 검색해줭"
-              value={searchWord}
-              onChange={searchHandler}
-              onKeyUp={sendSearchHandler}
-            />
-            <SearchBtn onClick={clickSearchHandler}>{searchButton}</SearchBtn>
+            <SearchBox
+              placeholder="검색어를 입력하세요."
+              changeFunc={search}
+            ></SearchBox>
           </SearchDiv>
         </div>
       </div>
-      <h3 style={{ display: "flex", justifyContent: "start", margin: "20px 0px 0px 20px" }}>
+      <h3
+        style={{
+          display: "flex",
+          justifyContent: "start",
+          margin: "20px 0px 0px 20px",
+        }}
+      >
         검색결과
       </h3>
       <Body className="searchList">
@@ -148,30 +77,11 @@ const DrinkpostSearch = () => {
               paddingBottom: "60px",
             }}
           >
-            {searchResult.map(drink => {
+            {searchResult.map((drink) => {
               return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
             })}
           </div>
         </ShowcaseBody>
-        {/* <SearchList>
-          {searchResult.map(drink => {
-            return (
-              <div onClick={() => navigate(`/drinkpost/${drink.drinkId}`)}>
-                <ListInfoItem
-                  key={drink.drinkId}
-                  title={drink.name}
-                  imgSrc={drink.image}
-                  tag={getTagName(drink.tagId)}
-                  content={`${drink.degree}도`}
-                  numberInfo={"후기 수 " + 3}
-                  isWaiting={false}
-                  outLine={false}
-                  routingFunc={false}
-                ></ListInfoItem>
-              </div>
-            );
-          })}
-        </SearchList> */}
       </Body>
     </>
   );
