@@ -91,5 +91,5 @@ export interface SubReview {
   content: string;
   createdAt: string;
   drinkReview: Review;
-  userId: number;
+  user: User;
 }
