@@ -23,7 +23,6 @@ public class UserCommentLikeService {
     public boolean toggleUserLike(Long userId, Long reviewId) {
         User user = userRepository.findById(userId).orElse(null);
         DrinkReview drinkReview = drinkReviewRepository.findById(reviewId).orElse(null);
-        UserdrinkReview.getUser();
 
         if (user == null || drinkReview == null) {
             return false;
