@@ -8,6 +8,23 @@ import { commentIcon, likeIcon } from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
 
+import TextareaAutosize from 'react-textarea-autosize';
+
+const StyleAutoTextArea = styled(TextareaAutosize)`
+  display: flex;
+  border: 0.5px solid #D2D2D2;
+  background-color: #d2d2d2;
+  border-radius: 5px;
+
+  // 글을 아래에 배치
+  align-self: flex-end;
+  font-size: 1rem;
+  &:focus {
+    border: none;
+  }
+`
+;
+
 const LikeAndComment = styled.div`
   display: flex;
   justify-content: space-around;
@@ -286,10 +303,12 @@ const DrinkpostReviewDetail = () => {
         <Description>{review?.content}</Description>
         <hr />
         <CommentBox>
-          <CommentInput
+          <StyleAutoTextArea
             placeholder="댓글을 작성해주세요..."
             value={comment}
             onChange={commentHandler}
+            minRows={1}
+            maxRows={5}
           />
           <CommentButton onClick={submitHandler}>
             <SendImg src={sendImage} alt="" />
