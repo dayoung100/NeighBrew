@@ -53,6 +53,7 @@ function App() {
     });
     event.addEventListener("FOLLOW", e => {
       console.log(JSON.parse(e.data));
+      noti("테스트");
     });
     return () => {
       event.close();
@@ -61,7 +62,7 @@ function App() {
       event.removeEventListener("FOLLOW", () => {});
     };
   }, [userid]);
-
+  //
   useEffect(() => {
     subscribe();
   }, []);
@@ -90,7 +91,37 @@ function App() {
       });
     }
   };
-
+  const noti = (message: string) => {
+    navigator.serviceWorker.ready.then(registration => {
+      const notiAlarm = registration.showNotification("알림", {
+        body: "pinyin + '\n' + means",
+        actions: [
+          {
+            title: "화면보기",
+            action: "goTab",
+          },
+          {
+            title: "닫기",
+            action: "close",
+          },
+        ],
+      });
+    });
+  };
+  // const noti = navigator.serviceWorker.ready.then(function (registration) {
+  //   const notiAlarm = registration.showNotification("알림", {
+  //     body: "pinyin + '\n' + means",
+  //     actions: [
+  //       {
+  //         title: "화면보기",
+  //         action: "goTab",
+  //       },
+  //       {
+  //         title: "닫기",
+  //         action: "close",
+  //       },
+  //     ],
+  //   });
   return (
     <>
       <Routes>
