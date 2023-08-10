@@ -304,9 +304,9 @@ const MeetingCreate = () => {
     return !(selectedDrink.drinkId === 0);
   };
 
-  //위치: 필수 입력
+  //위치: 필수 입력(구군은 필수x, 세종시 때문에)
   const positionCheck = () => {
-    return !(sido.sidoCode === 0 || gugun.gugunCode === 0);
+    return !(sido.sidoCode === 0);
   };
 
   //날짜: 필수 입력/현재 시점 이후로
@@ -391,8 +391,8 @@ const MeetingCreate = () => {
     f.append("maxParticipants", maxParticipants.toString());
     f.append("meetDate", `${date}T${time}:00`);
     f.append("tagId", selectedCategory.toString());
-    f.append("sido", sido.sidoName);
-    f.append("gugun", gugun.gugunName);
+    f.append("sido", sido.sidoCode.toString());
+    f.append("gugun", gugun.gugunCode.toString());
     f.append(
       "drinkId",
       selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
@@ -650,7 +650,7 @@ const MeetingCreate = () => {
             구/군
           </div>
           {!positionCheck() && btnClicked && (
-            <ErrorDiv>📌위치는 필수 입력 사항입니다.</ErrorDiv>
+            <ErrorDiv>📌위치(시/도)는 필수 입력 사항입니다.</ErrorDiv>
           )}
         </QuestionDiv>
         <QuestionDiv>
