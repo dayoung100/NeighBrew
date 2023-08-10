@@ -1,65 +1,81 @@
 // main
 import { styled } from "styled-components";
-import DrinkCard from "./../drinkpost/DrinkCard";
+import DrinkCard from "../drinkpost/DrinkCard";
 import { useState, useEffect } from "react";
-import useIntersectionObserver from "./../../hooks/useIntersectionObserver";
+import Navbar from "../navbar/NavbarForDrinkpost";
+import Footer from "../footer/Footer";
+import { useNavigate } from "react-router-dom";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
 
 const ShowcaseBody = styled.div`
-  background-color: var(--c-black);
-  color: white;
+  font-size: 14px;
+  margin-left: 1vw;
+`;
+
+const RoundBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 10%;
+
+  background: var(--c-yellow);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100px;
+  z-index: 10;
+
+  @media (max-width: 430px) {
+    right: 5%;
+  }
+  @media (min-width: 431px) {
+    left: 350px;
+  }
 `;
 
 // 무한 스크롤
 
-const drinkpost = () => {
-  const [page, setPage] = useState(0);
+const DrinkPostUseInUser = () => {
   const [drinkList, setDrinkList] = useState<Drink[]>([]);
-
-  const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
-    console.log(`감지결과 : ${isIntersecting}`);
-    // isIntersecting이 true면 감지했다는 뜻임
-    if (isIntersecting) {
-      if (page < 6) {
-        setTimeout(() => {
-          callApi("get", `api/drink?page=${page}&size=12`)
-            .then(res => {
-              setDrinkList(prev => [...prev, ...res.data.content]);
-              console.log(res.data.content);
-              console.log(drinkList);
-              console.log(page);
-              setPage(prev => prev + 1);
-            })
-            .catch(err => {
-              console.log(err);
-            });
-          console.log(page);
-        }, 100);
-      }
-    }
+  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const userid = localStorage.getItem("myId");
+  const toDrinkSearch = () => {
+    navigate("/drinkpost/search");
   };
-  const { setTarget } = useIntersectionObserver({ onIntersect });
-  // 위의 두 변수로 검사할 요소를 observer로 설정
-  // 여기에는 axios 요청 들어갈 예정
-
+  const myDrinkHandler = () => {
+    callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
+      setDrinkList(res.data);
+    });
+  };
+  useEffect(() => {
+    myDrinkHandler();
+  }, []);
   return (
     <>
       <ShowcaseBody>
-        <h1 style={{ paddingTop: "10px" }}>내 술장</h1>
+        <div style={{ textAlign: "start" }}></div>
 
-        <div className="whole" style={{ display: "flex", flexWrap: "wrap", paddingBottom: "60px" }}>
-          {drinkList.map((drink, i) => {
-            return <DrinkCard key={i} drink={drink}></DrinkCard>;
+        <div
+          className="whole"
+          style={{ display: "flex", flexWrap: "wrap", paddingBottom: "60px", marginLeft: "1px" }}
+        >
+          {drinkList.map(drink => {
+            return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
           })}
         </div>
         <div
-          ref={setTarget}
-          style={{ marginTop: "100px", height: "5px", backgroundColor: "--c-black" }}
+          style={{
+            marginTop: "100px",
+            height: "5px",
+            backgroundColor: "--c-black",
+          }}
         ></div>
       </ShowcaseBody>
+      <Footer></Footer>
     </>
   );
 };
 
-export default drinkpost;
+export default DrinkPostUseInUser;
