@@ -63,7 +63,6 @@ const ImageDiv = styled.div`
   background-color: var(--c-lightgray);
   background-repeat: no-repeat;
   background-size: cover;
-  border-radius: 30px;
   width: 100%;
   height: 36vh;
 `;
