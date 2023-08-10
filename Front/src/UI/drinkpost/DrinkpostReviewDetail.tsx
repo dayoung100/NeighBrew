@@ -311,7 +311,7 @@ const DrinkpostReviewDetail = () => {
             <div>
               {LikeIcon}
             </div>
-            <div style="margin: 0 1vh; ">
+            <div >
               {review?.likeCount}x
             </div>
           </LikeAndCommentDiv>
