@@ -27,7 +27,7 @@ const StyleAutoTextArea = styled(TextareaAutosize)`
 
 const LikeAndComment = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: left;
   width: 36%;
   margin-top: 1.5vh;
   font-size: 20px;
