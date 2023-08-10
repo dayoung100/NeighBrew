@@ -10,11 +10,9 @@ import com.ssafy.backend.repository.SubReviewRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +24,13 @@ public class SubReviewService {
     private final PushService pushService;
 
     // 리뷰의 댓글을 조회하는 API
-    public List<SubReviewDto> getSubReviewList(Long reviewId) {
+    public Page<SubReviewDto> getSubReviewList(Long reviewId, Pageable pageable) {
         if (!drinkReviewRepository.existsById(reviewId)) {
             throw new IllegalArgumentException("해당 리뷰가 존재하지 않습니다.");
         }
 
-        List<SubReview> subReviews = subReviewRepository.findAllByDrinkReview_DrinkReviewId(reviewId);
-        return subReviews.stream().map(this::toSubReviewDto).collect(Collectors.toList());
+        Page<SubReview> subReviews = subReviewRepository.findAllByDrinkReview_DrinkReviewIdOrderByCreatedAtDesc(reviewId, pageable);
+        return subReviews.map(this::toSubReviewDto);
     }
 
     private SubReviewDto toSubReviewDto(SubReview subReview) {
