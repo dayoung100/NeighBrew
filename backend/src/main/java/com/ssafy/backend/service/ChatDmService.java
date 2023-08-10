@@ -34,7 +34,7 @@ public class ChatDmService {
 
     //DM 목록 조회
     public List<ChatDmRoom> findMyDmList(Long userId) {
-        List<ChatDmRoom> dmList = chatDmRoomRepository.findChatDmRoomById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+        List<ChatDmRoom> dmList = chatDmRoomRepository.findChatDmRoomByIdOOrderByLastMessageTimeDesc(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
 
         List<ChatDmRoom> result = new ArrayList<>();
         for(ChatDmRoom cdr: dmList ){
@@ -54,13 +54,12 @@ public class ChatDmService {
         log.info("{}와{}의 메세지 가져오기", user1Id, user2Id);
 
         Optional<ChatDmRoom> dmRoom = chatDmRoomRepository.findByUser1_UserIdAndUser2_UserId(user1Id, user2Id);
-
-        //List<ChatDmMessage> messageList = new ArrayList<>();
+        LocalDateTime currentTime = LocalDateTime.now();
         if (dmRoom.isPresent()) {
             if(requestUser.equals(user1Id)){
-                result.put("messages", chatDmMessageRepository.findByChatDmRoom_ChatDmRoomIdAndCreatedAtAfter(dmRoom.get().getChatDmRoomId(), dmRoom.get().getUser1AttendTime()));
+                result.put("messages", chatDmMessageRepository.findByChatDmRoom_ChatDmRoomIdAndCreatedAtBetween(dmRoom.get().getChatDmRoomId(), dmRoom.get().getUser1AttendTime(), currentTime));
             } else{
-                result.put("messages", chatDmMessageRepository.findByChatDmRoom_ChatDmRoomIdAndCreatedAtAfter(dmRoom.get().getChatDmRoomId(), dmRoom.get().getUser2AttendTime()));
+                result.put("messages", chatDmMessageRepository.findByChatDmRoom_ChatDmRoomIdAndCreatedAtBetween(dmRoom.get().getChatDmRoomId(), dmRoom.get().getUser2AttendTime(), currentTime));
             }
         } else {
             //방이 없으면 빈 배열을 전달한다.
@@ -134,28 +133,47 @@ public class ChatDmService {
 
         //시스템 메세지를 저장
         chatDmMessageRepository.save(ChatDmMessage.builder()
+                .chatDmRoom(findDmRoom)
+                .user(leaveUser)
                 .message(leaveUser.getNickname() + "님이 채팅방을 나갔습니다.")
                 .createdAt(LocalDateTime.now())
-                .user(leaveUser)
                 .build());
 
         //채팅방을 나갔다는 메세지를 전송한다.
-
+        result.put("message", leaveUser.getNickname() + "님이 채팅방을 나갔습니다.");
         result.put("userId", leaveUserId);
         result.put("user", leaveUser.toChatDto());
-        result.put("message", leaveUser.getNickname() + "님이 채팅방을 나갔습니다.");
+
         return mapper.writeValueAsString(result);
     }
 
     @Transactional
     public Map<String, Object> saveMessageAndPush(ChatDmRoom chatDmRoom, User sender, User receiver, String message) {
-        //작성자 ID == DM.User1아이디가 같은데 참여시간이 null : 나간 이력이 있다
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        //작성자 ID == DM.User1
         if(sender.getUserId() == chatDmRoom.getUser1().getUserId()) {
-            //참여 시간을 갱신시킨다.
-            if (chatDmRoom.getUser1AttendTime() == null) chatDmRoom.setUser1AttendTime(LocalDateTime.now());
-        }else if(sender.getUserId() == chatDmRoom.getUser2().getUserId()){
-            if (chatDmRoom.getUser2AttendTime() == null) chatDmRoom.setUser2AttendTime(LocalDateTime.now());
+            //작성자 user1의 참여시간이 null -> 방을 퇴장했으니. 참여로 전환한다.
+            if (chatDmRoom.getUser1AttendTime() == null){
+                chatDmRoom.setUser1AttendTime(currentTime);
+
+            }//작성자는 user1인데 유저2가 퇴장한 상태
+            else if(chatDmRoom.getUser2AttendTime() == null){
+                chatDmRoom.setUser2AttendTime(currentTime); //유저1의 참여 상태로 전환해 메세지를 받게 한다.
+            }
+        }//작성자 ID == DM.user2
+        else if(sender.getUserId() == chatDmRoom.getUser2().getUserId()){
+            //작성자 user2의 참여시간이 null -> 방을 퇴장했으니. 참여로 전환한다.
+            if (chatDmRoom.getUser2AttendTime() == null) {
+                chatDmRoom.setUser2AttendTime(currentTime);
+            }
+            else if(chatDmRoom.getUser1AttendTime() == null){
+                chatDmRoom.setUser1AttendTime(currentTime); //유저1의 참여 상태로 전환해 메세지를 받게 한다.
+            }
         }
+        //메세지가 올 떄 마다 업데이트를 수행한다.
+        chatDmRoom.setLastMessageTime(currentTime);
+
         chatDmRoomRepository.save(chatDmRoom);
 
         //채팅 메세지를 저장
