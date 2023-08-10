@@ -34,8 +34,6 @@ const RoundBtn = styled.div`
   }
 `;
 
-// 무한 스크롤
-
 const DrinkPostUseInUser = () => {
   const [drinkList, setDrinkList] = useState<Drink[]>([]);
   const navigate = useNavigate();
