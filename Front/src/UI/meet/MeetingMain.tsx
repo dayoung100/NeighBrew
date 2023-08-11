@@ -16,19 +16,28 @@ const TopMenu = styled.div`
   display: flex;
   margin: 0 0.5rem 0 0.5rem;
   background-color: white;
-  border-bottom: 1px solid var(--c-gray);
+  border-bottom: 1px solid var(--c-borderline);
 `;
 
 const TopMenuDetail = styled.button<{ isfocused: string }>`
-  color: var(--${props => (props.isfocused === "true" ? "c-black" : "c-gray")});
+  color: var(
+    --${(props) => (props.isfocused === "true" ? "c-black" : "c-gray")}
+  );
   font-family: "JejuGothic";
   font-size: 20px;
   line-height: 150%;
   padding: 0 1rem;
   outline: none;
   border: none;
-  border-bottom: ${props => (props.isfocused === "true" ? "2px solid var(--c-black);" : "none;")};
+  border-bottom: ${(props) =>
+    props.isfocused === "true" ? "2px solid var(--c-black);" : "none;"};
   background: white;
+`;
+
+const MainDiv = styled.div`
+  padding-bottom: 10rem;
+  background: white;
+  min-height: 80vh;
 `;
 
 const RoundBtn = styled.div`
@@ -82,15 +91,9 @@ const meetingMain = () => {
           내모임
         </TopMenuDetail>
       </TopMenu>
-      <div
-        style={{
-          paddingBottom: "10rem",
-          background: "var(--c-lightgray)",
-          minHeight: "80vh",
-        }}
-      >
+      <MainDiv>
         {selectedMenu === "find" ? <MeetingFind /> : <MeetingMy />}
-      </div>
+      </MainDiv>
       <footer>
         <RoundBtn onClick={GotoCreateHandler}>
           <img src="/src/assets/plusButton.svg" width="25rem" />

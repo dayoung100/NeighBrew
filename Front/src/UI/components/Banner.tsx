@@ -16,16 +16,16 @@ function SlideComponent() {
   };
   const [bannerList, setBannerList] = useState<DrinkFestival[]>([]);
   useEffect(() => {
-    callApi("get", "api/drinkFestival/all").then(res => {
+    callApi("get", "api/drinkFestival/all").then((res) => {
       console.log(res.data);
       setBannerList(res.data);
     });
-  });
+  }, []);
 
   return (
     <>
       <Slider {...settings} style={{ height: "24vh" }}>
-        {bannerList.map(banner => {
+        {bannerList.map((banner) => {
           return (
             <div>
               <h3>{banner.name}</h3>

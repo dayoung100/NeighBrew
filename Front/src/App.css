@@ -13,8 +13,10 @@
   --c-gray: #aaaaaa;
   --c-lightgray: #f4f4f4;
   --c-beige: #efe9e1;
-  --c-yellow: #f2bc79;
-  --c-borderline : #ececec;
+  /* --c-yellow: #f2bc79; */
+  --c-yellow: #31edd3;
+  --c-pink: #f5acc7;
+  --c-borderline: #ececec;
 }
 
 body {

@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { callApi } from "../../utils/api";
+import Loading from "../etc/Loading";
+
 const KakaoLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -11,25 +13,25 @@ const KakaoLogin = () => {
       .post("/api/auth/kakao", {
         authorizationCode: code,
       })
-      .then(res => {
+      .then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
       })
       .then(async () => {
         await callApi("get", "/api/user/guard/myinfo")
-          .then(res => {
+          .then((res) => {
             localStorage.setItem("myId", JSON.stringify(res.data.userId));
           })
-          .catch(err => console.log(err));
+          .catch((err) => console.log(err));
         await navigate("/meet");
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
   useEffect(() => {
     KakaologinHandler();
   }, []);
-  return <div>로딩중입니다.</div>;
+  return <Loading />;
 };
 export default KakaoLogin;

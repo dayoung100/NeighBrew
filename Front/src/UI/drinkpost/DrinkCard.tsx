@@ -36,7 +36,8 @@ const Tag = styled.div`
   margin-top: 0.2rem;
   border-radius: 14px;
   font-size: 0.8rem;
-  background-color: #f2bc79;
+  background-color: var(--c-yellow);
+  font-family: "JejuGothic";
   display: flex;
   justify-content: center;
   align-items: center;
