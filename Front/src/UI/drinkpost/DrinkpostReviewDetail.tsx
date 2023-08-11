@@ -6,6 +6,7 @@ import { Drink, Review, SubReview } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 import fancyDrinkImage from "../../assets/fancydrinkImage.jpg";
 import { callApi } from "../../utils/api";
+import NavbarSimple from "../navbar/NavbarSimple";
 import { commentIcon, likeIcon } from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
@@ -136,10 +137,10 @@ const DrinkpostReviewDetail = () => {
 
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
-      .then(res => {
+      .then((res) => {
         setDrink(res.data);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
 
     callApi("get", `api/subreview/list/${reviewId}`)
       .then((res) => {
@@ -149,7 +150,10 @@ const DrinkpostReviewDetail = () => {
 
     async function summonReview() {
       // 술 상세 후기 조회 요청
-      const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
+      const response1 = await callApi(
+        "get",
+        `api/drinkreview/review/${reviewId}`
+      );
       setReview(response1.data);
       const userId = response1.data.user.userId;
       // 후기 쓴 사람에 대한 follow 요청
@@ -173,14 +177,14 @@ const DrinkpostReviewDetail = () => {
 
   const followHandler = () => {
     callApi("post", `api/follow/guard/${review?.user.userId}`)
-      .then(res => {
+      .then((res) => {
         followers();
       })
-      .catch(err => {});
+      .catch((err) => {});
   };
 
   const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
+    callApi("get", `api/follow/follower/${review?.user.userId}`).then((res) => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -217,13 +221,20 @@ const DrinkpostReviewDetail = () => {
   };
   return (
     <>
+      <NavbarSimple title={drink?.name}></NavbarSimple>
       <WholeDiv>
-        <h2>{drink?.name}</h2>
         <Usercard>
-          <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
+          <div
+            onClick={toProfileHandler}
+            style={{ display: "flex", alignItems: "center" }}
+          >
             <div>
               <UserImg
-                src={review?.user.profile !== "no image" ? review?.user.profile : defaultImg}
+                src={
+                  review?.user.profile !== "no image"
+                    ? review?.user.profile
+                    : defaultImg
+                }
               ></UserImg>
             </div>
             <div>
@@ -232,7 +243,8 @@ const DrinkpostReviewDetail = () => {
           </div>
           <FollowDiv
             style={{
-              backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+              backgroundColor:
+                following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
             }}
             onClick={followHandler}
           >
@@ -241,7 +253,9 @@ const DrinkpostReviewDetail = () => {
         </Usercard>
         <ImageDiv
           style={{
-            backgroundImage: `url(${review?.img !== "no image" ? review?.img : fancyDrinkImage})`,
+            backgroundImage: `url(${
+              review?.img !== "no image" ? review?.img : fancyDrinkImage
+            })`,
           }}
         ></ImageDiv>
         <LikeAndComment>
