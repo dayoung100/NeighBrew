@@ -9,7 +9,6 @@ import { callApi } from "../../utils/api";
 import { commentIcon, likeIcon } from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
-import TextareaAutosize from "react-textarea-autosize";
 
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
