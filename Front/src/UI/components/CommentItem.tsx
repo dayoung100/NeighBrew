@@ -29,14 +29,16 @@ type CommentItemProps = {
   subReview: SubReview;
 };
 
-const commentItem = forwardRef<HTMLDivElement, CommentItemProps>((props, ref) => {
+const commentItem = forwardRef<HTMLDivElement, CommentItemProps>((props) => {
   const { subReview } = props;
   return (
     <WholeDiv>
       <ProfileDiv>
         <ProfileDiv2
           style={{
-            backgroundImage: `url(${subReview.user?.profile || "기본 이미지 URL"})`,
+            backgroundImage: `url(${
+              subReview.user?.profile || "기본 이미지 URL"
+            })`,
           }}
         ></ProfileDiv2>
       </ProfileDiv>
@@ -45,7 +47,6 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>((props, ref) =>
           <b>{subReview.user?.nickname}</b>
         </div>
         <div>{subReview.content}</div>
-        <div ref={ref}></div>
       </NameAndContent>
     </WholeDiv>
   );

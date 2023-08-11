@@ -43,7 +43,7 @@ const meetingFind = () => {
     if (isIntersecting && !throttle) {
       setThrottle(true);
       setTimeout(() => {
-        setPage((prev) => prev + 1);
+        setPage(prev => prev + 1);
         setThrottle(false);
       }, 300);
     }
@@ -59,20 +59,17 @@ const meetingFind = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    callApi("get", "api/sido").then((res) => {
+    callApi("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
 
   //페이지가 변하면 기존 데이터에 이어서 로드
   useEffect(() => {
-    const promise = callApi(
-      "get",
-      `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`
-    );
-    promise.then((res) => {
+    const promise = callApi("get", `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`);
+    promise.then(res => {
       setTotalPage(res.data.totalPages);
-      setMeetAllData((prev) => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
+      setMeetAllData(prev => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
     });
   }, [page]);
 
@@ -80,11 +77,8 @@ const meetingFind = () => {
   useEffect(() => {
     setPage(0);
     setTotalPage(1);
-    const promise = callApi(
-      "get",
-      `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`
-    );
-    promise.then((res) => {
+    const promise = callApi("get", `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`);
+    promise.then(res => {
       setTotalPage(res.data.totalPages);
       setMeetAllData(res.data.content); //받아온 데이터로 meetAllData 초기화
     });
@@ -92,7 +86,7 @@ const meetingFind = () => {
 
   useEffect(() => {
     //선택한 시도에 따라 구군 fetch
-    callApi("get", `api/gugun/${sido.sidoCode}`).then((res) => {
+    callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);
@@ -125,15 +119,17 @@ const meetingFind = () => {
   //구군 정보로 필터링
   const gugunFiltering = (data: Meeting) => {
     if (gugun.gugunCode === 0) return true;
-    return (
-      data.gugun.gugunCode === gugun.gugunCode &&
-      data.gugun.sidoCode === gugun.sidoCode
-    );
+    return data.gugun.gugunCode === gugun.gugunCode && data.gugun.sidoCode === gugun.sidoCode;
   };
   //날짜 정보로 필터링
   const dateFiltering = (data: Meeting) => {
     if (startDate === "" && endDate === "") return true;
-    return data.meetDate > startDate && data.meetDate < endDate;
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(`${endDate}T23:59:59`);
+    const targetDateObj = new Date(data.meetDate);
+    if (startDate !== "" && endDate !== "")
+      return targetDateObj >= startDateObj && targetDateObj <= endDateObj;
+    else return targetDateObj >= startDateObj || targetDateObj <= endDateObj;
   };
   //모임 이름으로 필터링
   const titleFiltering = (data: Meeting) => {
@@ -166,7 +162,7 @@ const meetingFind = () => {
   };
 
   useEffect(() => {
-    setMeetData(meetAllData.map((item) => item)); //필터 적용을 위해 복사한 리스트 만들어두기
+    setMeetData(meetAllData.map(item => item)); //필터 적용을 위해 복사한 리스트 만들어두기
     Filtering();
   }, [meetAllData]);
 
@@ -195,16 +191,14 @@ const meetingFind = () => {
                 <FilterElement>
                   <div>
                     <DropdownInput
-                      onChange={(e) => {
+                      onChange={e => {
                         const selectedValue = e.target.value;
-                        const selectedSido = sidoList.find(
-                          (item) => item.sidoName === selectedValue
-                        );
+                        const selectedSido = sidoList.find(item => item.sidoName === selectedValue);
                         setSido(selectedSido);
                       }}
                       value={sido.sidoName}
                     >
-                      {sidoList.map((siItem) => {
+                      {sidoList.map(siItem => {
                         return (
                           <option value={siItem.sidoName} key={siItem.sidoCode}>
                             {siItem.sidoName}
@@ -216,21 +210,18 @@ const meetingFind = () => {
                   </div>
                   <div>
                     <DropdownInput
-                      onChange={(e) => {
+                      onChange={e => {
                         const selectedValue = e.target.value;
                         const selectedGugun = gugunList.find(
-                          (item) => item.gugunName === selectedValue
+                          item => item.gugunName === selectedValue
                         );
                         setGugun(selectedGugun);
                       }}
                       value={gugun.gugunName}
                     >
-                      {gugunList.map((guItem) => {
+                      {gugunList.map(guItem => {
                         return (
-                          <option
-                            value={guItem.gugunName}
-                            key={guItem.gugunCode}
-                          >
+                          <option value={guItem.gugunName} key={guItem.gugunCode}>
                             {guItem.gugunName}
                           </option>
                         );
@@ -243,14 +234,14 @@ const meetingFind = () => {
                 <FilterElement>
                   <DateInput
                     type="date"
-                    onChange={(e) => {
+                    onChange={e => {
                       setStartDate(e.target.value);
                     }}
                   />
                   ~
                   <DateInput
                     type="date"
-                    onChange={(e) => {
+                    onChange={e => {
                       setEndDate(e.target.value);
                     }}
                   />
