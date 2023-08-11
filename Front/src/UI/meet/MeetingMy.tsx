@@ -6,6 +6,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import MeetingListItem from "./MeetingListItem";
+import EmptyMsg from "./../components/EmptyMsg";
 import { callApi } from "../../utils/api";
 
 const MeetingDiv = styled.div`
@@ -59,16 +60,34 @@ const meetingMy = () => {
   return (
     <div style={{ background: "var(--c-lightgray)", padding: "1rem" }}>
       <MeetingDiv>
-        <MeetTitle>내가 주최 중인 모임</MeetTitle>
+        <MeetTitle>개설</MeetTitle>
         {hostMeet.length > 0 && <MeetingListItem data={hostMeet} />}
+        {hostMeet.length === 0 && (
+          <EmptyMsg
+            title="개설한 모임이 없습니다"
+            contents={`모임을 만들어보세요!\n개설한 모임은 여기에 표시됩니다`}
+          />
+        )}
       </MeetingDiv>
       <MeetingDiv>
-        <MeetTitle>내가 참여 중인 모임</MeetTitle>
+        <MeetTitle>참여</MeetTitle>
         {guestMeet.length > 0 && <MeetingListItem data={guestMeet} />}
+        {guestMeet.length === 0 && (
+          <EmptyMsg
+            title="참여 중인 모임이 없습니다"
+            contents={`마음에 드는 모임을 찾아 신청해보세요!\n참여 확정된 모임은 여기에 표시됩니다`}
+          />
+        )}
       </MeetingDiv>
       <MeetingDiv>
-        <MeetTitle>내가 신청한 모임</MeetTitle>
+        <MeetTitle>대기</MeetTitle>
         {applyMeet.length > 0 && <MeetingListItem data={applyMeet} />}
+        {applyMeet.length === 0 && (
+          <EmptyMsg
+            title="대기 중인 모임이 없습니다"
+            contents={`마음에 드는 모임을 찾아 신청해보세요!\n참여 신청한 모임은 여기에 표시됩니다.`}
+          />
+        )}
       </MeetingDiv>
     </div>
   );
