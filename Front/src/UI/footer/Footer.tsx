@@ -1,7 +1,3 @@
-// import footerChat from '../../assets/footerChat.svg';
-// import footerMypage from '../../assets/footerMypage.svg';
-// import footerGroup from '../../assets/footerDrinkpost.svg';
-// import footerDrinkpost from '../../assets/footerGroup.svg';
 import styled from "styled-components";
 import {
   breweryFooterIcon,
@@ -15,12 +11,10 @@ import { useNavigate } from "react-router-dom";
 const Button = styled.button<{ now: number; choosebutton: number }>`
   width: 40%;
   display: inline-block;
-  height: 4rem;
+  height: 3.5rem;
   background-color: white;
   border: none;
-  margin: 0.5rem auto 2px auto;
-  border-bottom: ${(props) =>
-    props.now == props.choosebutton ? "2px solid #000000" : "none"};
+  margin: 0 auto 2px auto;
 `;
 
 const Footer = () => {
