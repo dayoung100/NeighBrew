@@ -20,7 +20,7 @@ const StyleAutoTextArea = styled(TextareaAutosize)`
   border-radius: 5px;
   padding: 0.3rem;
   overflow-y: auto;
-  resize : none;
+  resize: none;
   margin: 0.5rem 0 0.5rem 0.5rem;
   padding: 0.3rem;
   // 글을 아래에 배치

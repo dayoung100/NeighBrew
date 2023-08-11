@@ -1,15 +1,7 @@
 package com.ssafy.backend.service;
 
-<<<<<<< Updated upstream
-import com.ssafy.backend.dto.DrinkRequestDto;
-import com.ssafy.backend.dto.DrinkResponseDto;
-import com.ssafy.backend.dto.DrinkUpdateRequestDto;
-import com.ssafy.backend.dto.DrinkUpdateResponseDto;
-=======
 import com.ssafy.backend.Enum.UploadType;
-import com.ssafy.backend.dto.DrinkDto;
-import com.ssafy.backend.dto.DrinkUpdateDto;
->>>>>>> Stashed changes
+import com.ssafy.backend.dto.*;
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.repository.DrinkRepository;
@@ -22,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,12 +34,11 @@ public class DrinkService {
     }
 
     // 술 추가
-    public Drink save(DrinkDto drinkDto, MultipartFile multipartFile) {
+    public Drink save(DrinkDto drinkDto, MultipartFile multipartFile) throws IOException {
         if (drinkDto.getName().equals("")) throw new IllegalArgumentException("술 이름이 없습니다.");
 
         if(multipartFile != null){
             if(!multipartFile.isEmpty()) drinkDto.setImage(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
-                //formData에 image는 있지만 파일이 없을 때
             else drinkDto.setImage("no image");
         }else drinkDto.setImage("no image");//null 값이 전달 되었을 때
 

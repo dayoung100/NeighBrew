@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,13 +58,18 @@ public class DrinkController {
 
     // 술 추가
     @PostMapping()
-    public ResponseEntity<?> save(@RequestBody DrinkDto drinkDto,
-                                  @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException {
-
+    public ResponseEntity<?> save(DrinkDto drinkDto,
+                                  @RequestPart(value = "upload", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException, IOException {
+        try{
             if(multipartFile.isPresent())
                 return ResponseEntity.ok(drinkService.save(drinkDto, multipartFile.get()));
             else
                 return ResponseEntity.ok(drinkService.save(drinkDto, null));
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("실패");
+        }
+
 
     }
 
