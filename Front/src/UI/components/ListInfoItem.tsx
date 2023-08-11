@@ -5,12 +5,12 @@ const ItemDiv = styled.div<{ $outline: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 90%;
+  width: 100%;
   height: 6rem;
   background: white;
-  margin: 1rem auto 0 auto;
+  margin: 0.5rem 0;
   border-radius: 20px;
-  padding: 0.5rem 0.5rem;
+  padding: 0.5rem;
   border: ${(props) => (props.$outline ? "1px solid var(--c-gray)" : "none")};
 `;
 
@@ -21,7 +21,7 @@ const ImageArea = styled.div<{ src: string; $isDrink: boolean }>`
   justify-content: center;
   align-items: center;
   border-radius: 15px;
-  width: 30%;
+  width: 25%;
   margin: 0 3%;
   &::after {
     content: "";

@@ -10,12 +10,14 @@ import { meetingicon, directMessage } from "../../assets/AllIcon";
 import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
+import MeetingListItem from "../meet/MeetingListItem.tsx";
+import EmptyMsg from "../components/EmptyMsg.tsx";
 
 const ChatListDiv = styled.div`
   display: flex;
   margin: 0 1rem;
   background-color: white;
-  border-bottom: 1px solid var(--c-gray);
+  border-bottom: 1px solid var(--c-borderline);
 `;
 
 const Button = styled.button`
@@ -92,54 +94,67 @@ const ChatList = () => {
   const [selectedMenu, setSelectedMenu] = useState("find");
   return (
     <>
-      <ChatListDiv>
-        <Button
-          onClick={() => {
-            setChooseChat(0);
-          }}
-          style={{
-            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
-            color: chooseChat === 0 ? "var(--c-black)" : "var(--c-gray)",
-          }}
-        >
-          {/*{MeetingIcon}*/}
-          모임채팅
-        </Button>
-        <Button
-          onClick={() => {
-            setChooseChat(1);
-          }}
-          style={{
-            borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
-            color: chooseChat === 1 ? "var(--c-black)" : "var(--c-gray)",
-          }}
-        >
-          {/*{directMessageIcon}*/}
-          채팅
-        </Button>
-      </ChatListDiv>
-      <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)", minHeight: "760px" }}>
-        {chooseChat === 0
-          ? chatList.map(chatRoom => {
-              return (
-                <Chat
-                  key={chatRoom.chatRoomId}
-                  chatRoomName={chatRoom.chatRoomName}
-                  chatRoomId={chatRoom.chatRoomId}
-                  chatRoomDetail={chatRoomDetail}
-                />
-              );
-            })
-          : chatList.map((chatRoom, i) => {
-              return (
-                <ChatDM
-                  key={i}
-                  chatRoomDetail={chatDMRoomDetail}
-                  user1={chatRoom.user1}
-                  user2={chatRoom.user2}
-                />
-              );
-            })}
+        <ChatListDiv>
+            <Button
+                onClick={() => {
+                    setChooseChat(0);
+                }}
+                style={{
+                    borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+                    color : chooseChat === 0 ? "var(--c-black)" : "var(--c-borderLinegray)",
+                }}
+            >
+                {/*{MeetingIcon}*/}
+                모임채팅
+            </Button>
+            <Button
+                onClick={() => {
+                    setChooseChat(1);
+                }}
+                style={{
+                    borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
+                    color : chooseChat === 1 ? "var(--c-black)" : "var(--c-gray)",
+                }}
+            >
+                {/*{directMessageIcon}*/}
+                채팅
+            </Button>
+        </ChatListDiv>
+      {/*<div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)", minHeight: "760px" }}>*/}
+        <div style={{ padding: "1rem", backgroundColor: "white", minHeight: "760px" }}>
+          {chatList.length === 0 ? (
+              <EmptyMsg
+                  title={chooseChat === 0 ? "참여 중인 모임이 없습니다." : "DM 내역이 없습니다."}
+                  contents={
+                      chooseChat === 0
+                          ? "모임에 참여해 보세요!\n참여중인 모임의 채팅방이 여기에 표시됩니다."
+                          : "관심 있는 유저들과 대화를 나눠 보세요!\n대화 중인 채팅방은 여기에 표시됩니다."
+                  }
+              />
+          ) : (
+              chooseChat === 0
+                  ? chatList.map(chatRoom => {
+                      return (
+                          <Chat
+                              key={chatRoom.chatRoomId}
+                              chatRoomName={chatRoom.chatRoomName}
+                              chatRoomId={chatRoom.chatRoomId}
+                              chatRoomDetail={chatRoomDetail}
+                          />
+                      );
+                  })
+                  : chatList.map((chatRoom, i) => {
+                      return (
+                          <ChatDM
+                              key={i}
+                              chatRoomDetail={chatDMRoomDetail}
+                              user1={chatRoom.user1}
+                              user2={chatRoom.user2}
+                          />
+                      );
+                  })
+          )}
+
       </div>
       {/* <div style={{ height: "80px" }}></div> */}
       <footer>

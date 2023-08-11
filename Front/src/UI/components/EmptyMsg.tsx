@@ -32,7 +32,7 @@ type EmptyMsgProps = {
 const EmptyMsg = (props: EmptyMsgProps) => {
   return (
     <WrapperDiv>
-      <img src="src/assets/placard.svg" />
+      <img src="/src/assets/placard.svg" />
       <Title>{props.title}</Title>
       <Contents>{props.contents}</Contents>
     </WrapperDiv>

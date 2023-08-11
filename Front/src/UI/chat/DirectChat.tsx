@@ -23,6 +23,7 @@ const StyleAutoTextArea = styled(TextareaAutosize)`
   resize: none;
   margin: 0.5rem 0 0.5rem 0.5rem;
   padding: 0.3rem;
+  outline: none;
   // 글을 아래에 배치
   align-self: flex-end;
   font-size: 1rem;
@@ -119,7 +120,7 @@ const ChatNav = styled.div`
   padding: 0.5rem;
   width: 100%;
   height: 3rem;
-  background-color: var(--c-lightgray);
+  background-color: white;
   display: flex;
   word-break: break-all;
   font-size: 0.9rem;
@@ -424,7 +425,7 @@ const DirectChat = () => {
       </RightModal>
       <div
         style={{
-          backgroundColor: ismodal ? "#757575" : "#b4fdb5",
+          backgroundColor: ismodal ? "#757575" : "var(--c-beige)",
           width: "100%",
           minHeight: "90vh",
           overflow: "auto",
