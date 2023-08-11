@@ -57,7 +57,8 @@ const meetingMy = (props: { userId: number }) => {
   }, [meetData]);
 
   return (
-    <div style={{ background: "var(--c-lightgray)", padding: "1rem", minHeight: "400px" }}>
+    // <div style={{ background: "var(--c-lightgray)", padding: "1rem", minHeight: "400px" }}>
+      <div style={{padding: "1rem", minHeight: "400px" }}>
       <MeetingDiv>
         <MeetTitle>개설</MeetTitle>
         {hostMeet.length > 0 && <MeetingListItem data={hostMeet} />}

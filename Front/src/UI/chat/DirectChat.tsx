@@ -23,6 +23,7 @@ const StyleAutoTextArea = styled(TextareaAutosize)`
   resize: none;
   margin: 0.5rem 0 0.5rem 0.5rem;
   padding: 0.3rem;
+  outline: none;
   // 글을 아래에 배치
   align-self: flex-end;
   font-size: 1rem;

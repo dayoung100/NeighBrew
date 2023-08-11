@@ -336,7 +336,9 @@ const MyPage = () => {
             <SirenArea onClick={reportHandler}></SirenArea>
           </FollowDiv>
         </div>
-        <div>
+        <div style={{
+            borderBottom : "1px solid var(--c-borderline)",
+        }}>
           <Button
               onClick={() => {
                 setChooseChat(0);
