@@ -17,6 +17,8 @@ const MeetTitle = styled.div`
   font-family: "JejuGothic";
   font-size: 20px;
   text-align: left;
+  padding: 1rem;
+  padding-bottom: 0;
 `;
 
 const meetingMy = () => {
@@ -59,7 +61,7 @@ const meetingMy = () => {
 
   return (
     // <div style={{ background: "var(--c-lightgray)", padding: "1rem" }}>
-      <div style={{ background: "white", padding: "1rem" }}>
+    <div>
       <MeetingDiv>
         <MeetTitle>개설</MeetTitle>
         {hostMeet.length > 0 && <MeetingListItem data={hostMeet} />}
