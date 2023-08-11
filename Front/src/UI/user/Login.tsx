@@ -134,24 +134,6 @@ const Login = () => {
     localStorage.setItem("chooseMenu", "0");
   }, []);
 
-  // const noti = (message: string) => {
-  //   navigator.serviceWorker.ready.then(registration => {
-  //     const notiAlarm = registration.showNotification("알림", {
-  //       body: "pinyin + '\n' + means",
-  //       actions: [
-  //         {
-  //           title: "화면보기",
-  //           action: "goTab",
-  //         },
-  //         {
-  //           title: "닫기",
-  //           action: "close",
-  //         },
-  //       ],
-  //     });
-  //   });
-  // };
-
   const followHandler = async () => {
     const api = await callApi("get", `api/push/follow/18`)
       .then(res => {

@@ -11,20 +11,20 @@ const KakaoLogin = () => {
       .post("/api/auth/kakao", {
         authorizationCode: code,
       })
-      .then(res => {
+      .then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
       })
       .then(async () => {
         await callApi("get", "/api/user/guard/myinfo")
-          .then(res => {
+          .then((res) => {
             localStorage.setItem("myId", JSON.stringify(res.data.userId));
             console.log(res.data);
           })
-          .catch(err => console.log(err));
+          .catch((err) => console.log(err));
         await navigate("/meet");
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };

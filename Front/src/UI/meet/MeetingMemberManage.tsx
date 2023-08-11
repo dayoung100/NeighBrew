@@ -13,6 +13,7 @@ import Footer from "../footer/Footer";
 import UserInfoItem from "../components/UserInfoItem";
 import { callApi } from "../../utils/api";
 import { MeetDetail, User } from "../../Type/types";
+import { initialMeetDetail, initialUser, WhiteModal } from "../common";
 
 const SubTitle = styled.div`
   font-size: 20px;
@@ -39,65 +40,27 @@ const NoBtn = styled(BtnSmall)`
   background: #f28f79;
 `;
 
-const WhiteModal = {
-  content: {
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "15rem",
-    height: "6rem",
-    padding: "0.5rem 1rem",
-    borderRadius: "15px",
-    background: "white",
-    textAlign: "center",
-    fontFamily: "NanumSquareNeo",
-  },
-  overlay: {
-    background: "rgba(0, 0, 0, 0.5)",
-    zIndex: "11",
-  },
-};
+const ModalBtnDiv = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 10%;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+`;
 
-const initialData: MeetDetail = {
-  meetDto: {
-    meetId: 0,
-    meetName: "",
-    description: "",
-    nowParticipants: 0,
-    maxParticipants: 0,
-    meetDate: "0000-01-01T00:00:00",
-    tagId: 0,
-    sido: "-",
-    gugun: "-",
-    dong: "-",
-    drink: {
-      degree: 0,
-      description: "",
-      drinkId: 0,
-      image: "",
-      name: "",
-      tagId: 0,
-    },
-    imgSrc: "",
-  },
-  users: [],
-  statuses: [],
-};
-
-const initialUser = {
-  userId: 0,
-  email: "",
-  nickname: "",
-  name: "",
-  liverPoint: 0,
-  profile: "",
-  follower: 0,
-  following: 0,
-};
+const ModalBtn = styled.div`
+  width: 5rem;
+  padding: 0.5rem;
+  margin: 0 0.5rem;
+  border-radius: 5px;
+  background: var(--c-yellow);
+`;
 
 const MeetingMemberManage = () => {
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
-  const [meetData, setMeetData] = useState<MeetDetail>(initialData);
+  const [meetData, setMeetData] = useState<MeetDetail>(initialMeetDetail);
   const [memberList, setMemberList] = useState<User[]>([]);
   const [applicantList, setApplicantList] = useState<User[]>([]);
   const [modalOn, setModalOn] = useState(false);
@@ -158,14 +121,14 @@ const MeetingMemberManage = () => {
         <NavbarSimple title="모임 관리" />
       </header>
       <div style={{ fontSize: "32px", marginTop: "1rem" }}>
-        {meetData.meetDto.meetName}
+        {meetData.meet.meetName}
       </div>
       <div style={{ marginBottom: "7rem" }}>
         <SubTitle style={{ display: "flex", alignItems: "center" }}>
           <div>참여중</div>
           <PeopleNumInfo
-            now={meetData.meetDto.nowParticipants}
-            max={meetData.meetDto.maxParticipants}
+            now={meetData.meet.nowParticipants}
+            max={meetData.meet.maxParticipants}
             color="var(--c-black)"
             size={15}
           />
@@ -219,36 +182,29 @@ const MeetingMemberManage = () => {
         onRequestClose={() => setModalOn(false)}
         style={WhiteModal}
       >
-        <div style={{ padding: "1rem 0" }}>
-          유저 {targetUser.nickname}을/를 <br />
-          {targetAction ? "승인" : "거절"}
-          하시겠습니까?
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-          }}
-        >
-          <div
-            onClick={() => {
-              memberHandler(targetUser);
-              setModalOn(false);
-            }}
-            style={{ width: "7rem", padding: "0.5rem 0" }}
-          >
-            예
+        <div>
+          <div style={{ padding: "1rem 0 3rem 0" }}>
+            유저 {targetUser.nickname}을/를 <br />
+            {targetAction ? "승인" : "거절"}
+            하시겠습니까?
           </div>
-          <div>|</div>
-          <div
-            onClick={() => {
-              setModalOn(false);
-            }}
-            style={{ width: "7rem", padding: "0.5rem 0" }}
-          >
-            아니오
-          </div>
+          <ModalBtnDiv>
+            <ModalBtn
+              onClick={() => {
+                memberHandler(targetUser);
+                setModalOn(false);
+              }}
+            >
+              예
+            </ModalBtn>
+            <ModalBtn
+              onClick={() => {
+                setModalOn(false);
+              }}
+            >
+              아니오
+            </ModalBtn>
+          </ModalBtnDiv>
         </div>
       </Modal>
       <Modal

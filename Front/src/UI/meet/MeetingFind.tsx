@@ -12,6 +12,7 @@ import MeetingListItem from "./MeetingListItem";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Meeting } from "../../Type/types";
+import { initialSido, initialGugun } from "../common";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
 const meetingFind = () => {
@@ -19,6 +20,7 @@ const meetingFind = () => {
   const [meetAllData, setMeetAllData] = useState<Meeting[]>([]);
   //필터링 한 후 모임 정보
   const [meetData, setMeetData] = useState<Meeting[]>([]);
+
   const [page, setPage] = useState(0); //페이징용, 0에서 시작
   const [totalPage, setTotalPage] = useState(0); //페이징용, 예정된 전체 페이지 수
   const [throttle, setThrottle] = useState(false);
@@ -28,6 +30,12 @@ const meetingFind = () => {
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
   };
+
+  //필터 지역 검색용
+  const [sidoList, setSidoList] = useState([initialSido]);
+  const [gugunList, setGugunList] = useState([initialGugun]);
+  const [sido, setSido] = useState(initialSido);
+  const [gugun, setGugun] = useState(initialGugun);
 
   //TODO: 무한 스크롤 로직
   const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
@@ -43,8 +51,21 @@ const meetingFind = () => {
 
   const { setTarget } = useIntersectionObserver({ onIntersect });
 
+  //초기 로딩
   useEffect(() => {
-    console.log("page:" + page);
+    //페이지 들어오면 위로 스크롤 올리기
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    //시도 정보 미리 받아와 세팅하기
+    callApi("get", "api/sido").then((res) => {
+      setSidoList([initialSido, ...res.data]);
+    });
+  }, []);
+
+  //페이지가 변하면 기존 데이터에 이어서 로드
+  useEffect(() => {
     const promise = callApi(
       "get",
       `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`
@@ -55,6 +76,7 @@ const meetingFind = () => {
     });
   }, [page]);
 
+  //카테고리 변경 시 새로 데이터 로드
   useEffect(() => {
     setPage(0);
     setTotalPage(1);
@@ -69,11 +91,11 @@ const meetingFind = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
+    //선택한 시도에 따라 구군 fetch
+    callApi("get", `api/gugun/${sido.sidoCode}`).then((res) => {
+      setGugunList([initialGugun, ...res.data]);
     });
-  }, []);
+  }, [sido]);
 
   //필터 애니메이션 관련
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -82,54 +104,10 @@ const meetingFind = () => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
-  //필터 지역 검색용
-  const [sidoList, setSiList] = useState(["서울", "경기", "대전", "시도"]);
-  const [gugunList, setGuList] = useState([
-    "동구",
-    "중구",
-    "서구",
-    "유성구",
-    "대덕구",
-    "구군",
-  ]);
-  const [dongList, setDongList] = useState([
-    "봉명동",
-    "중앙동",
-    "갈마1동",
-    "삼성동",
-    "탄방동",
-    "학하동",
-    "동",
-  ]);
-  const [sido, setSido] = useState("");
-  const [gugun, setGugun] = useState("");
-  const [dong, setDong] = useState("");
-  //TODO: 중복 코드인데 합칠 수 없나
-  const sidoSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedSido = e.target.value;
-    setSido(selectedSido);
-    //여기서 si에 따라 guList 업데이트
-  };
-  const gugunSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setGugun(e.target.value);
-    //여기서 gu에 따라 dongList 업데이트
-  };
-  const dongSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDong(e.target.value);
-  };
-
   //필터에 날짜 검색용
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const startDateSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setStartDate(e.target.value);
-  };
-  const endDateSetter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setEndDate(e.target.value);
-  };
-
-  //필터에 텍스트 검색용
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState(""); //필터에 텍스트 검색용(모임이름,술이름)
 
   //필터용 함수
   //카테고리로 필터링
@@ -141,18 +119,16 @@ const meetingFind = () => {
   };
   //시도 정보로 필터링
   const sidoFiltering = (data: Meeting) => {
-    if (sido === "") return true;
-    return data.sido === sido;
+    if (sido.sidoCode === 0) return true;
+    return data.sido.sidoCode === sido.sidoCode;
   };
   //구군 정보로 필터링
   const gugunFiltering = (data: Meeting) => {
-    if (gugun === "") return true;
-    return data.gugun === gugun;
-  };
-  //동 정보로 필터링
-  const dongFiltering = (data: Meeting) => {
-    if (dong === "") return true;
-    return data.dong === dong;
+    if (gugun.gugunCode === 0) return true;
+    return (
+      data.gugun.gugunCode === gugun.gugunCode &&
+      data.gugun.sidoCode === gugun.sidoCode
+    );
   };
   //날짜 정보로 필터링
   const dateFiltering = (data: Meeting) => {
@@ -162,12 +138,12 @@ const meetingFind = () => {
   //모임 이름으로 필터링
   const titleFiltering = (data: Meeting) => {
     if (inputText === "") return true;
-    return data.meetName === inputText;
+    return data.meetName.includes(inputText);
   };
   //술의 이름으로 필터링
   const drinkNameFiltering = (data: Meeting) => {
     if (inputText === "") return true;
-    return data.drink.name === inputText;
+    return data.drink.name.includes(inputText);
   };
 
   const Filtering = () => {
@@ -178,10 +154,8 @@ const meetingFind = () => {
         categoryFiltering(cur) &&
         sidoFiltering(cur) &&
         gugunFiltering(cur) &&
-        dongFiltering(cur) &&
         dateFiltering(cur) &&
-        titleFiltering(cur) &&
-        drinkNameFiltering(cur)
+        (titleFiltering(cur) || drinkNameFiltering(cur))
       ) {
         acc.push(cur);
       }
@@ -199,7 +173,7 @@ const meetingFind = () => {
   //전체 필터
   useEffect(() => {
     Filtering();
-  }, [selectedCategory, sido, gugun, dong, startDate, endDate, inputText]);
+  }, [selectedCategory, sido, gugun, startDate, endDate, inputText]);
 
   return (
     //TODO: 날짜 세팅에 props 설정
@@ -220,49 +194,75 @@ const meetingFind = () => {
                 위치
                 <FilterElement>
                   <div>
-                    <DropdownInput onChange={sidoSetter} value={sido}>
+                    <DropdownInput
+                      onChange={(e) => {
+                        const selectedValue = e.target.value;
+                        const selectedSido = sidoList.find(
+                          (item) => item.sidoName === selectedValue
+                        );
+                        setSido(selectedSido);
+                      }}
+                      value={sido.sidoName}
+                    >
                       {sidoList.map((siItem) => {
                         return (
-                          <option value={siItem} key={siItem}>
-                            {siItem}
+                          <option value={siItem.sidoName} key={siItem.sidoCode}>
+                            {siItem.sidoName}
                           </option>
                         );
                       })}
                     </DropdownInput>
-                    시
+                    시/도
                   </div>
                   <div>
-                    <DropdownInput onChange={gugunSetter} value={gugun}>
+                    <DropdownInput
+                      onChange={(e) => {
+                        const selectedValue = e.target.value;
+                        const selectedGugun = gugunList.find(
+                          (item) => item.gugunName === selectedValue
+                        );
+                        setGugun(selectedGugun);
+                      }}
+                      value={gugun.gugunName}
+                    >
                       {gugunList.map((guItem) => {
                         return (
-                          <option value={guItem} key={guItem}>
-                            {guItem}
+                          <option
+                            value={guItem.gugunName}
+                            key={guItem.gugunCode}
+                          >
+                            {guItem.gugunName}
                           </option>
                         );
                       })}
                     </DropdownInput>
-                    구
-                  </div>
-                  <div>
-                    <DropdownInput onChange={dongSetter} value={dong}>
-                      {dongList.map((dongItem) => {
-                        return (
-                          <option value={dongItem} key={dongItem}>
-                            {dongItem}
-                          </option>
-                        );
-                      })}
-                    </DropdownInput>
-                    동
+                    구/군
                   </div>
                 </FilterElement>
                 날짜
                 <FilterElement>
-                  <DateInput type="date" /> ~
-                  <DateInput type="date" />
+                  <DateInput
+                    type="date"
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                    }}
+                  />
+                  ~
+                  <DateInput
+                    type="date"
+                    onChange={(e) => {
+                      setEndDate(e.target.value);
+                    }}
+                  />
                 </FilterElement>
                 <div style={{ gridColumn: "span 2" }}>
-                  <SearchBox placeholder="정확한 술의 이름 또는 모임의 이름" />
+                  <SearchBox
+                    placeholder="정확한 술의 이름 또는 모임의 이름"
+                    value={inputText}
+                    changeFunc={(inputTxt: string) => {
+                      setInputText(inputTxt);
+                    }}
+                  />
                 </div>
               </FilterBg>
             </FilterDiv>
@@ -351,7 +351,7 @@ const FilterElement = styled.div`
 `;
 
 const DropdownInput = styled.select`
-  width: 4rem;
+  width: 6rem;
   background: white;
   text-align: right;
   padding: 3% 5%;

@@ -38,4 +38,5 @@ public class PushController {
         User wk = userRepository.findByUserId(19L).orElseThrow();
         pushService.send(wk, hb, PushType.FOLLOW, wk.getName()+"님께서 회원님을 팔로우하기 시작했습니다.", "이동할 url");
     }
+
 }

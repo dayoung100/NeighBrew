@@ -171,7 +171,7 @@ const DrinkpostCreate = () => {
       const formData = new FormData();
       formData.append("img", file);
       const response = await axios.post(
-        "http://i9b310.p.ssafy.io/api/img/upload",
+        "https://i9b310.p.ssafy.io/api/img/upload",
         formData,
         {
           headers: {
