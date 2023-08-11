@@ -38,6 +38,7 @@ const UserCard = styled.div`
 // 유저 닉네임
 const UserNickname = styled.div`
   display: flex;
+  font-family: "NanumSquareNeo";
   justify-content: center;
   align-items: center;
   font-size: 12.6px;
@@ -65,7 +66,7 @@ const DescriptionP = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  font-family: "Noto Sans KR";
+  font-family: "NanumSquareNeo";
   -webkit-line-clamp: 3; /* 라인수 */
   -webkit-box-orient: vertical;
 `;

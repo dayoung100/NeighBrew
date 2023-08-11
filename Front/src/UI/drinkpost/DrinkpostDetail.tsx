@@ -56,6 +56,11 @@ const NavbarBackIcon = styled.div`
 `;
 
 const DescriptionP = styled.p`
+  word-spacing: 0.2rem;
+  line-height: 150%;
+  font-family: "NanumSquareNeo";
+  /* font-family: "Noto Sans KR"; */
+  font-size: 1rem;
   margin-top: 20px;
   text-align: start;
   -webkit-line-clamp: 4;
@@ -194,7 +199,7 @@ const DrinkpostDetail = () => {
       <WholeDiv>
         <InfoDiv>
           <SimpleInfo>
-            <div style={{ textAlign: "center", marginLeft: "10vw" }}>
+            <div style={{ textAlign: "center", marginLeft: "10vw", fontFamily: "JejuGothic" }}>
               <h3 style={{ marginRight: "2vw", textAlign: "start" }}>{detail?.name}</h3>
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <b style={{ marginRight: "2vw" }}>주종</b>
@@ -224,6 +229,7 @@ const DrinkpostDetail = () => {
                 marginTop: "2vh",
                 marginLeft: "8vw",
                 cursor: "pointer",
+                fontFamily: "JejuGothic",
               }}
             >
               <b>후기 {reviewList.length}</b>
@@ -259,7 +265,9 @@ const DrinkpostDetail = () => {
         </div>
 
         <div className="reviewBox">
-          <h1 style={{ textAlign: "start", marginBottom: "10px" }}>후기</h1>
+          <h1 style={{ textAlign: "start", marginBottom: "10px", fontFamily: "JejuGothic" }}>
+            후기
+          </h1>
 
           <div
             className="reviewList"
