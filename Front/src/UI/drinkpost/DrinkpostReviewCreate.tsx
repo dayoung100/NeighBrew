@@ -132,8 +132,14 @@ const DrinkpostReviewCreate = () => {
     formData.append("content", review);
     formData.append("image", file);
     if (review === "") {
-      alert("뭐라도 입력해봐.");
+      alert("내용을 입력해주세요.");
       return;
+    }
+    if (file) {
+      if (file.size > 1024 * 1024 * 10) {
+        alert("20MB 이하 이미지만 올릴 수 있습니다.");
+        return;
+      }
     }
 
     axios
@@ -208,7 +214,7 @@ const DrinkpostReviewCreate = () => {
     formData.append("content", review);
     formData.append("image", file);
     if (review === "") {
-      alert("뭐라도 입력해봐.");
+      alert("내용을 입력해주세요.");
     }
     formData.forEach((value, key) => {
       console.log(`${key}: ${value}`);
