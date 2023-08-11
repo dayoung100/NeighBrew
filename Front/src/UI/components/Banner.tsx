@@ -30,7 +30,7 @@ function SlideComponent() {
             <div>
               <h3>{banner.name}</h3>
               <a href={banner.redirectUri}>
-                <img src={banner.image} alt="" />
+                <img src={banner.image} alt="" style={{ maxWidth: "100%" }} />
               </a>
             </div>
           );
