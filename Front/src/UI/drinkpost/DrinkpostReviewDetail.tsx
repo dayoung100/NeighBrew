@@ -40,6 +40,7 @@ const LikeAndComment = styled.div`
 `;
 
 const Description = styled.div`
+  font-family: "NanumSquareNeo";
   text-align: start;
   margin: 0.5rem;
   white-space: pre-wrap;
@@ -62,7 +63,6 @@ const ImageDiv = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   width: 100%;
-  height: 36vh;
 `;
 
 const Usercard = styled.div`
@@ -123,6 +123,7 @@ const SubReviewList = styled.div`
 const LikeAndCommentDiv = styled.div`
   display: flex;
   flex-direction: row;
+  margin-right: 4vw;
 `;
 
 const DrinkpostReviewDetail = () => {
@@ -138,23 +139,20 @@ const DrinkpostReviewDetail = () => {
 
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
-      .then((res) => {
+      .then(res => {
         setDrink(res.data);
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
 
     callApi("get", `api/subreview/list/${reviewId}`)
-      .then((res) => {
+      .then(res => {
         setSubReviewList(res.data);
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
 
     async function summonReview() {
       // 술 상세 후기 조회 요청
-      const response1 = await callApi(
-        "get",
-        `api/drinkreview/review/${reviewId}`
-      );
+      const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
       setReview(response1.data);
       const userId = response1.data.user.userId;
       // 후기 쓴 사람에 대한 follow 요청
@@ -178,14 +176,14 @@ const DrinkpostReviewDetail = () => {
 
   const followHandler = () => {
     callApi("post", `api/follow/guard/${review?.user.userId}`)
-      .then((res) => {
+      .then(res => {
         followers();
       })
-      .catch((err) => {});
+      .catch(err => {});
   };
 
   const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then((res) => {
+    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -218,24 +216,17 @@ const DrinkpostReviewDetail = () => {
     });
 
     setComment("");
-    setSubReviewList((prev) => [fun.data, ...prev]);
+    setSubReviewList(prev => [fun.data, ...prev]);
   };
   return (
     <>
       <NavbarSimple title={drink?.name}></NavbarSimple>
       <WholeDiv>
         <Usercard>
-          <div
-            onClick={toProfileHandler}
-            style={{ display: "flex", alignItems: "center" }}
-          >
+          <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
             <div>
               <UserImg
-                src={
-                  review?.user.profile !== "no image"
-                    ? review?.user.profile
-                    : defaultImg
-                }
+                src={review?.user.profile !== "no image" ? review?.user.profile : defaultImg}
               ></UserImg>
             </div>
             <div>
@@ -244,8 +235,7 @@ const DrinkpostReviewDetail = () => {
           </div>
           <FollowDiv
             style={{
-              backgroundColor:
-                following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+              backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
             }}
             onClick={followHandler}
           >
@@ -253,12 +243,15 @@ const DrinkpostReviewDetail = () => {
           </FollowDiv>
         </Usercard>
         <ImageDiv
-          style={{
-            backgroundImage: `url(${
-              review?.img !== "no image" ? review?.img : fancyDrinkImage
-            })`,
-          }}
-        ></ImageDiv>
+        // style={{
+        //   backgroundImage: `url(${review?.img !== "no image" ? review?.img : fancyDrinkImage})`,
+        // }}
+        >
+          <img
+            src={review?.img !== "no image" ? review?.img : fancyDrinkImage}
+            style={{ width: "100%" }}
+          />
+        </ImageDiv>
         <LikeAndComment>
           <LikeAndCommentDiv>
             <div>{LikeIcon}</div>
@@ -273,9 +266,10 @@ const DrinkpostReviewDetail = () => {
 
         <CommentBox>
           <StyleAutoTextArea
+            style={{ fontFamily: "NanumSquareNeo", resize: "none" }}
             placeholder="댓글을 작성해주세요..."
             value={comment}
-            onChange={(e) => {
+            onChange={e => {
               setComment(e.target.value);
             }}
             minRows={1}

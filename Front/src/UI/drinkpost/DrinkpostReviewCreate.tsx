@@ -11,6 +11,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Navdiv = styled.div`
+  font-family: "JejuGothic";
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -45,6 +46,7 @@ const Input = styled.input`
 `;
 
 const LongTextInput = styled.textarea`
+  font-family: "NanumSquareNeo";
   border: 1px solid var(--c-gray);
   width: 100%;
   height: 30vh;
@@ -136,7 +138,7 @@ const DrinkpostReviewCreate = () => {
       return;
     }
     if (file) {
-      if (file.size > 1024 * 1024 * 10) {
+      if (file.size > 1024 * 1024 * 20) {
         alert("20MB 이하 이미지만 올릴 수 있습니다.");
         return;
       }
@@ -187,49 +189,49 @@ const DrinkpostReviewCreate = () => {
     };
   };
 
-  const uploadReviewImage = async () => {
-    const file = imgRef.current.files[0];
-    try {
-      const formData = new FormData();
-      formData.append("image", file);
-      if (file !== undefined) {
-        const response = await axios.post(`https://i9b310.p.ssafy.io/api/img/upload`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        return response.data;
-      }
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
+  // const uploadReviewImage = async () => {
+  //   const file = imgRef.current.files[0];
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("image", file);
+  //     if (file !== undefined) {
+  //       const response = await axios.post(`https://i9b310.p.ssafy.io/api/img/upload`, formData, {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: "Bearer " + localStorage.getItem("token"),
+  //         },
+  //       });
+  //       return response.data;
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw error;
+  //   }
+  // };
 
-  const submitHandler = async (e: React.MouseEvent<HTMLDivElement>) => {
-    const file = imgRef.current.files[0];
-    const formData = new FormData();
-    formData.append("drinkId", drinkId);
-    formData.append("content", review);
-    formData.append("image", file);
-    if (review === "") {
-      alert("내용을 입력해주세요.");
-    }
-    formData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
+  // const submitHandler = async (e: React.MouseEvent<HTMLDivElement>) => {
+  //   const file = imgRef.current.files[0];
+  //   const formData = new FormData();
+  //   formData.append("drinkId", drinkId);
+  //   formData.append("content", review);
+  //   formData.append("image", file);
+  //   if (review === "") {
+  //     alert("내용을 입력해주세요.");
+  //   }
+  //   formData.forEach((value, key) => {
+  //     console.log(`${key}: ${value}`);
+  //   });
 
-    axios
-      .post("api/drinkreview/guard", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then(res => console.log(res.data))
-      .catch(err => console.log(err));
-  };
+  //   axios
+  //     .post("api/drinkreview/guard", formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //         Authorization: "Bearer " + localStorage.getItem("token"),
+  //       },
+  //     })
+  //     .then(res => console.log(res.data))
+  //     .catch(err => console.log(err));
+  // };
   return (
     <>
       <Navdiv>
