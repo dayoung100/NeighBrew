@@ -41,7 +41,13 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
   const hasLiverLimit = (meetData.minLiverPoint ?? 0) > 0 ? true : false;
 
   return (
-    <div style={{ fontFamily: "Noto Sans KR", fontSize: "10px" }}>
+    <div
+      style={{
+        fontFamily: "NanumSquareNeo",
+        fontSize: "12px",
+        lineHeight: "150%",
+      }}
+    >
       <div style={{ display: "flex" }}>
         <div style={{ display: "flex", alignContent: "center", width: "50%" }}>
           <img src="/src/assets/mapPin.svg" width="10rem"></img>
@@ -49,7 +55,7 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
         </div>
         <div style={{ display: "flex", alignContent: "center" }}>
           <img src="/src/assets/calendar.svg" width="10rem" />
-          <InnerText $widthRem={6}>{formattedDate}</InnerText>
+          <InnerText $widthRem={8}>{formattedDate}</InnerText>
         </div>
       </div>
       <InnerText $widthRem={12}>
@@ -64,7 +70,8 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
           <div>{meetData.host.nickname}</div>
         </div>
       </InnerText>
-      <div style={{ display: "flex" }}>
+      <InnerText $widthRem={12}>🥂{meetData.drink.name}</InnerText>
+      {/* <div style={{ display: "flex" }}>
         {hasLiverLimit && (
           <div style={{ display: "flex", alignItems: "center", width: "50%" }}>
             <img src="/src/assets/liverIcon.svg" width="10rem" />
@@ -77,7 +84,7 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
             연령제한
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
