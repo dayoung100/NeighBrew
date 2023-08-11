@@ -1,9 +1,6 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.dto.DrinkRequestDto;
-import com.ssafy.backend.dto.DrinkResponseDto;
-import com.ssafy.backend.dto.DrinkUpdateRequestDto;
-import com.ssafy.backend.dto.DrinkUpdateResponseDto;
+import com.ssafy.backend.dto.*;
 import com.ssafy.backend.service.DrinkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,8 +8,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,9 +57,14 @@ public class DrinkController {
 
     // 술 추가
     @PostMapping()
-    public ResponseEntity<DrinkResponseDto> addNewDrink(@RequestBody DrinkRequestDto drinkRequestDto) {
-        DrinkResponseDto savedDrinkDto = drinkService.addNewDrink(drinkRequestDto);
-        return ResponseEntity.ok(savedDrinkDto);
+    public ResponseEntity<?> save(@RequestBody DrinkDto drinkDto,
+                                  @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException {
+
+            if(multipartFile.isPresent())
+                return ResponseEntity.ok(drinkService.save(drinkDto, multipartFile.get()));
+            else
+                return ResponseEntity.ok(drinkService.save(drinkDto, null));
+
     }
 
     // 술 삭제

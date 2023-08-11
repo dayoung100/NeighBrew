@@ -1,9 +1,15 @@
 package com.ssafy.backend.service;
 
+<<<<<<< Updated upstream
 import com.ssafy.backend.dto.DrinkRequestDto;
 import com.ssafy.backend.dto.DrinkResponseDto;
 import com.ssafy.backend.dto.DrinkUpdateRequestDto;
 import com.ssafy.backend.dto.DrinkUpdateResponseDto;
+=======
+import com.ssafy.backend.Enum.UploadType;
+import com.ssafy.backend.dto.DrinkDto;
+import com.ssafy.backend.dto.DrinkUpdateDto;
+>>>>>>> Stashed changes
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.repository.DrinkRepository;
@@ -14,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +32,7 @@ import java.util.stream.Collectors;
 public class DrinkService {
     private final DrinkRepository drinkRepository;
     private final DrinkReviewRepository drinkReviewRepository;
-
+    private final S3Service s3Service;
 
     // 모든 술 조회
     public Page<DrinkResponseDto> findAll(Pageable pageable) {
@@ -34,16 +41,16 @@ public class DrinkService {
     }
 
     // 술 추가
+    public Drink save(DrinkDto drinkDto, MultipartFile multipartFile) {
+        if (drinkDto.getName().equals("")) throw new IllegalArgumentException("술 이름이 없습니다.");
 
-    public DrinkResponseDto addNewDrink(DrinkRequestDto drinkRequestDto) {
-        if (drinkRequestDto.getName() == null || drinkRequestDto.getName().isEmpty()) {
-            throw new IllegalArgumentException("술 이름이 없습니다.");
-        }
+        if(multipartFile != null){
+            if(!multipartFile.isEmpty()) drinkDto.setImage(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
+                //formData에 image는 있지만 파일이 없을 때
+            else drinkDto.setImage("no image");
+        }else drinkDto.setImage("no image");//null 값이 전달 되었을 때
 
-        Drink drink = drinkRequestDto.toEntity();
-        Drink savedDrink = drinkRepository.save(drink);
-
-        return DrinkResponseDto.fromEntity(savedDrink);
+        return drinkRepository.save(drinkDto.toEntity());
     }
 
     // 술 삭제
