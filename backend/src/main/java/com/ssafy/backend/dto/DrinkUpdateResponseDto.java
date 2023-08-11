@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class DrinkResponseDto {
+
+public class DrinkUpdateResponseDto {
     private Long drinkId;
     private String name;
     private String image;
@@ -16,7 +17,7 @@ public class DrinkResponseDto {
     private Long tagId;
 
     @Builder
-    public DrinkResponseDto(Long drinkId, String name, String image, Float degree, String description, Long tagId) {
+    public DrinkUpdateResponseDto(Long drinkId, String name, String image, Float degree, String description, Long tagId) {
         this.drinkId = drinkId;
         this.name = name;
         this.image = image;
@@ -25,8 +26,8 @@ public class DrinkResponseDto {
         this.tagId = tagId;
     }
 
-    public static DrinkResponseDto fromEntity(Drink drink) {
-        return DrinkResponseDto.builder()
+    public static DrinkUpdateResponseDto fromEntity(Drink drink) {
+        return DrinkUpdateResponseDto.builder()
                 .drinkId(drink.getDrinkId())
                 .name(drink.getName())
                 .image(drink.getImage())
