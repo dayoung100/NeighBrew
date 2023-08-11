@@ -31,7 +31,7 @@ const UserProfileImg = styled(CircleImg)`
 
 const DrinkCate = styled(CircleImg)`
   background-size: contain;
-  background-color: var(--c-yellow);
+  background-color: var(--c-pink);
 `;
 
 /**

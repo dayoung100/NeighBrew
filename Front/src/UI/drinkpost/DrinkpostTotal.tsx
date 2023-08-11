@@ -52,11 +52,11 @@ const drinkpostTotal = () => {
       if (page < 10) {
         setTimeout(() => {
           callApi("get", `api/drink?page=${page}&size=12`)
-            .then(res => {
-              setDrinkList(prev => [...prev, ...res.data.content]);
-              setPage(prev => prev + 1);
+            .then((res) => {
+              setDrinkList((prev) => [...prev, ...res.data.content]);
+              setPage((prev) => prev + 1);
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
           // console.log(page);
@@ -82,7 +82,7 @@ const drinkpostTotal = () => {
           <div
             style={{
               height: "1px",
-              backgroundColor: "#c4c4c4",
+              backgroundColor: "var(--c-borderline)",
               margin: "10px 20px 10px 20px",
             }}
           ></div>
@@ -90,9 +90,14 @@ const drinkpostTotal = () => {
 
         <div
           className="whole"
-          style={{ display: "flex", flexWrap: "wrap", paddingBottom: "60px", marginLeft: "1px" }}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            paddingBottom: "60px",
+            marginLeft: "1px",
+          }}
         >
-          {drinkList.map(drink => {
+          {drinkList.map((drink) => {
             return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
           })}
         </div>
