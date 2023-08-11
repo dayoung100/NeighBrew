@@ -38,13 +38,7 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
         <ProfileDiv2
           style={{
             backgroundImage: `url(${
-<<<<<<< Updated upstream
-              subReview.user.profile === "no image"
-                ? defaultImg
-                : subReview.user.profile
-=======
-              subReview.user?.profile !== "no image" ? subReview.user?.profile : defaultImg
->>>>>>> Stashed changes
+              subReview.user.profile === "no image" ? defaultImg : subReview.user.profile
             })`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
