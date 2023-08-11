@@ -46,7 +46,7 @@ const drinkpostTotal = () => {
   // const navigate = useNavigate();
 
   const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
-    console.log(`감지결과 : ${isIntersecting}`);
+    // console.log(`감지결과 : ${isIntersecting}`);
     // isIntersecting이 true면 감지했다는 뜻임
     if (isIntersecting) {
       if (page < 10) {
@@ -59,7 +59,7 @@ const drinkpostTotal = () => {
             .catch(err => {
               console.log(err);
             });
-          console.log(page);
+          // console.log(page);
         }, 100);
       }
     }

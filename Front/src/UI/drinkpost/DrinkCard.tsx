@@ -57,6 +57,7 @@ const NameCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: "JejuGothic";
 `;
 
 const DrinkCard = ({ drink }: { drink: Drink }) => {
