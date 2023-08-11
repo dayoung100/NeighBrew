@@ -279,6 +279,7 @@ const CateDiv = styled.div`
   height: 10rem;
   margin-top: 1rem;
   background: white;
+  border-bottom: 1px solid var(--c-borderline);
   div {
     margin: 0;
   }
@@ -291,7 +292,8 @@ const CateDiv = styled.div`
 `;
 
 const SearchResultDiv = styled.div`
-  background: var(--c-lightgray);
+  //background: var(--c-lightgray);
+  background: #ffffff;
   padding: 1rem 0 0 0;
 `;
 

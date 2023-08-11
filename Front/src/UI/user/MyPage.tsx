@@ -340,17 +340,44 @@ const MyPage = () => {
           )}
           {userData.userId !== parseInt(localStorage.getItem("myId")) ? (
             <SirenArea onClick={reportHandler}></SirenArea>
-          ) : null}
-        </FollowDiv>
-      </div>
-      <div>
-        <Button
-          onClick={() => {
-            setChooseChat(0);
-          }}
-          style={{
-            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
-          }}
+          </FollowDiv>
+        </div>
+        <div style={{
+            borderBottom : "1px solid var(--c-borderline)",
+        }}>
+          <Button
+              onClick={() => {
+                setChooseChat(0);
+              }}
+              style={{
+                borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+              }}
+          >
+            {MeetingIcon}
+            {/*<p style={{ color: chooseChat === 0 ? "var(--c-black)" : "var(--c-lightgray)" }}>모임</p>*/}
+          </Button>
+          <Button
+              onClick={() => {
+                setChooseChat(1);
+              }}
+              style={{ borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)" }}
+          >
+            {Brewery}
+            {/*<p style={{ color: chooseChat === 0 ? "var(--c-lightgray)" : "var(--c-black)" }}>술장</p>*/}
+          </Button>
+        </div>
+        {chooseChat === 0 ? (
+            <MeetingMy userId={parseInt(userid)}></MeetingMy>
+        ) : (
+            <DrinkpostMain></DrinkpostMain>
+        )}
+        {/* Footer에 의해 가려지는게 없게 하기위해 존재하는 div */}
+        <div style={{ height: "3rem" }}></div>
+        <Modal
+            isOpen={deleteModalOn}
+            onRequestClose={() => setDeleteModalOn(false)}
+            style={WhiteModal}
+            ariaHideApp={false}
         >
           {MeetingIcon}
           {/*<p style={{ color: chooseChat === 0 ? "var(--c-black)" : "var(--c-lightgray)" }}>모임</p>*/}
