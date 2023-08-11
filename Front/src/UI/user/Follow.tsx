@@ -7,7 +7,7 @@ import Footer from "../footer/Footer";
 import autoAnimate from "@formkit/auto-animate";
 import { User as userType } from "../../Type/types";
 import { callApi } from "../../utils/api";
-import temgif from "../../assets/temgif.gif";
+import defaultImage from "../../assets/defaultImg.png";
 
 const Follow = () => {
   const navigate = useNavigate();
@@ -28,7 +28,6 @@ const Follow = () => {
       res.data.map(tem => {
         setUsers(users => [...users, tem.following]);
       });
-      console.log(res.data);
     });
   };
   useEffect(() => {
@@ -68,7 +67,7 @@ const Follow = () => {
               key={idx}
             >
               <ImgDiv>
-                <Img src={user.profile == "no image" ? temgif : user.profile} />
+                <Img src={user.profile == "no image" ? defaultImage : user.profile} />
               </ImgDiv>
               <div style={{ textAlign: "left" }}>
                 <p style={{ fontFamily: "JejuGothic", fontSize: "16px", marginBottom: "0.5rem" }}>

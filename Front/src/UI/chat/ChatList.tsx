@@ -61,7 +61,6 @@ const ChatList = () => {
   const classListHandler = () => {
     callApi("GET", `api/chatroom/${userId}/getChatRoom`)
       .then(res => {
-        console.log(res.data);
         setChatList(res.data);
       })
       .catch(e => {
@@ -71,7 +70,6 @@ const ChatList = () => {
   const dmListHandler = () => {
     callApi("GET", `api/dm/list/${userId}`)
       .then(res => {
-        console.log(res.data);
         setChatList(res.data);
       })
       .catch(e => {
@@ -91,35 +89,35 @@ const ChatList = () => {
       dmListHandler();
     }
   }, [chooseChat]);
-    const [selectedMenu, setSelectedMenu] = useState("find");
+  const [selectedMenu, setSelectedMenu] = useState("find");
   return (
     <>
-        <ChatListDiv>
-            <Button
-                onClick={() => {
-                    setChooseChat(0);
-                }}
-                style={{
-                    borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
-                    color : chooseChat === 0 ? "var(--c-black)" : "var(--c-gray)",
-                }}
-            >
-                {/*{MeetingIcon}*/}
-                모임채팅
-            </Button>
-            <Button
-                onClick={() => {
-                    setChooseChat(1);
-                }}
-                style={{
-                    borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
-                    color : chooseChat === 1 ? "var(--c-black)" : "var(--c-gray)",
-                }}
-            >
-                {/*{directMessageIcon}*/}
-                채팅
-            </Button>
-        </ChatListDiv>
+      <ChatListDiv>
+        <Button
+          onClick={() => {
+            setChooseChat(0);
+          }}
+          style={{
+            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+            color: chooseChat === 0 ? "var(--c-black)" : "var(--c-gray)",
+          }}
+        >
+          {/*{MeetingIcon}*/}
+          모임채팅
+        </Button>
+        <Button
+          onClick={() => {
+            setChooseChat(1);
+          }}
+          style={{
+            borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
+            color: chooseChat === 1 ? "var(--c-black)" : "var(--c-gray)",
+          }}
+        >
+          {/*{directMessageIcon}*/}
+          채팅
+        </Button>
+      </ChatListDiv>
       <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)", minHeight: "760px" }}>
         {chooseChat === 0
           ? chatList.map(chatRoom => {
