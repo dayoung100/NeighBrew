@@ -47,10 +47,10 @@ const InfoTitle = styled.div`
 `;
 
 const InfoContent = styled.div`
-  font-family: "SeoulNamsan";
-  font-size: 10px;
+  font-family: "NanumSquareNeo";
+  font-size: 12px;
   color: var(--c-gray);
-  width: 12rem;
+  width: 13rem;
   // 4줄 넘어가면 말줄임
   overflow: hidden;
   text-overflow: ellipsis;
@@ -67,7 +67,7 @@ const Tag = styled.div`
   background: var(--c-yellow);
   padding: 1.5% 2%;
   font-family: "JejuGothic";
-  font-size: 7px;
+  font-size: 10px;
   border-radius: 10px;
   span {
     display: flex;
