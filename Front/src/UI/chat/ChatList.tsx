@@ -12,12 +12,18 @@ import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 
 const Button = styled.button`
-  width: 40%;
-  display: inline-block;
+  flex-basis: 50%;
   height: 3rem;
   background-color: white;
   border: none;
-  margin: 0.7rem auto;
+`;
+
+const ChatListDiv = styled.div`
+  width:50%;
+  height: 3rem;
+  background-color: white;
+  border: none;
+  display: flex;
 `;
 
 const ChatList = () => {
@@ -69,28 +75,32 @@ const ChatList = () => {
   }, [chooseChat]);
   return (
     <>
-      <div>
-        <Button
-          onClick={() => {
-            setChooseChat(0);
-          }}
-          style={{
-            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
-          }}
-        >
-          {MeetingIcon}
-        </Button>
-        <Button
-          onClick={() => {
-            setChooseChat(1);
-          }}
-          style={{
-            borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
-          }}
-        >
-          {directMessageIcon}
-        </Button>
-      </div>
+      <nav>
+        <ChatListDiv>
+          <Button
+              onClick={() => {
+                setChooseChat(0);
+              }}
+              style={{
+                borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+              }}
+          >
+            {/*{MeetingIcon}*/}
+            모임채팅
+          </Button>
+          <Button
+              onClick={() => {
+                setChooseChat(1);
+              }}
+              style={{
+                borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
+              }}
+          >
+            {/*{directMessageIcon}*/}
+            채팅
+          </Button>
+        </ChatListDiv>
+      </nav>
       <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)", minHeight: "940px" }}>
         {chooseChat === 0
           ? chatList.map(chatRoom => {
