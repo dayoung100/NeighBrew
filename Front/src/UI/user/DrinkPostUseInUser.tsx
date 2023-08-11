@@ -63,6 +63,7 @@ const DrinkPostUseInUser = () => {
             return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
           })}
         </div>
+        {drinkList.length === 0 ? <p>후기를 남겨주세요.</p> : null}
         <div
           style={{
             marginTop: "100px",

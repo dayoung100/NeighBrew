@@ -7,7 +7,7 @@ import Footer from "../footer/Footer";
 import autoAnimate from "@formkit/auto-animate";
 import { User as userType } from "../../Type/types";
 import { callApi } from "../../utils/api";
-import tempgif from "../../assets/tempgif.gif";
+import defaultImage from "../../assets/defaultImg.png";
 
 const Follower = () => {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ const Follower = () => {
               style={{ cursor: "pointer" }}
             >
               <ImgDiv>
-                <Img src={user.profile == "no image" ? tempgif : user.profile} />
+                <Img src={user.profile == "no image" ? defaultImage : user.profile} />
               </ImgDiv>
               <div style={{ textAlign: "left" }}>
                 <p
