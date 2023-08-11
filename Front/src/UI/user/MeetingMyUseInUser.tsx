@@ -58,11 +58,11 @@ const meetingMy = (props: { userId: number }) => {
   return (
     <div style={{ background: "var(--c-lightgray)", padding: "1rem", minHeight: "800px" }}>
       <MeetingDiv>
-        <MeetTitle>내가 주최 중인 모임</MeetTitle>
+        <MeetTitle>개설</MeetTitle>
         <MeetingListItem data={hostMeet} />
       </MeetingDiv>
       <MeetingDiv>
-        <MeetTitle>내가 참여 중인 모임</MeetTitle>
+        <MeetTitle>참여</MeetTitle>
         <MeetingListItem data={guestMeet} />
       </MeetingDiv>
     </div>
