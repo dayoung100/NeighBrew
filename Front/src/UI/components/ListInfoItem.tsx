@@ -5,7 +5,7 @@ const ItemDiv = styled.div<{ $outline: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 20rem;
+  width: 90%;
   height: 6rem;
   background: white;
   margin: 1rem auto 0 auto;
