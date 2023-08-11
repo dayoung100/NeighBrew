@@ -24,6 +24,11 @@ type EmptyMsgProps = {
   contents?: string;
 };
 
+/**
+ * 뭔가 비어있을 때 보여줄 컴포넌트
+ * @property {string} title: 제목. 두꺼운 글씨로 들어감
+ * @property {string} contents: [Optional] 추가로 작성할 내용. 탬플릿 리터럴 사용시 줄바꿈 가능
+ */
 const EmptyMsg = (props: EmptyMsgProps) => {
   return (
     <WrapperDiv>
