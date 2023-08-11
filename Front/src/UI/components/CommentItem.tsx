@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { forwardRef } from "react";
 import { SubReview } from "../../Type/types";
+import defaultImg from "../../assets/defaultImg.png";
 
 const WholeDiv = styled.div`
   display: flex;
@@ -16,7 +17,7 @@ const ProfileDiv2 = styled.div`
   width: 100%;
   aspect-ratio: 1/1;
   border-radius: 30px;
-  background-color: var(--c-lightgray);
+  background-size: cover;
 `;
 
 const NameAndContent = styled.div`
@@ -37,7 +38,9 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>((props) => {
         <ProfileDiv2
           style={{
             backgroundImage: `url(${
-              subReview.user?.profile || "기본 이미지 URL"
+              subReview.user.profile === "no image"
+                ? defaultImg
+                : subReview.user.profile
             })`,
           }}
         ></ProfileDiv2>
