@@ -27,7 +27,7 @@ public class SubReviewService {
 
     // 리뷰의 댓글을 조회하는 API
     public List<SubReviewResponseDto> findByDrinkReviewId(Long drinkReviewId) {
-        List<SubReview> subReviews = subReviewRepository.findByDrinkReview_DrinkReviewId(drinkReviewId);
+        List<SubReview> subReviews = subReviewRepository.findByDrinkReview_DrinkReviewIdOrderByCreatedAtDesc(drinkReviewId);
         return subReviews.stream()
                 .map(subReview -> SubReviewResponseDto.builder()
                         .subReviewId(subReview.getSubReviewId())
@@ -68,8 +68,8 @@ public class SubReviewService {
                 .build();
 
         //send(User sender, User receiver, PushType pushType, String content, String url) {
-        String pushContent = user.getNickname() + "님께서 " + drinkReview.getContent().substring(0, 10) + "... 리뷰에 댓글을 남기셨습니다.";
-        pushService.send(drinkReview.getUser(), user, PushType.REVIEWLIKE, pushContent, "이동할 URL");
+//        String pushContent = user.getNickname() + "님께서 " + drinkReview.getContent().substring(0, 10) + "... 리뷰에 댓글을 남기셨습니다.";
+//        pushService.send(drinkReview.getUser(), user, PushType.REVIEWLIKE, pushContent, "이동할 URL");
         return subReviewRepository.save(subReview);
     }
 
