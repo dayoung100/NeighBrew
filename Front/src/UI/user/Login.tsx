@@ -136,9 +136,7 @@ const Login = () => {
 
   const followHandler = async () => {
     const api = await callApi("get", `api/push/follow/18`)
-      .then(res => {
-        console.log(res.data);
-      })
+      .then(res => {})
       .catch(err => console.log(err));
   };
   return (

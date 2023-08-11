@@ -193,7 +193,6 @@ const ChatRoom = () => {
     });
 
     client.current.connect({}, () => {
-
       // 웹소켓 이벤트 핸들러 설정
       client.current!.subscribe(`/pub/room/${id}`, res => {
         const receivedMessage = JSON.parse(res.body);
@@ -324,6 +323,10 @@ const ChatRoom = () => {
               marginRight: "0rem",
               fontFamily: "JejuGothic",
               fontSize: "20px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "80%",
             }}
           >
             <>

@@ -176,7 +176,7 @@ const InputDiv = styled.div`
   display: flex;
   background-color: #fff;
   width: 100%;
-  border-top : 0.5px solid #dfdfdf;
+  border-top: 0.5px solid #dfdfdf;
   max-height: 100px;
   align-items: center;
   justify-content: space-around;
@@ -230,13 +230,9 @@ const DirectChat = () => {
     });
 
     client.current.connect({}, () => {
-      console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
-
       // 웹소켓 이벤트 핸들러 설정
       client.current!.subscribe(`/pub/dm/${user1}/${user2}`, res => {
-        console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
-        console.log(receivedMessage);
         setMessages((prevMessages: any) => [
           ...prevMessages,
           {
@@ -277,7 +273,6 @@ const DirectChat = () => {
       if (e.code === "Enter" || e.keyCode === 13) {
         if (message === "") return;
         // 백엔드에 메시지 전송
-        console.log(client);
         client.current.send(
           `/sub/dm/${user1}/${user2}`,
           {},
@@ -304,7 +299,6 @@ const DirectChat = () => {
     }
     callApi("get", `/api/dm/message/${localStorage.getItem("myId")}/${user1}/${user2}`)
       .then(res => {
-        console.log(res.data);
         setUsers([res.data.user1, res.data.user2]);
         setChatRoomName(
           res.data.user1.userId == localStorage.getItem("myId")
@@ -377,6 +371,10 @@ const DirectChat = () => {
               marginRight: "0rem",
               fontFamily: "JejuGothic",
               fontSize: "20px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "80%",
             }}
           >
             <>
@@ -479,27 +477,26 @@ const DirectChat = () => {
       <footer>
         <InputDiv>
           <StyleAutoTextArea
-              value={message}
-              onChange={messageHandler}
-              onKeyUp={sendMessageHandler}
-              minRows={1}
-              maxRows={4}>
-          </StyleAutoTextArea>
+            value={message}
+            onChange={messageHandler}
+            onKeyUp={sendMessageHandler}
+            minRows={1}
+            maxRows={4}
+          ></StyleAutoTextArea>
 
           <SendBtnDiv>
             {message.length > 0 ? (
-                <div onClick={sendMessageHandler}>
-                  {/*<SendIcon></SendIcon>*/}
-                  <SendImg src={sendImage} alt="" />
-                </div>
+              <div onClick={sendMessageHandler}>
+                {/*<SendIcon></SendIcon>*/}
+                <SendImg src={sendImage} alt="" />
+              </div>
             ) : (
-                <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
-                  {/*<SendIcon></SendIcon>*/}
-                  <SendImg src={sendImage} alt="" />
-                </div>
+              <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
+                {/*<SendIcon></SendIcon>*/}
+                <SendImg src={sendImage} alt="" />
+              </div>
             )}
           </SendBtnDiv>
-
         </InputDiv>
       </footer>
     </div>
