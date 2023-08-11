@@ -5,11 +5,13 @@ import { Review } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import defaultBeerImage from "../../assets/Beer.jpg";
 import { useNavigate } from "react-router-dom";
+import defaultImg from "../../assets/defaultImg.png";
+import fancyDrinkImage from "../../assets/fancydrinkImage.jpg";
 
 const ReviewCard = styled.div`
   display: flex;
   flex-direction: column;
-  width: 44%;
+  width: 48%;
   height: auto;
   background-color: white;
   margin-bottom: 10px;
@@ -153,13 +155,17 @@ const ReviewItem = ({ review }: { review: Review }) => {
     <>
       <ReviewCard>
         <ReviewImg
-          style={{ backgroundImage: `url(${review.img})` }}
+          style={{
+            backgroundImage: `url(${review.img !== "no image" ? review.img : fancyDrinkImage})`,
+          }}
           onClick={toReviewDetail}
         ></ReviewImg>
         <div style={{ width: "100%" }}>
           <UserCard>
             <div style={{ display: "flex" }}>
-              <UserImg src={review.user.profile} />
+              <UserImg
+                src={review.user.profile !== "no image" ? review.user.profile : defaultImg}
+              />
               <UserNickname>
                 {review.user.nickname.includes("@")
                   ? review.user.nickname.split("@")[0]
@@ -173,9 +179,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
             </LikeDiv>
           </UserCard>
           <div style={{ textAlign: "start" }}>
-            <DescriptionP className={showMore ? "show" : ""}>
-              {review?.content}
-            </DescriptionP>
+            <DescriptionP className={showMore ? "show" : ""}>{review?.content}</DescriptionP>
           </div>
         </div>
       </ReviewCard>
