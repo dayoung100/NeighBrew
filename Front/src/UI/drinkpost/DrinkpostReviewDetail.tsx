@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import TextareaAutosize from "react-textarea-autosize";
 import styled from "styled-components";
 import { Drink, Review, SubReview } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
@@ -7,31 +8,27 @@ import { callApi } from "../../utils/api";
 import { commentIcon, likeIcon } from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
-import TextareaAutosize from 'react-textarea-autosize';
 
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
-  flex-basis : 90%;
+  flex-basis: 90%;
   border: 0.5px solid #dfdfdf;
   background-color: #eeeeee;
   border-radius: 5px;
-      margin: 0.5rem 0 0.5rem 0.5rem;
+  margin: 0.5rem 0 0.5rem 0.5rem;
   padding: 0.3rem;
-  overflow-y : auto;
-  
-  
+  overflow-y: auto;
+
   // 글을 아래에 배치
   align-self: flex-end;
   font-size: 1rem;
-      
+
   &:focus {
     border: none;
   }
-`
-;
-
+`;
 const LikeAndComment = styled.div`
-  margin : 0.5rem;
+  margin: 0.5rem;
   display: flex;
   justify-content: left;
   width: 36%;
@@ -41,7 +38,7 @@ const LikeAndComment = styled.div`
 
 const Description = styled.div`
   text-align: start;
-  margin : 0.5rem;
+  margin: 0.5rem;
   white-space: pre-wrap;
   display: -webkit-box;
   -webkit-line-clamp: 4;
@@ -55,8 +52,7 @@ const Description = styled.div`
   }
 `;
 
-const WholeDiv = styled.div`
-`;
+const WholeDiv = styled.div``;
 
 const ImageDiv = styled.div`
   background-color: var(--c-lightgray);
@@ -69,9 +65,8 @@ const ImageDiv = styled.div`
 const Usercard = styled.div`
   display: flex;
   align-items: center;
-  margin : 0.5rem;
+  margin: 0.5rem;
   justify-content: space-between;
-  
 `;
 
 const FollowDiv = styled.div`
@@ -92,26 +87,6 @@ const UserImg = styled.img`
   margin-right: 1rem;
 `;
 
-const SubReviewCreateDiv = styled.div`
-  background-color: var(--c-lightgray);
-  border-radius: 20px;
-  text-align: start;
-  height: 4rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const SubReviewInput = styled.input`
-  border: none;
-  width: 80%;
-  background-color: var(--c-lightgray);
-  font-size: 1.2rem;
-  outline: none;
-  &:focus {
-    border: none;
-  }
-`;
 const CommentBox = styled.div`
   position: fixed;
   bottom: 0;
@@ -125,21 +100,6 @@ const CommentBox = styled.div`
   border-top: 0.5px solid #dfdfdf;
 `;
 
-const CommentInput = styled.input`
-  display: flex;
-  margin-right: 10px;
-  border: none;
-  border-bottom: 1px solid var(--c-gray);
-  border-radius: 5px;
-  height: 90%;
-  // 글을 아래에 배치
-  align-self: flex-end;
-  font-size: 1rem;
-  &:focus {
-    border: none;
-  }
-`;
-
 const CommentButton = styled.button`
   background-color: var(--c-blue);
   border: none;
@@ -150,12 +110,11 @@ const CommentButton = styled.button`
 const SendImg = styled.img`
   width: 23px;
   height: 23px;
-  ;
 `;
 
 const SubReviewList = styled.div`
   padding-bottom: 4.5rem;
-  margin : 0.5rem
+  margin: 0.5rem;
 `;
 
 const LikeAndCommentDiv = styled.div`
@@ -172,10 +131,7 @@ const DrinkpostReviewDetail = () => {
   const [following, setFollowing] = useState(0);
   const [subReviewList, setSubReviewList] = useState<SubReview[]>([]);
   const [comment, setComment] = useState("");
-  const [postable, setPostable] = useState(false);
   const navigate = useNavigate();
-
-  const endOfCommentsRef = useRef(null);
 
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
@@ -186,7 +142,7 @@ const DrinkpostReviewDetail = () => {
 
     callApi("get", `api/subreview/list/${reviewId}`)
       .then((res) => {
-        setSubReviewList((prev) => [...prev, ...res.data]);
+        setSubReviewList(res.data);
       })
       .catch((err) => console.error(err));
 
@@ -247,25 +203,19 @@ const DrinkpostReviewDetail = () => {
     navigate(`/myPage/${review?.user.userId}`);
   };
 
-  const commentHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setComment(e.target.value);
-    setPostable(e.target.value.trim() !== "");
-  };
+  const commentHandler = (e: React.ChangeEvent<HTMLInputElement>) => {};
+
+  useEffect(() => {}, [comment]);
 
   // 술 후기에 대한 댓글 제출하는 함수.
   const submitHandler = async () => {
-    if (postable === false) {
-      return;
-    }
     const fun = await callApi("post", "api/subreview/guard/write", {
       content: comment.trim(),
       drinkReviewId: reviewId,
     });
 
     setComment("");
-    setSubReviewList((prev) => [...prev, fun.data]);
-
-    endOfCommentsRef.current?.scrollIntoView({ behavior: "smooth" });
+    setSubReviewList((prev) => [fun.data, ...prev]);
   };
   return (
     <>
@@ -301,58 +251,38 @@ const DrinkpostReviewDetail = () => {
         </Usercard>
         <ImageDiv style={{ backgroundImage: `url(${review?.img})` }}></ImageDiv>
         <LikeAndComment>
-          {/*<div>*/}
-          {/*  {LikeIcon} {review?.likeCount}*/}
-          {/*</div>*/}
-
-          {/*<div>*/}
-          {/*  {CommentIcon} {subReviewList.length}*/}
-          {/*</div>*/}
           <LikeAndCommentDiv>
-            <div>
-              {LikeIcon}
-            </div>
-            <div >
-              {review?.likeCount}
-            </div>
+            <div>{LikeIcon}</div>
+            <div>{review?.likeCount}</div>
           </LikeAndCommentDiv>
           <LikeAndCommentDiv>
-            <div>
-              {CommentIcon}
-            </div>
-            <div>
-              {subReviewList.length}
-            </div>
+            <div>{CommentIcon}</div>
+            <div>{subReviewList.length}</div>
           </LikeAndCommentDiv>
         </LikeAndComment>
         <Description>{review?.content}</Description>
-        <hr />
+
         <CommentBox>
           <StyleAutoTextArea
             placeholder="댓글을 작성해주세요..."
             value={comment}
-            onChange={commentHandler}
+            onChange={(e) => {
+              setComment(e.target.value);
+            }}
             minRows={1}
             maxRows={4}
           />
-          <CommentButton onClick={submitHandler}>
+          <CommentButton
+            onClick={() => {
+              submitHandler();
+            }}
+          >
             <SendImg src={sendImage} alt="" />
           </CommentButton>
         </CommentBox>
         <SubReviewList>
-          {subReviewList.map((subReview, i, array) => {
-            // 마지막 댓글에만 ref를 붙임
-            if (i === array.length - 1) {
-              return (
-                <CommentItem
-                  ref={endOfCommentsRef}
-                  key={i}
-                  subReview={subReview}
-                ></CommentItem>
-              );
-            } else {
-              return <CommentItem key={i} subReview={subReview}></CommentItem>;
-            }
+          {subReviewList.map((subReview, i) => {
+            return <CommentItem key={i} subReview={subReview}></CommentItem>;
           })}
         </SubReviewList>
       </WholeDiv>
