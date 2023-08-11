@@ -2,6 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import { Meeting, User } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
+import Whiskey from "../../assets/Category/Whiskey.svg";
+import Cocktail from "../../assets/Category/Cocktail.svg";
+import CraftBeer from "../../assets/Category/CraftBeer.svg";
+import Sake from "../../assets/Category/Sake.png";
+import SojuBeer from "../../assets/Category/SojuBeer.svg";
+import Tradition from "../../assets/Category/Tradition.png";
+import Wine from "../../assets/Category/Wine.svg";
 
 const InnerText = styled.div<{ $widthRem: number }>`
   width: ${(props) => props.$widthRem}rem;
@@ -10,13 +17,21 @@ const InnerText = styled.div<{ $widthRem: number }>`
   white-space: nowrap;
 `;
 
-const UserProfileImg = styled.div<{ src: string }>`
+const CircleImg = styled.div<{ src: string }>`
   background: url(${(props) => props.src}) no-repeat center;
-  background-size: cover;
   width: 1rem;
   padding-bottom: 1rem;
   border-radius: 100px;
   margin-right: 0.2rem;
+`;
+
+const UserProfileImg = styled(CircleImg)`
+  background-size: cover;
+`;
+
+const DrinkCate = styled(CircleImg)`
+  background-size: contain;
+  background-color: var(--c-yellow);
 `;
 
 /**
@@ -70,7 +85,18 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
           <div>{meetData.host.nickname}</div>
         </div>
       </InnerText>
-      <InnerText $widthRem={12}>🥂{meetData.drink.name}</InnerText>
+      <InnerText $widthRem={12}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {meetData.tagId === 1 && <DrinkCate src={Whiskey} />}
+          {meetData.tagId === 2 && <DrinkCate src={Tradition} />}
+          {meetData.tagId === 3 && <DrinkCate src={Cocktail} />}
+          {meetData.tagId === 4 && <DrinkCate src={Sake} />}
+          {meetData.tagId === 5 && <DrinkCate src={Wine} />}
+          {meetData.tagId === 6 && <DrinkCate src={CraftBeer} />}
+          {meetData.tagId === 7 && <DrinkCate src={SojuBeer} />}
+          {meetData.drink.name}
+        </div>
+      </InnerText>
       {/* <div style={{ display: "flex" }}>
         {hasLiverLimit && (
           <div style={{ display: "flex", alignItems: "center", width: "50%" }}>

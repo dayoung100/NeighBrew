@@ -52,7 +52,6 @@ const MeetingListItem = ({ data, isWaiting = false }: MeetingListItemProps) => {
             key={meetId}
             title={meeting.meetName}
             imgSrc={bgImg}
-            tag={tagName}
             content={<MeetingDetailSimple meetData={meeting} />}
             numberInfo={
               <PeopleNumInfo

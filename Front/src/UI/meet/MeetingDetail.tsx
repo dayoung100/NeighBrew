@@ -22,7 +22,7 @@ const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
     url(${(props) => props.$bgImgSrc}) no-repeat center;
   background-size: cover;
   width: 100%;
-  height: 33vh;
+  min-height: 30vh;
   color: white;
 `;
 
