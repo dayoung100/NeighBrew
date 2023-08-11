@@ -63,7 +63,6 @@ const ChatList = () => {
   const classListHandler = () => {
     callApi("GET", `api/chatroom/${userId}/getChatRoom`)
       .then(res => {
-        console.log(res.data);
         setChatList(res.data);
       })
       .catch(e => {
@@ -73,7 +72,6 @@ const ChatList = () => {
   const dmListHandler = () => {
     callApi("GET", `api/dm/list/${userId}`)
       .then(res => {
-        console.log(res.data);
         setChatList(res.data);
       })
       .catch(e => {
@@ -93,7 +91,7 @@ const ChatList = () => {
       dmListHandler();
     }
   }, [chooseChat]);
-    const [selectedMenu, setSelectedMenu] = useState("find");
+  const [selectedMenu, setSelectedMenu] = useState("find");
   return (
     <>
         <ChatListDiv>

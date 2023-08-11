@@ -74,7 +74,6 @@ const Chat = (props: {
   useEffect(() => {
     setUsers1(props.user1);
     setUsers2(props.user2);
-    console.log(user1);
   }, [props.user1, props.user2]);
 
   return (
