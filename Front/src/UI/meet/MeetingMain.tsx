@@ -14,7 +14,7 @@ import { callApi } from "../../utils/api";
 const TopMenu = styled.div`
   height: 2rem;
   display: flex;
-  margin: 1rem 0.5rem 0 0.5rem;
+  margin: 0 0.5rem 0 0.5rem;
   background-color: white;
   border-bottom: 1px solid var(--c-gray);
 `;
