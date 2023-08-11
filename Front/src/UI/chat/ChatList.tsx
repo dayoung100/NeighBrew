@@ -11,21 +11,39 @@ import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 
+const ChatListDiv = styled.div`
+  display: flex;
+  margin: 0 1rem;
+  background-color: white;
+  border-bottom: 1px solid var(--c-gray);
+`;
+
 const Button = styled.button`
   flex-basis: 50%;
   height: 3rem;
   background-color: white;
   border: none;
+  font-family: "JejuGothic";
+  font-size: 20px;
 `;
-
-const ChatListDiv = styled.div`
-  width:50%;
-  height: 3rem;
-  background-color: white;
-  border: none;
+const TopMenu = styled.div`
+  height: 2rem;
   display: flex;
+  margin: 0 0.5rem 0 0.5rem;
+  background-color: white;
+  border-bottom: 1px solid var(--c-gray);
 `;
-
+const TopMenuDetail = styled.button<{ isfocused: string }>`
+  color: var(--${props => (props.isfocused === "true" ? "c-black" : "c-gray")});
+  font-family: "JejuGothic";
+  font-size: 20px;
+  line-height: 150%;
+  padding: 0 1rem;
+  outline: none;
+  border: none;
+  border-bottom: ${props => (props.isfocused === "true" ? "2px solid var(--c-black);" : "none;")};
+  background: white;
+`;
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
@@ -73,35 +91,36 @@ const ChatList = () => {
       dmListHandler();
     }
   }, [chooseChat]);
+    const [selectedMenu, setSelectedMenu] = useState("find");
   return (
     <>
-      <nav>
         <ChatListDiv>
-          <Button
-              onClick={() => {
-                setChooseChat(0);
-              }}
-              style={{
-                borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
-              }}
-          >
-            {/*{MeetingIcon}*/}
-            모임채팅
-          </Button>
-          <Button
-              onClick={() => {
-                setChooseChat(1);
-              }}
-              style={{
-                borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
-              }}
-          >
-            {/*{directMessageIcon}*/}
-            채팅
-          </Button>
+            <Button
+                onClick={() => {
+                    setChooseChat(0);
+                }}
+                style={{
+                    borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+                    color : chooseChat === 0 ? "var(--c-black)" : "var(--c-gray)",
+                }}
+            >
+                {/*{MeetingIcon}*/}
+                모임채팅
+            </Button>
+            <Button
+                onClick={() => {
+                    setChooseChat(1);
+                }}
+                style={{
+                    borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
+                    color : chooseChat === 1 ? "var(--c-black)" : "var(--c-gray)",
+                }}
+            >
+                {/*{directMessageIcon}*/}
+                채팅
+            </Button>
         </ChatListDiv>
-      </nav>
-      <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)", minHeight: "940px" }}>
+      <div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)", minHeight: "760px" }}>
         {chooseChat === 0
           ? chatList.map(chatRoom => {
               return (
