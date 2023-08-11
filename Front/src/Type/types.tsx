@@ -99,3 +99,10 @@ export interface SubReview {
   drinkReview: Review;
   user: User;
 }
+
+export interface DrinkFestival {
+  drinkFestivalId: number;
+  image: string;
+  name: string;
+  redirectUri: string;
+}
