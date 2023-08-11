@@ -1,7 +1,9 @@
 package com.ssafy.backend.entity;
 
-import com.ssafy.backend.dto.DrinkUpdateDto;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -37,30 +39,13 @@ public class Drink {
 
 
     @Builder
-    public Drink(String name, String image, Float degree, String description, Long tagId) {
+    public Drink(Long drinkId, String name, String image, Float degree, String description, Long tagId) {
+        this.drinkId = drinkId;
         this.name = name;
         this.image = image;
         this.degree = degree;
         this.description = description;
         this.tagId = tagId;
-    }
-
-    public void updateDrink(DrinkUpdateDto drinkUpdateDto) {
-        if (drinkUpdateDto.getName() != null) {
-            this.name = drinkUpdateDto.getName();
-        }
-        if (drinkUpdateDto.getImage() != null) {
-            this.image = drinkUpdateDto.getImage();
-        }
-        if (drinkUpdateDto.getDegree() != null) {
-            this.degree = drinkUpdateDto.getDegree();
-        }
-        if (drinkUpdateDto.getDescription() != null) {
-            this.description = drinkUpdateDto.getDescription();
-        }
-        if (drinkUpdateDto.getTagId() != null) {
-            this.tagId = drinkUpdateDto.getTagId();
-        }
     }
 
     @Override

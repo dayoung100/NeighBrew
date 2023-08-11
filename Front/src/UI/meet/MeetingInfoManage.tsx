@@ -313,9 +313,9 @@ const MeetingInfoManage = () => {
   };
 
   //////////////api 호출 전 각종 데이터 검증//////////////
-  //제목: 필수 입력/15자 이내
+  //제목: 필수 입력/30자 이내
   const titleCheck = () => {
-    return !(meetTitle === "" || meetTitle == null || meetTitle.length > 15);
+    return !(meetTitle === "" || meetTitle == null || meetTitle.length > 30);
   };
 
   //술: 필수 입력
@@ -352,7 +352,7 @@ const MeetingInfoManage = () => {
   const imgcheck = () => {
     return !(
       file &&
-      (file.size > 1024 * 1024 * 5 || !file.type.startsWith("image/"))
+      (file.size > 1024 * 1024 * 10 || !file.type.startsWith("image/"))
     );
   };
   //////////////api 호출 전 각종 데이터 검증//////////////
@@ -532,7 +532,7 @@ const MeetingInfoManage = () => {
             onChange={(e) => setMeetTitle(e.target.value)}
           />
           {!titleCheck() && btnClicked && (
-            <ErrorDiv>📌모임 이름은 필수로 입력해야합니다.(15자 이내)</ErrorDiv>
+            <ErrorDiv>📌모임 이름은 필수로 입력해야합니다.(30자 이내)</ErrorDiv>
           )}
         </QuestionDiv>
         <QuestionDiv>
@@ -789,7 +789,7 @@ const MeetingInfoManage = () => {
         <div>
           <ImageInput key={imgSrc} getFunc={setFile} imgSrc={imgSrc} />
           {!imgcheck() && btnClicked && (
-            <ErrorDiv>📌이미지만 업로드 가능합니다.(5MB 이하)</ErrorDiv>
+            <ErrorDiv>📌이미지만 업로드 가능합니다.(10MB 이하)</ErrorDiv>
           )}
         </div>
       </div>

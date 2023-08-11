@@ -5,12 +5,12 @@ const ItemDiv = styled.div<{ $outline: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 20rem;
+  width: 100%;
   height: 6rem;
   background: white;
-  margin: 1rem auto 0 auto;
+  margin: 0.5rem 0;
   border-radius: 20px;
-  padding: 0.5rem 0.5rem;
+  padding: 0.5rem;
   border: ${(props) => (props.$outline ? "1px solid var(--c-gray)" : "none")};
 `;
 
@@ -21,7 +21,7 @@ const ImageArea = styled.div<{ src: string; $isDrink: boolean }>`
   justify-content: center;
   align-items: center;
   border-radius: 15px;
-  width: 30%;
+  width: 25%;
   margin: 0 3%;
   &::after {
     content: "";
@@ -47,10 +47,10 @@ const InfoTitle = styled.div`
 `;
 
 const InfoContent = styled.div`
-  font-family: "SeoulNamsan";
-  font-size: 10px;
+  font-family: "NanumSquareNeo";
+  font-size: 12px;
   color: var(--c-gray);
-  width: 12rem;
+  width: 13rem;
   // 4줄 넘어가면 말줄임
   overflow: hidden;
   text-overflow: ellipsis;
@@ -67,7 +67,7 @@ const Tag = styled.div`
   background: var(--c-yellow);
   padding: 1.5% 2%;
   font-family: "JejuGothic";
-  font-size: 7px;
+  font-size: 10px;
   border-radius: 10px;
   span {
     display: flex;

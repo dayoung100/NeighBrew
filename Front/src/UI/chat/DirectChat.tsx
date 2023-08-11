@@ -9,6 +9,39 @@ import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import { Chat, User } from "../../Type/types";
 import { callApi } from "../../utils/api";
+import TextareaAutosize from "react-textarea-autosize";
+import sendImage from "../../assets/send.png";
+
+const StyleAutoTextArea = styled(TextareaAutosize)`
+  display: flex;
+  flex-basis: 90%;
+  border: 0.5px solid #dfdfdf;
+  background-color: #eeeeee;
+  border-radius: 5px;
+  padding: 0.3rem;
+  overflow-y: auto;
+  resize: none;
+  margin: 0.5rem 0 0.5rem 0.5rem;
+  padding: 0.3rem;
+  outline: none;
+  // 글을 아래에 배치
+  align-self: flex-end;
+  font-size: 1rem;
+
+  &:focus {
+    border: none;
+  }
+`;
+const SendBtnDiv = styled.div`
+  background-color: #ffffff;
+  border-radius: 0 5px 5px 0;
+  border: none;
+  flex-basis: 10%;
+`;
+const SendImg = styled.img`
+  width: 23px;
+  height: 23px;
+`;
 
 const OtherChat = styled.div`
   position: relative;
@@ -21,7 +54,7 @@ const OtherChat = styled.div`
   margin-bottom: 5px;
   margin-left: 1px;
   margin-right: 0.5rem;
-  font-size: 13px;
+  font-size: 15px;
   text-align: left;
   font-family: "SeoulNamsan";
 `;
@@ -38,8 +71,8 @@ const MyChat = styled.div`
   margin-bottom: 5px;
   margin-right: 1px;
   margin-left: 0.5rem;
-  font-size: 13px;
-  text-align: right;
+  font-size: 15px;
+  text-align: left;
   font-family: "SeoulNamsan";
 `;
 
@@ -87,7 +120,7 @@ const ChatNav = styled.div`
   padding: 0.5rem;
   width: 100%;
   height: 3rem;
-  background-color: var(--c-lightgray);
+  background-color: white;
   display: flex;
   word-break: break-all;
   font-size: 0.9rem;
@@ -141,14 +174,13 @@ const UserDiv = styled.div`
 `;
 
 const InputDiv = styled.div`
-  width: 100%;
-  background-color: white;
-  height: 2.5rem;
-  box-sizing: border-box;
   display: flex;
+  background-color: #fff;
+  width: 100%;
+  border-top: 0.5px solid #dfdfdf;
+  max-height: 100px;
   align-items: center;
   justify-content: space-around;
-  padding: 0.5rem;
 `;
 
 const Input = styled.input`
@@ -162,13 +194,13 @@ const Input = styled.input`
 
 const BackDrop = styled.div<{ ismodal: boolean }>`
   display: ${props => (props.ismodal ? "block" : "none")};
-  transition: all 1s;
+  transition: all 0.3s;
   width: 100%;
   max-width: 430px;
   height: 10000px;
   position: fixed;
   z-index: 15;
-  background-color: #322d29;
+  background-color: rgba(89, 88, 88, 0.11);
 `;
 
 const DirectChat = () => {
@@ -199,13 +231,9 @@ const DirectChat = () => {
     });
 
     client.current.connect({}, () => {
-      console.log("Connect!!!!!!!!!!!!!!!!!!!!!!!");
-
       // 웹소켓 이벤트 핸들러 설정
       client.current!.subscribe(`/pub/dm/${user1}/${user2}`, res => {
-        console.log("New message", res);
         const receivedMessage = JSON.parse(res.body);
-        console.log(receivedMessage);
         setMessages((prevMessages: any) => [
           ...prevMessages,
           {
@@ -246,7 +274,6 @@ const DirectChat = () => {
       if (e.code === "Enter" || e.keyCode === 13) {
         if (message === "") return;
         // 백엔드에 메시지 전송
-        console.log(client);
         client.current.send(
           `/sub/dm/${user1}/${user2}`,
           {},
@@ -273,7 +300,6 @@ const DirectChat = () => {
     }
     callApi("get", `/api/dm/message/${localStorage.getItem("myId")}/${user1}/${user2}`)
       .then(res => {
-        console.log(res.data);
         setUsers([res.data.user1, res.data.user2]);
         setChatRoomName(
           res.data.user1.userId == localStorage.getItem("myId")
@@ -346,6 +372,10 @@ const DirectChat = () => {
               marginRight: "0rem",
               fontFamily: "JejuGothic",
               fontSize: "20px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "80%",
             }}
           >
             <>
@@ -395,7 +425,7 @@ const DirectChat = () => {
       </RightModal>
       <div
         style={{
-          backgroundColor: ismodal ? "#757575" : "#b4fdb5",
+          backgroundColor: ismodal ? "#757575" : "var(--c-beige)",
           width: "100%",
           minHeight: "90vh",
           overflow: "auto",
@@ -447,16 +477,27 @@ const DirectChat = () => {
       </div>
       <footer>
         <InputDiv>
-          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
-          {message.length > 0 ? (
-            <div onClick={sendMessageHandler}>
-              <SendIcon></SendIcon>
-            </div>
-          ) : (
-            <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
-              <SendIcon></SendIcon>
-            </div>
-          )}
+          <StyleAutoTextArea
+            value={message}
+            onChange={messageHandler}
+            onKeyUp={sendMessageHandler}
+            minRows={1}
+            maxRows={4}
+          ></StyleAutoTextArea>
+
+          <SendBtnDiv>
+            {message.length > 0 ? (
+              <div onClick={sendMessageHandler}>
+                {/*<SendIcon></SendIcon>*/}
+                <SendImg src={sendImage} alt="" />
+              </div>
+            ) : (
+              <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
+                {/*<SendIcon></SendIcon>*/}
+                <SendImg src={sendImage} alt="" />
+              </div>
+            )}
+          </SendBtnDiv>
         </InputDiv>
       </footer>
     </div>

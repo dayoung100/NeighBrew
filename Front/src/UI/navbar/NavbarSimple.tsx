@@ -6,13 +6,15 @@ const Title = styled.div`
   text-align: center;
   font-family: "JejuGothic";
   font-size: 20px;
+  width: 95%;
 `;
 
 const ArrowBtn = styled.div`
   cursor: pointer;
-  position: absolute;
+  /* position: absolute; */
   top: 1rem;
   left: 1rem;
+  width: 5%;
 `;
 
 /**
@@ -31,12 +33,13 @@ const NavbarSimple = ({ title }: { title: string }) => {
   return (
     <div
       style={{
+        display: "flex",
         padding: "1rem",
         background: "white",
       }}
     >
-      <Title>{title}</Title>
       <ArrowBtn onClick={GoBackHandler}>{ArrowLeftIcon}</ArrowBtn>
+      <Title>{title}</Title>
     </div>
   );
 };

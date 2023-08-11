@@ -24,7 +24,6 @@ const SearchUser = () => {
 
   const search = (name: string) => {
     callApi("get", `api/user/search/${name}`).then(res => {
-      console.log(res.data);
       setUsers(res.data);
     });
   };

@@ -17,7 +17,7 @@ public interface DrinkReviewRepository extends JpaRepository<DrinkReview, Long> 
 
     List<DrinkReview> findAllByUserAndDrink(User user, Drink drink);
 
-    List<DrinkReview> findByUser_UserId(Long userId);
+    List<DrinkReview> findDistinctDrinkByUser_UserId(Long userId);
 
     List<DrinkReview> findAllByOrderByLikeCountDesc(Pageable pageable);
 

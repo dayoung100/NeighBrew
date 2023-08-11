@@ -116,7 +116,7 @@ const RatingCreate = () => {
   useEffect(() => {
     callApi("GET", `/api/meet/${meetId}`)
       .then((res) => {
-        setMeetTitle(res.data.meetDto.meetName);
+        setMeetTitle(res.data.meet.meetName);
         return res.data.users.filter(
           (user: User, index) =>
             user.userId !== myId && res.data.statuses[index] !== "APPLY"

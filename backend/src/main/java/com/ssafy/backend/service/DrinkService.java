@@ -1,6 +1,7 @@
 package com.ssafy.backend.service;
 
-import com.ssafy.backend.dto.DrinkUpdateDto;
+import com.ssafy.backend.Enum.UploadType;
+import com.ssafy.backend.dto.*;
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.repository.DrinkRepository;
@@ -11,11 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,73 +25,100 @@ import java.util.stream.Collectors;
 public class DrinkService {
     private final DrinkRepository drinkRepository;
     private final DrinkReviewRepository drinkReviewRepository;
-
+    private final S3Service s3Service;
 
     // 모든 술 조회
-    public Page<Drink> findAll(Pageable pageable) {
-        return drinkRepository.findAll(pageable);
+    public Page<DrinkResponseDto> findAll(Pageable pageable) {
+        Page<Drink> drinks = drinkRepository.findAll(pageable);
+        return drinks.map(DrinkResponseDto::fromEntity);
     }
 
     // 술 추가
-    public Drink save(Drink drink) {
-        if (drink.getName().equals("")) throw new IllegalArgumentException("술 이름이 없습니다.");
-        return drinkRepository.save(drink);
+    public Drink save(DrinkDto drinkDto, MultipartFile multipartFile) throws IOException {
+        if (drinkDto.getName().equals("")) throw new IllegalArgumentException("술 이름이 없습니다.");
+
+        if(multipartFile != null){
+            if(!multipartFile.isEmpty()) drinkDto.setImage(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
+            else drinkDto.setImage("no image");
+        }else drinkDto.setImage("no image");//null 값이 전달 되었을 때
+
+        return drinkRepository.save(drinkDto.toEntity());
     }
 
     // 술 삭제
-    public void delete(Long drinkId) {
-        drinkRepository.deleteByDrinkId(drinkId).orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
+    public void deleteDrinkById(Long drinkId) {
+        if (!drinkRepository.existsById(drinkId)) {
+            throw new IllegalArgumentException("해당 술이 없습니다.");
+        }
+        drinkRepository.deleteById(drinkId);
     }
 
     // 술 수정
-    public Drink updateDrink(Long drinkId, DrinkUpdateDto drinkUpdateDto) {
-        Drink drink = findById(drinkId);
-        drink.updateDrink(drinkUpdateDto);
-        return drinkRepository.save(drink);
-    }
+    public DrinkUpdateResponseDto updateDrinkById(Long drinkId, DrinkUpdateRequestDto drinkUpdateRequestDto) {
+        Drink existingDrink = drinkRepository.findById(drinkId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
 
-    public Drink findById(Long drinkId) {
-        return drinkRepository.findById(drinkId).orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
+        // 업데이트 로직 적용
+        Drink updatedDrink = Drink.builder()
+                .drinkId(existingDrink.getDrinkId())
+                .name(drinkUpdateRequestDto.getName() != null ? drinkUpdateRequestDto.getName() : existingDrink.getName())
+                .image(drinkUpdateRequestDto.getImage() != null ? drinkUpdateRequestDto.getImage() : existingDrink.getImage())
+                .degree(drinkUpdateRequestDto.getDegree() != null ? drinkUpdateRequestDto.getDegree() : existingDrink.getDegree())
+                .description(drinkUpdateRequestDto.getDescription() != null ? drinkUpdateRequestDto.getDescription() : existingDrink.getDescription())
+                .tagId(drinkUpdateRequestDto.getTagId() != null ? drinkUpdateRequestDto.getTagId() : existingDrink.getTagId())
+                .build();
+
+        Drink savedUpdatedDrink = drinkRepository.save(updatedDrink);
+
+        return DrinkUpdateResponseDto.builder()
+                .drinkId(savedUpdatedDrink.getDrinkId())
+                .name(savedUpdatedDrink.getName())
+                .image(savedUpdatedDrink.getImage())
+                .degree(savedUpdatedDrink.getDegree())
+                .description(savedUpdatedDrink.getDescription())
+                .tagId(savedUpdatedDrink.getTagId())
+                .build();
+    }
+    public DrinkResponseDto getDrinkDetailsById(Long drinkId) {
+        Drink drink = drinkRepository.findById(drinkId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
+
+        return DrinkResponseDto.fromEntity(drink);
     }
 
     // 이름과 태그로 술조회
     // 이름이 없다면 태그로만 조회
     // 태그가 없다면 이름으로 조회
     // 결과가 없다면 null을 반환
-    public Page<Drink> findDrinkByName(String name, Long tagId, Pageable pageable) {
+    public Page<DrinkResponseDto> searchDrinksByCriteria(String name, Long tagId, Pageable pageable) {
+        Page<Drink> drinks;
         if (name == null && tagId == null) {
-            return drinkRepository.findAll(pageable);
+            drinks = drinkRepository.findAll(pageable);
         } else if (name == null) {
-            return drinkRepository.findByTagId(tagId, pageable).orElse(null);
+            drinks = drinkRepository.findByTagId(tagId, pageable).orElse(Page.empty());
         } else if (tagId == null) {
-            return drinkRepository.findByNameContains(name, pageable).orElse(null);
+            drinks = drinkRepository.findByNameContains(name, pageable).orElse(Page.empty());
         } else {
-            return drinkRepository.findByNameContainsAndTagId(name, tagId, pageable).orElse(null);
+            drinks = drinkRepository.findByNameContainsAndTagId(name, tagId, pageable).orElse(Page.empty());
         }
+        return drinks.map(DrinkResponseDto::fromEntity);
     }
 
-    public List<Drink> getDrinksReviewedByUser(Long userId) {
-        List<DrinkReview> reviews = drinkReviewRepository.findByUser_UserId(userId);
-        return reviews.stream()
+    public List<DrinkResponseDto> findReviewedDrinksByUserId(Long userId) {
+        return drinkReviewRepository.findDistinctDrinkByUser_UserId(userId)
+                .stream()
                 .map(DrinkReview::getDrink)
-                .distinct()
+                .map(DrinkResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
 
-    public List<Drink> pickRandomDrinks() {
-        List<Drink> allDrinks = drinkRepository.findAll(); // 전체 술 리스트 가져오기
-        List<Drink> randomDrinks = new ArrayList<>(); // 랜덤하게 선택된 술들을 담을 리스트
+    public List<DrinkResponseDto> getRandomMDPicks() {
+        int numToPick = 3;
+        List<Drink> randomDrinks = drinkRepository.findRandomDrinks(numToPick);
 
-        int numToPick = Math.min(3, allDrinks.size()); // 최대 3개까지 선택하되, 실제 술 리스트 크기보다 작거나 같아야 함
-        List<Drink> shuffledDrinks = new ArrayList<>(allDrinks); // 술 리스트를 복사하여 셔플할 리스트 생성
-
-        Collections.shuffle(shuffledDrinks, new Random()); // 슐 리스트를 셔플하여 랜덤한 순서로 섞기
-
-        for (int i = 0; i < numToPick; i++) {
-            randomDrinks.add(shuffledDrinks.get(i)); // 셔플된 리스트에서 앞에서부터 술 선택하여 결과 리스트에 추가
-        }
-
-        return randomDrinks;
+        return randomDrinks.stream()
+                .map(DrinkResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 }
