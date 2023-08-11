@@ -11,6 +11,7 @@ import MdsItem from "../components/MdsItem";
 import ReviewItem from "../components/ReviewItem";
 import Footer from "../footer/Footer";
 import Navbar from "../navbar/NavbarForDrinkpost";
+import SlideComponent from "../components/Banner";
 
 const MdsDiv = styled.div`
   width: 96%;
@@ -94,7 +95,7 @@ const drinkpostMain = () => {
     <>
       <div>
         <Navbar toDrinkSearch={toDrinkSearch}></Navbar>
-        <MdsDiv>
+        {/* <MdsDiv>
           <h3
             style={{
               margin: "0px 0px 0px 10px",
@@ -116,8 +117,9 @@ const drinkpostMain = () => {
               return <MdsItem key={i} pick={pick}></MdsItem>;
             })}
           </div>
-        </MdsDiv>
-        <DarkWood></DarkWood>
+        </MdsDiv> */}
+        <SlideComponent></SlideComponent>
+
         <div style={{ margin: "30px 10px 30px 10px" }} onClick={clickTotalDrink}>
           <Total>
             <p style={{ marginBottom: "3%", marginRight: "5%" }}>모든 술 보기 {toForward}</p>
