@@ -3,7 +3,7 @@ import CocktailGlass from "../../assets/Loading/CocktailGlass.png";
 import LoadingRing from "./LoadingRing";
 
 const LoadingDiv = styled.div`
-  background-color: #31edd3;
+  background-color: var(--c-yellow);
   min-height: 80vh;
   padding-top: 20vh;
   color: white;

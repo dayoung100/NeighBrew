@@ -16,7 +16,7 @@ const Button = styled.button`
   border: none;
 `;
 
-const Navbar = (props: { modalHandler: () => void; userid: number }) => {
+const Navbar = () => {
   const alertButton = alertNavIcon();
   const resetIcon = resetUserInfo();
   const searchButton = searchNavIcon();
@@ -31,12 +31,6 @@ const Navbar = (props: { modalHandler: () => void; userid: number }) => {
       </span>
       <span>
         <Button onClick={UserSearchHandler}>{searchButton}</Button>
-        {props.userid === parseInt(localStorage.getItem("myId")) ? (
-          <Button onClick={props.modalHandler.bind(true)}>{resetIcon}</Button>
-        ) : (
-          <></>
-        )}
-        {/* <Button onClick={props.modalHandler.bind(true)}>{resetIcon}</Button> */}
         <Button
           onClick={() => {
             console.log("alert!");
