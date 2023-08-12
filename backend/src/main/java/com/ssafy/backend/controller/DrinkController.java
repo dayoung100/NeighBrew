@@ -1,6 +1,9 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.dto.*;
+import com.ssafy.backend.dto.drink.DrinkRequestDto;
+import com.ssafy.backend.dto.drink.DrinkResponseDto;
+import com.ssafy.backend.dto.drink.DrinkUpdateRequestDto;
+import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.service.DrinkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,19 +60,9 @@ public class DrinkController {
 
     // 술 추가
     @PostMapping()
-    public ResponseEntity<?> save(DrinkDto drinkDto,
-                                  @RequestPart(value = "upload", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException, IOException {
-        try{
-            if(multipartFile.isPresent())
-                return ResponseEntity.ok(drinkService.save(drinkDto, multipartFile.get()));
-            else
-                return ResponseEntity.ok(drinkService.save(drinkDto, null));
-        }catch(Exception e){
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body("실패");
-        }
-
-
+    public ResponseEntity<Drink> save(DrinkRequestDto drinkRequestDto,
+                                      @RequestPart(value = "upload", required = false) MultipartFile multipartFile) throws IOException {
+        return ResponseEntity.ok(drinkService.save(drinkRequestDto, multipartFile));
     }
 
     // 술 삭제
@@ -83,9 +75,9 @@ public class DrinkController {
 
     // 술 수정
     @PutMapping("/{drinkId}")
-    public ResponseEntity<DrinkUpdateResponseDto> updateDrinkById(@PathVariable Long drinkId, @RequestBody DrinkUpdateRequestDto drinkUpdateRequestDto) {
-        DrinkUpdateResponseDto updatedDrinkDto = drinkService.updateDrinkById(drinkId, drinkUpdateRequestDto);
-        return ResponseEntity.ok(updatedDrinkDto);
+    public ResponseEntity<DrinkResponseDto> updateDrinkById(@PathVariable Long drinkId, @RequestBody DrinkUpdateRequestDto drinkUpdateRequestDto) {
+        DrinkResponseDto drinkResponseDto = drinkService.updateDrinkById(drinkId, drinkUpdateRequestDto);
+        return ResponseEntity.ok(drinkResponseDto);
     }
 
     //MD'S PICK 3개 랜덤으로 꺼내줌

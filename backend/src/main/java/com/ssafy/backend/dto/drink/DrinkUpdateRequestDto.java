@@ -1,4 +1,4 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.drink;
 
 import lombok.Builder;
 import lombok.Getter;
