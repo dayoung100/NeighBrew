@@ -54,6 +54,10 @@ dependencies {
 
     // ModelMapper
     implementation 'org.modelmapper:modelmapper:2.4.2'
+
+    //Firebase Cloud Message
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
 }
 
 tasks.named('test') {
