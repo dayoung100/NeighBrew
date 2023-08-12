@@ -28,7 +28,7 @@ public class DrinkReview {
     private String img;
 
     @Column(columnDefinition = "int default 0")
-    private Integer likeCount;
+    private Long likeCount;
 
     @Builder
     public DrinkReview(Long drinkReviewId, User user, Drink drink, String content, String img) {
@@ -41,7 +41,7 @@ public class DrinkReview {
 
     @PrePersist
     public void prePersist() {
-        this.likeCount = 0;
+        this.likeCount = 0L;
     }
 
     public void decreaseLikeCount() {
@@ -50,5 +50,13 @@ public class DrinkReview {
 
     public void increaseLikeCount() {
         this.likeCount++;
+    }
+
+    public void updateImg(String uploadedImageUrl) {
+        this.img = uploadedImageUrl;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
     }
 }
