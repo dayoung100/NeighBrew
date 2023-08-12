@@ -1,19 +1,16 @@
 package com.ssafy.backend.dto;
 
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserUpdateDto {
-    private Long userId;
-    private String nickname;
-    private String intro;
-    private String profile;
-    private LocalDate birth;
-    private Float liverPoint;
+
+@Getter
+@Setter
+public class UserUpdateDto extends UserRequestDto {
+    public UserUpdateDto(String email, String nickname, String name, LocalDate birth, String intro, Float liverPoint, String profile) {
+        super(email, nickname, name, birth, intro, liverPoint, profile);
+    }
 }

@@ -3,7 +3,6 @@ package com.ssafy.backend.controller;
 import com.ssafy.backend.dto.drink.DrinkRequestDto;
 import com.ssafy.backend.dto.drink.DrinkResponseDto;
 import com.ssafy.backend.dto.drink.DrinkUpdateRequestDto;
-import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.service.DrinkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +45,7 @@ public class DrinkController {
     }
 
     @GetMapping("/{drinkId}")
-    public ResponseEntity<?> getDrinkDetailsById(@PathVariable Long drinkId) {
+    public ResponseEntity<DrinkResponseDto> getDrinkDetailsById(@PathVariable Long drinkId) {
         DrinkResponseDto drinkResponseDto = drinkService.getDrinkDetailsById(drinkId);
         return ResponseEntity.ok(drinkResponseDto);
     }

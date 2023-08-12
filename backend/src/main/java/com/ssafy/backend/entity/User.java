@@ -5,7 +5,10 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import com.ssafy.backend.dto.UserChatDto;
 import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.dto.UserUpdateDto;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -64,25 +67,14 @@ public class User {
 
 
     @Builder
-    public User(String email, String nickname, String name, Float liverPoint, OAuthProvider oAuthProvider) {
+    public User(String email, String nickname, String name, Float liverPoint, OAuthProvider oAuthProvider, LocalDate birth, String intro, String profile) {
         this.email = email;
         this.nickname = nickname;
         this.liverPoint = liverPoint;
         this.name = name;
         this.oAuthProvider = oAuthProvider;
-    }
-
-    @Builder
-    public User(Long userId, String email, String nickname, OAuthProvider oAuthProvider, String name,
-                LocalDate birth, String intro, Float liverPoint, String profile) {
-        this.userId = userId;
-        this.email = email;
-        this.nickname = nickname;
-        this.oAuthProvider = oAuthProvider;
-        this.name = name;
         this.birth = birth;
         this.intro = intro;
-        this.liverPoint = liverPoint;
         this.profile = profile;
     }
 

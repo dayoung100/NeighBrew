@@ -36,7 +36,7 @@ public class DrinkService {
     }
 
     // 술 추가
-    public Drink save(DrinkRequestDto drinkRequestDto, MultipartFile multipartFile) throws IOException {
+    public DrinkResponseDto save(DrinkRequestDto drinkRequestDto, MultipartFile multipartFile) throws IOException {
         if (drinkRequestDto.getName().isEmpty()) throw new IllegalArgumentException("술 이름이 없습니다.");
 
         String image = "no image";
@@ -52,7 +52,7 @@ public class DrinkService {
                 .tagId(drinkRequestDto.getTagId())
                 .build();
 
-        return drinkRepository.save(updatedRequestDto.toEntity());
+        return DrinkResponseDto.fromEntity(drinkRepository.save(updatedRequestDto.toEntity()));
     }
 
     // 술 삭제
