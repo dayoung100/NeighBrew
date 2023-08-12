@@ -241,7 +241,7 @@ const MyPage = () => {
   return (
     <nav>
       <header>
-        <Navbar modalHandler={modalHandler} userid={parseInt(userid)} />
+        <Navbar />
       </header>
       <div
         style={{
@@ -318,35 +318,54 @@ const MyPage = () => {
         >
           <p>{userData.intro}</p>
         </div>
-        <FollowDiv>
-          <button
-            style={{
-              backgroundColor:
-                following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
-              border: "none",
-              borderRadius: "8px",
-              fontFamily: "JejuGothic",
-              cursor: "pointer",
-              flex: "0 0 40%", // flex-grow, flex-shrink, flex-basis
-            }}
-            onClick={followHandler}
-          >
-            {following === 0 ? "팔로우" : "언팔로우"}
-          </button>
-          <button
-            style={{
-              border: "none",
-              borderRadius: "8px",
-              fontFamily: "JejuGothic",
-              cursor: "pointer",
-              flex: "0 0 40%", // flex-grow, flex-shrink, flex-basis
-            }}
-            onClick={directMessageHandler}
-          >
-            메세지
-          </button>
-          <SirenArea onClick={reportHandler}></SirenArea>
-        </FollowDiv>
+        {userData.userId !== parseInt(localStorage.getItem("myId")) && (
+          <FollowDiv>
+            <button
+              style={{
+                backgroundColor:
+                  following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+                border: "none",
+                borderRadius: "8px",
+                fontFamily: "JejuGothic",
+                cursor: "pointer",
+                flex: "0 0 40%", // flex-grow, flex-shrink, flex-basis
+              }}
+              onClick={followHandler}
+            >
+              {following === 0 ? "팔로우" : "언팔로우"}
+            </button>
+            <button
+              style={{
+                border: "none",
+                borderRadius: "8px",
+                fontFamily: "JejuGothic",
+                cursor: "pointer",
+                flex: "0 0 40%", // flex-grow, flex-shrink, flex-basis
+              }}
+              onClick={directMessageHandler}
+            >
+              메세지
+            </button>
+            <SirenArea onClick={reportHandler}></SirenArea>
+          </FollowDiv>
+        )}
+        {userData.userId === parseInt(localStorage.getItem("myId")) && (
+          <FollowDiv>
+            <button
+              style={{
+                backgroundColor: "var(--c-lightgray)",
+                border: "none",
+                borderRadius: "8px",
+                fontFamily: "JejuGothic",
+                cursor: "pointer",
+                flex: "0 0 40%", // flex-grow, flex-shrink, flex-basis
+              }}
+              onClick={modalHandler}
+            >
+              프로필 수정
+            </button>
+          </FollowDiv>
+        )}
       </div>
       <div
         style={{

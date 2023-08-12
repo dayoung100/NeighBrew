@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
 import { callApi } from "../../utils/api";
 import { User, Drink } from "../../Type/types";
+import ImageInput from "../components/ImageInput";
 import detail from "./DrinkpostDetail";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import { useParams, useNavigate } from "react-router-dom";
@@ -129,7 +130,7 @@ const DrinkpostReviewCreate = () => {
   }, []);
 
   const reviewSubmit = () => {
-    const file = imgRef.current.files[0];
+    const file = imgFile;
     const formData = new FormData();
 
     formData.append("drinkId", drinkId);
@@ -260,25 +261,7 @@ const DrinkpostReviewCreate = () => {
         </InputDiv>
         <div style={{ marginLeft: "36px" }}>
           <QuestionDiv style={{ textAlign: "left" }}>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Title style={{ margin: "0" }}>대표 이미지</Title>
-              <ImgInput>
-                <label htmlFor="img_file">
-                  <img
-                    src="/src/assets/imageButton.svg"
-                    style={{ margin: "0 0.5rem" }}
-                  />
-                </label>
-                <input
-                  type="file"
-                  id="img_file"
-                  accept="image/jpg, image/png, image/jpeg"
-                  onChange={saveImgFile}
-                  ref={imgRef}
-                />
-              </ImgInput>
-            </div>
-            {imgFile && <ImageArea src={imgFile}></ImageArea>}
+            <ImageInput getFunc={setImgFile} />
           </QuestionDiv>
         </div>
       </CreateBody>
