@@ -126,6 +126,11 @@ const LikeAndCommentDiv = styled.div`
   margin-right: 4vw;
 `;
 
+const InfoBox  =styled.div`
+  display : flex;
+  justify-content : space-between;
+`
+
 const DrinkpostReviewDetail = () => {
   const LikeIcon = likeIcon();
   const CommentIcon = commentIcon();
@@ -218,6 +223,12 @@ const DrinkpostReviewDetail = () => {
     setComment("");
     setSubReviewList(prev => [fun.data, ...prev]);
   };
+
+  const deleteHandler = () => {
+    // callApi('delete', `api/drinkreview/guard/${review?.drinkReviewId}`)
+    // .then(res=>console.log(res))
+    console.log("삭제로직")
+  }
   return (
     <>
       <NavbarSimple title={drink?.name}></NavbarSimple>
@@ -252,6 +263,8 @@ const DrinkpostReviewDetail = () => {
             style={{ width: "100%" }}
           />
         </ImageDiv>
+        <InfoBox>
+
         <LikeAndComment>
           <LikeAndCommentDiv>
             <div>{LikeIcon}</div>
@@ -262,6 +275,8 @@ const DrinkpostReviewDetail = () => {
             <div>{subReviewList.length}</div>
           </LikeAndCommentDiv>
         </LikeAndComment>
+          {review?.user.userId.toString() === localStorage.getItem("myId") ? <div style={{ cursor : "pointer"}} onClick={deleteHandler}>delete</div> : null}
+        </InfoBox>
         <Description>{review?.content}</Description>
 
         <CommentBox>

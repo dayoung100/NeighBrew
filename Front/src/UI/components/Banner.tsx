@@ -28,7 +28,7 @@ function SlideComponent() {
         {bannerList.map((banner) => {
           return (
             <div>
-              <h3>{banner.name}</h3>
+            
               <a href={banner.redirectUri}>
                 <img src={banner.image} alt="" style={{ maxWidth: "100%" }} />
               </a>
