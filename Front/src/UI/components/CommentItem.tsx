@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { SubReview } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 
@@ -32,6 +32,12 @@ type CommentItemProps = {
 
 const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
   const { subReview } = props;
+  const nickname = subReview.user.nickname.includes("@")
+    ? subReview.user?.nickname.split("@")[0]
+    : subReview.user?.nickname;
+  const [nameLimit, setNameLimit] = useState(15);
+  const truncatedNickname =
+    nickname.length > nameLimit ? nickname.substring(0, nameLimit) + "..." : nickname;
   return (
     <WholeDiv>
       <ProfileDiv>
@@ -47,7 +53,7 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
       </ProfileDiv>
       <NameAndContent>
         <div style={{ fontFamily: "JejuGothic" }}>
-          <b>{subReview.user?.nickname}</b>
+          <b>{truncatedNickname}</b>
         </div>
         <div style={{ fontFamily: "NanumSquareNeo", marginTop: "1vh" }}>{subReview.content}</div>
       </NameAndContent>

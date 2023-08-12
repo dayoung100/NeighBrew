@@ -74,7 +74,7 @@ const ReviewList = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin: 0px 10px 80px 10px;
+  margin: 0px 10px 100px 10px;
 `;
 
 // 리뷰 카드
@@ -101,11 +101,11 @@ const drinkpostMain = () => {
   const [threePick, setThreePick] = useState<Drink[]>([]);
 
   useEffect(() => {
-    callApi("get", "api/drinkreview/likes").then((res) => {
+    callApi("get", "api/drinkreview/likes").then(res => {
       console.log(res.data);
       setReviewList(res.data.content);
     });
-    callApi("get", "api/drink/mdPick").then((res) => {
+    callApi("get", "api/drink/mdPick").then(res => {
       setThreePick([...res.data]);
     });
   }, []);
@@ -113,7 +113,12 @@ const drinkpostMain = () => {
   return (
     <>
       <div>
-        <Navbar toDrinkSearch={toDrinkSearch}></Navbar>
+        <header>
+          <Navbar toDrinkSearch={toDrinkSearch}></Navbar>
+        </header>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <SlideComponent></SlideComponent>
+        </div>
         {/* <MdsDiv>
           <h3
             style={{
@@ -137,15 +142,13 @@ const drinkpostMain = () => {
             })}
           </div>
         </MdsDiv> */}
-        <SlideComponent></SlideComponent>
 
         <div style={{ margin: "4rem 10px" }} onClick={clickTotalDrink}>
           <Total>
             <TotalDiv>
               <TotalSubTitle>다양한 술을 한 눈에!</TotalSubTitle>
               <TotalTitle>
-                <div style={{ marginRight: "0.5rem" }}>모든 술 보기</div>{" "}
-                {toForward}
+                <div style={{ marginRight: "0.5rem" }}>모든 술 보기</div> {toForward}
               </TotalTitle>
             </TotalDiv>
           </Total>
@@ -156,17 +159,14 @@ const drinkpostMain = () => {
           </div>
           <ReviewList>
             {Array.isArray(reviewList) &&
-              reviewList.map((review) => {
-                return (
-                  <ReviewItem
-                    key={review.drinkReviewId}
-                    review={review}
-                  ></ReviewItem>
-                );
+              reviewList.map(review => {
+                return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
               })}
           </ReviewList>
         </div>
-        <Footer></Footer>
+        <footer>
+          <Footer />
+        </footer>
       </div>
     </>
   );
