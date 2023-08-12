@@ -7,8 +7,10 @@ import { useState, useEffect, useRef } from "react";
 import { callApi } from "../../utils/api";
 import { User, Drink } from "../../Type/types";
 import detail from "./DrinkpostDetail";
+import FooterBigBtn from "../footer/FooterBigBtn";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import NavbarSimple from "../navbar/NavbarSimple";
 
 const Navdiv = styled.div`
   font-family: "JejuGothic";
@@ -85,7 +87,7 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 15px;
   position: relative;
@@ -110,20 +112,20 @@ const DrinkpostReviewCreate = () => {
   useEffect(() => {
     console.log(myId);
     callApi("get", `api/drink/${drinkId}`)
-      .then(res => {
+      .then((res) => {
         setDrink(res.data);
         console.log(res.data);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
   useEffect(() => {
     callApi("get", `api/user/guard/myinfo`)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         setMyInfo(res.data);
         console.log(myInfo);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
 
   const reviewSubmit = () => {
@@ -151,11 +153,11 @@ const DrinkpostReviewCreate = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         navigate(`/drinkpost/${drinkId}`);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
 
     // callApi("post", "api/drinkreview/guard", {
     //   myInfo: myInfo.userId,
@@ -234,13 +236,7 @@ const DrinkpostReviewCreate = () => {
   // };
   return (
     <>
-      <Navdiv>
-        <div style={{ marginLeft: "10px", cursor: "pointer" }} onClick={toPreviousPage}>
-          <img src={backIcon} alt="" />
-        </div>
-        <h2 onClick={() => navigate(`/drinkpost/${drinkId}`)}>{drink?.name}</h2>
-        <div style={{ visibility: "hidden" }}>A</div>
-      </Navdiv>
+      <NavbarSimple title={drink?.name} />
       <CreateBody>
         <InputDiv>
           <div style={{ marginBottom: "10px" }}>
@@ -268,7 +264,10 @@ const DrinkpostReviewCreate = () => {
               <Title style={{ margin: "0" }}>대표 이미지</Title>
               <ImgInput>
                 <label htmlFor="img_file">
-                  <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
+                  <img
+                    src="/src/assets/imageButton.svg"
+                    style={{ margin: "0 0.5rem" }}
+                  />
                 </label>
                 <input
                   type="file"
@@ -282,19 +281,12 @@ const DrinkpostReviewCreate = () => {
             {imgFile && <ImageArea src={imgFile}></ImageArea>}
           </QuestionDiv>
         </div>
-
-        <div
-          onClick={reviewSubmit}
-          style={{
-            position: "fixed",
-            bottom: "40px",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <img src={createButton} alt="" />
-        </div>
       </CreateBody>
+      <FooterBigBtn
+        content="등록하기"
+        color="var(--c-yellow)"
+        reqFunc={reviewSubmit}
+      />
     </>
   );
 };
