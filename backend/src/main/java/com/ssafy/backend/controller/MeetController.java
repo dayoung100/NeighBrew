@@ -81,10 +81,15 @@ public class MeetController {
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
         if (meetDto.getMinAge() < 20) return ResponseEntity.badRequest().body("모임 최소나이를 다시 입력해 주세요.");
         if (meetDto.getMinAge() >= 200) return ResponseEntity.badRequest().body("모임 최대 나이를 다시 입력해 주세요.");
-        if (meetDto.getMeetDate().toLocalDate().isBefore(LocalDateTime.now().toLocalDate()))
-            return ResponseEntity.badRequest().body("모임 날짜가 지났습니다. 다시 한 번 입력해 주세요.");
-        if (meetDto.getMeetDate().toLocalTime().isBefore(LocalDateTime.now().toLocalTime()))
-            return ResponseEntity.badRequest().body("모임 시간이 지났습니다. 다시 한 번 입력해 주세요.");
+
+        if (meetDto.getMeetDate().isBefore(LocalDateTime.now())){
+            return ResponseEntity.badRequest().body("모임 날짜 및 시간을 확인해 주세요.");
+        }
+
+
+
+
+
 
         try {
             Meet createdMeet = null;
@@ -119,9 +124,12 @@ public class MeetController {
         if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
         if (meetDto.getMinAge() < 20) return ResponseEntity.badRequest().body("모임 최소나이를 다시 입력해 주세요.");
         if (meetDto.getMinAge() >= 200) return ResponseEntity.badRequest().body("모임 최대 나이를 다시 입력해 주세요.");
-        if (meetDto.getMeetDate().toLocalDate().isBefore(LocalDate.now())
-                || meetDto.getMeetDate().toLocalTime().isBefore(LocalTime.now()))
-            return ResponseEntity.badRequest().body("모임 시간이 지났습니다. 다시 한 번 입력해 주세요.");
+
+        if (meetDto.getMeetDate().isBefore(LocalDateTime.now())){
+            return ResponseEntity.badRequest().body("모임 날짜 및 시간을 확인해 주세요.");
+        }
+
+
 
 
         try {
