@@ -16,7 +16,7 @@ function SlideComponent() {
   };
   const [bannerList, setBannerList] = useState<DrinkFestival[]>([]);
   useEffect(() => {
-    callApi("get", "api/drinkFestival/all").then((res) => {
+    callApi("get", "api/drinkFestival/all").then(res => {
       console.log(res.data);
       setBannerList(res.data);
     });
@@ -25,10 +25,9 @@ function SlideComponent() {
   return (
     <>
       <Slider {...settings} style={{ height: "15vh" }}>
-        {bannerList.map((banner) => {
+        {bannerList.map(banner => {
           return (
             <div>
-              {/* <h3>{banner.name}</h3> */}
               <a href={banner.redirectUri}>
                 <img src={banner.image} alt="" style={{ maxWidth: "100%" }} />
               </a>
