@@ -1,7 +1,9 @@
 package com.ssafy.backend.service;
 
 import com.ssafy.backend.Enum.UploadType;
-import com.ssafy.backend.dto.*;
+import com.ssafy.backend.dto.drink.DrinkRequestDto;
+import com.ssafy.backend.dto.drink.DrinkResponseDto;
+import com.ssafy.backend.dto.drink.DrinkUpdateRequestDto;
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.repository.DrinkRepository;
@@ -34,15 +36,23 @@ public class DrinkService {
     }
 
     // 술 추가
-    public Drink save(DrinkDto drinkDto, MultipartFile multipartFile) throws IOException {
-        if (drinkDto.getName().equals("")) throw new IllegalArgumentException("술 이름이 없습니다.");
+    public Drink save(DrinkRequestDto drinkRequestDto, MultipartFile multipartFile) throws IOException {
+        if (drinkRequestDto.getName().isEmpty()) throw new IllegalArgumentException("술 이름이 없습니다.");
 
-        if(multipartFile != null){
-            if(!multipartFile.isEmpty()) drinkDto.setImage(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
-            else drinkDto.setImage("no image");
-        }else drinkDto.setImage("no image");//null 값이 전달 되었을 때
+        String image = "no image";
+        if (multipartFile != null && !multipartFile.isEmpty()) {
+            image = s3Service.upload(UploadType.DRINKREVIEW, multipartFile);
+        }
 
-        return drinkRepository.save(drinkDto.toEntity());
+        DrinkRequestDto updatedRequestDto = DrinkRequestDto.builder()
+                .name(drinkRequestDto.getName())
+                .image(image)
+                .degree(drinkRequestDto.getDegree())
+                .description(drinkRequestDto.getDescription())
+                .tagId(drinkRequestDto.getTagId())
+                .build();
+
+        return drinkRepository.save(updatedRequestDto.toEntity());
     }
 
     // 술 삭제
@@ -54,7 +64,7 @@ public class DrinkService {
     }
 
     // 술 수정
-    public DrinkUpdateResponseDto updateDrinkById(Long drinkId, DrinkUpdateRequestDto drinkUpdateRequestDto) {
+    public DrinkResponseDto updateDrinkById(Long drinkId, DrinkUpdateRequestDto drinkUpdateRequestDto) {
         Drink existingDrink = drinkRepository.findById(drinkId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
 
@@ -70,7 +80,7 @@ public class DrinkService {
 
         Drink savedUpdatedDrink = drinkRepository.save(updatedDrink);
 
-        return DrinkUpdateResponseDto.builder()
+        return DrinkResponseDto.builder()
                 .drinkId(savedUpdatedDrink.getDrinkId())
                 .name(savedUpdatedDrink.getName())
                 .image(savedUpdatedDrink.getImage())
@@ -79,6 +89,7 @@ public class DrinkService {
                 .tagId(savedUpdatedDrink.getTagId())
                 .build();
     }
+
     public DrinkResponseDto getDrinkDetailsById(Long drinkId) {
         Drink drink = drinkRepository.findById(drinkId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
