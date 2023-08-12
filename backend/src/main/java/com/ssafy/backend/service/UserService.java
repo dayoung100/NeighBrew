@@ -1,92 +1,64 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.dto.UserResponseDto;
 import com.ssafy.backend.dto.UserUpdateDto;
 import com.ssafy.backend.entity.User;
-import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
-    private final FollowRepository followRepository;
 
-    @Value("${oauth.kakao.client-id}")
-    private String clientId;
-
-    @Value("${oauth.kakao.url.auth}")
-    private String authUrl;
-
-
-
-    public String redirectApiUrl() {
-        String redirectUri = "http://localhost:8080/kakao/callback";
-        String responseType = "code";
-        String Url = authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
-
-        return Url;
-    }
-
-    public User findByUserId(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+    public UserResponseDto findByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+        return UserResponseDto.fromEntity(user);
     }
 
     @Transactional
-    public User updateUser(Long userId, UserUpdateDto updateDto) {
-        log.info(String.valueOf(updateDto.getBirth()));
+    public UserResponseDto updateUser(Long userId, UserUpdateDto updateDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
-        User temp = userRepository.findByNickname(updateDto.getNickname());
-        if(temp != null){
-            log.info(temp.toString());
-            if(updateDto.getNickname().equals(user.getNickname())){
-                if(!updateDto.getBirth().equals(user.getBirth()) || !updateDto.getIntro().equals(user.getIntro())) {
 
-                }else {
-                    throw new IllegalArgumentException("에러");
-                }
-            }else{
-                log.info("이름 이미 있음");
-                throw new IllegalArgumentException("중복");
-            }
+        if (userRepository.existsByNickname(updateDto.getNickname()) && !updateDto.getNickname().equals(user.getNickname())) {
+            throw new IllegalArgumentException("닉네임 중복");
+        }
+
+        if (!userRepository.existsByNickname(updateDto.getNickname()) && updateDto.getNickname().equals(user.getNickname())
+                && updateDto.getBirth().equals(user.getBirth()) && updateDto.getIntro().equals(user.getIntro())) {
+            throw new IllegalArgumentException("변경 사항이 없습니다.");
         }
 
         user.updateFromDto(updateDto);
 
-        return userRepository.save(user);
+        return UserResponseDto.fromEntity(userRepository.save(user));
     }
 
     @Transactional
-    public User updateUserImg(Long userId, String url) {
+    public void updateUserImg(Long userId, String url) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
         user.updateImg(url);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
 
-
-
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserResponseDto> findAll() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(UserResponseDto::fromEntity).collect(Collectors.toList());
     }
 
 
-    public List<Optional<User>>searchUsers(String nickName){
-            log.info(nickName);
-            // 해당 이름을 가지고있는 데이터를 가져옴
-            return userRepository.findByNicknameContaining(nickName);
-        }
-
-
-
+    public List<UserResponseDto> searchUsers(String nickName) {
+        List<User> users = userRepository.findByNicknameContaining(nickName);
+        return users.stream().map(UserResponseDto::fromEntity).collect(Collectors.toList());
+    }
 }
