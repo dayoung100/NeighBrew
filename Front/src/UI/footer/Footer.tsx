@@ -34,9 +34,14 @@ const Footer = () => {
     setChooseMenu(parseInt(localStorage.getItem("chooseMenu") || "0"));
   }, []);
   return (
-    <footer className="footer" style={{
-        borderTop : "1px solid var(--c-borderline)",
-    }}>
+    <footer
+      className="footer"
+      style={{
+        borderTop: "1px solid var(--c-borderline)",
+        position: "sticky",
+        bottom: 0,
+      }}
+    >
       <Button
         onClick={() => {
           chooseMenuHandler(0);

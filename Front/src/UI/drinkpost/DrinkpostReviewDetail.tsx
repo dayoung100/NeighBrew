@@ -126,6 +126,11 @@ const LikeAndCommentDiv = styled.div`
   margin-right: 4vw;
 `;
 
+const InfoBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 const DrinkpostReviewDetail = () => {
   const LikeIcon = likeIcon();
   const CommentIcon = commentIcon();
@@ -218,6 +223,15 @@ const DrinkpostReviewDetail = () => {
     setComment("");
     setSubReviewList(prev => [fun.data, ...prev]);
   };
+
+  const deleteHandler = () => {
+    callApi("delete", `api/drinkreview/guard/${review?.drinkReviewId}`)
+      .then(res => {
+        console.log(res);
+        navigate(`/drinkpost/${drinkId}`);
+      })
+      .catch(err => console.error(err));
+  };
   return (
     <>
       <NavbarSimple title={drink?.name}></NavbarSimple>
@@ -252,16 +266,32 @@ const DrinkpostReviewDetail = () => {
             style={{ width: "100%" }}
           />
         </ImageDiv>
-        <LikeAndComment>
-          <LikeAndCommentDiv>
-            <div>{LikeIcon}</div>
-            <div>{review?.likeCount}</div>
-          </LikeAndCommentDiv>
-          <LikeAndCommentDiv>
-            <div>{CommentIcon}</div>
-            <div>{subReviewList.length}</div>
-          </LikeAndCommentDiv>
-        </LikeAndComment>
+        <InfoBox>
+          <LikeAndComment>
+            <LikeAndCommentDiv>
+              <div>{LikeIcon}</div>
+              <div>{review?.likeCount}</div>
+            </LikeAndCommentDiv>
+            <LikeAndCommentDiv>
+              <div>{CommentIcon}</div>
+              <div>{subReviewList.length}</div>
+            </LikeAndCommentDiv>
+          </LikeAndComment>
+          {review?.user.userId.toString() === localStorage.getItem("myId") ? (
+            <div
+              style={{
+                cursor: "pointer",
+                margin: "0.5rem",
+                backgroundColor: "#FF5F5F",
+                color: "white",
+                borderRadius: "8px",
+              }}
+              onClick={deleteHandler}
+            >
+              delete
+            </div>
+          ) : null}
+        </InfoBox>
         <Description>{review?.content}</Description>
 
         <CommentBox>

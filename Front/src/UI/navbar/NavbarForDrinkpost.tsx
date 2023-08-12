@@ -27,7 +27,7 @@ const Navbar = (props: toDrinkpSearchProps) => {
   const searchButton = searchNavIcon();
   const alertButton = alertNavIcon();
   return (
-    <nav className="nav" style={{ width: "100vw" }}>
+    <nav className="nav" style={{ width: "100%" }}>
       <span className="logo">
         <img src={logoNavbar} />
       </span>
