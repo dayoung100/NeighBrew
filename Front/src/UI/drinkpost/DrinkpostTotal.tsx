@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
 import plusButton from "../../assets/plusButton.svg";
+import NavbarSimple from "../navbar/NavbarSimple";
 
 const ShowcaseBody = styled.div`
   font-size: 14px;
@@ -73,21 +74,8 @@ const drinkpostTotal = () => {
   return (
     <>
       <Navbar toDrinkSearch={toDrinkSearch}></Navbar>
+      <NavbarSimple title="네이브루의 술장" />
       <ShowcaseBody>
-        <div style={{ textAlign: "start" }}>
-          <h2 style={{ margin: "0px 0px 0px 10px" }}>네이브루의 술장</h2>
-          {/* 실선 추가 */}
-          {/* 회색 */}
-          {/* 중앙정렬 */}
-          <div
-            style={{
-              height: "1px",
-              backgroundColor: "var(--c-borderline)",
-              margin: "10px 20px 10px 20px",
-            }}
-          ></div>
-        </div>
-
         <div
           className="whole"
           style={{
