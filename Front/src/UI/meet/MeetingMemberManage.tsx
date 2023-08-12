@@ -170,7 +170,7 @@ const MeetingMemberManage = () => {
                     setModalOn(true);
                   }}
                 >
-                  <img src="/src/assets/XButtonIcon.svg" />
+                  <img src="/src/assets/XbuttonIcon.svg" />
                 </NoBtn>
               </div>
             );
