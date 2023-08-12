@@ -108,6 +108,12 @@ const LikeCount = styled.div`
 `;
 
 const ReviewItem = ({ review }: { review: Review }) => {
+  const nickname = review.user.nickname.includes("@")
+    ? review.user.nickname.split("@")[0]
+    : review.user.nickname;
+  const [nameLimit, setNameLimit] = useState(12);
+  const truncatedNickname =
+    nickname.length > nameLimit ? nickname.substring(0, nameLimit) + "..." : nickname;
   const [showMore, setShowMore] = useState(false);
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(review.likeCount);
@@ -151,6 +157,11 @@ const ReviewItem = ({ review }: { review: Review }) => {
     });
     setLike(!like);
   };
+  const toggleEllipsis = (str, limit) => {
+    return {
+      string: str.slice(0, limit),
+    };
+  };
 
   return (
     <>
@@ -168,9 +179,10 @@ const ReviewItem = ({ review }: { review: Review }) => {
                 src={review.user.profile !== "no image" ? review.user.profile : defaultImg}
               />
               <UserNickname>
-                {review.user.nickname.includes("@")
+                {truncatedNickname}
+                {/* {review.user.nickname.includes("@")
                   ? review.user.nickname.split("@")[0]
-                  : review.user.nickname}
+                  : review.user.nickname} */}
               </UserNickname>
             </div>
 
