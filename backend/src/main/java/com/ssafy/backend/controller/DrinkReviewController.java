@@ -48,7 +48,7 @@ public class DrinkReviewController {
 
     @PostMapping("/guard")
     public ResponseEntity<DrinkReviewResponseDto> createDrinkReview(HttpServletRequest request,
-                                                                    @RequestBody DrinkReviewRequestDto drinkReviewRequestDto,
+                                                                    @ModelAttribute DrinkReviewRequestDto drinkReviewRequestDto,
                                                                     @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws IOException {
         String userId = (String) request.getAttribute("userId");
         drinkReviewRequestDto.setUserId(Long.valueOf(userId));
@@ -58,7 +58,7 @@ public class DrinkReviewController {
 
     @PutMapping("/guard/{drinkReviewId}")
     public ResponseEntity<DrinkReviewResponseDto> updateDrinkReview(@PathVariable Long drinkReviewId,
-                                                                    @RequestBody DrinkReviewUpdateDto drinkReviewUpdateDto,
+                                                                    @ModelAttribute DrinkReviewUpdateDto drinkReviewUpdateDto,
                                                                     @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile,
                                                                     HttpServletRequest request) throws IOException {
         String userId = (String) request.getAttribute("userId");
