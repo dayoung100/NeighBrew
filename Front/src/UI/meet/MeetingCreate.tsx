@@ -7,13 +7,9 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarSimple from "../navbar/NavbarSimple";
 import styled, { css } from "styled-components";
-import DrinkCategory from "../drinkCategory/DrinkCategory";
-import SearchBox from "../components/SearchBox";
 import FooterBigBtn from "../footer/FooterBigBtn";
-import OneLineListItem from "../components/OneLineListItem";
-import ListInfoItem from "../components/ListInfoItem";
 import ImageInput from "../components/ImageInput";
-import { MeetDetail } from "../../Type/types";
+import MeetingDrinkSearch from "./MeetingDrinkSearch";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
@@ -23,7 +19,6 @@ import {
   initialSido,
   initialGugun,
   WhiteModal,
-  encodeUrl,
 } from "../common";
 import Modal from "react-modal";
 
@@ -43,16 +38,6 @@ const SubTitle = styled.div`
 
 const QuestionDiv = styled.div`
   margin-top: 1.5rem;
-`;
-
-const ReselectBtn = styled.div`
-  background: var(--c-lightgray);
-  border-radius: 10px;
-  width: 3rem;
-  font-family: "NanumSquareNeo";
-  font-size: 15px;
-  padding: 0.5rem;
-  margin: 0.5rem 0 0 auto;
 `;
 
 const Input = styled.input`
@@ -91,27 +76,6 @@ const DropdownInput = styled.select`
   appearance: none; /* 화살표 없애기 공통*/
 `;
 
-const SearchResultDiv = styled.div`
-  border-radius: 15px;
-  border: 1px solid var(--c-gray);
-  height: 12rem;
-  margin-top: 0.5rem;
-  display: flex;
-  flex-direction: column;
-`;
-
-const OnOffBtn = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  position: sticky;
-  bottom: 0;
-  height: 3rem;
-  z-index: 3;
-  padding: 0 1rem;
-  font-family: "NanumSquareNeo";
-`;
-
 const DateAndTimeInputStyle = css`
   color: var(--c-black);
   width: 45%;
@@ -130,20 +94,6 @@ const DateInput = styled.input.attrs({ type: "date" })`
 
 const TimeInput = styled.input.attrs({ type: "time" })`
   ${DateAndTimeInputStyle}
-`;
-
-const CateDiv = styled.div`
-  height: 10rem;
-  margin: 1rem 0 0.5rem 0;
-  div {
-    margin: 0;
-  }
-  .first,
-  .second {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 0.5rem;
-  }
 `;
 
 const LimitDiv = styled.div`
@@ -204,10 +154,6 @@ const MeetingCreate = () => {
   const [imgSrc, setImgSrc] = useState<string>(""); //이미지 경로
   const [file, setFile] = useState(null); //파일 타입
 
-  //검색 관련 state
-  const [inputText, setInputText] = useState(""); //검색창에 입력된 텍스트
-  const [searchResultList, setSearchResultList] = useState<Drink[]>([]); //주류 검색 결과 리스트
-
   //생성 버튼 클릭했는지 - 버튼 한번이라도 클릭 시에만 빨간 가이드 글씨 오픈
   const [btnClicked, setBtnClicked] = useState(false);
 
@@ -246,34 +192,6 @@ const MeetingCreate = () => {
     });
   }, [sido]);
 
-  //inputText로 술장 검색 api
-  useEffect(() => {
-    const promise = callApi(
-      "get",
-      `api/drink/search?tagId=${selectedCategory}&name=${inputText}`
-    );
-    promise.then((res) => {
-      setSearchResultList(res.data.content);
-    });
-  }, [inputText, selectedCategory]);
-
-  //카테고리 변경 시 주류 검색 결과 및 조건 초기화
-  useEffect(() => {
-    setSelectedDrink(initialDrink);
-    setInputText("");
-  }, [selectedCategory]);
-
-  //주종 카테고리 선택
-  const getDrinkCategory = (tagId: number) => {
-    setSelectedCategory(tagId);
-  };
-
-  //검색 후 선택한 주류 정보, 즉 모임에 설정할 술 정보받아오기
-  const getDrink = (drink: Drink) => {
-    setSelectedDrink(drink);
-    setIsSearchFocused(false);
-  };
-
   //////////////api 호출 전 각종 데이터 검증//////////////
   //제목: 필수 입력/30자 이내
   const titleCheck = () => {
@@ -282,10 +200,10 @@ const MeetingCreate = () => {
 
   //술: 필수 입력
   const drinkCheck = () => {
-    return !(selectedDrink.drinkId === 0);
+    return !(selectedDrink.drinkId < 1);
   };
 
-  //위치: 필수 입력(구군은 필수x, 세종시 때문에)
+  //위치: 필수 입력
   const positionCheck = () => {
     return !(sido.sidoCode === 0 || gugun.gugunCode === 0);
   };
@@ -356,7 +274,7 @@ const MeetingCreate = () => {
   };
 
   //수정 완료 버튼 클릭 api
-  const updateMeeting = async () => {
+  const createMeeting = async () => {
     setBtnClicked(true);
     //api 요청 전에 확인
     //입력 값들이 적절한가?
@@ -389,13 +307,11 @@ const MeetingCreate = () => {
       f.append("maxAge", maxAge.toString());
     }
     f.append("description", meetDesc);
-    if (file) {
-      f.append("image", file);
-    }
+    f.append("image", file);
+
     const promise = callApi("post", `/api/meet/create`, f);
     promise
       .then((res) => {
-        console.dir(res);
         GoMeetDetailHandler(res.data.meetId); //모임 상세 페이지로 이동
       })
       .catch((error) => {
@@ -403,13 +319,6 @@ const MeetingCreate = () => {
         setIsModalOn(true);
       });
   };
-
-  //검색 결과 창 애니메이션 용
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const parent = useRef(null);
-  useEffect(() => {
-    parent.current && autoAnimate(parent.current);
-  }, [parent]);
 
   //날짜와 변환 함수
   function formateDate(dateData: string) {
@@ -432,21 +341,6 @@ const MeetingCreate = () => {
       date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
 
     return `${hour}:${minute}`;
-  }
-
-  //태그ID를 태그 이름으로 변환
-  function getTagName(tagId: number) {
-    const tag = [
-      { tagId: 0, tagName: "전체" },
-      { tagId: 1, tagName: "양주" },
-      { tagId: 2, tagName: "전통주" },
-      { tagId: 3, tagName: "칵테일" },
-      { tagId: 4, tagName: "사케" },
-      { tagId: 5, tagName: "와인" },
-      { tagId: 6, tagName: "수제맥주" },
-      { tagId: 7, tagName: "소주/맥주" },
-    ];
-    return tag[tagId].tagName;
   }
 
   //현재 날짜를 받아오기 -> min 값으로 설정
@@ -495,99 +389,14 @@ const MeetingCreate = () => {
           )}
         </QuestionDiv>
         <QuestionDiv>
-          <Title>우리가 마실 것은</Title>
-          <SubTitle>카테고리를 선택해주세요</SubTitle>
-          <CateDiv>
-            <DrinkCategory
-              key={selectedCategory}
-              getFunc={getDrinkCategory}
-              selectedId={selectedCategory}
-              isSearch={false}
-            />
-          </CateDiv>
-          <div ref={parent}>
-            {selectedDrink.drinkId === 0 && (
-              <div>
-                <SubTitle style={{ marginBottom: "0.3rem" }}>
-                  정확한 술의 이름을 검색할 수 있어요
-                </SubTitle>
-                <div onFocus={() => setIsSearchFocused(true)}>
-                  <SearchBox
-                    placeholder=""
-                    value={inputText}
-                    changeFunc={(inputTxt: string) => {
-                      setInputText(inputTxt);
-                    }}
-                  />
-                </div>
-                {!isSearchFocused && btnClicked && !drinkCheck() && (
-                  <ErrorDiv>
-                    📌한 가지의 주류를 필수적으로 입력해야합니다.
-                  </ErrorDiv>
-                )}
-                {isSearchFocused && (
-                  <SearchResultDiv>
-                    <div
-                      style={{
-                        overflow: "auto",
-                        height: "100%",
-                        flexGrow: "1",
-                      }}
-                    >
-                      {searchResultList.length === 0 ? (
-                        <div
-                          style={{
-                            textAlign: "center",
-                            paddingTop: "2rem",
-                            fontFamily: "NanumSquareNeo",
-                          }}
-                        >
-                          검색 결과가 없습니다.
-                        </div>
-                      ) : (
-                        searchResultList.map((res) => (
-                          <div onClick={() => getDrink(res)} key={res.drinkId}>
-                            <OneLineListItem
-                              content={res.name}
-                              tag={getTagName(res.tagId)}
-                            ></OneLineListItem>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                    <OnOffBtn onClick={() => setIsSearchFocused(false)}>
-                      ▲닫기
-                    </OnOffBtn>
-                  </SearchResultDiv>
-                )}
-              </div>
-            )}
-            {selectedDrink.drinkId !== 0 && (
-              <div>
-                <ListInfoItem
-                  title={selectedDrink.name}
-                  imgSrc={
-                    selectedDrink.image === "no image"
-                      ? "/src/assets/whiskeyImage.png"
-                      : encodeUrl(selectedDrink.image)
-                  }
-                  tag={getTagName(selectedDrink.tagId)}
-                  content={selectedDrink.description}
-                  isWaiting={false}
-                  outLine={true}
-                  isDrink={true}
-                  routingFunc={null}
-                />
-                <ReselectBtn
-                  onClick={() => {
-                    setSelectedDrink(initialDrink);
-                  }}
-                >
-                  재선택
-                </ReselectBtn>
-              </div>
-            )}
-          </div>
+          <MeetingDrinkSearch
+            tagId={selectedCategory}
+            setTagIdFunc={setSelectedCategory}
+            drink={selectedDrink}
+            setDrinkFunc={setSelectedDrink}
+            btnClicked={btnClicked}
+            isModify={false}
+          />
         </QuestionDiv>
         <QuestionDiv>
           <div
@@ -638,7 +447,7 @@ const MeetingCreate = () => {
             구/군
           </div>
           {!positionCheck() && btnClicked && (
-            <ErrorDiv>📌위치(시/도)는 필수 입력 사항입니다.</ErrorDiv>
+            <ErrorDiv>📌위치는 필수 입력 사항입니다.</ErrorDiv>
           )}
         </QuestionDiv>
         <QuestionDiv>
@@ -736,7 +545,7 @@ const MeetingCreate = () => {
         color="var(--c-yellow)"
         bgColor="white"
         reqFunc={() => {
-          updateMeeting();
+          createMeeting();
         }}
       />
       <Modal

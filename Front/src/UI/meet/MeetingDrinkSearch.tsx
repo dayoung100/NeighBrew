@@ -86,6 +86,7 @@ type MeetingDrinkSearchProps = {
   drink: Drink;
   setDrinkFunc(drink: Drink): void;
   btnClicked: boolean;
+  isModify?: boolean;
 };
 
 const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
@@ -128,10 +129,11 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
 
   useEffect(() => {
     if (
-      meetTag !== 0 &&
-      meetDrink.drinkId !== 0 &&
-      meetTag === tag &&
-      meetDrink.drinkId === drink.drinkId
+      !(props.isModify ?? true) ||
+      (meetTag !== 0 &&
+        meetDrink.drinkId !== 0 &&
+        meetTag === tag &&
+        meetDrink.drinkId === drink.drinkId)
     ) {
       setFetchDone(true);
     }
@@ -241,7 +243,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
               isWaiting={false}
               outLine={true}
               isDrink={true}
-              routingFunc={null}
+              routingFunc={() => {}} //이동하지않도록
             />
             <ReselectBtn
               onClick={() => {

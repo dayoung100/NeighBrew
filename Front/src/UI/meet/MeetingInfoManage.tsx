@@ -152,10 +152,6 @@ const MeetingInfoManage = () => {
   const [imgSrc, setImgSrc] = useState<string>(""); //이미지 경로
   const [file, setFile] = useState(null); //파일 타입
 
-  //검색 관련 state
-  // const [inputText, setInputText] = useState(""); //검색창에 입력된 텍스트
-  // const [searchResultList, setSearchResultList] = useState<Drink[]>([]); //주류 검색 결과 리스트
-
   //지역 관련 state
   const [sidoList, setSidoList] = useState([initialSido]);
   const [gugunList, setGugunList] = useState([initialGugun]);
@@ -367,13 +363,6 @@ const MeetingInfoManage = () => {
         setIsModalOn(true);
       });
   };
-
-  //검색 결과 창 애니메이션 용
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const parent = useRef(null);
-  useEffect(() => {
-    parent.current && autoAnimate(parent.current);
-  }, [parent]);
 
   //날짜와 변환 함수
   function formateDate(dateData: string) {
