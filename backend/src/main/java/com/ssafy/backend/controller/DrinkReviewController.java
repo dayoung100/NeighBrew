@@ -42,7 +42,7 @@ public class DrinkReviewController {
 
     // 좋아요 많은 순으로 리뷰 가져오기
     @GetMapping("/likes")
-    public ResponseEntity<List<DrinkReviewResponseDto>> getReviewsOrderByLikes(Pageable pageable) {
+    public ResponseEntity<Page<DrinkReviewResponseDto>> getReviewsOrderByLikes(Pageable pageable) {
         return ResponseEntity.ok(drinkReviewService.getReviewsOrderByLikes(pageable));
     }
 
