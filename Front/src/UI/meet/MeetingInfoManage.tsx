@@ -7,11 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import NavbarSimple from "../navbar/NavbarSimple";
 import styled, { css } from "styled-components";
-// import DrinkCategory from "../drinkCategory/DrinkCategory";
-// import SearchBox from "../components/SearchBox";
 import FooterBigBtn from "../footer/FooterBigBtn";
-// import OneLineListItem from "../components/OneLineListItem";
-// import ListInfoItem from "../components/ListInfoItem";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
 import { MeetDetail } from "../../Type/types";
@@ -43,16 +39,6 @@ const SubTitle = styled.div`
 
 const QuestionDiv = styled.div`
   margin-top: 1.5rem;
-`;
-
-const ReselectBtn = styled.div`
-  background: var(--c-lightgray);
-  border-radius: 10px;
-  width: 3rem;
-  font-family: "SeoulNamsan";
-  font-size: 15px;
-  padding: 0.5rem;
-  margin: 0.5rem 0 0 auto;
 `;
 
 const Input = styled.input`
@@ -90,27 +76,6 @@ const DropdownInput = styled.select`
   appearance: none; /* 화살표 없애기 공통*/
 `;
 
-// const SearchResultDiv = styled.div`
-//   border-radius: 15px;
-//   border: 1px solid var(--c-gray);
-//   height: 12rem;
-//   margin-top: 0.5rem;
-//   display: flex;
-//   flex-direction: column;
-// `;
-
-// const CloseDiv = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: flex-end;
-//   position: sticky;
-//   bottom: 0;
-//   height: 3rem;
-//   z-index: 3;
-//   padding: 0 1rem;
-//   font-family: "NanumSquareNeo";
-// `;
-
 const DateAndTimeInputStyle = css`
   color: var(--c-black);
   width: 45%;
@@ -130,19 +95,6 @@ const DateInput = styled.input.attrs({ type: "date" })`
 const TimeInput = styled.input.attrs({ type: "time" })`
   ${DateAndTimeInputStyle}
 `;
-
-// const CateDiv = styled.div`
-//   height: 10rem;
-//   div {
-//     margin: 0;
-//   }
-//   .first,
-//   .second {
-//     display: flex;
-//     justify-content: space-around;
-//     margin-top: 0.5rem;
-//   }
-// `;
 
 const InfoTextArea = styled.textarea`
   width: 90%;
@@ -264,41 +216,6 @@ const MeetingInfoManage = () => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);
-
-  //inputText로 술장 검색 api
-  // useEffect(() => {
-  //   const promise = callApi(
-  //     "get",
-  //     `api/drink/search?tagId=${selectedCategory}&name=${inputText}`
-  //   );
-  //   promise.then((res) => {
-  //     setSearchResultList(res.data.content);
-  //   });
-  // }, [inputText, selectedCategory]);
-
-  //카테고리 변경 시 주류 검색 결과 및 조건 초기화
-  // useEffect(() => {
-  //   //선택된 술이 원래의 술이고,
-  //   //변경된 카테고리도 원래의 술이라면 -> 초기 로딩임 -> 초기화x
-  //   if (
-  //     selectedDrink.drinkId === meetData.meet.drink.drinkId &&
-  //     selectedCategory === meetData.meet.tagId
-  //   )
-  //     return;
-  //   setSelectedDrink(initialDrink);
-  //   setInputText("");
-  // }, [selectedCategory]);
-
-  //주종 카테고리 선택
-  // const getDrinkCategory = (tagId: number) => {
-  //   setSelectedCategory(tagId);
-  // };
-
-  //검색 후 선택한 주류 정보, 즉 모임에 설정할 술 정보받아오기
-  // const getDrink = (drink: Drink) => {
-  //   setSelectedDrink(drink);
-  //   setIsSearchFocused(false);
-  // };
 
   //api 호출 전 각종 데이터 검증
   //유저 아이디와 호스트 아이디 확인
@@ -481,21 +398,6 @@ const MeetingInfoManage = () => {
     return `${hour}:${minute}`;
   }
 
-  //태그ID를 태그 이름으로 변환
-  function getTagName(tagId: number) {
-    const tag = [
-      { tagId: 0, tagName: "전체" },
-      { tagId: 1, tagName: "양주" },
-      { tagId: 2, tagName: "전통주" },
-      { tagId: 3, tagName: "전체" },
-      { tagId: 4, tagName: "사케" },
-      { tagId: 5, tagName: "와인" },
-      { tagId: 6, tagName: "수제맥주" },
-      { tagId: 7, tagName: "소주/맥주" },
-    ];
-    return tag[tagId].tagName;
-  }
-
   //현재 날짜를 받아오기 -> min 값으로 설정
   const localDate = () => {
     const date = new Date().toISOString().substring(0, 10);
@@ -541,100 +443,6 @@ const MeetingInfoManage = () => {
               btnClicked={btnClicked}
             />
           )}
-          {/* <Title>우리가 마실 것은</Title>
-          <SubTitle>카테고리를 선택해주세요</SubTitle>
-          <CateDiv>
-            {selectedCategory !== 0 && (
-              <DrinkCategory
-                getFunc={getDrinkCategory}
-                selectedId={selectedCategory}
-                isSearch={false}
-              />
-            )}
-          </CateDiv>
-          <div ref={parent}>
-            {selectedDrink.drinkId === 0 && (
-              <div>
-                <SubTitle style={{ marginBottom: "0.3rem" }}>
-                  정확한 술의 이름을 검색할 수 있어요
-                </SubTitle>
-                <div onFocus={() => setIsSearchFocused(true)}>
-                  <SearchBox
-                    placeholder=""
-                    value={inputText}
-                    changeFunc={(inputTxt: string) => {
-                      setInputText(inputTxt);
-                    }}
-                  />
-                </div>
-                {!isSearchFocused && btnClicked && (
-                  <ErrorDiv>
-                    📌한 가지의 주류를 필수적으로 입력해야합니다.
-                  </ErrorDiv>
-                )}
-                {isSearchFocused && (
-                  <SearchResultDiv>
-                    <div
-                      style={{
-                        overflow: "auto",
-                        height: "100%",
-                        flexGrow: "1",
-                      }}
-                    >
-                      {searchResultList.length === 0 ? (
-                        <div
-                          style={{
-                            textAlign: "center",
-                            paddingTop: "2rem",
-                            fontFamily: "SeoulNamsan",
-                          }}
-                        >
-                          검색 결과가 없습니다.
-                        </div>
-                      ) : (
-                        searchResultList.map((res) => (
-                          <div onClick={() => getDrink(res)} key={res.drinkId}>
-                            <OneLineListItem
-                              content={res.name}
-                              tag={getTagName(res.tagId)}
-                            ></OneLineListItem>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                    <CloseDiv onClick={() => setIsSearchFocused(false)}>
-                      ▲닫기
-                    </CloseDiv>
-                  </SearchResultDiv>
-                )}
-              </div>
-            )}
-            {selectedDrink.drinkId !== 0 && (
-              <div>
-                <ListInfoItem
-                  title={selectedDrink.name}
-                  imgSrc={
-                    selectedDrink.image === "no image"
-                      ? "/src/assets/whiskeyImage.png"
-                      : encodeUrl(selectedDrink.image)
-                  }
-                  tag={getTagName(selectedDrink.tagId)}
-                  content={selectedDrink.description}
-                  isWaiting={false}
-                  outLine={true}
-                  isDrink={true}
-                  routingFunc={null}
-                />
-                <ReselectBtn
-                  onClick={() => {
-                    setSelectedDrink(initialDrink);
-                  }}
-                >
-                  재선택
-                </ReselectBtn>
-              </div>
-            )}
-          </div> */}
         </QuestionDiv>
         <QuestionDiv>
           <div

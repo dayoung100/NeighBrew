@@ -5,14 +5,10 @@ import SearchBox from "../components/SearchBox";
 import DrinkCategory from "../drinkCategory/DrinkCategory";
 import OneLineListItem from "../components/OneLineListItem";
 import ListInfoItem from "../components/ListInfoItem";
-import { Drink, MeetDetail } from "../../Type/types";
-import {
-  getTagName,
-  encodeUrl,
-  initialDrink,
-  initialMeetDetail,
-} from "../common";
+import { Drink } from "../../Type/types";
+import { getTagName, encodeUrl, initialDrink } from "../common";
 import { callApi } from "../../utils/api";
+import EmptyMsg from "../components/EmptyMsg";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -131,7 +127,6 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
   }, [props]);
 
   useEffect(() => {
-    console.dir(meetDrink);
     if (
       meetTag !== 0 &&
       meetDrink.drinkId !== 0 &&
@@ -158,7 +153,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
     if (fetchDone) {
       setDrink(CustomInitialDrink);
       setInputText("");
-      props.setTagIdFunc(tag);
+      props.setTagIdFunc(tag); //부모에게 전달
     }
   }, [tag]);
 
@@ -167,7 +162,6 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
     if (fetchDone) {
       props.setDrinkFunc(drink);
     }
-    console.dir(drink);
   }, [drink]);
 
   return (
@@ -211,15 +205,10 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
                   }}
                 >
                   {searchResultList.length === 0 ? (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        paddingTop: "2rem",
-                        fontFamily: "SeoulNamsan",
-                      }}
-                    >
-                      검색 결과가 없습니다.
-                    </div>
+                    <EmptyMsg
+                      title="검색 결과가 없습니다"
+                      contents={`아직 네이브루에 등록되지 않았나봐요\n술장에서 직접 등록해보시는 건 어떤가요?`}
+                    />
                   ) : (
                     searchResultList.map((res) => (
                       <div onClick={() => getDrink(res)} key={res.drinkId}>
