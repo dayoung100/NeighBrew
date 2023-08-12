@@ -1,11 +1,9 @@
 // 채팅방 목록에서 보일 개별 채팅방 컴포넌트
 import styled from "styled-components";
-import tempimg from "../../assets/tempgif.gif";
-import temimg from "../../assets/temgif.gif";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { callApi } from "../../utils/api";
-
+import defaultImg from "../../assets/defaultImg.png";
 const ChatDiv = styled.div`
   padding: 0.3rem;
   min-height: 5rem;
@@ -58,7 +56,7 @@ const Chat = (props: {
   return (
     <ChatDiv onClick={() => props.chatRoomDetail(props.chatRoomId)}>
       <ImgDiv>
-        <Img src={temimg}></Img>
+        <Img src={defaultImg}></Img>
       </ImgDiv>
       <div style={{}}>
         <div style={{ textAlign: "left" }}>
@@ -69,7 +67,7 @@ const Chat = (props: {
               fontFamily: "JejuGothic",
             }}
           >
-            채팅방 제목: {props.chatRoomName}
+            {props.chatRoomName}
           </span>
           <span style={{ color: "var(--c-gray", fontSize: "12px", marginLeft: "0.5rem" }}>
             {user.length}
