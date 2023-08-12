@@ -54,8 +54,10 @@ const TotalDiv = styled.div`
 `;
 
 const TotalTitle = styled.div`
+  display: flex;
+  align-items: center;
   font-size: 30px;
-  font-family: "JejuGothic";
+  font-family: "NanumSquareNeoExtraBold";
 `;
 
 const TotalSubTitle = styled.div`
@@ -144,7 +146,10 @@ const drinkpostMain = () => {
           <Total>
             <TotalDiv>
               <TotalSubTitle>다양한 술을 한 눈에!</TotalSubTitle>
-              <TotalTitle>모든 술 보기 {toForward}</TotalTitle>
+              <TotalTitle>
+                <div style={{ marginRight: "0.5rem" }}>모든 술 보기</div>{" "}
+                {toForward}
+              </TotalTitle>
             </TotalDiv>
           </Total>
         </div>

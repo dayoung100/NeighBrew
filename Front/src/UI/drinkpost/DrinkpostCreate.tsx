@@ -4,9 +4,9 @@
 import DrinkCategory from "../drinkCategory/DrinkCategory";
 import styled from "styled-components";
 import { useState, useRef } from "react";
-import createButton from "../../assets/createButton.svg";
 import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
+import ImageInput from "../components/ImageInput";
 import axios from "axios";
 import TextareaAutosize from "react-textarea-autosize";
 import NavbarSimple from "../navbar/NavbarSimple";
@@ -158,7 +158,7 @@ const CateDiv = styled.div`
 // 서버로부터 받은 이미지 URL이나 정보를 리턴하거나 활용할 수 있습니다.
 
 const DrinkpostCreate = () => {
-  const [selectedCategory, setSelectedCategory] = useState<any>();
+  const [selectedCategory, setSelectedCategory] = useState(1);
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
   };
@@ -170,7 +170,6 @@ const DrinkpostCreate = () => {
   const navigate = useNavigate();
 
   const drinkNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(drinkName);
     setDrinkName(e.target.value);
   };
   const drinkAlcoholHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,22 +182,22 @@ const DrinkpostCreate = () => {
   };
 
   const [imgFile, setImgFile] = useState(null);
-  const imgRef = useRef<HTMLInputElement>(null);
+  // const imgRef = useRef<HTMLInputElement>(null);
 
   //이미지 파일 업로드 시 미리보기
-  const saveImgFile = () => {
-    const file = imgRef.current.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        setImgFile(reader.result);
-      }
-    };
-  };
+  // const saveImgFile = () => {
+  //   const file = imgRef.current.files[0];
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+  //   reader.onloadend = () => {
+  //     if (typeof reader.result === "string") {
+  //       setImgFile(reader.result);
+  //     }
+  //   };
+  // };
 
   const drinkSubmitHandler = (e: React.MouseEvent<HTMLDivElement>) => {
-    const file = imgRef.current.files[0];
+    const file = imgFile;
     const formData = new FormData();
 
     if (file) {
@@ -211,7 +210,7 @@ const DrinkpostCreate = () => {
     formData.append("upload", file);
     formData.append("description", drinkDescription.trim());
     formData.append("degree", drinkAlcohol);
-    formData.append("tagId", selectedCategory);
+    formData.append("tagId", selectedCategory.toString());
 
     callApi("post", "api/drink", formData)
       .then((res) => {
@@ -310,7 +309,11 @@ const DrinkpostCreate = () => {
         </InputDiv>
         <h3>카테고리</h3>
         <CateDiv>
-          <DrinkCategory getFunc={getDrinkCategory}></DrinkCategory>
+          <DrinkCategory
+            getFunc={getDrinkCategory}
+            isSearch={false}
+            selectedId={selectedCategory}
+          ></DrinkCategory>
         </CateDiv>
 
         <GuideText>설명</GuideText>
@@ -343,8 +346,10 @@ const DrinkpostCreate = () => {
           <p>%</p>
         </InputDivAlcohol>
         <QuestionDiv style={{ textAlign: "left" }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <ImageInput getFunc={setImgFile} />
+          {/* <div style={{ display: "flex", alignItems: "center" }}>
             <Title style={{ margin: "0" }}>대표 이미지</Title>
+
             <ImgInput>
               <label htmlFor="img_file">
                 <img
@@ -361,7 +366,7 @@ const DrinkpostCreate = () => {
               />
             </ImgInput>
           </div>
-          {imgFile && <ImageArea src={imgFile}></ImageArea>}
+          {imgFile && <ImageArea src={imgFile}></ImageArea>} */}
         </QuestionDiv>
         {/* <div style={{ marginTop: "20px", display: "flex", alignItems: "flex-end" }}>
           <span>
