@@ -130,15 +130,11 @@ public class GoogleApiClient implements OAuthApiClient {
     @Override
     public String authApiUrl(OAuthLoginParams params) {
         log.info("authApiUrl :" + params);
-        // 구글 로컬 테스트를 위해 잠시 빼둠
-        String redirectUri = "http://localhost:5173/google/callback";
+
+
         String responseType = "code";
         String url = authUrl + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType +"&scope=email profile";
         return url;
     }
-
-
-
-
 
 }
