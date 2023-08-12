@@ -27,7 +27,7 @@ const LoadingText = styled.div`
 `;
 
 const SubText = styled.div<{ size: number }>`
-  font-family: "NanumSquareNeo";
+  font-family: "NanumSquareNeoBold";
   font-size: ${(props) => props.size}px;
   font-style: italic;
   margin: 0.5rem auto;

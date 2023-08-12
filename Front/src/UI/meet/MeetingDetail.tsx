@@ -72,6 +72,7 @@ const HostInfo = styled.div`
   justify-content: center;
   font-family: "NanumSquareNeo";
   font-size: 16px;
+  margin: 0.5rem 0;
 `;
 
 const UserProfileImg = styled.div<{ src: string }>`
