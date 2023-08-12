@@ -5,6 +5,7 @@ import com.ssafy.backend.dto.drink.DrinkResponseDto;
 import com.ssafy.backend.dto.drink.DrinkUpdateRequestDto;
 import com.ssafy.backend.service.DrinkService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -59,8 +60,8 @@ public class DrinkController {
 
     // 술 추가
     @PostMapping()
-    public ResponseEntity<DrinkResponseDto> save(
-            @RequestBody DrinkRequestDto drinkRequestDto,
+    public ResponseEntity<Drink> save(
+            @ModelAttribute DrinkRequestDto drinkRequestDto,
             @RequestPart(value = "upload", required = false) MultipartFile multipartFile) throws IOException {
         return ResponseEntity.ok(drinkService.save(drinkRequestDto, multipartFile));
     }
