@@ -24,7 +24,7 @@ function SlideComponent() {
 
   return (
     <>
-      <Slider {...settings} style={{ height: "24vh" }}>
+      <Slider {...settings} style={{ height: "15vh" }}>
         {bannerList.map((banner) => {
           return (
             <div>

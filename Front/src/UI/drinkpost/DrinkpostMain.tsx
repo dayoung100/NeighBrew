@@ -139,10 +139,7 @@ const drinkpostMain = () => {
         </MdsDiv> */}
         <SlideComponent></SlideComponent>
 
-        <div
-          style={{ margin: "30px 10px 30px 10px" }}
-          onClick={clickTotalDrink}
-        >
+        <div style={{ margin: "4rem 10px" }} onClick={clickTotalDrink}>
           <Total>
             <TotalDiv>
               <TotalSubTitle>다양한 술을 한 눈에!</TotalSubTitle>
