@@ -54,9 +54,10 @@ const ImageArea = styled.div<{ src: string }>`
   background-size: cover;
   border-radius: 15px;
   position: relative;
-  width: 30%;
-  padding-bottom: 30%;
+  width: 70%;
+  padding-bottom: 70%;
   overflow: hidden;
+  margin-top: 1rem;
 `;
 
 type ImageInputProps = {
