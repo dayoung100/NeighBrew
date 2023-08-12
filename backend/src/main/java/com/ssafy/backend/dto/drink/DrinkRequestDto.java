@@ -1,11 +1,10 @@
 package com.ssafy.backend.dto.drink;
 
 import com.ssafy.backend.entity.Drink;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class DrinkRequestDto {
     private String name;
