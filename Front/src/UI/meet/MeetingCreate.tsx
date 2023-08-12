@@ -23,6 +23,7 @@ import {
   initialSido,
   initialGugun,
   WhiteModal,
+  encodeUrl,
 } from "../common";
 import Modal from "react-modal";
 
@@ -567,7 +568,7 @@ const MeetingCreate = () => {
                   imgSrc={
                     selectedDrink.image === "no image"
                       ? "/src/assets/whiskeyImage.png"
-                      : selectedDrink.image
+                      : encodeUrl(selectedDrink.image)
                   }
                   tag={getTagName(selectedDrink.tagId)}
                   content={selectedDrink.description}

@@ -102,3 +102,8 @@ export const ModalInner = styled.div`
   white-space: pre-line;
   overflow: auto;
 `;
+
+//이미지 경로에 공백 있을 시 제거
+export const encodeUrl = (url: string) => {
+  return url.replace(/\s/g, "%20");
+};
