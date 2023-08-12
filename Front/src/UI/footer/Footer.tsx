@@ -38,8 +38,9 @@ const Footer = () => {
       className="footer"
       style={{
         borderTop: "1px solid var(--c-borderline)",
-        position: "sticky",
+        position: "fixed",
         bottom: 0,
+        width: "100%",
       }}
     >
       <Button
