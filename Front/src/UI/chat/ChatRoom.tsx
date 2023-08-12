@@ -73,11 +73,12 @@ const ChatOtherMsg = styled.div`
 const ChatTime = styled.div`
   margin-left: 2px;
   margin-bottom: 0.4rem;
+  font-size: 0.8rem;
 `;
 
 const ChatUserName = styled.div`
   font-family: "JejuGothic";
-  font-size: 0.2rem;
+  font-size: 0.8rem;
   margin-bottom: 0.4rem;
   margin-top: 1.2rem;
 `;
@@ -225,6 +226,7 @@ const ChatRoom = () => {
     e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>
   ) => {
     if (e.type == "click") {
+      if (message.trim() === "") return;
       client.current.send(
         `/sub/chat/${id}/sendMessage`,
         {},
@@ -234,7 +236,7 @@ const ChatRoom = () => {
       scroll();
     } else {
       if (e.code === "Enter" || e.keyCode === 13) {
-        if (message === "") return;
+        if (message.trim() === "") return;
         // 백엔드에 메시지 전송
         client.current.send(
           `/sub/chat/${id}/sendMessage`,
@@ -254,6 +256,7 @@ const ChatRoom = () => {
   useEffect(() => {
     callApi("GET", `api/chatMessage/${id}/messages`)
       .then(res => {
+        // console.log(res.data);
         setChatRoomName(res.data[0].chatRoom.chatRoomName);
         setChatRoomId(res.data[0].chatRoom.chatRoomId);
         setMessages(res.data);
@@ -381,7 +384,7 @@ const ChatRoom = () => {
       </RightModal>
       <div
         style={{
-            backgroundColor: ismodal ? "#757575" : "var(--c-lightgray)",
+          backgroundColor: ismodal ? "#757575" : "var(--c-lightgray)",
           width: "100%",
           minHeight: "90vh",
           overflow: "auto",

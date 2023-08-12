@@ -181,15 +181,20 @@ const MyPage = () => {
         .catch(err => console.log(err));
     }
     if (userData.nickname != nickname && nickname.length > 10) {
-      alert("닉네임이 길어 변경할 수 없습니다.");
+      alert("닉네임은 10자 까지만 가능합니다.");
       setNickname(userData.nickname);
       return;
     }
-    // if (userData.nickname != nickname && nickname.length > 10) {
-    //   alert("닉네임이 길어 변경할 수 없습니다.");
-    //   setNickname(userData.nickname);
-    //   return;
-    // }
+    if (userData.intro != intro && intro.length > 50) {
+      alert("한줄소개는 50자 까지만 가능합니다");
+      setNickname(userData.intro);
+      return;
+    }
+    if (parseInt(birth.split("-")[0]) >= 2005) {
+      alert("만 18세 이상만 가입 가능합니다.");
+      setBirth(userData.birth);
+      return;
+    }
     if (intro == "" || nickname == "" || birth == "") {
       alert("빈 값이 존재합니다.");
       return;

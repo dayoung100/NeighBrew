@@ -53,9 +53,9 @@ const Follower = () => {
           {/* 이 div는 중앙 정렬을 위한 임의의 div임 */}
         </ChatNav>
       </header>
-      <div style={{ width: "90%", margin: "0 auto" }}>
+      {/* <div style={{ width: "90%", margin: "0 auto" }}>
         <SearchBox placeholder="유저 닉네임 검색" />
-      </div>
+      </div> */}
       <div ref={parent}>
         {users.map((user, idx) => {
           return (
@@ -109,14 +109,18 @@ const User = styled.div`
   display: flex;
 `;
 const ImgDiv = styled.div`
-  width: 15%;
-  height: 100%;
+  /* width: 15%;
+  height: 100%; */
   overflow: hidden;
   /* inline-size: 25ch; */
   aspect-ratio: 1/1;
   border-radius: 50%;
   float: left;
   margin-right: 2rem;
+  min-width: 50px;
+  min-height: 50px;
+  max-width: 50px;
+  max-height: 50px;
 `;
 
 const Img = styled.img`
