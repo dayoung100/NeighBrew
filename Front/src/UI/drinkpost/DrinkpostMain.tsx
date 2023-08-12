@@ -41,12 +41,29 @@ const Total = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  border-radius: 32px;
+  border-radius: 20px;
   color: white;
   display: flex;
   justify-content: end;
   align-items: end;
+`;
+
+const TotalDiv = styled.div`
+  margin-bottom: 3%;
+  margin-right: 5%;
+`;
+
+const TotalTitle = styled.div`
   font-size: 30px;
+  font-family: "JejuGothic";
+`;
+
+const TotalSubTitle = styled.div`
+  font-size: 16px;
+  font-family: "NanumSquareNeo";
+  margin-bottom: 0.5rem;
+  text-align: left;
+  padding-left: 0.3rem;
 `;
 
 // 한줄에 두개씩 보여주기
@@ -82,11 +99,11 @@ const drinkpostMain = () => {
   const [threePick, setThreePick] = useState<Drink[]>([]);
 
   useEffect(() => {
-    callApi("get", "api/drinkreview/likes").then(res => {
+    callApi("get", "api/drinkreview/likes").then((res) => {
       console.log(res.data);
       setReviewList(res.data);
     });
-    callApi("get", "api/drink/mdPick").then(res => {
+    callApi("get", "api/drink/mdPick").then((res) => {
       setThreePick([...res.data]);
     });
   }, []);
@@ -120,9 +137,15 @@ const drinkpostMain = () => {
         </MdsDiv> */}
         <SlideComponent></SlideComponent>
 
-        <div style={{ margin: "30px 10px 30px 10px" }} onClick={clickTotalDrink}>
+        <div
+          style={{ margin: "30px 10px 30px 10px" }}
+          onClick={clickTotalDrink}
+        >
           <Total>
-            <p style={{ marginBottom: "3%", marginRight: "5%" }}>모든 술 보기 {toForward}</p>
+            <TotalDiv>
+              <TotalSubTitle>다양한 술을 한 눈에!</TotalSubTitle>
+              <TotalTitle>모든 술 보기 {toForward}</TotalTitle>
+            </TotalDiv>
           </Total>
         </div>
         <div style={{ margin: "0px 5vw 0px 5vw" }}>
@@ -130,8 +153,13 @@ const drinkpostMain = () => {
             <h3>후기 모아보기</h3>
           </div>
           <ReviewList>
-            {reviewList.map(review => {
-              return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
+            {reviewList.map((review) => {
+              return (
+                <ReviewItem
+                  key={review.drinkReviewId}
+                  review={review}
+                ></ReviewItem>
+              );
             })}
           </ReviewList>
         </div>
