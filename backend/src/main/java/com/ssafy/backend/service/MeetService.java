@@ -135,8 +135,11 @@ public class MeetService {
         log.info("모임 생성 : {} ", meetDto);
 
         if (multipartFile != null) {
+            //Optinal로 get한 MultipartFile이 있을 떄
             if (!multipartFile.isEmpty()) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-        } else meetDto.setImgSrc("no image");
+            //Optinal로 get한 MultipartFile이 없을 때
+            else meetDto.setImgSrc("no image");
+        } else meetDto.setImgSrc("no image"); //image 자체를 Formdata에 추가하지 않았을 때
 
         ChatRoom createChatRoom = chatRoomService.save(ChatRoom.builder()
                 .chatRoomName(meetDto.getMeetName() + "모임의 채팅방")
@@ -197,7 +200,6 @@ public class MeetService {
 
         if (multipartFile != null) {
             boolean imgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
-
             if (imgExist) { //업로드할 파일이 있으면 DB와 S3에 존재하는 이미지를 제거한다/
                 s3Service.deleteImg(prevMeetImgSrc);
                 meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
