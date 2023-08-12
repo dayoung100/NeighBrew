@@ -1,4 +1,4 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.drink;
 
 import com.ssafy.backend.entity.Drink;
 import lombok.Builder;
