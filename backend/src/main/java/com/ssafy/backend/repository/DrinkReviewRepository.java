@@ -19,7 +19,7 @@ public interface DrinkReviewRepository extends JpaRepository<DrinkReview, Long> 
 
     List<DrinkReview> findDistinctDrinkByUser_UserId(Long userId);
 
-    List<DrinkReview> findAllByOrderByLikeCountDesc(Pageable pageable);
+    Page<DrinkReview> findAllByOrderByLikeCountDesc(Pageable pageable);
 
     Optional<DrinkReview> findByDrinkReviewId(Long drinkReviewId);
 }
