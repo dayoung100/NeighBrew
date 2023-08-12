@@ -14,6 +14,7 @@ function SlideComponent() {
     slidesToShow: 1,
     slidesToScroll: 1,
     adaptiveHeight: false,
+    arrows: false,
   };
   const [bannerList, setBannerList] = useState<DrinkFestival[]>([]);
   useEffect(() => {
@@ -25,7 +26,7 @@ function SlideComponent() {
 
   return (
     <>
-      <Slider {...settings} style={{ height: "16vh", width: "84%" }}>
+      <Slider {...settings} style={{ height: "auto", width: "100%" }}>
         {bannerList.map(banner => {
           return (
             <div>
