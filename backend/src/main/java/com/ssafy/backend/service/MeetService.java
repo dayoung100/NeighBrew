@@ -7,13 +7,13 @@ import com.ssafy.backend.Enum.UploadType;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetSearchDto;
 import com.ssafy.backend.dto.MeetUserDto;
+import com.ssafy.backend.dto.follow.FollowResponseDto;
 import com.ssafy.backend.entity.*;
 import com.ssafy.backend.repository.DrinkRepository;
 import com.ssafy.backend.repository.MeetRepository;
 import com.ssafy.backend.repository.MeetUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.sql.OracleJoinFragment;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -171,9 +171,9 @@ public class MeetService {
                 .build());
 
         //팔로워에게 메세지를 보낸다
-        List<Follow> followers = followService.findByFollower(userId);
+        List<FollowResponseDto> followers = followService.findByFollower(userId);
         log.info("방장");
-        for (Follow fw : followers) {
+        for (FollowResponseDto fw : followers) {
             StringBuilder pushMessage = new StringBuilder();
             pushMessage.append(hostUser.getName()).append("님께서 회원님께서 모임(").append(createdMeet.getMeetName()).append(")을 생성했습니다.");
             pushService.send(hostUser, fw.getFollower(), PushType.MEETCREATED, pushMessage.toString(), "이동할 url");

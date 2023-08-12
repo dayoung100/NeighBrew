@@ -7,7 +7,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
