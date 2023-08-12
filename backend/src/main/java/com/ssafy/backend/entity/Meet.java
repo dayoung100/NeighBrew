@@ -1,5 +1,6 @@
 package com.ssafy.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.backend.Enum.MeetStatus;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetSearchDto;
@@ -78,6 +79,7 @@ public class Meet {
     private ChatRoom chatRoom;
 
     @Enumerated(EnumType.STRING)
+    @JsonIgnore
     private MeetStatus meetStatus;
 
     @Builder
