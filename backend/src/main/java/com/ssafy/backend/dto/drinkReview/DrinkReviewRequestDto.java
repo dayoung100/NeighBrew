@@ -1,17 +1,13 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.drinkReview;
 
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.entity.User;
 import lombok.*;
 
-@Setter
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-public class DrinkReviewDto {
+@Setter
+public class DrinkReviewRequestDto {
     private Long userId;
     private Long drinkId;
     private String content;
