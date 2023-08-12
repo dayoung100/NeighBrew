@@ -1,6 +1,7 @@
 package com.ssafy.backend.service;
 
 import com.ssafy.backend.Enum.PushType;
+import com.ssafy.backend.dto.follow.FollowResponseDto;
 import com.ssafy.backend.entity.Follow;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.FollowRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,50 +24,63 @@ public class FollowService {
     private final PushService pushService;
     private final PushRepository pushRepository;
 
-    public List<Follow> getFollowers(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 userId입니다:" + userId));
+    public List<FollowResponseDto> getFollowers(Long userId) {
+        if (!userRepository.existsById(userId)) throw new AssertionError("잘못된 userId입니다:" + userId);
 
-        return followRepository.findFollowsByFollowing_UserId(userId);
+        return followRepository.findByFollowing_UserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."))
+                .stream()
+                .map(FollowResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
-    public List<Follow> findByFollower(Long userId) {
-        return followRepository.findByFollowing_UserId(userId).orElseThrow(() -> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."));
+    public List<FollowResponseDto> findByFollower(Long userId) {
+        return followRepository.findByFollower_UserId(userId).orElseThrow(() -> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."))
+                .stream()
+                .map(FollowResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     // 팔로우 토글
     @Transactional
-    public String followToggle(Long userId, Long followingId) {
-        User follower = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("잘못된 userId입니다: " + userId));
-        User following = userRepository.findById(followingId).orElseThrow(() -> new IllegalArgumentException("잘못된 followingId입니다: " + followingId));
+    public String toggleFollow(Long userId, Long followingId) {
+        User follower = getUserById(userId, "잘못된 userId입니다: ");
+        User following = getUserById(followingId, "잘못된 followingId입니다: ");
 
-        return followRepository.findByFollowerUserIdAndFollowingUserId(userId, followingId).map(existingFollow -> {
-            //팔로우 정보 삭제
-            followRepository.delete(existingFollow);
-            //알림 정보 제거
-            pushRepository.deleteByPushTypeAndSender_UserIdAndReceiver_UserId(PushType.FOLLOW, userId, followingId);
-            return following.getNickname() + "님을 팔로우 취소하였습니다.";
-        }).orElseGet(() -> {
-            Follow follow = Follow.builder()
-                    .follower(follower)
-                    .following(following)
-                    .build();
-            followRepository.save(follow);
-
-            log.info("{}", follow);
-
-            // push 이벤트 발생
-            pushService.send(follower, following, PushType.FOLLOW, follower.getNickname() + "님이 회원님을 팔로우하기 시작했습니다.", "http://localhost/mypage/" + follower.getUserId());
-            // 팔로우가 성공한 경우
-            return following.getNickname() + "님을 팔로우하였습니다.";
-        });
+        return followRepository.findByFollowerUserIdAndFollowingUserId(userId, followingId)
+                .map(follow -> {
+                    unfollow(follow, userId, followingId);
+                    return following.getNickname() + "님을 팔로우 취소하였습니다.";
+                }).orElseGet(() -> {
+                    followUser(follower, following);
+                    return following.getNickname() + "님을 팔로우하였습니다.";
+                });
     }
 
-    public List<Follow> getFollowing(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 userId입니다:" + userId));
+    private User getUserById(Long userId, String errorMessage) {
+        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException(errorMessage + userId));
+    }
 
-        return followRepository.findByFollower_UserId(userId).orElseThrow(() -> new IllegalArgumentException("팔로잉 정보를 찾을 수 없습니다."));
+    private void unfollow(Follow existingFollow, Long userId, Long followingId) {
+        followRepository.delete(existingFollow);
+        pushRepository.deleteByPushTypeAndSender_UserIdAndReceiver_UserId(PushType.FOLLOW, userId, followingId);
+    }
 
+    private void followUser(User follower, User following) {
+        Follow follow = Follow.builder().follower(follower).following(following).build();
+        followRepository.save(follow);
+        pushService.send(follower, following, PushType.FOLLOW, follower.getNickname() + "님이 회원님을 팔로우하기 시작했습니다.", "http://localhost/mypage/" + follower.getUserId());
+    }
+
+    public List<FollowResponseDto> getFollowing(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("잘못된 userId입니다:" + userId);
+        }
+
+        return followRepository.findByFollower_UserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("팔로잉 정보를 찾을 수 없습니다."))
+                .stream()
+                .map(FollowResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 }
