@@ -35,8 +35,8 @@ public class NaverApiClient implements OAuthApiClient {
 
     @Value("${oauth.naver.secret}")
     private String clientSecret;
-    @Value("${oauth.naver.url.redirect}")
-    private String redirectUri;
+//    @Value("${oauth.naver.url.redirect}")
+//    private String redirectUri;
 
     @Qualifier("restTemplate")
     private final RestTemplate restTemplate;
@@ -88,6 +88,7 @@ public class NaverApiClient implements OAuthApiClient {
     @Override
     public String authApiUrl(OAuthLoginParams params) {
         String responseType = "code";
+        String redirectUri = "http://localhost:5173/naver/callback";
         return authUrl + "/oauth2.0/authorize" + "?response_type=" + responseType + "&client_id=" + clientId + "&state=" + clientSecret + "&redirect_uri=" + redirectUri;
     }
 }
