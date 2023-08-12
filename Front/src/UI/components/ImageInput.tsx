@@ -27,6 +27,18 @@ const ImgInput = styled.div`
   }
 `;
 
+const ImageInputBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 10px;
+  background-color: var(--c-yellow);
+  padding: 0.5rem;
+  margin-left: 0.5rem;
+`;
+
 const ReselectBtn = styled.div`
   background: var(--c-lightgray);
   border-radius: 10px;
@@ -87,10 +99,9 @@ const ImageInput = (props: ImageInputProps) => {
         <Title style={{ margin: "0" }}>대표 이미지</Title>
         <ImgInput>
           <label htmlFor="img_file">
-            <img
-              src="/src/assets/imageButton.svg"
-              style={{ margin: "0 0.5rem" }}
-            />
+            <ImageInputBtn>
+              <img src="/src/assets/imagePlusIcon.svg" width="90%" />
+            </ImageInputBtn>
           </label>
           <input
             type="file"
