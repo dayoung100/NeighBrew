@@ -46,20 +46,34 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
 
   //선택할 수 없으면 회색으로
   const bgColorSelector = () => {
-    if (chooseCategoryDiv === 0) return "#f2bc79";
+    if (chooseCategoryDiv === 0) return "var(--c-yellow)";
     else if (props.isSearch ?? true) {
-      return "#F0E5DC";
-    } else return "#ECECEC";
+      return "var(--c-lightgray)";
+    } else return "var(--c-gray)";
   };
 
   const totalDrink = TotalDrink(bgColorSelector());
-  const whiskey = Whiskey(chooseCategoryDiv === 1 ? "#F2BC79" : "#F0E5DC");
-  const tradition = Tradition(chooseCategoryDiv === 2 ? "#F2BC79" : "#F0E5DC");
-  const cocktail = Cocktail(chooseCategoryDiv === 3 ? "#F2BC79" : "#F0E5DC");
-  const sake = Sake(chooseCategoryDiv === 4 ? "#F2BC79" : "#f0e5dc");
-  const wine = Wine(chooseCategoryDiv === 5 ? "#F2BC79" : "#F0E5DC");
-  const craftBeer = CraftBeer(chooseCategoryDiv === 6 ? "#F2BC79" : "#F0E5DC");
-  const sojuAndBeer = SojuBeer(chooseCategoryDiv === 7 ? "#F2BC79" : "#F0E5DC");
+  const whiskey = Whiskey(
+    chooseCategoryDiv === 1 ? "var(--c-yellow)" : "var(--c-lightgray)"
+  );
+  const tradition = Tradition(
+    chooseCategoryDiv === 2 ? "var(--c-yellow)" : "var(--c-lightgray)"
+  );
+  const cocktail = Cocktail(
+    chooseCategoryDiv === 3 ? "var(--c-yellow)" : "var(--c-lightgray)"
+  );
+  const sake = Sake(
+    chooseCategoryDiv === 4 ? "var(--c-yellow)" : "var(--c-lightgray)"
+  );
+  const wine = Wine(
+    chooseCategoryDiv === 5 ? "var(--c-yellow)" : "var(--c-lightgray)"
+  );
+  const craftBeer = CraftBeer(
+    chooseCategoryDiv === 6 ? "var(--c-yellow)" : "var(--c-lightgray)"
+  );
+  const sojuAndBeer = SojuBeer(
+    chooseCategoryDiv === 7 ? "var(--c-yellow)" : "var(--c-lightgray)"
+  );
 
   return (
     <div className="drinkCategories">

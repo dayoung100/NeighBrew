@@ -104,7 +104,7 @@ const InfoNumber = styled.div`
 type ListInfoItemProps = {
   title: string; //제목
   imgSrc: string; //이미지 경로
-  tag: string; //주종 태그
+  tag?: string; //주종 태그
   content: any; //내용, 컴포넌트를 넣어도 됨
   numberInfo?: any; //인원정보, 컴포넌트를 넣어도 됨
   isWaiting?: boolean; //신청대기중인 모임인지(아니라면 false)
@@ -118,7 +118,7 @@ type ListInfoItemProps = {
  * 간격을 위해 상단 margin이 1rem 주어져있음(ItemDiv 참고)
  * @property {string} title 제목
  * @property {string} imgSrc 이미지 경로
- * @property {string} tag 주종 태그
+ * @property {string} tag [Optional] 주종 태그
  * @property {any} content 내용. 컴포넌트를 넣어도 됨
  * @property {any} numberInfo 인원정보 또는 후기 수. 컴포넌트를 넣어도 됨
  * @property {boolean} isWaiting optional. 신청대기중인 모임인지(아니라면 false)
@@ -139,9 +139,11 @@ const ListInfoItem = (props: ListInfoItemProps) => {
           <InfoTitle>{props.title}</InfoTitle>
           <InfoContent>{props.content}</InfoContent>
         </InfoArea>
-        <InfoTag>
-          <span>{props.tag}</span>
-        </InfoTag>
+        {props.tag && (
+          <InfoTag>
+            <span>{props.tag}</span>
+          </InfoTag>
+        )}
         {props.numberInfo && <InfoNumber>{props.numberInfo}</InfoNumber>}
         {props.isWaiting ? (
           <WaitingTag>

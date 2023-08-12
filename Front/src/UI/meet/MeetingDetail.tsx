@@ -22,8 +22,15 @@ const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
     url(${(props) => props.$bgImgSrc}) no-repeat center;
   background-size: cover;
   width: 100%;
-  height: 33vh;
+  min-height: 30vh;
   color: white;
+`;
+
+const DetailHeader = styled.div`
+  display: flex;
+  align-items: center;
+  text-align: left;
+  padding: 1rem;
 `;
 
 const Tag = styled.div`
@@ -31,10 +38,10 @@ const Tag = styled.div`
   justify-content: space-between;
   align-items: center;
   background: var(--c-yellow);
-  padding: 1.5% 2%;
-  font-family: "NanumSquareNeo";
+  padding: 0.5rem 1rem;
+  font-family: "NanumSquareNeoBold";
   font-size: 12px;
-  border-radius: 10px;
+  border-radius: 20px;
   color: var(--c-black);
   &::before {
     content: "";
@@ -50,6 +57,21 @@ const Tag = styled.div`
     justify-content: center;
     min-width: 30px;
   }
+`;
+
+const Title = styled.div`
+  font-family: "JejuGothic";
+  font-size: 28px;
+  margin: 0 auto 0.5rem auto;
+  width: 20rem;
+`;
+
+const HostInfo = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "NanumSquareNeo";
+  font-size: 16px;
 `;
 
 const UserProfileImg = styled.div<{ src: string }>`
@@ -90,11 +112,22 @@ const MeetPosDateDiv = styled.div`
   font-size: 16px;
 `;
 
-const MeetTitle = styled.div`
+const SubTitle = styled.div`
   font-family: "JejuGothic";
   font-size: 20px;
   text-align: left;
   margin-top: 1.5rem;
+`;
+
+const Description = styled.div`
+  color: var(--c-black);
+  font-family: "NanumSquareNeo";
+  font-size: 16px;
+  text-align: justify;
+  line-height: 1.6rem;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+  white-space: pre-line;
 `;
 
 const MeetingDetail = () => {
@@ -243,13 +276,7 @@ const MeetingDetail = () => {
   return (
     <div style={{ color: "var(--c-black)" }}>
       <MeetThumbnail $bgImgSrc={bgImg}>
-        <div
-          style={{
-            display: "flex",
-            textAlign: "left",
-            padding: "1rem",
-          }}
-        >
+        <DetailHeader>
           <div
             style={{ cursor: "pointer", marginRight: "1rem" }}
             onClick={GoBackHandler}
@@ -257,27 +284,10 @@ const MeetingDetail = () => {
             {ArrowLeftIcon}
           </div>
           <Tag>{getTagName(meetDetailData.meet.tagId)}</Tag>
-        </div>
+        </DetailHeader>
         <div style={{ textAlign: "center", padding: "2rem 0 7rem 0" }}>
-          <div
-            style={{
-              fontFamily: "JejuGothic",
-              fontSize: "28px",
-              margin: "0 auto 0.5rem auto",
-              width: "20rem",
-            }}
-          >
-            {meetDetailData.meet.meetName}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "NanumSquareNeo",
-              fontSize: "16px",
-            }}
-          >
+          <Title>{meetDetailData.meet.meetName}</Title>
+          <HostInfo>
             <div>주최자: </div>
             {memberList[0] && (
               <div style={{ display: "flex", alignItems: "center" }}>
@@ -291,7 +301,7 @@ const MeetingDetail = () => {
                 <div>{memberList[0].nickname}</div>
               </div>
             )}
-          </div>
+          </HostInfo>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <PeopleNumInfo
               now={meetDetailData.meet.nowParticipants}
@@ -350,7 +360,7 @@ const MeetingDetail = () => {
             </div>
           )}
         </div>
-        <MeetTitle>우리가 마실 것은</MeetTitle>
+        <SubTitle>우리가 마실 것은</SubTitle>
         <ListInfoItem
           title={meetDetailData.meet.drink.name}
           imgSrc={
@@ -366,23 +376,10 @@ const MeetingDetail = () => {
             GotoDrinkPostHandler(meetDetailData.meet.drink.drinkId)
           }
         />
-        <MeetTitle>모임 소개</MeetTitle>
-        <div
-          style={{
-            color: "var(--c-black)",
-            fontFamily: "NanumSquareNeo",
-            fontSize: "16px",
-            textAlign: "justify",
-            lineHeight: "1.6rem",
-            marginTop: "0.5rem",
-            marginBottom: "2rem",
-            whiteSpace: "pre-line",
-          }}
-        >
-          {meetDetailData.meet.description}
-        </div>
+        <SubTitle>모임 소개</SubTitle>
+        <Description>{meetDetailData.meet.description}</Description>
         <div style={{ display: "flex" }}>
-          <MeetTitle>참여 인원</MeetTitle>
+          <SubTitle>참여 인원</SubTitle>
           <div
             style={{
               marginTop: "1.6rem",
