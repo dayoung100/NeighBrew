@@ -41,7 +41,7 @@ const Total = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  border-radius: 20px;
+  border-radius: 10px;
   color: white;
   display: flex;
   justify-content: end;
@@ -49,7 +49,7 @@ const Total = styled.div`
 `;
 
 const TotalDiv = styled.div`
-  margin-bottom: 3%;
+  margin-bottom: 5%;
   margin-right: 5%;
 `;
 
