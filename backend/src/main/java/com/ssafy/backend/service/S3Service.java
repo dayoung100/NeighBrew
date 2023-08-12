@@ -85,7 +85,7 @@ public class S3Service {
             }
 
         } catch (Exception e) {
-            log.debug("Delete File failed", e);
+            log.info("Delete File failed", e);
         }
     }
 

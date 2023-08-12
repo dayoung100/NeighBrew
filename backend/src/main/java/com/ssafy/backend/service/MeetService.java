@@ -186,6 +186,7 @@ public class MeetService {
         log.info("meetId : {}인 모임 정보 업데이트 : {} ", meetId, meetDto);
         //기존 Meet를 가져온다
         String prevMeetImgSrc = meetRepository.findImgSrcByMeetId(meetId);
+        log.info("기본 모임 사진 {}", prevMeetImgSrc);
         User host = userService.findByUserId(userId);
 
 
@@ -205,7 +206,8 @@ public class MeetService {
         updateMeet.setTag(tagService.findById(meetDto.getTagId()));
         updateMeet.setDrink(drinkRepository.findById(drinkId).orElse(null));
 
-        meetRepository.save(updateMeet);
+        Meet result = meetRepository.save(updateMeet);
+        log.info("수정된 Meet 정보 : {}", result.getImgSrc());
 
         //모임이 수정되면 모임에 참여한 사람들에게 Push 알림을 보낸다.
         //MeetUserDto meetUser = findMeetUserByMeetId(meetId);
