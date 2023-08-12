@@ -9,6 +9,7 @@ import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import TextareaAutosize from "react-textarea-autosize";
+import NavbarSimple from "../navbar/NavbarSimple";
 
 // 여기부터 지정한 부분까지 style 부분입니다.
 // GuideText는 h3 tag가 상하 margin을 너무 많이 잡아서 새로 만든 겁니다.
@@ -127,7 +128,7 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 15px;
   position: relative;
@@ -174,7 +175,9 @@ const DrinkpostCreate = () => {
   const drinkAlcoholHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDrinkAlcohol(e.target.value);
   };
-  const drinkDescriptionHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const drinkDescriptionHandler = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setDrinkDescription(e.target.value);
   };
 
@@ -198,10 +201,9 @@ const DrinkpostCreate = () => {
     const formData = new FormData();
 
     if (file) {
-        if (file.size > 1024 * 1024 * 10) {
-          alert("10MB보다 작은 이미지만 올릴 수 있습니다.");
-          return;
-        
+      if (file.size > 1024 * 1024 * 10) {
+        alert("10MB보다 작은 이미지만 올릴 수 있습니다.");
+        return;
       }
     }
     formData.append("name", drinkName.trim());
@@ -211,11 +213,11 @@ const DrinkpostCreate = () => {
     formData.append("tagId", selectedCategory);
 
     callApi("post", "api/drink", formData)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         navigate(`/drinkpost/${res.data.drinkId}`);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
     // axios
     //   .post("/api/drink", formData, {
     //     headers: {
@@ -285,7 +287,7 @@ const DrinkpostCreate = () => {
 
   return (
     <div>
-      <h3>술 문서 등록하기</h3>
+      <NavbarSimple title="술 문서 등록하기" />
       <div style={{ textAlign: "start", margin: "0px 15px 80px 15px" }}>
         <GuideText>이름</GuideText>
         <InputDiv>
@@ -298,7 +300,8 @@ const DrinkpostCreate = () => {
           {/* 등록 버튼을 누르기전에는 숨겨져있음 */}
           <ErrorMessage
             style={{
-              display: drinkName.trim().length === 0 && inputCheck ? "block" : "none",
+              display:
+                drinkName.trim().length === 0 && inputCheck ? "block" : "none",
             }}
           >
             이름을 입력해주세요.
@@ -320,7 +323,10 @@ const DrinkpostCreate = () => {
           ></TextAreaDiv>
           <ErrorMessage
             style={{
-              display: drinkDescription.trim().length === 0 && inputCheck ? "block" : "none",
+              display:
+                drinkDescription.trim().length === 0 && inputCheck
+                  ? "block"
+                  : "none",
             }}
           >
             설명을 입력해주세요.
@@ -340,7 +346,10 @@ const DrinkpostCreate = () => {
             <Title style={{ margin: "0" }}>대표 이미지</Title>
             <ImgInput>
               <label htmlFor="img_file">
-                <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
+                <img
+                  src="/src/assets/imageButton.svg"
+                  style={{ margin: "0 0.5rem" }}
+                />
               </label>
               <input
                 type="file"
