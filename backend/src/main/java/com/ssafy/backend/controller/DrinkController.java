@@ -60,8 +60,9 @@ public class DrinkController {
 
     // 술 추가
     @PostMapping()
-    public ResponseEntity<Drink> save(DrinkRequestDto drinkRequestDto,
-                                      @RequestPart(value = "upload", required = false) MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<Drink> save(
+            @RequestBody DrinkRequestDto drinkRequestDto,
+            @RequestPart(value = "upload", required = false) MultipartFile multipartFile) throws IOException {
         return ResponseEntity.ok(drinkService.save(drinkRequestDto, multipartFile));
     }
 
