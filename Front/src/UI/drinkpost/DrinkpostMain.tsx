@@ -103,7 +103,7 @@ const drinkpostMain = () => {
   useEffect(() => {
     callApi("get", "api/drinkreview/likes").then((res) => {
       console.log(res.data);
-      setReviewList(res.data);
+      setReviewList(res.data.content);
     });
     callApi("get", "api/drink/mdPick").then((res) => {
       setThreePick([...res.data]);
@@ -155,14 +155,15 @@ const drinkpostMain = () => {
             <h3>후기 모아보기</h3>
           </div>
           <ReviewList>
-            {reviewList.map((review) => {
-              return (
-                <ReviewItem
-                  key={review.drinkReviewId}
-                  review={review}
-                ></ReviewItem>
-              );
-            })}
+            {Array.isArray(reviewList) &&
+              reviewList.map((review) => {
+                return (
+                  <ReviewItem
+                    key={review.drinkReviewId}
+                    review={review}
+                  ></ReviewItem>
+                );
+              })}
           </ReviewList>
         </div>
         <Footer></Footer>

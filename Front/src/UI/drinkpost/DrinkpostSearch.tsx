@@ -6,6 +6,7 @@ import backIcon from "../../assets/backIcon.svg";
 import { callApi } from "../../utils/api";
 import SearchBox from "./../components/SearchBox";
 import DrinkCard from "./DrinkCard";
+import DrinkCategory from "../drinkCategory/DrinkCategory";
 
 const Body = styled.div`
   background-color: white;
@@ -17,7 +18,22 @@ const SearchDiv = styled.div`
   justify-content: flex-end;
   background: var(--c-lightgray);
   border-radius: 20px;
-  padding: 0.5rem 1rem;
+`;
+
+const CateDiv = styled.div`
+  height: 10rem;
+  margin-top: 1rem;
+  background: white;
+  border-bottom: 1px solid var(--c-borderline);
+  div {
+    margin: 0;
+  }
+  .first,
+  .second {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 0.5rem;
+  }
 `;
 
 const ShowcaseBody = styled.div`
@@ -29,6 +45,12 @@ const ShowcaseBody = styled.div`
 const DrinkpostSearch = () => {
   const navigate = useNavigate();
   const [searchResult, setSearchResult] = useState<Drink[]>([]);
+  //주종 카테고리 선택
+  const [selectedCategory, setSelectedCategory] = useState(0);
+  const getDrinkCategory = (tagId: number) => {
+    setSelectedCategory(tagId);
+  };
+
   const search = (drink: string) => {
     callApi("GET", `api/drink/search?name=${drink}`).then((res) => {
       setSearchResult(res.data.content);
@@ -57,6 +79,9 @@ const DrinkpostSearch = () => {
           </SearchDiv>
         </div>
       </div>
+      <CateDiv>
+        <DrinkCategory getFunc={getDrinkCategory} />
+      </CateDiv>
       <h3
         style={{
           display: "flex",
