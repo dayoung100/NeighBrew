@@ -3,7 +3,6 @@ package com.ssafy.backend.controller;
 import com.ssafy.backend.dto.drink.DrinkRequestDto;
 import com.ssafy.backend.dto.drink.DrinkResponseDto;
 import com.ssafy.backend.dto.drink.DrinkUpdateRequestDto;
-import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.service.DrinkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,7 +44,7 @@ public class DrinkController {
     }
 
     @GetMapping("/{drinkId}")
-    public ResponseEntity<?> getDrinkDetailsById(@PathVariable Long drinkId) {
+    public ResponseEntity<DrinkResponseDto> getDrinkDetailsById(@PathVariable Long drinkId) {
         DrinkResponseDto drinkResponseDto = drinkService.getDrinkDetailsById(drinkId);
         return ResponseEntity.ok(drinkResponseDto);
     }
@@ -60,7 +59,7 @@ public class DrinkController {
 
     // 술 추가
     @PostMapping()
-    public ResponseEntity<Drink> save(
+    public ResponseEntity<DrinkResponseDto> save(
             @RequestBody DrinkRequestDto drinkRequestDto,
             @RequestPart(value = "upload", required = false) MultipartFile multipartFile) throws IOException {
         return ResponseEntity.ok(drinkService.save(drinkRequestDto, multipartFile));
