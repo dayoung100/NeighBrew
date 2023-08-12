@@ -46,7 +46,7 @@ const SendImg = styled.img`
 const OtherChat = styled.div`
   position: relative;
   display: inline-block;
-  background-color: #f0d389;
+  background-color: white;
   border-radius: 12px;
   padding: 10px;
   max-width: 70%;
@@ -63,7 +63,7 @@ const MyChat = styled.div`
   position: relative;
   display: inline-block;
   flex-direction: row;
-  background-color: white;
+  background-color: var(--c-yellow);
   border-radius: 12px;
   padding: 14px;
   max-width: 70%;
@@ -425,7 +425,7 @@ const DirectChat = () => {
       </RightModal>
       <div
         style={{
-          backgroundColor: ismodal ? "#757575" : "var(--c-beige)",
+          backgroundColor: ismodal ? "#757575" : "var(--c-lightgray)",
           width: "100%",
           minHeight: "90vh",
           overflow: "auto",
