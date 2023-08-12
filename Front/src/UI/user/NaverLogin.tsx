@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { callApi } from "../../utils/api";
 import Loading from "../etc/Loading";
 
 const NaverLogin = () => {
@@ -19,17 +18,10 @@ const NaverLogin = () => {
       .then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
+        localStorage.setItem("myId", JSON.stringify(res.data.userId));
       })
-      .then(async () => {
-        await callApi("get", "api/user/guard/myinfo")
-          .then((res) => {
-            localStorage.setItem("myId", JSON.stringify(res.data.userId));
-          })
-          .catch((err) => console.log(err));
-        await navigate("/meet");
-      })
-      .catch((err) => {
-        console.log(err);
+      .then(() => {
+        navigate("/meet");
       });
   };
   useEffect(() => {
