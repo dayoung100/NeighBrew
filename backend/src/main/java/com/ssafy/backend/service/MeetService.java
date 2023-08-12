@@ -12,6 +12,7 @@ import com.ssafy.backend.entity.*;
 import com.ssafy.backend.repository.DrinkRepository;
 import com.ssafy.backend.repository.MeetRepository;
 import com.ssafy.backend.repository.MeetUserRepository;
+import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -42,6 +43,7 @@ public class MeetService {
     private final SidoService sidoService;
     private final GugunService gugunService;
     private final DrinkRepository drinkRepository;
+    private final UserRepository userRepository;
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomUserService chatRoomUserService;
@@ -144,14 +146,16 @@ public class MeetService {
         Gugun findGugun = gugunService.getGugun(meetDto.getSidoCode(), meetDto.getGugunCode());
 
         Meet meet = meetDto.toEntity();
-        meet.setHost(userService.findByUserId(meetDto.getHostId()));
+        meet.setHost(userRepository.findByUserId(meetDto.getHostId()).orElseThrow(
+                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다.")));
         meet.setTag(tagService.findById(meetDto.getTagId()));
         meet.setDrink(drinkRepository.findById(drinkId).orElse(null));
         meet.setChatRoom(createChatRoom);
         meet.setNowParticipants(1);
         Meet createdMeet = meetRepository.save(meet);
 
-        User hostUser = userService.findByUserId(userId);
+        User hostUser = userRepository.findByUserId(userId).orElseThrow(
+                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다."));
         log.info("모임 잘 만들어 졌나 {}", createdMeet);
 
         //MeetUser 정보를 추가한다.
@@ -187,7 +191,8 @@ public class MeetService {
         //기존 Meet를 가져온다
         String prevMeetImgSrc = meetRepository.findImgSrcByMeetId(meetId);
         log.info("기본 모임 사진 {}", prevMeetImgSrc);
-        User host = userService.findByUserId(userId);
+        User host = userRepository.findByUserId(userId).orElseThrow(
+                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다."));
 
 
         if (multipartFile != null) {
@@ -264,8 +269,12 @@ public class MeetService {
         Meet attendMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
         Long hostId = meetUser.getMeetDto().getHostId();
 
-        User attendUser = userService.findByUserId(userId);
-        User host = userService.findByUserId(hostId);
+        User attendUser = userRepository.findByUserId(userId).orElseThrow(
+                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다.")
+        );
+        User host = userRepository.findByUserId(hostId).orElseThrow(
+                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다.")
+        );
 
         //모임의 인원수 체크
         if (meetUser.getMeetDto().getNowParticipants() >= meetUser.getMeetDto().getMaxParticipants())
@@ -336,7 +345,9 @@ public class MeetService {
 
         //Host유저와 관리할유저 리스트 반환(1개의 쿼리를 사용 하기 위함) 0번 : 호스트, 1번 : 관리할 유저
         User host = managementMeet.getHost();
-        User manageUser = userService.findByUserId(userId);
+        User manageUser = userRepository.findByUserId(userId).orElseThrow(
+                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다.")
+        );
 
         if (applyResult) {//신청 결과가 true
             //모임 상태를 변경 시킨다.
