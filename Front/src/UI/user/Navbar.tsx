@@ -1,6 +1,10 @@
 import logoNavbar from "../../assets/logoNavbar.svg";
 import styled from "styled-components";
-import { alertNavIcon, resetUserInfo, searchNavIcon } from "../../assets/AllIcon";
+import {
+  alertNavIcon,
+  resetUserInfo,
+  searchNavIcon,
+} from "../../assets/AllIcon";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -27,11 +31,11 @@ const Navbar = (props: { modalHandler: () => void; userid: number }) => {
       </span>
       <span>
         <Button onClick={UserSearchHandler}>{searchButton}</Button>
-        {/* {props.userid == parseInt(localStorage.getItem("myId")) ? (
+        {props.userid === parseInt(localStorage.getItem("myId")) ? (
           <Button onClick={props.modalHandler.bind(true)}>{resetIcon}</Button>
         ) : (
           <></>
-        )} */}
+        )}
         {/* <Button onClick={props.modalHandler.bind(true)}>{resetIcon}</Button> */}
         <Button
           onClick={() => {
