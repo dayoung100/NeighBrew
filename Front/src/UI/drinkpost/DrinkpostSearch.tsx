@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { Drink } from "../../Type/types";
@@ -50,12 +50,27 @@ const DrinkpostSearch = () => {
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
   };
+  const [inputText, setInputText] = useState("");
 
-  const search = (drink: string) => {
-    callApi("GET", `api/drink/search?name=${drink}`).then((res) => {
+  // const search = (drink: string) => {
+  //   callApi(
+  //     "GET",
+  //     `api/drink/search?tagId=${selectedCategory}&name=${drink}`
+  //   ).then((res) => {
+  //     setSearchResult(res.data.content);
+  //   });
+  // };
+
+  //inputText로 술장 검색 api
+  useEffect(() => {
+    const promise = callApi(
+      "get",
+      `api/drink/search?tagId=${selectedCategory}&name=${inputText}`
+    );
+    promise.then((res) => {
       setSearchResult(res.data.content);
     });
-  };
+  }, [inputText, selectedCategory]);
 
   return (
     <>
@@ -74,7 +89,9 @@ const DrinkpostSearch = () => {
           <SearchDiv>
             <SearchBox
               placeholder="검색어를 입력하세요."
-              changeFunc={search}
+              changeFunc={(inputTxt: string) => {
+                setInputText(inputTxt);
+              }}
             ></SearchBox>
           </SearchDiv>
         </div>
