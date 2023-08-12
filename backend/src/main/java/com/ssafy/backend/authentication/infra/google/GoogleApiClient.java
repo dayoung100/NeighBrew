@@ -77,7 +77,7 @@ public class GoogleApiClient implements OAuthApiClient {
         body.add("code", decodedData);
         body.add("client_id", clientId);
         body.add("client_secret", clientSecret);
-        body.add("redirect_uri","http://localhost:5173/google/callback" );
+        body.add("redirect_uri", redirectUri );
         body.add("grant_type","authorization_code");
         System.out.println("body.toString() = " + body.toString());
 
