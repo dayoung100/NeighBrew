@@ -395,6 +395,7 @@ const MeetingCreate = () => {
     const promise = callApi("post", `/api/meet/create`, f);
     promise
       .then((res) => {
+        console.dir(res.data);
         GoMeetDetailHandler(res.data.meetId); //모임 상세 페이지로 이동
       })
       .catch((error) => {

@@ -7,12 +7,13 @@ import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import NavbarSimple from "../navbar/NavbarSimple";
 import styled, { css } from "styled-components";
-import DrinkCategory from "../drinkCategory/DrinkCategory";
-import SearchBox from "../components/SearchBox";
+// import DrinkCategory from "../drinkCategory/DrinkCategory";
+// import SearchBox from "../components/SearchBox";
 import FooterBigBtn from "../footer/FooterBigBtn";
-import OneLineListItem from "../components/OneLineListItem";
-import ListInfoItem from "../components/ListInfoItem";
+// import OneLineListItem from "../components/OneLineListItem";
+// import ListInfoItem from "../components/ListInfoItem";
 import ImageInput from "../components/ImageInput";
+import MeetingDrinkSearch from "./MeetingDrinkSearch";
 import { MeetDetail } from "../../Type/types";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
@@ -24,7 +25,6 @@ import {
   initialGugun,
   WhiteModal,
   ModalInner,
-  encodeUrl,
 } from "../common";
 import Modal from "react-modal";
 
@@ -90,26 +90,26 @@ const DropdownInput = styled.select`
   appearance: none; /* 화살표 없애기 공통*/
 `;
 
-const SearchResultDiv = styled.div`
-  border-radius: 15px;
-  border: 1px solid var(--c-gray);
-  height: 12rem;
-  margin-top: 0.5rem;
-  display: flex;
-  flex-direction: column;
-`;
+// const SearchResultDiv = styled.div`
+//   border-radius: 15px;
+//   border: 1px solid var(--c-gray);
+//   height: 12rem;
+//   margin-top: 0.5rem;
+//   display: flex;
+//   flex-direction: column;
+// `;
 
-const CloseDiv = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  position: sticky;
-  bottom: 0;
-  height: 3rem;
-  z-index: 3;
-  padding: 0 1rem;
-  font-family: "NanumSquareNeo";
-`;
+// const CloseDiv = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: flex-end;
+//   position: sticky;
+//   bottom: 0;
+//   height: 3rem;
+//   z-index: 3;
+//   padding: 0 1rem;
+//   font-family: "NanumSquareNeo";
+// `;
 
 const DateAndTimeInputStyle = css`
   color: var(--c-black);
@@ -131,18 +131,18 @@ const TimeInput = styled.input.attrs({ type: "time" })`
   ${DateAndTimeInputStyle}
 `;
 
-const CateDiv = styled.div`
-  height: 10rem;
-  div {
-    margin: 0;
-  }
-  .first,
-  .second {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 0.5rem;
-  }
-`;
+// const CateDiv = styled.div`
+//   height: 10rem;
+//   div {
+//     margin: 0;
+//   }
+//   .first,
+//   .second {
+//     display: flex;
+//     justify-content: space-around;
+//     margin-top: 0.5rem;
+//   }
+// `;
 
 const InfoTextArea = styled.textarea`
   width: 90%;
@@ -201,8 +201,8 @@ const MeetingInfoManage = () => {
   const [file, setFile] = useState(null); //파일 타입
 
   //검색 관련 state
-  const [inputText, setInputText] = useState(""); //검색창에 입력된 텍스트
-  const [searchResultList, setSearchResultList] = useState<Drink[]>([]); //주류 검색 결과 리스트
+  // const [inputText, setInputText] = useState(""); //검색창에 입력된 텍스트
+  // const [searchResultList, setSearchResultList] = useState<Drink[]>([]); //주류 검색 결과 리스트
 
   //지역 관련 state
   const [sidoList, setSidoList] = useState([initialSido]);
@@ -266,40 +266,39 @@ const MeetingInfoManage = () => {
   }, [sido]);
 
   //inputText로 술장 검색 api
-  //TODO: 검색 결과가 없을 때 처리
-  useEffect(() => {
-    const promise = callApi(
-      "get",
-      `api/drink/search?tagId=${selectedCategory}&name=${inputText}`
-    );
-    promise.then((res) => {
-      setSearchResultList(res.data.content);
-    });
-  }, [inputText, selectedCategory]);
+  // useEffect(() => {
+  //   const promise = callApi(
+  //     "get",
+  //     `api/drink/search?tagId=${selectedCategory}&name=${inputText}`
+  //   );
+  //   promise.then((res) => {
+  //     setSearchResultList(res.data.content);
+  //   });
+  // }, [inputText, selectedCategory]);
 
   //카테고리 변경 시 주류 검색 결과 및 조건 초기화
-  useEffect(() => {
-    //선택된 술이 원래의 술이고,
-    //변경된 카테고리도 원래의 술이라면 -> 초기 로딩임 -> 초기화x
-    if (
-      selectedDrink.drinkId === meetData.meet.drink.drinkId &&
-      selectedCategory === meetData.meet.tagId
-    )
-      return;
-    setSelectedDrink(initialDrink);
-    setInputText("");
-  }, [selectedCategory]);
+  // useEffect(() => {
+  //   //선택된 술이 원래의 술이고,
+  //   //변경된 카테고리도 원래의 술이라면 -> 초기 로딩임 -> 초기화x
+  //   if (
+  //     selectedDrink.drinkId === meetData.meet.drink.drinkId &&
+  //     selectedCategory === meetData.meet.tagId
+  //   )
+  //     return;
+  //   setSelectedDrink(initialDrink);
+  //   setInputText("");
+  // }, [selectedCategory]);
 
   //주종 카테고리 선택
-  const getDrinkCategory = (tagId: number) => {
-    setSelectedCategory(tagId);
-  };
+  // const getDrinkCategory = (tagId: number) => {
+  //   setSelectedCategory(tagId);
+  // };
 
   //검색 후 선택한 주류 정보, 즉 모임에 설정할 술 정보받아오기
-  const getDrink = (drink: Drink) => {
-    setSelectedDrink(drink);
-    setIsSearchFocused(false);
-  };
+  // const getDrink = (drink: Drink) => {
+  //   setSelectedDrink(drink);
+  //   setIsSearchFocused(false);
+  // };
 
   //api 호출 전 각종 데이터 검증
   //유저 아이디와 호스트 아이디 확인
@@ -321,7 +320,7 @@ const MeetingInfoManage = () => {
 
   //술: 필수 입력
   const drinkCheck = () => {
-    return !(selectedDrink.drinkId === 0);
+    return !(selectedDrink.drinkId < 1);
   };
 
   //위치: 필수 입력
@@ -452,10 +451,6 @@ const MeetingInfoManage = () => {
       });
   };
 
-  useEffect(() => {
-    console.dir(file);
-  }, [file]);
-
   //검색 결과 창 애니메이션 용
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const parent = useRef(null);
@@ -537,7 +532,16 @@ const MeetingInfoManage = () => {
           )}
         </QuestionDiv>
         <QuestionDiv>
-          <Title>우리가 마실 것은</Title>
+          {selectedDrink.drinkId !== 0 && selectedCategory !== 0 && (
+            <MeetingDrinkSearch
+              tagId={selectedCategory}
+              setTagIdFunc={setSelectedCategory}
+              drink={selectedDrink}
+              setDrinkFunc={setSelectedDrink}
+              btnClicked={btnClicked}
+            />
+          )}
+          {/* <Title>우리가 마실 것은</Title>
           <SubTitle>카테고리를 선택해주세요</SubTitle>
           <CateDiv>
             {selectedCategory !== 0 && (
@@ -630,7 +634,7 @@ const MeetingInfoManage = () => {
                 </ReselectBtn>
               </div>
             )}
-          </div>
+          </div> */}
         </QuestionDiv>
         <QuestionDiv>
           <div
