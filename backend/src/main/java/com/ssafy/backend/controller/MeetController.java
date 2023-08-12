@@ -86,17 +86,15 @@ public class MeetController {
             return ResponseEntity.badRequest().body("모임 날짜 및 시간을 확인해 주세요.");
         }
 
-
-
-
-
-
         try {
             Meet createdMeet = null;
 
-            if (multipartFile.isPresent())
+            if (multipartFile.isPresent()) {
                 if (multipartFile.get().getSize() > 1024 * 1024 * 20)
+                    return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
+
                 createdMeet = meetService.saveMeet(meetDto, userId, drinkId, multipartFile.get());
+            }
             else createdMeet = meetService.saveMeet(meetDto, userId, drinkId, null);
 
             return ResponseEntity.ok(createdMeet);
@@ -134,6 +132,7 @@ public class MeetController {
             if (multipartFile.isPresent()) {
                 if (multipartFile.get().getSize() > 1024 * 1024 * 20)
                     return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
+
                 meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());
             } else meetService.updateMeet(meetDto, userId, meetId, drinkId, null);
 
