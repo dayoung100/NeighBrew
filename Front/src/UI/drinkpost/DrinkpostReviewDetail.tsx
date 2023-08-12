@@ -141,7 +141,8 @@ const DrinkpostReviewDetail = () => {
   const [subReviewList, setSubReviewList] = useState<SubReview[]>([]);
   const [comment, setComment] = useState("");
   const navigate = useNavigate();
-
+  const [like, setLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
       .then(res => {
@@ -159,6 +160,8 @@ const DrinkpostReviewDetail = () => {
       // 술 상세 후기 조회 요청
       const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
       setReview(response1.data);
+      setLikeCount(response1.data.likeCount);
+      console.log(response1.data);
       const userId = response1.data.user.userId;
       // 후기 쓴 사람에 대한 follow 요청
       // 술 상세 후기 조회 이후에 이루어져야 함.
@@ -178,6 +181,31 @@ const DrinkpostReviewDetail = () => {
     }
     summonReview();
   }, []);
+
+  useEffect(() => {
+    callApi("GET", `api/like/guard/${reviewId}`, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    }).then(res => {
+      setLike(res.data);
+    });
+  }, [localStorage.getItem("token")]);
+
+  const likeHandler = () => {
+    callApi("POST", `api/like/guard/${reviewId}`, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    }).then(() => {
+      if (!like) {
+        setLikeCount(prev => prev + 1);
+      } else {
+        setLikeCount(prev => prev - 1);
+      }
+    });
+    setLike(!like);
+  };
 
   const followHandler = () => {
     callApi("post", `api/follow/guard/${review?.user.userId}`)
@@ -269,8 +297,8 @@ const DrinkpostReviewDetail = () => {
         <InfoBox>
           <LikeAndComment>
             <LikeAndCommentDiv>
-              <div>{LikeIcon}</div>
-              <div>{review?.likeCount}</div>
+              <div onClick={likeHandler}>{LikeIcon}</div>
+              <div>{likeCount}</div>
             </LikeAndCommentDiv>
             <LikeAndCommentDiv>
               <div>{CommentIcon}</div>
