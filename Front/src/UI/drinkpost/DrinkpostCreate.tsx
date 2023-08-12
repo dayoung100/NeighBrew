@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import TextareaAutosize from "react-textarea-autosize";
 import NavbarSimple from "../navbar/NavbarSimple";
+import FooterBigBtn from "../footer/FooterBigBtn";
 
 // 여기부터 지정한 부분까지 style 부분입니다.
 // GuideText는 h3 tag가 상하 margin을 너무 많이 잡아서 새로 만든 겁니다.
@@ -374,9 +375,11 @@ const DrinkpostCreate = () => {
           </span>
         </div> */}
       </div>
-      <div onClick={drinkSubmitHandler}>
-        <img src={createButton} alt="등록" />
-      </div>
+      <FooterBigBtn
+        content="등록하기"
+        color="var(--c-yellow)"
+        reqFunc={drinkSubmitHandler}
+      />
     </div>
   );
 };
