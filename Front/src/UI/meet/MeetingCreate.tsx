@@ -20,6 +20,12 @@ import {
   initialGugun,
   WhiteModal,
 } from "../common";
+import {
+  localDate,
+  localTime,
+  formateDate,
+  formateTime,
+} from "./DateTimeCommon";
 import Modal from "react-modal";
 
 const Title = styled.div`
@@ -124,10 +130,10 @@ const ErrorDiv = styled.div`
 `;
 
 const MeetingCreate = () => {
-  //네비게이터: 모임 수정 후 모임 상세로 이동, 주류 추가 페이지로 이동
   const navigate = useNavigate();
+  //모임 수정 후 모임 상세로 이동
   const GoMeetDetailHandler = (meetId: number) => {
-    navigate(`/meet/${meetId}`);
+    navigate(`/meet/${meetId}`, { replace: true });
   };
   //모달 관련
   const [isModalOn, setIsModalOn] = useState(false);
@@ -318,45 +324,6 @@ const MeetingCreate = () => {
         setErrorMsg(error.response.data);
         setIsModalOn(true);
       });
-  };
-
-  //날짜와 변환 함수
-  function formateDate(dateData: string) {
-    const date = new Date(dateData);
-    const year = date.getFullYear();
-    const month =
-      date.getMonth() + 1 < 10
-        ? `0${date.getMonth() + 1}`
-        : date.getMonth() + 1;
-    const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
-
-    return `${year}-${month}-${day}`;
-  }
-
-  //시간 변환 함수
-  function formateTime(dateData: string) {
-    const date = new Date(dateData);
-    const hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
-    const minute =
-      date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-
-    return `${hour}:${minute}`;
-  }
-
-  //현재 날짜를 받아오기 -> min 값으로 설정
-  const localDate = () => {
-    const date = new Date().toISOString().substring(0, 10);
-    return date;
-  };
-
-  // //현재 시간을 받아오기(UTC9)
-  const localTime = () => {
-    const time = new Date(
-      new Date().getTime() - new Date().getTimezoneOffset() * 60000
-    )
-      .toISOString()
-      .slice(11, 16);
-    return time;
   };
 
   //날짜와 시간 입력 시 현재 날짜, 시간보다 이전인지를 반환(UTC0)

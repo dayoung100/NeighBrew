@@ -13,6 +13,7 @@ import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Meeting } from "../../Type/types";
 import { initialSido, initialGugun } from "../common";
+import { localDate } from "./DateTimeCommon";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
 const meetingFind = () => {
@@ -248,6 +249,7 @@ const meetingFind = () => {
                 <FilterElement>
                   <DateInput
                     type="date"
+                    min={localDate().toString()}
                     onChange={(e) => {
                       setStartDate(e.target.value);
                     }}
@@ -359,7 +361,7 @@ const FilterElement = styled.div`
 `;
 
 const DropdownInput = styled.select`
-  width: 6rem;
+  width: 5rem;
   background: white;
   text-align: right;
   padding: 3% 5%;
