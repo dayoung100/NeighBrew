@@ -41,7 +41,7 @@ const MyChat = styled.div`
   margin-right: 1px;
   margin-left: 0.5rem;
   font-size: 13px;
-  text-align: right;
+  text-align: left;
   font-family: "SeoulNamsan";
 `;
 
