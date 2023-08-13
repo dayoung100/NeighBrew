@@ -94,8 +94,7 @@ public class MeetController {
                     return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
 
                 createdMeet = meetService.saveMeet(meetDto, userId, drinkId, multipartFile.get());
-            }
-            else createdMeet = meetService.saveMeet(meetDto, userId, drinkId, null);
+            } else createdMeet = meetService.saveMeet(meetDto, userId, drinkId, null);
 
             return ResponseEntity.ok(createdMeet);
         } catch (Exception e) {
@@ -129,12 +128,13 @@ public class MeetController {
         }
 
         try {
-            if (multipartFile.isPresent()) {
+            if (multipartFile.isPresent()) { //FormData.append("image", "?") 있을 때
                 if (multipartFile.get().getSize() > 1024 * 1024 * 20)
                     return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
-
                 meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());
-            } else meetService.updateMeet(meetDto, userId, meetId, drinkId, null);
+            } else{ //FormData에 ("image", "?") 없을 때
+                meetService.updateMeet(meetDto, userId, meetId, drinkId, null);
+            }
 
             return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
         } catch (Exception e) {
