@@ -15,7 +15,7 @@ import java.util.List;
 public class FollowController {
     private final FollowService followService;
 
-    @GetMapping("/guard/followers")
+    @GetMapping("/followers")
     public ResponseEntity<List<FollowResponseDto>> getFollowers(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
         return ResponseEntity.ok(followService.getFollowers(Long.valueOf(userId)));
@@ -31,7 +31,7 @@ public class FollowController {
         return ResponseEntity.ok(followService.getFollowing(userId));
     }
 
-    @PostMapping("/guard/{followingId}")
+    @PostMapping("/{followingId}")
     public ResponseEntity<String> followUser(HttpServletRequest request, @PathVariable Long followingId) {
         String userId = (String) request.getAttribute("userId");
         return ResponseEntity.ok(followService.toggleFollow(Long.valueOf(userId), followingId));

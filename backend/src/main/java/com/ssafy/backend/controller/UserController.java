@@ -36,7 +36,7 @@ public class UserController {
         return ResponseEntity.ok().body(userService.findAll());
     }
 
-    @GetMapping("/guard/myinfo")
+    @GetMapping("/myinfo")
     public ResponseEntity<UserResponseDto> getMyInfo(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
         return ResponseEntity.ok().body(userService.findByUserId(Long.parseLong(userId)));
@@ -69,7 +69,7 @@ public class UserController {
         return ResponseEntity.ok(tokens);
     }
 
-    @PutMapping("/guard")
+    @PutMapping("/")
     public ResponseEntity<UserResponseDto> updateUserInfo(@RequestBody UserUpdateDto userUpdateDto,
                                                           HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
@@ -77,7 +77,7 @@ public class UserController {
         return ResponseEntity.ok(userResponseDto);
     }
 
-    @PutMapping("/guard/img")
+    @PutMapping("/img")
     public ResponseEntity<String> updataUserImg(@RequestParam("profile") MultipartFile profile, HttpServletRequest request) throws IOException {
         String url = s3Service.upload(UploadType.USERPROFILE, profile);
         String userId = (String) request.getAttribute("userId");
