@@ -5,7 +5,7 @@
 모임 위치, 시간, 주최자, 간수치제한, 인원 제한 정보를 담고 있음
 */
 import { useState, useEffect } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
 import PeopleNumInfo from "./PeopleNumInfo";
@@ -170,7 +170,7 @@ const MeetingDetail = () => {
         setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
       })
       .catch((e) => {
-        console.log(e.data);
+        console.log(e);
         GotoMainHandler();
       });
   };
