@@ -1,8 +1,10 @@
 package com.ssafy.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,6 +21,10 @@ public class DrinkReview {
     @ManyToOne
     @JoinColumn(name = "drinkId")
     private Drink drink;
+
+    @OneToMany(mappedBy = "drinkReview", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<UserCommentLike> userCommentLikes;
 
     @Lob
     @Setter

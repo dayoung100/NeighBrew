@@ -1,6 +1,10 @@
 package com.ssafy.backend.entity;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -18,6 +22,7 @@ public class UserCommentLike {
 
     @ManyToOne
     @JoinColumn(name = "reviewId")
+    @JsonIgnore
     private DrinkReview drinkReview;
 
     @Builder

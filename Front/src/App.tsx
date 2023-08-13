@@ -31,6 +31,7 @@ import DirectChat from "./UI/chat/DirectChat";
 import SearchUser from "./UI/user/SearchUser";
 import RatingCreate from "./UI/meetrate/RatingCreate";
 import logo from "./assets/logoNavbar.svg";
+import DrinkpostReviewUpdate from "./UI/drinkpost/DrinkpostReviewUpdate";
 
 function App() {
   const navigate = useNavigate();
@@ -167,6 +168,10 @@ function App() {
         <Route
           path="/drinkpost/:drinkId/:reviewId"
           element={<DrinkpostReviewDetail></DrinkpostReviewDetail>}
+        ></Route>
+        <Route
+          path="/drinkpost/:drinkId/:reviewId/update"
+          element={<DrinkpostReviewUpdate></DrinkpostReviewUpdate>}
         ></Route>
       </Routes>
     </>
