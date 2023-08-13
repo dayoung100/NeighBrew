@@ -5,10 +5,12 @@ import com.ssafy.backend.entity.SubReview;
 import com.ssafy.backend.entity.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class SubReviewRequestDto {
     private Long subReviewId;
     private String content;
@@ -16,7 +18,7 @@ public class SubReviewRequestDto {
     private Long userId;
 
     @Builder
-    public SubReviewRequestDto(Long subReviewId, String content, String createdAt, Long drinkReviewId, Long userId) {
+    public SubReviewRequestDto(Long subReviewId, String content, Long drinkReviewId, Long userId) {
         this.subReviewId = subReviewId;
         this.content = content;
         this.drinkReviewId = drinkReviewId;
