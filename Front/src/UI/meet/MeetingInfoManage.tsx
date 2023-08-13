@@ -152,6 +152,9 @@ const MeetingInfoManage = () => {
   const [imgSrc, setImgSrc] = useState<string>(""); //이미지 경로
   const [file, setFile] = useState(null); //파일 타입
 
+  //이미지 수정용
+  const [newImgSrc, setNewImgSrc] = useState("");
+
   //지역 관련 state
   const [sidoList, setSidoList] = useState([initialSido]);
   const [gugunList, setGugunList] = useState([initialGugun]);
@@ -196,6 +199,7 @@ const MeetingInfoManage = () => {
     setMaxAge(meetData.meet.maxAge); //최대 나이
     setMeetDesc(meetData.meet.description); //모임 소개
     setImgSrc(meetData.meet.imgSrc); //이미지 경로
+    setNewImgSrc(meetData.meet.imgSrc); //초기값세팅
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -589,7 +593,12 @@ const MeetingInfoManage = () => {
           ></InfoTextArea>
         </QuestionDiv>
         <div>
-          <ImageInput key={imgSrc} getFunc={setFile} imgSrc={imgSrc} />
+          <ImageInput
+            key={newImgSrc}
+            getFunc={setFile}
+            imgSrc={newImgSrc}
+            getImgSrc={setNewImgSrc}
+          />
           {!imgcheck() && btnClicked && (
             <ErrorDiv>📌이미지만 업로드 가능합니다.(10MB 이하)</ErrorDiv>
           )}

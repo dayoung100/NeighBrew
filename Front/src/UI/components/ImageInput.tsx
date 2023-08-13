@@ -63,6 +63,7 @@ const ImageArea = styled.div<{ src: string }>`
 type ImageInputProps = {
   imgSrc?: string; //이미지 경로
   getFunc?: (f: File) => void; //파일 타입을 부모로 가져가는 함수
+  getImgSrc?: (src: string) => void;
 };
 
 const ImageInput = (props: ImageInputProps) => {
