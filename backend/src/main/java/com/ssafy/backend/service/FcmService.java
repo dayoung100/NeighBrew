@@ -6,6 +6,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.ssafy.backend.config.WebMvcConfig;
+import com.ssafy.backend.dto.FCMDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,22 +21,17 @@ public class FcmService {
 
     private final ObjectMapper objectMapper;
 
-    public void sendPushNotification(String deviceToken, String title, String body) {
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build();
-
+    public String sendPushNotification(String deviceToken, String body, String url) {
         Message message = Message.builder()
-                .setNotification(notification)
                 .setToken(deviceToken)
+                .setNotification(Notification.builder().setTitle("Neighbrew").setBody(body).build())
+                .putData("url", url)
                 .build();
 
         try {
             String response = FirebaseMessaging.getInstance().send(message);
-            System.out.println("Successfully sent message: " + response);
         } catch (Exception e) {
-            System.err.println("Error sending FCM message: " + e.getMessage());
+            log.info("Error sending FCM message:  {}", e.getMessage());
         }
     }
 }

@@ -30,6 +30,7 @@ import DrinkpostReviewDetail from "./UI/drinkpost/DrinkpostReviewDetail";
 import DirectChat from "./UI/chat/DirectChat";
 import SearchUser from "./UI/user/SearchUser";
 import RatingCreate from "./UI/meetrate/RatingCreate";
+import "./utils/fcm.ts"
 import logo from "./assets/logoNavbar.svg";
 
 function App() {

@@ -3,6 +3,7 @@ package com.ssafy.backend.config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,12 @@ public class FcmConfiguration{
                 .build();
         log.info(">> FCM 초기화 완료 <<");
         return FirebaseApp.initializeApp(options);
+    }
+
+    @Bean
+    public FirebaseMessaging firebaseMessaging() throws IOException{
+
+        return FirebaseMessaging.getInstance(firebaseApp());
     }
 
 }
