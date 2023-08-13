@@ -46,7 +46,7 @@ public class DrinkReviewController {
         return ResponseEntity.ok(drinkReviewService.getReviewsOrderByLikes(pageable));
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<DrinkReviewResponseDto> createDrinkReview(HttpServletRequest request,
                                                                     @ModelAttribute DrinkReviewRequestDto drinkReviewRequestDto,
                                                                     @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws IOException {
