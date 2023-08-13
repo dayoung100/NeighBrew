@@ -6,6 +6,7 @@
 자세한 props는 type PeopleNumProps 참고
 */
 import { personIcon } from "../../assets/AllIcon";
+import React from "react";
 
 type PeopleNumProps = {
   now: number; //현재 인원
@@ -38,4 +39,4 @@ const PeopleNumInfo = (props: PeopleNumProps) => {
     </div>
   );
 };
-export default PeopleNumInfo;
+export default React.memo(PeopleNumInfo);
