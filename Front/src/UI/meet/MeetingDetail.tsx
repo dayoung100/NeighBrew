@@ -13,7 +13,7 @@ import ListInfoItem from "../components/ListInfoItem";
 import UserInfoItem from "../components/UserInfoItem";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import { callApi } from "../../utils/api";
-import { initialMeetDetail } from "../common";
+import { initialMeetDetail, encodeUrl } from "../common";
 import { MeetDetail, User } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 
@@ -367,7 +367,7 @@ const MeetingDetail = () => {
           imgSrc={
             meetDetailData.meet.drink.image === "no image"
               ? "/src/assets/whiskeyImage.png"
-              : meetDetailData.meet.drink.image
+              : encodeUrl(meetDetailData.meet.drink.image)
           }
           tag={getTagName(meetDetailData.meet.drink.tagId)}
           content={meetDetailData.meet.drink.description}

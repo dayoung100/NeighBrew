@@ -4,6 +4,7 @@
 요소 별 구분을 위한 밑줄이 포함되어 있음
 자세한 props는 type ListInfoItemProps 참고
 */
+import React from "react";
 import styled from "styled-components";
 
 const ItemDiv = styled.div`
@@ -53,4 +54,4 @@ const OneLineListItem = (props: OneLineListItemProps) => {
     </ItemDiv>
   );
 };
-export default OneLineListItem;
+export default React.memo(OneLineListItem);

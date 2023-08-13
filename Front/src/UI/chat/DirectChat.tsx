@@ -105,12 +105,12 @@ const ChatOtherMsg = styled.div`
 
 const ChatTime = styled.div`
   margin-left: 2px;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.8rem;
 `;
 
 const ChatUserName = styled.div`
   font-family: "JejuGothic";
-  font-size: 0.2rem;
+  font-size: 0.8rem;
   margin-bottom: 0.4rem;
   margin-top: 1.2rem;
 `;
@@ -213,7 +213,7 @@ const DirectChat = () => {
   const userId = parseInt(localStorage.getItem("myId"));
   const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState("");
-  const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const messageHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
   };
   // 웹소켓 연결 및 이벤트 핸들러 설정
@@ -259,34 +259,14 @@ const DirectChat = () => {
     connectToWebSocket();
   }, []);
   // 엔터 누르면 메세지 전송
-  const sendMessageHandler = (
-    e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>
-  ) => {
-    if (e.type == "click") {
-      client.current.send(
-        `/sub/dm/${user1}/${user2}`,
-        {},
-        JSON.stringify({ message: message, senderId: userId, nickname: "닉네임" })
-      );
-      setMessage("");
-      scroll();
-    } else {
-      if (e.code === "Enter" || e.keyCode === 13) {
-        if (message === "") return;
-        // 백엔드에 메시지 전송
-        client.current.send(
-          `/sub/dm/${user1}/${user2}`,
-          {},
-          JSON.stringify({
-            message: message,
-            senderId: userId,
-            nickname: "닉네임",
-          })
-        );
-        setMessage("");
-        scroll();
-      }
-    }
+  const sendMessageHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    client.current.send(
+      `/sub/dm/${user1}/${user2}`,
+      {},
+      JSON.stringify({ message: message, senderId: userId, nickname: "닉네임" })
+    );
+    setMessage("");
+    scroll();
   };
 
   const navigate = useNavigate();
@@ -480,7 +460,6 @@ const DirectChat = () => {
           <StyleAutoTextArea
             value={message}
             onChange={messageHandler}
-            onKeyUp={sendMessageHandler}
             minRows={1}
             maxRows={4}
           ></StyleAutoTextArea>
