@@ -42,11 +42,12 @@ const ImageInputBtn = styled.div`
 const ReselectBtn = styled.div`
   background: var(--c-lightgray);
   border-radius: 10px;
-  width: 3rem;
+  width: 2rem;
   font-family: "NanumSquareNeo";
   font-size: 15px;
   padding: 0.5rem;
   margin-left: 0.5rem;
+  text-align: center;
 `;
 
 const ImageArea = styled.div<{ src: string }>`
@@ -85,14 +86,21 @@ const ImageInput = (props: ImageInputProps) => {
           setImgFile(reader.result);
         }
       };
-    } else props.getFunc(null);
+    } else {
+      console.log("여기도 들어와요");
+      props.getImgSrc("no image");
+      props.getFunc(null);
+    }
   };
 
   //입력한 이미지 파일 제거
   const resetImgFile = () => {
+    console.log("취소버튼 눌렀어요");
     imgRef.current.value = null;
     setImgFile(null); // 미리보기 초기화
     saveImgFile(); //부모 객체로 전달
+    // props.getFunc(null);
+    // props.getImgSrc("no image");
   };
 
   return (
@@ -113,7 +121,7 @@ const ImageInput = (props: ImageInputProps) => {
             ref={imgRef}
           />
         </ImgInput>
-        {imgFile && <ReselectBtn onClick={resetImgFile}>재선택</ReselectBtn>}
+        {imgFile && <ReselectBtn onClick={resetImgFile}>취소</ReselectBtn>}
       </div>
       {imgFile && <ImageArea src={imgFile}></ImageArea>}
     </QuestionDiv>

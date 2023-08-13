@@ -198,8 +198,8 @@ const MeetingInfoManage = () => {
     setMinAge(meetData.meet.minAge); //최소 나이
     setMaxAge(meetData.meet.maxAge); //최대 나이
     setMeetDesc(meetData.meet.description); //모임 소개
-    setImgSrc(meetData.meet.imgSrc); //이미지 경로
-    setNewImgSrc(meetData.meet.imgSrc); //초기값세팅
+    setImgSrc(meetData.meet.imgSrc); //이미지 경로(원래의)
+    setNewImgSrc(meetData.meet.imgSrc); //이미지 경로(새로세팅할)
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -355,7 +355,23 @@ const MeetingInfoManage = () => {
       f.append("maxAge", maxAge.toString());
     }
     f.append("description", meetDesc);
-    f.append("image", file);
+
+    //이미지 수정을 위한 분기
+    //1. 파일이 null이 아님 -> 이미지를 변경한 것 -> 새파일을 담아서 전송
+    if (file !== null) {
+      f.append("image", file);
+    } else if (newImgSrc === "no image") {
+      //2. 파일이 null이지만 newImgSrc가 no image임
+      //-> 이미지 첨부를 취소하고 기본이미지로 돌리려는 것
+      //-> image와 함께 변경된 imgSrc 정보도 담아야
+      f.append("image", null);
+      f.append("imgSrc", "no image");
+    } else {
+      //3. 파일이 null이고 imgSrc가 no image가 아님
+      //-> 첨부 취소 버튼을 누르지도 않고, 파일 첨부도 하지 않음 = 이미지 수정하지 않음
+      //-> image만 null로 담아 보내기
+      f.append("image", null);
+    }
 
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
     promise
@@ -367,6 +383,12 @@ const MeetingInfoManage = () => {
         setIsModalOn(true);
       });
   };
+
+  useEffect(() => {
+    console.log("변경됐어요");
+    console.dir(file);
+    console.dir(newImgSrc);
+  }, [file, newImgSrc]);
 
   //날짜와 변환 함수
   function formateDate(dateData: string) {
@@ -574,7 +596,7 @@ const MeetingInfoManage = () => {
             />
             세 이상
             <InputShort
-              placeholder="100"
+              placeholder="200"
               value={maxAge > 0 ? maxAge : ""}
               onChange={(e) => setMaxAge(parseInt(e.target.value))}
             />
