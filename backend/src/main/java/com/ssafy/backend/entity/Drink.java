@@ -11,6 +11,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = @Index(name = "idx_drink_name", columnList = "name"))
 public class Drink {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
