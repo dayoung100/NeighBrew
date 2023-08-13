@@ -64,6 +64,7 @@ const RoundBtn = styled.div`
 const meetingMain = () => {
   const [selectedMenu, setSelectedMenu] = useState("find");
   const navigate = useNavigate();
+  //모임 생성 페이지로 이동
   const GotoCreateHandler = () => {
     navigate(`/meet/create`);
   };

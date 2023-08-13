@@ -48,16 +48,17 @@ const MeetingManageMain = () => {
   const [errMsg, setErrMsg] = useState("");
   const [meetData, setMeetData] = useState<Meeting>(initialMeet);
 
+  //모임 편집 페이지로 이동
   const GotoMeetInfoManage = (meetId: number) => {
     navigate(`/meet/${meetId}/manage/info`);
   };
-
+  //모임 참여자 관리페이지로 이동
   const GotoMemberManage = (meetId: number) => {
     navigate(`/meet/${meetId}/manage/member`);
   };
-
+  //모임 삭제 후 메인으로 이동
   const GoMeetMainHandler = () => {
-    navigate(`/meet`);
+    navigate(`/meet`, { replace: true });
   };
 
   useEffect(() => {

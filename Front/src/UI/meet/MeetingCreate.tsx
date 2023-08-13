@@ -130,10 +130,10 @@ const ErrorDiv = styled.div`
 `;
 
 const MeetingCreate = () => {
-  //네비게이터: 모임 수정 후 모임 상세로 이동, 주류 추가 페이지로 이동
   const navigate = useNavigate();
+  //모임 수정 후 모임 상세로 이동
   const GoMeetDetailHandler = (meetId: number) => {
-    navigate(`/meet/${meetId}`);
+    navigate(`/meet/${meetId}`, { replace: true });
   };
   //모달 관련
   const [isModalOn, setIsModalOn] = useState(false);

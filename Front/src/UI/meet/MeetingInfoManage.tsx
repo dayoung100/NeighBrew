@@ -119,11 +119,12 @@ const ErrorDiv = styled.div`
 `;
 
 const MeetingInfoManage = () => {
-  //네비게이터: 모임 수정 후 모임 상세로 이동, 주류 추가 페이지로 이동
   const navigate = useNavigate();
+  //모임 수정 후 모임 상세로 이동
   const GoMeetDetailHandler = () => {
-    navigate(`/meet/${meetId}`);
+    navigate(`/meet/${meetId}`, { replace: true });
   };
+  //호스트가 아닌데 편집하려고 할 시 모임 메인으로 이동
   const GoMeetMainHandler = () => {
     navigate(`/meet`);
   };
