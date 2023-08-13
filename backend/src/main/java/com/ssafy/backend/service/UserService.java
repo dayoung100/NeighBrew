@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final S3Service s3Service;
 
     public UserResponseDto findByUserId(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
@@ -46,6 +47,10 @@ public class UserService {
     public void updateUserImg(Long userId, String url) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
+
+        //프로필이 존재하면 기존 이미지 제거한다.
+        if(!user.getProfile().equals("no image")) s3Service.deleteImg(user.getProfile());
+
         user.updateImg(url);
         userRepository.save(user);
     }

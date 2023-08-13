@@ -77,12 +77,21 @@ public class UserController {
         return ResponseEntity.ok(userResponseDto);
     }
 
-    @PostMapping("/img/{userId}")
+    @PutMapping("/img/{userId}")
     public ResponseEntity<String> updateUserImg(@RequestParam("profile") MultipartFile profile,
                                                 @PathVariable Long userId) throws IOException {
-        String url = s3Service.upload(UploadType.USERPROFILE, profile);
-        userService.updateUserImg(userId, url);
 
+        String url;
+
+        if(profile.isEmpty())  {
+            log.info("이미지 업로드 안함");
+            url = "no image";
+        }
+        else {
+            url = s3Service.upload(UploadType.USERPROFILE, profile);
+        }
+
+        userService.updateUserImg(userId, url);
         return ResponseEntity.ok(url);
     }
 

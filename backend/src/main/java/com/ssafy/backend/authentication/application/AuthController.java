@@ -5,6 +5,7 @@ import com.ssafy.backend.authentication.domain.AuthTokens;
 import com.ssafy.backend.authentication.infra.google.GoogleLoginParams;
 import com.ssafy.backend.authentication.infra.kakao.KakaoLoginParams;
 import com.ssafy.backend.authentication.infra.naver.NaverLoginParams;
+import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -64,5 +65,13 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-
+//    @GetMapping("/access-token/{userId}")
+//    public ResponseEntity<Map<String, String>> jwtMaker(@PathVariable Long userId) {
+//        String accessToken = JwtUtil.generateToken(String.valueOf(userId));
+//        String refreshToken = JwtUtil.generateRefreshToken(String.valueOf(userId));
+//        Map<String, String> tokens = new HashMap<>();
+//        tokens.put("accessToken", accessToken);
+//        tokens.put("refreshToken", refreshToken);
+//        return ResponseEntity.ok(tokens);
+//    }
 }
