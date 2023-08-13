@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -70,6 +71,7 @@ public class DrinkReviewService {
         return drinkReviewList.stream().map(DrinkReviewResponseDto::fromEntity).collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteDrinkReview(Long drinkReviewId, Long userId) {
         DrinkReview drinkReview = drinkReviewRepository.findById(drinkReviewId)
                 .orElseThrow(() -> new IllegalArgumentException("음료 리뷰가 존재하지 않아 삭제할 수 없습니다."));
