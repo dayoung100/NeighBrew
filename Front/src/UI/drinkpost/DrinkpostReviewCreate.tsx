@@ -79,9 +79,10 @@ const DrinkpostReviewCreate = () => {
     }
 
     axios
-      .post("/api/drinkreview", formData, {
+      .post(`/api/drinkreview`, formData, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
+          UserID: myId,
           "Content-Type": "multipart/form-data",
         },
       })

@@ -355,7 +355,7 @@ const MyPage = () => {
     formData.append("profile", file);
     if (file !== undefined) {
       axios
-        .post(`/api/user/img/${localStorage.getItem("myId")}`, formData, {
+        .put(`/api/user/img/${localStorage.getItem("myId")}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + localStorage.getItem("token"),

@@ -56,13 +56,11 @@ public class DrinkReviewController {
         return ResponseEntity.ok().body(drinkReviewService.createDrinkReview(drinkReviewRequestDto, multipartFile));
     }
 
-    @PutMapping("/{drinkReviewId}")
+    @PutMapping("/{drinkReviewId}/{userId}")
     public ResponseEntity<DrinkReviewResponseDto> updateDrinkReview(@PathVariable Long drinkReviewId,
                                                                     @ModelAttribute DrinkReviewUpdateDto drinkReviewUpdateDto,
                                                                     @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile,
-                                                                    HttpServletRequest request) throws IOException {
-        String userId = (String) request.getAttribute("userId");
-
+                                                                    @PathVariable Long userId) throws IOException {
         return ResponseEntity.ok().body(drinkReviewService.updateDrinkReview(drinkReviewId, drinkReviewUpdateDto, multipartFile, Long.valueOf(userId)));
     }
 

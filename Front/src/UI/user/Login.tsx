@@ -1,25 +1,14 @@
 // 로그인 화면, 회원 가입을 누르면 Signup.tsx로 이동
-import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import styled from "styled-components";
 import axios from "axios";
-import { callApi } from "../../utils/api";
-import naverLogin from "../../assets/Login/naverLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import { registerServiceWorker } from "../../serviceWorker.js";
-
-const ImgDiv = styled.div`
-  width: 20%;
-  height: 30%;
-  overflow: hidden;
-  aspect-ratio: 1/1;
-  border-radius: 50%;
-  float: left;
-  margin-right: 1rem;
-`;
+import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import naverLogin from "../../assets/Login/naverLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
+import { callApi } from "../../utils/api";
 
 const ImgDivIcon = styled.div`
   overflow: hidden;
@@ -33,14 +22,6 @@ const Img = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-`;
-
-const SocialDiv = styled.div`
-  display: flex;
-  width: 80%;
-  height: 50%;
-  min-height: 350px;
-  flex-direction: column;
 `;
 
 const Div = styled.div`
@@ -78,13 +59,12 @@ const WhiteSection = styled.div`
 
 const Login = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     if (localStorage.getItem("token") != null) {
       callApi("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
-      }).then(res => {
+      }).then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
         navigate("/meet");
@@ -95,52 +75,37 @@ const Login = () => {
     axios({
       method: "get",
       url: "/api/auth/login/kakao",
-    })
-      .then(res => {
-        const url = res.data.URL;
-        window.location.href = url;
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    }).then((res) => {
+      const url = res.data.URL;
+      window.location.href = url;
+    });
   };
   const NaverloginHandler = async () => {
     axios({
       method: "get",
       url: "api/auth/login/naver",
-    })
-      .then(res => {
-        const url = res.data.URL;
-        window.location.href = url;
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    }).then((res) => {
+      const url = res.data.URL;
+      window.location.href = url;
+    });
   };
   const GoogleloginHandler = async () => {
     axios({
       method: "get",
       url: "api/auth/login/google",
-    })
-      .then(res => {
-        const url = res.data.URL;
-        window.location.href = url;
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    }).then((res) => {
+      const url = res.data.URL;
+      window.location.href = url;
+    });
   };
   useEffect(() => {
     localStorage.setItem("chooseMenu", "0");
   }, []);
 
-  const followHandler = async () => {
-    const api = await callApi("get", `api/push/follow/18`)
-      .then(res => {})
-      .catch(err => console.log(err));
-  };
   return (
-    <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+    <div
+      style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+    >
       <OrangeSection>
         <div style={{ marginBottom: "3rem" }}>
           <img src={NeighBrew} style={{ marginTop: "5rem" }} />
@@ -181,7 +146,10 @@ const Login = () => {
             top: "1rem",
           }}
         >
-          <Div onClick={KakaologinHandler} style={{ cursor: "pointer", marginTop: "" }}>
+          <Div
+            onClick={KakaologinHandler}
+            style={{ cursor: "pointer", marginTop: "" }}
+          >
             <Img src={kakaoLogin} />
           </Div>
 
