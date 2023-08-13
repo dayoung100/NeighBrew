@@ -145,22 +145,22 @@ const DrinkpostDetail = () => {
   // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         setDetail(res.data);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
     // callApi("get", reviewUrl)
     // .then(res=> )
   }, []);
 
   useEffect(() => {
     callApi("get", `api/drinkreview/${drinkId}`)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
-        setReviewList(prev => [...prev, ...res.data.content]);
+        setReviewList((prev) => [...prev, ...res.data.content]);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, []);
 
   const transImage = (img: string) => {
@@ -195,13 +195,28 @@ const DrinkpostDetail = () => {
   return (
     <>
       <DrinkThumbnail>
-        <NavbarBackIcon onClick={() => navigate(-1)}>{ArrowLeftIcon}</NavbarBackIcon>
+        <NavbarBackIcon
+          onClick={() => {
+            console.log("뒤로갑시다");
+            navigate(-1);
+          }}
+        >
+          {ArrowLeftIcon}
+        </NavbarBackIcon>
       </DrinkThumbnail>
       <WholeDiv>
         <InfoDiv>
           <SimpleInfo>
-            <div style={{ textAlign: "center", marginLeft: "10vw", fontFamily: "JejuGothic" }}>
-              <h3 style={{ marginRight: "2vw", textAlign: "start" }}>{detail?.name}</h3>
+            <div
+              style={{
+                textAlign: "center",
+                marginLeft: "10vw",
+                fontFamily: "JejuGothic",
+              }}
+            >
+              <h3 style={{ marginRight: "2vw", textAlign: "start" }}>
+                {detail?.name}
+              </h3>
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <b style={{ marginRight: "2vw" }}>주종</b>
                 {getTagNameMk2(detail?.tagId)}
@@ -243,7 +258,7 @@ const DrinkpostDetail = () => {
             <img
               src={transImage(detail?.image)}
               alt=""
-              style={{ maxWidth: "100%", height: "100%" }}
+              style={{ width: "28vh", height: "40vh" }}
             />
           </ImageInfo>
         </InfoDiv>
@@ -260,17 +275,29 @@ const DrinkpostDetail = () => {
               justifyContent: "flex-end",
             }}
           >
-            <MoreButton className={showMore ? "hide" : ""} onClick={toggleShowMore}>
+            <MoreButton
+              className={showMore ? "hide" : ""}
+              onClick={toggleShowMore}
+            >
               더보기
             </MoreButton>
-            <MoreButton className={showMore ? "" : "hide"} onClick={toggleShowMore}>
+            <MoreButton
+              className={showMore ? "" : "hide"}
+              onClick={toggleShowMore}
+            >
               줄이기
             </MoreButton>
           </div>
         </div>
 
         <div className="reviewBox">
-          <h1 style={{ textAlign: "start", marginBottom: "10px", fontFamily: "JejuGothic" }}>
+          <h1
+            style={{
+              textAlign: "start",
+              marginBottom: "10px",
+              fontFamily: "JejuGothic",
+            }}
+          >
             후기
           </h1>
 
@@ -283,12 +310,19 @@ const DrinkpostDetail = () => {
               justifyContent: "space-between",
             }}
           >
-            {reviewList.map(review => {
-              return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
+            {reviewList.map((review) => {
+              return (
+                <ReviewItem
+                  key={review.drinkReviewId}
+                  review={review}
+                ></ReviewItem>
+              );
             })}
           </div>
         </div>
-        <RoundBtn onClick={() => navigate(`/drinkpost/${drinkId}/review/create`)}>
+        <RoundBtn
+          onClick={() => navigate(`/drinkpost/${drinkId}/review/create`)}
+        >
           <img src={plusButton} width="25rem" />
         </RoundBtn>
       </WholeDiv>

@@ -145,17 +145,20 @@ const DrinkpostReviewDetail = () => {
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    callApi("get", `api/drink/${drinkId}`).then((res) => {
       setDrink(res.data);
     });
 
-    callApi("get", `api/subreview/list/${reviewId}`).then(res => {
+    callApi("get", `api/subreview/list/${reviewId}`).then((res) => {
       setSubReviewList(res.data);
     });
 
     async function summonReview() {
       // 술 상세 후기 조회 요청
-      const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
+      const response1 = await callApi(
+        "get",
+        `api/drinkreview/review/${reviewId}`
+      );
       setReview(response1.data);
       setLikeCount(response1.data.likeCount);
       const userId = response1.data.user.userId;
@@ -183,7 +186,7 @@ const DrinkpostReviewDetail = () => {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-    }).then(res => {
+    }).then((res) => {
       setLike(res.data);
     });
   }, [localStorage.getItem("token")]);
@@ -195,9 +198,9 @@ const DrinkpostReviewDetail = () => {
       },
     }).then(() => {
       if (!like) {
-        setLikeCount(prev => prev + 1);
+        setLikeCount((prev) => prev + 1);
       } else {
-        setLikeCount(prev => prev - 1);
+        setLikeCount((prev) => prev - 1);
       }
     });
     setLike(!like);
@@ -212,7 +215,7 @@ const DrinkpostReviewDetail = () => {
   };
 
   const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
+    callApi("get", `api/follow/follower/${review?.user.userId}`).then((res) => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -243,12 +246,13 @@ const DrinkpostReviewDetail = () => {
     });
 
     setComment("");
-    setSubReviewList(prev => [fun.data, ...prev]);
+    setSubReviewList((prev) => [fun.data, ...prev]);
   };
 
   const deleteHandler = () => {
     callApi("delete", `api/drinkreview/${review?.drinkReviewId}`).then(() => {
-      navigate(`/drinkpost/${drinkId}`);
+      // navigate(`/drinkpost/${drinkId}`, { replace: true });
+      navigate(-1);
     });
   };
   return (
@@ -256,10 +260,17 @@ const DrinkpostReviewDetail = () => {
       <NavbarSimple title={drink?.name}></NavbarSimple>
       <WholeDiv>
         <Usercard>
-          <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
+          <div
+            onClick={toProfileHandler}
+            style={{ display: "flex", alignItems: "center" }}
+          >
             <div>
               <UserImg
-                src={review?.user.profile !== "no image" ? review?.user.profile : defaultImg}
+                src={
+                  review?.user.profile !== "no image"
+                    ? review?.user.profile
+                    : defaultImg
+                }
               ></UserImg>
             </div>
             <div>
@@ -268,7 +279,8 @@ const DrinkpostReviewDetail = () => {
           </div>
           <FollowDiv
             style={{
-              backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+              backgroundColor:
+                following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
             }}
             onClick={followHandler}
           >
@@ -316,7 +328,7 @@ const DrinkpostReviewDetail = () => {
             style={{ fontFamily: "NanumSquareNeo", resize: "none" }}
             placeholder="댓글을 작성해주세요..."
             value={comment}
-            onChange={e => {
+            onChange={(e) => {
               setComment(e.target.value);
             }}
             minRows={1}

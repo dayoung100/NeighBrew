@@ -5,7 +5,7 @@
 모임 위치, 시간, 주최자, 간수치제한, 인원 제한 정보를 담고 있음
 */
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
 import PeopleNumInfo from "./PeopleNumInfo";
@@ -144,24 +144,35 @@ const MeetingDetail = () => {
       ? "/src/assets/meetDefaultImg.jpg"
       : meetDetailData.meet.imgSrc;
 
-  //네비게이터 : 모임 관리 페이지로 이동, 뒤로가기 기능
   const navigate = useNavigate();
+  //뒤로가기
   const GoBackHandler = () => {
     navigate(-1);
   };
+  //모임 관리 페이지로 이동
   const GotoMeetManageHandler = (meetId: number) => {
     navigate(`/meet/${meetId}/manage`);
   };
+  //특정 술로 이동
   const GotoDrinkPostHandler = (drinkId: number) => {
     navigate(`/drinkpost/${drinkId}`);
+  };
+  //없는 모임일 경우 모임 메인으로 이동
+  const GotoMainHandler = () => {
+    navigate(`/meet`, { replace: true });
   };
 
   //api호출
   const fetchMeetData = () => {
     const promise = callApi("get", `api/meet/${meetId}`);
-    promise.then((res) => {
-      setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
-    });
+    promise
+      .then((res) => {
+        setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
+      })
+      .catch((e) => {
+        console.log(e.data);
+        GotoMainHandler();
+      });
   };
 
   useEffect(() => {
