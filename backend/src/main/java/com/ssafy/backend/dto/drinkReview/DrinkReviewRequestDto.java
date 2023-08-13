@@ -7,6 +7,7 @@ import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class DrinkReviewRequestDto {
     private Long userId;
     private Long drinkId;

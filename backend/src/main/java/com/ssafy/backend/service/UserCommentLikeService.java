@@ -21,12 +21,12 @@ public class UserCommentLikeService {
 
     @Transactional
     public boolean toggleUserLike(Long userId, Long reviewId) {
-        User user = userRepository.findById(userId).orElse(null);
-        DrinkReview drinkReview = drinkReviewRepository.findById(reviewId).orElse(null);
-
-        if (user == null || drinkReview == null) {
-            return false;
-        }
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId)
+        );
+        DrinkReview drinkReview = drinkReviewRepository.findById(reviewId).orElseThrow(
+                () -> new IllegalArgumentException("해당 리뷰가 없습니다. id=" + reviewId)
+        );
 
         Optional<UserCommentLike> existingLike = userCommentLikeRepository.findByUser_UserIdAndDrinkReview_DrinkReviewId(userId, reviewId);
 
