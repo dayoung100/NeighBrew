@@ -46,9 +46,6 @@ public class S3Service {
                     new PutObjectRequest(bucket, upload, inputStream, objMeta));
 
             // TODO : 외부에 공개하는 파일인 경우 Public Read 권한을 추가, ACL 확인
-        /*amazonS3Client.putObject(
-            new PutObjectRequest(bucket, s3Key, inputStream, objectMetadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead));*/
         } catch (IOException e) {
             e.printStackTrace();
             log.error("file Upload fail", e);
