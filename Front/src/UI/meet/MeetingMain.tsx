@@ -35,7 +35,7 @@ const TopMenuDetail = styled.button<{ isfocused: string }>`
 `;
 
 const MainDiv = styled.div`
-  padding-bottom: 10rem;
+  padding-bottom: 25vh;
   background: white;
   min-height: 80vh;
 `;
