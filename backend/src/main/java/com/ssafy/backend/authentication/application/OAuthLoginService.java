@@ -34,10 +34,10 @@ public class OAuthLoginService {
 
         // 받아온 정보를 기반으로  userId를 추출
         ObjectMapper objectMapper = new ObjectMapper();
-        try{
+        try {
             String jsonString = objectMapper.writeValueAsString(oAuthInfoResponse);
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -47,10 +47,10 @@ public class OAuthLoginService {
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setAccessToken(JwtUtil.generateToken(String.valueOf(userId)));
         loginResponse.setRefreshToken(JwtUtil.generateRefreshToken(String.valueOf(userId)));
+        loginResponse.setUserId(userId);
 
         return loginResponse;
     }
-
 
 
     // 해당 이메일로 user의 id를 반환
@@ -76,7 +76,7 @@ public class OAuthLoginService {
                     .build();
             return userRepository.save(user).getUserId();
 
-        }else{
+        } else {
             User user = User.builder()
                     .email(oAuthInfoResponse.getEmail())
                     .name(oAuthInfoResponse.getName())
@@ -86,15 +86,7 @@ public class OAuthLoginService {
             return userRepository.save(user).getUserId();
 
         }
-
-
-
-
-
-
-
     }
-
 
     public String redirectApiUrl(OAuthLoginParams params) {
         return requestOAuthInfoService.authApiUrl(params);

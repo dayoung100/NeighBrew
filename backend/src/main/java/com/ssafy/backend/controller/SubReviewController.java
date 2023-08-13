@@ -28,7 +28,7 @@ public class SubReviewController {
 
 
     // 리뷰의 댓글을 작성하는 API
-    @PostMapping("/guard/write")
+    @PostMapping("/write")
     public ResponseEntity<?> writeSubReview(@RequestBody SubReviewDto subReviewDto, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
         log.info(userId); // 내가 작성
@@ -37,7 +37,7 @@ public class SubReviewController {
 
     // 댓글 삭제 API
     @Transactional
-    @DeleteMapping("/guard/delete/{subReviewId}")
+    @DeleteMapping("/delete/{subReviewId}")
     public ResponseEntity<?> deleteSubReview(@PathVariable Long subReviewId, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
         // 삭제 성공
@@ -47,7 +47,7 @@ public class SubReviewController {
 
     // 댓글을 수정하는 API
     @Transactional
-    @PutMapping("/guard/update")
+    @PutMapping("/update")
     public ResponseEntity<?> updateSubReview(@RequestBody SubReviewDto subReviewDto, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
         return ResponseEntity.ok().body(subReviewService.updateSubReview(subReviewDto, Long.valueOf(userId)));

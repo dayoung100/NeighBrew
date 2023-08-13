@@ -103,11 +103,11 @@ public class DrinkService {
     // 결과가 없다면 null을 반환
     public Page<DrinkResponseDto> searchDrinksByCriteria(String name, Long tagId, Pageable pageable) {
         Page<Drink> drinks;
-        if (name == null && tagId == null) {
+        if (name == null && tagId == 0) {
             drinks = drinkRepository.findAll(pageable);
         } else if (name == null) {
             drinks = drinkRepository.findByTagId(tagId, pageable).orElse(Page.empty());
-        } else if (tagId == null) {
+        } else if (tagId == 0) {
             drinks = drinkRepository.findByNameContains(name, pageable).orElse(Page.empty());
         } else {
             drinks = drinkRepository.findByNameContainsAndTagId(name, tagId, pageable).orElse(Page.empty());

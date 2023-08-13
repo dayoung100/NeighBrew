@@ -1,24 +1,12 @@
-import backIcon from "../../assets/backIcon.svg";
-import createButton from "../../assets/createButton.svg";
-import defaultImage from "../../assets/defaultImage.svg";
-import imageButton from "../../assets/imageButton.svg";
-import styled from "styled-components";
-import { useState, useEffect, useRef } from "react";
-import { callApi } from "../../utils/api";
-import { User, Drink } from "../../Type/types";
-import ImageInput from "../components/ImageInput";
-import detail from "./DrinkpostDetail";
-import FooterBigBtn from "../footer/FooterBigBtn";
-import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import styled from "styled-components";
+import { Drink, User } from "../../Type/types";
+import { callApi } from "../../utils/api";
+import ImageInput from "../components/ImageInput";
+import FooterBigBtn from "../footer/FooterBigBtn";
 import NavbarSimple from "../navbar/NavbarSimple";
-
-const Navdiv = styled.div`
-  font-family: "JejuGothic";
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
 
 const CreateBody = styled.div`
   width: 100%;
@@ -29,23 +17,6 @@ const InputDiv = styled.div`
   text-align: start;
   margin-bottom: 30px;
   margin-right: 2rem;
-`;
-
-const ImageDiv = styled.div`
-  margin-left: 36px;
-  text-align: start;
-`;
-
-const Input = styled.input`
-  font-size: 20px;
-  width: 98%;
-  height: 70%;
-  border: none;
-  border-bottom: 1px solid #444;
-  outline: none;
-  &:focus {
-    border-bottom: 2px solid #000000;
-  }
 `;
 
 const LongTextInput = styled.textarea`
@@ -66,37 +37,6 @@ const QuestionDiv = styled.div`
   margin-top: 1.5rem;
 `;
 
-const Title = styled.div`
-  font-family: "JejuGothic";
-  font-size: 20px;
-  text-align: left;
-  margin-bottom: 0.5rem;
-`;
-
-const ImgInput = styled.div`
-  // label로 대신하고 input은 숨기기 위한 css
-  input[type="file"] {
-    position: absolute;
-    width: 0;
-    height: 0;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
-  }
-`;
-
-const ImageArea = styled.div<{ src: string }>`
-  background: url(${(props) => props.src}) no-repeat center;
-  background-size: cover;
-  border-radius: 15px;
-  position: relative;
-  width: 30%;
-  padding-bottom: 30%;
-  overflow: hidden;
-`;
-
 const DrinkpostReviewCreate = () => {
   const navigate = useNavigate();
   const { drinkId } = useParams();
@@ -108,25 +48,16 @@ const DrinkpostReviewCreate = () => {
   };
   const myId = localStorage.getItem("myId");
   const [imgFile, setImgFile] = useState(null);
-  const imgRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    console.log(myId);
-    callApi("get", `api/drink/${drinkId}`)
-      .then((res) => {
-        setDrink(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => console.log(err));
+    callApi("get", `api/drink/${drinkId}`).then((res) => {
+      setDrink(res.data);
+    });
   }, []);
   useEffect(() => {
-    callApi("get", `api/user/guard/myinfo`)
-      .then((res) => {
-        console.log(res.data);
-        setMyInfo(res.data);
-        console.log(myInfo);
-      })
-      .catch((err) => console.log(err));
+    callApi("get", `api/user/myinfo`).then((res) => {
+      setMyInfo(res.data);
+    });
   }, []);
 
   const reviewSubmit = () => {
@@ -148,93 +79,17 @@ const DrinkpostReviewCreate = () => {
     }
 
     axios
-      .post("/api/drinkreview/guard", formData, {
+      .post("/api/drinkreview", formData, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
           "Content-Type": "multipart/form-data",
         },
       })
       .then((res) => {
-        console.log(res.data);
         navigate(`/drinkpost/${drinkId}`);
-      })
-      .catch((err) => console.log(err));
-
-    // callApi("post", "api/drinkreview/guard", {
-    //   myInfo: myInfo.userId,
-    //   drinkId: drinkId,
-    //   content: review,
-    //   img: null,
-    // })
-    //   .then(res => {
-    //     console.log(res);
-    //     console.log("잘댐");
-    //     navigate(`/drinkpost/${drinkId}`);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     console.log("안댐");
-    //   });
+      });
   };
 
-  const toPreviousPage = () => {
-    navigate(`/drinkpost/${drinkId}`);
-  };
-
-  const saveImgFile = () => {
-    const file = imgRef.current.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        setImgFile(reader.result);
-      }
-    };
-  };
-
-  // const uploadReviewImage = async () => {
-  //   const file = imgRef.current.files[0];
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("image", file);
-  //     if (file !== undefined) {
-  //       const response = await axios.post(`https://i9b310.p.ssafy.io/api/img/upload`, formData, {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           Authorization: "Bearer " + localStorage.getItem("token"),
-  //         },
-  //       });
-  //       return response.data;
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     throw error;
-  //   }
-  // };
-
-  // const submitHandler = async (e: React.MouseEvent<HTMLDivElement>) => {
-  //   const file = imgRef.current.files[0];
-  //   const formData = new FormData();
-  //   formData.append("drinkId", drinkId);
-  //   formData.append("content", review);
-  //   formData.append("image", file);
-  //   if (review === "") {
-  //     alert("내용을 입력해주세요.");
-  //   }
-  //   formData.forEach((value, key) => {
-  //     console.log(`${key}: ${value}`);
-  //   });
-
-  //   axios
-  //     .post("api/drinkreview/guard", formData, {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //         Authorization: "Bearer " + localStorage.getItem("token"),
-  //       },
-  //     })
-  //     .then(res => console.log(res.data))
-  //     .catch(err => console.log(err));
-  // };
   return (
     <>
       <NavbarSimple title={drink?.name} />

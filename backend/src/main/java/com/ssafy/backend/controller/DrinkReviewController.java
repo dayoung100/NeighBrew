@@ -46,7 +46,7 @@ public class DrinkReviewController {
         return ResponseEntity.ok(drinkReviewService.getReviewsOrderByLikes(pageable));
     }
 
-    @PostMapping("/guard")
+    @PostMapping("/")
     public ResponseEntity<DrinkReviewResponseDto> createDrinkReview(HttpServletRequest request,
                                                                     @ModelAttribute DrinkReviewRequestDto drinkReviewRequestDto,
                                                                     @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws IOException {
@@ -56,7 +56,7 @@ public class DrinkReviewController {
         return ResponseEntity.ok().body(drinkReviewService.createDrinkReview(drinkReviewRequestDto, multipartFile));
     }
 
-    @PutMapping("/guard/{drinkReviewId}")
+    @PutMapping("/{drinkReviewId}")
     public ResponseEntity<DrinkReviewResponseDto> updateDrinkReview(@PathVariable Long drinkReviewId,
                                                                     @ModelAttribute DrinkReviewUpdateDto drinkReviewUpdateDto,
                                                                     @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile,
@@ -67,7 +67,7 @@ public class DrinkReviewController {
     }
 
 
-    @DeleteMapping("/guard/{drinkReviewId}")
+    @DeleteMapping("/{drinkReviewId}")
     public ResponseEntity<String> deleteDrinkReview(HttpServletRequest request, @PathVariable Long drinkReviewId) throws IllegalArgumentException {
         String userId = (String) request.getAttribute("userId");
         drinkReviewService.deleteDrinkReview(drinkReviewId, Long.valueOf(userId));

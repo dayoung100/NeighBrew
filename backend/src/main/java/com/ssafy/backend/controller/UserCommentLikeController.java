@@ -13,13 +13,13 @@ import javax.servlet.http.HttpServletRequest;
 public class UserCommentLikeController {
     private final UserCommentLikeService userCommentLikeService;
 
-    @GetMapping("/guard/{reviewId}")
+    @GetMapping("/{reviewId}")
     public ResponseEntity<?> getIsLik(@PathVariable Long reviewId, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
         return ResponseEntity.ok(userCommentLikeService.getIsLike(Long.valueOf(userId), reviewId));
     }
 
-    @PostMapping("/guard/{reviewId}")
+    @PostMapping("/{reviewId}")
     public ResponseEntity<String> userLikeReview(HttpServletRequest request, @PathVariable Long reviewId) {
         String userId = (String) request.getAttribute("userId");
         boolean isLiked = userCommentLikeService.toggleUserLike(Long.valueOf(userId), reviewId);
