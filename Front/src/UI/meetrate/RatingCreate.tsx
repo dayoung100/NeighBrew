@@ -1,16 +1,10 @@
-import { styled } from "styled-components";
-import RatingMember from "./RatingMember";
-import { callApi } from "../../utils/api";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { styled } from "styled-components";
 import { User } from "../../Type/types";
+import { callApi } from "../../utils/api";
 import NavbarSimple from "../navbar/NavbarSimple";
-
-const PageName = styled.div`
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 20px;
-`;
+import RatingMember from "./RatingMember";
 
 const Title = styled.div`
   font-size: 27px;
@@ -75,7 +69,7 @@ const RatingCreate = () => {
   };
 
   const PostHandler = (rateValue) => {
-    callApi("POST", "/api/evaluation/guard", {
+    callApi("POST", "/api/evaluation", {
       ratedUser: myId,
       reviewer: rateValue.userId,
       meetId: meetId,
@@ -125,7 +119,7 @@ const RatingCreate = () => {
       .then((users) => {
         setUsers(users);
       })
-      .catch((e) => {});
+      .catch(() => {});
   }, []);
 
   return (
