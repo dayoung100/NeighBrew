@@ -39,7 +39,7 @@ const CateDiv = styled.div`
 const ShowcaseBody = styled.div`
   font-size: 14px;
   display: flex;
-  justify-content: center;
+  justify-content: start;
 `;
 
 const DrinkpostSearch = () => {
@@ -63,11 +63,8 @@ const DrinkpostSearch = () => {
 
   //inputText로 술장 검색 api
   useEffect(() => {
-    const promise = callApi(
-      "get",
-      `api/drink/search?tagId=${selectedCategory}&name=${inputText}`
-    );
-    promise.then((res) => {
+    const promise = callApi("get", `api/drink/search?tagId=${selectedCategory}&name=${inputText}`);
+    promise.then(res => {
       setSearchResult(res.data.content);
     });
   }, [inputText, selectedCategory]);
@@ -118,7 +115,7 @@ const DrinkpostSearch = () => {
               paddingBottom: "60px",
             }}
           >
-            {searchResult.map((drink) => {
+            {searchResult.map(drink => {
               return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
             })}
           </div>
