@@ -17,8 +17,8 @@ public class DrinkReviewRequestDto {
         return DrinkReview.builder()
                 .user(user)
                 .drink(drink)
-                .content(this.content)
-                .img(this.img)
+                .content(content)
+                .img(img)
                 .build();
     }
 }
