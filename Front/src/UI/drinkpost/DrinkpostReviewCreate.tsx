@@ -37,6 +37,37 @@ const QuestionDiv = styled.div`
   margin-top: 1.5rem;
 `;
 
+const Title = styled.div`
+  font-family: "JejuGothic";
+  font-size: 20px;
+  text-align: left;
+  margin-bottom: 0.5rem;
+`;
+
+const ImgInput = styled.div`
+  // label로 대신하고 input은 숨기기 위한 css
+  input[type="file"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+`;
+
+const ImageArea = styled.div<{ src: string }>`
+  background: url(${props => props.src}) no-repeat center;
+  background-size: cover;
+  border-radius: 15px;
+  position: relative;
+  width: 30%;
+  padding-bottom: 30%;
+  overflow: hidden;
+`;
+
 const DrinkpostReviewCreate = () => {
   const navigate = useNavigate();
   const { drinkId } = useParams();
@@ -50,12 +81,12 @@ const DrinkpostReviewCreate = () => {
   const [imgFile, setImgFile] = useState(null);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then((res) => {
+    callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
   }, []);
   useEffect(() => {
-    callApi("get", `api/user/myinfo`).then((res) => {
+    callApi("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);
     });
   }, []);
@@ -82,10 +113,11 @@ const DrinkpostReviewCreate = () => {
       .post("/api/drinkreview", formData, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
+          userId: myId,
           "Content-Type": "multipart/form-data",
         },
       })
-      .then((res) => {
+      .then(res => {
         navigate(`/drinkpost/${drinkId}`);
       });
   };
@@ -97,7 +129,7 @@ const DrinkpostReviewCreate = () => {
         <InputDiv>
           <div style={{ marginBottom: "10px" }}>
             <label htmlFor="review">
-              <b>후기 작성</b>
+              <b style={{ fontFamily: "JejuGothic" }}>후기 작성</b>
             </label>
           </div>
           {/* <Input
@@ -120,11 +152,7 @@ const DrinkpostReviewCreate = () => {
           </QuestionDiv>
         </div>
       </CreateBody>
-      <FooterBigBtn
-        content="등록하기"
-        color="var(--c-yellow)"
-        reqFunc={reviewSubmit}
-      />
+      <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />
     </>
   );
 };

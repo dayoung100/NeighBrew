@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { SubReview } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
+import { callApi } from "../../utils/api";
 
 const WholeDiv = styled.div`
   display: flex;
@@ -38,6 +39,17 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
   const [nameLimit, setNameLimit] = useState(15);
   const truncatedNickname =
     nickname.length > nameLimit ? nickname.substring(0, nameLimit) + "..." : nickname;
+  const [mySubReview, setMySubReview] = useState<boolean>();
+  useEffect(() => {
+    subReview.user.userId.toString() === localStorage.getItem("myId")
+      ? setMySubReview(true)
+      : setMySubReview(false);
+  });
+  const deleteHandler = () => {
+    callApi("delete", "api/guard/delete")
+      .then(res => console.log(res.data))
+      .catch(err => console.error(err));
+  };
   return (
     <WholeDiv>
       <ProfileDiv>
