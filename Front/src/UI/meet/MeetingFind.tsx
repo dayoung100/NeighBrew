@@ -37,7 +37,7 @@ const meetingFind = () => {
   const [sido, setSido] = useState(initialSido);
   const [gugun, setGugun] = useState(initialGugun);
 
-  //TODO: 무한 스크롤 로직
+  //무한 스크롤 로직
   const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
     // isIntersecting이 true면 감지했다는 뜻임
     if (isIntersecting && !throttle) {

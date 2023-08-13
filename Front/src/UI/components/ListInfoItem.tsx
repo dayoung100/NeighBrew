@@ -128,6 +128,7 @@ type ListInfoItemProps = {
  */
 const ListInfoItem = (props: ListInfoItemProps) => {
   //TODO: props를 object로 받도록 수정?
+
   return (
     <div
       style={{ display: "flex", justifyContent: "center" }}

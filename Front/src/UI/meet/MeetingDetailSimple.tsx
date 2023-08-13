@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Meeting, User } from "../../Type/types";
+import { Meeting } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 import Whiskey from "../../assets/Category/Whiskey.svg";
 import Cocktail from "../../assets/Category/Cocktail.svg";

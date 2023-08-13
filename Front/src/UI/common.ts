@@ -102,3 +102,23 @@ export const ModalInner = styled.div`
   white-space: pre-line;
   overflow: auto;
 `;
+
+//이미지 경로에 공백 있을 시 제거
+export const encodeUrl = (url: string) => {
+  return url.replace(/\s/g, "%20");
+};
+
+//태그ID를 태그 이름으로 변환
+export const getTagName = (tagId: number) => {
+  const tag = [
+    { tagId: 0, tagName: "전체" },
+    { tagId: 1, tagName: "양주" },
+    { tagId: 2, tagName: "전통주" },
+    { tagId: 3, tagName: "칵테일" },
+    { tagId: 4, tagName: "사케" },
+    { tagId: 5, tagName: "와인" },
+    { tagId: 6, tagName: "수제맥주" },
+    { tagId: 7, tagName: "소주/맥주" },
+  ];
+  return tag[tagId].tagName;
+};
