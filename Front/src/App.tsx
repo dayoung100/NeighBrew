@@ -32,6 +32,9 @@ import SearchUser from "./UI/user/SearchUser";
 import RatingCreate from "./UI/meetrate/RatingCreate";
 import logo from "./assets/logoNavbar.svg";
 import DrinkpostReviewUpdate from "./UI/drinkpost/DrinkpostReviewUpdate";
+// import "./firebase-messaging-sw.js";
+import { initializeApp } from "firebase/app";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 function App() {
   const navigate = useNavigate();
@@ -43,80 +46,45 @@ function App() {
     }, 3000);
   }, []);
 
-  // const userid = localStorage.getItem("myId");
+  const firebaseConfig = {
+    apiKey: "AIzaSyAj-406BFv0qHt8L-vpW7Ath__ZDGO1rsY",
+    authDomain: "neighbrew-b1e78.firebaseapp.com",
+    projectId: "neighbrew-b1e78",
+    storageBucket: "neighbrew-b1e78.appspot.com",
+    messagingSenderId: "735404055230",
+    appId: "1:735404055230:web:2e96cd5b4a74eb6f8bdcef",
+    measurementId: "G-P18G2K2JJN",
+  };
 
-  // useEffect(() => {
-  //   const event = new EventSource(
-  //     `https://i9b310.p.ssafy.io/api/push/connect/${userid}`,
-  //     {
-  //       withCredentials: true,
-  //     }
-  //   );
-  //   event.addEventListener("open", (e) => {
-  //     console.log("연결완료");
-  //   });
-  //   event.addEventListener("sse", (e) => {
-  //     console.log(e.data);
-  //   });
-  //   event.addEventListener("FOLLOW", (e) => {
-  //     console.log(JSON.parse(e.data));
-  //     noti(JSON.parse(e.data).content);
-  //   });
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
 
-  //   return () => {
-  //     event.close();
-  //     event.removeEventListener("open", () => {});
-  //     event.removeEventListener("sse", () => {});
-  //     event.removeEventListener("FOLLOW", () => {});
-  //   };
-  // });
+  async function requestPermission() {
+    console.log("권한 요청 중...");
 
-  // useEffect(() => {
-  //   subscribe();
-  // }, []);
-  // const subscribe = () => {
-  //   if (!("Notification" in window)) {
-  //     // 브라우저가 Notification API를 지원하는지 확인한다.
-  //     alert("알림을 지원하지 않는 데스크탑 브라우저입니다");
-  //     return;
-  //   }
+    const permission = await Notification.requestPermission();
+    if (permission === "denied") {
+      console.log("알림 권한 허용 안됨");
+      return;
+    }
 
-  //   if (Notification.permission === "granted") {
-  //     // 이미 알림 권한이 허가됐는지 확인한다.
-  //     // 그렇다면, 알림을 표시한다.
-  //     // const notification = new Notification("안녕하세요!");
-  //     return;
-  //   }
+    console.log("알림 권한이 허용됨");
 
-  //   // 알림 권한이 거부된 상태는 아니라면
-  //   if (Notification.permission !== "denied") {
-  //     // 사용자에게 알림 권한 승인을 요청한다
-  //     Notification.requestPermission().then((permission) => {
-  //       // 사용자가 승인하면, 알림을 표시한다
-  //       if (permission === "granted") {
-  //         const notification = new Notification("알림을 허용하셨습니다.");
-  //       }
-  //     });
-  //   }
-  // };
-  // const noti = (message: string) => {
-  //   navigator.serviceWorker.ready.then((registration) => {
-  //     const notiAlarm = registration.showNotification("NeighBrew", {
-  //       body: message,
-  //       icon: logo,
-  //       actions: [
-  //         {
-  //           title: "화면 이동",
-  //           action: "goTab",
-  //         },
-  //         {
-  //           title: "닫기",
-  //           action: "close",
-  //         },
-  //       ],
-  //     });
-  //   });
-  // };
+    const token = await getToken(messaging, {
+      vapidKey:
+        "BIx1uyEnAZKWSIOmMoK7gtdqA2ERTXDHJBLz9u6qNUaO-GTOLSlBcGj1bbH_XHYGA6pG5bgaFXZZzBADzsgNFWo",
+    });
+
+    if (token) console.log("token: ", token);
+    else console.log("Can not get Token");
+  }
+  onMessage(messaging, payload => {
+    console.log("메시지가 도착했습니다.", payload);
+    // ...
+  });
+
+  requestPermission();
+
   return (
     <>
       <Routes>
