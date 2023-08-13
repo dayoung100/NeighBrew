@@ -116,10 +116,8 @@ public class DrinkService {
     }
 
     public List<DrinkResponseDto> findReviewedDrinksByUserId(Long userId) {
-        return drinkReviewRepository.findDistinctDrinkByUser_UserId(userId)
-                .stream()
-                .map(DrinkReview::getDrink)
-                .map(DrinkResponseDto::fromEntity)
+        return drinkReviewRepository.findDrinksByUserId(userId)
+                .stream().map(DrinkResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 

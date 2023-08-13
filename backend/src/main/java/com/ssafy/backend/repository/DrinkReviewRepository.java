@@ -6,6 +6,7 @@ import com.ssafy.backend.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,7 +18,8 @@ public interface DrinkReviewRepository extends JpaRepository<DrinkReview, Long> 
 
     List<DrinkReview> findAllByUserAndDrink(User user, Drink drink);
 
-    List<DrinkReview> findDistinctDrinkByUser_UserId(Long userId);
+    @Query("SELECT DISTINCT dr.drink FROM DrinkReview dr WHERE dr.user.userId = :userId")
+    List<Drink> findDrinksByUserId(Long userId);
 
     Page<DrinkReview> findAllByOrderByLikeCountDesc(Pageable pageable);
 
