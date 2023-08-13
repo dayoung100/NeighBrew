@@ -13,12 +13,13 @@ const Card = styled.div`
   border-radius: 14px;
   background-color: var(--c-lightgray);
   align-items: center;
+  justify-content: space-between;
   padding: 5px 3px 5px 3px;
 `;
 
 const CardImage = styled.img`
-  width: 110%;
-  height: 150%;
+  max-height: 64%;
+  max-width: 100%;
 `;
 
 const TopTag = styled.div`
@@ -122,6 +123,7 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
       <TopTag>
         <Tag>{getTagName(drink.tagId)}</Tag>
       </TopTag>
+
       <CardImage src={transImage(drink.image)}></CardImage>
       <NameCard>
         {drink.name.length < limit

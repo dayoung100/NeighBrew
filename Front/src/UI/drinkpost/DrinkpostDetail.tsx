@@ -43,9 +43,10 @@ const SimpleInfo = styled.div`
 `;
 
 const ImageInfo = styled.div`
+  height: 180%;
   width: 40%;
   position: absolute;
-  left: 54%;
+  left: 70%;
   transform: translateX(-50%);
   bottom: -12px;
 `;
@@ -239,7 +240,11 @@ const DrinkpostDetail = () => {
             </div>
           </SimpleInfo>
           <ImageInfo>
-            <img src={transImage(detail?.image)} alt="" style={{ width: "28vh", height: "40vh" }} />
+            <img
+              src={transImage(detail?.image)}
+              alt=""
+              style={{ maxWidth: "100%", height: "100%" }}
+            />
           </ImageInfo>
         </InfoDiv>
 
