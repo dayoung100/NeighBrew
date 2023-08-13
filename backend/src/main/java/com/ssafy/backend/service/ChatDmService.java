@@ -34,10 +34,11 @@ public class ChatDmService {
 
     //DM 목록 조회
     public List<ChatDmRoom> findMyDmList(Long userId) {
-        List<ChatDmRoom> dmList = chatDmRoomRepository.findChatDmRoomByIdOOrderByLastMessageTimeDesc(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
+        List<ChatDmRoom> dmList = chatDmRoomRepository.findChatDmRoomByIdOrderByLastMessageTimeDesc(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
 
         List<ChatDmRoom> result = new ArrayList<>();
         for (ChatDmRoom cdr : dmList) {
+            log.info("{},{}", cdr.getChatDmRoomId(), cdr.getLastMessageTime());
             //떠난 기록이 있을 경우 내 목록에서 제외한다.
             if (cdr.getUser1().getUserId() == userId) {
                 if (cdr.getUser1AttendTime() != null) result.add(cdr);
