@@ -23,7 +23,7 @@ const meetingFind = () => {
   const [meetData, setMeetData] = useState<Meeting[]>([]);
 
   const [page, setPage] = useState(0); //페이징용, 0에서 시작
-  const [totalPage, setTotalPage] = useState(0); //페이징용, 예정된 전체 페이지 수
+  const [totalPage, setTotalPage] = useState(1); //페이징용, 예정된 전체 페이지 수
   const [throttle, setThrottle] = useState(false);
 
   //주종 카테고리 선택
@@ -49,6 +49,12 @@ const meetingFind = () => {
       }, 300);
     }
   };
+
+  useEffect(() => {
+    console.log("throttle:" + throttle);
+    console.log("page:" + page);
+    console.log("total:" + totalPage);
+  }, [throttle, page, totalPage]);
 
   const { setTarget } = useIntersectionObserver({ onIntersect });
 
@@ -276,9 +282,13 @@ const meetingFind = () => {
           )}
         </div>
         {meetData.length > 0 && <MeetingListItem data={meetData} />}
-        {meetData.length === 0 && <div style={{ minHeight: "100vh" }}></div>}
+        {/* 검색 결과가 없고 더이상 로드할 수 없다면(page가 넘었음) 빈공간 */}
+        {meetData.length === 0 && page >= totalPage && (
+          <div style={{ minHeight: "100vh" }}></div>
+        )}
         {!throttle && page < totalPage && (
           <div
+            className="target"
             ref={setTarget}
             style={{
               height: "1px",
