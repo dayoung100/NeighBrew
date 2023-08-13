@@ -5,10 +5,10 @@ import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.entity.User;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@NoArgsConstructor
+@Setter
 public class DrinkReviewResponseDto {
     private Long drinkReviewId;
     private User user;

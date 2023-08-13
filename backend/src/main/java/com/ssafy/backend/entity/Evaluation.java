@@ -1,9 +1,6 @@
 package com.ssafy.backend.entity;
 
 import com.ssafy.backend.Enum.EvaluationType;
-import com.ssafy.backend.dto.EvaluationDto;
-import com.ssafy.backend.dto.UserUpdateDto;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -47,9 +44,4 @@ public class Evaluation {
     public void createdAt() {
         this.createdAt = new Date();
     }
-
-
-
-
-
 }

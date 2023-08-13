@@ -1,7 +1,7 @@
 package com.ssafy.backend.service;
 
-import com.ssafy.backend.dto.UserResponseDto;
-import com.ssafy.backend.dto.UserUpdateDto;
+import com.ssafy.backend.dto.user.UserResponseDto;
+import com.ssafy.backend.dto.user.UserUpdateDto;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ public class UserService {
     private final S3Service s3Service;
 
     public UserResponseDto findByUserId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."));
-        return UserResponseDto.fromEntity(user);
+        return UserResponseDto.fromEntity(userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다.")));
     }
 
     @Transactional
@@ -39,7 +39,6 @@ public class UserService {
         }
 
         user.updateFromDto(updateDto);
-
         return UserResponseDto.fromEntity(userRepository.save(user));
     }
 
@@ -49,7 +48,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
 
         //프로필이 존재하면 기존 이미지 제거한다.
-        if(!user.getProfile().equals("no image")) s3Service.deleteImg(user.getProfile());
+        if (!user.getProfile().equals("no image")) s3Service.deleteImg(user.getProfile());
 
         user.updateImg(url);
         userRepository.save(user);
@@ -57,13 +56,17 @@ public class UserService {
 
 
     public List<UserResponseDto> findAll() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(UserResponseDto::fromEntity).collect(Collectors.toList());
+        return userRepository.findAll()
+                .stream()
+                .map(UserResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
 
     public List<UserResponseDto> searchUsers(String nickName) {
-        List<User> users = userRepository.findByNicknameContaining(nickName);
-        return users.stream().map(UserResponseDto::fromEntity).collect(Collectors.toList());
+        return userRepository.findByNicknameContaining(nickName)
+                .stream()
+                .map(UserResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 }

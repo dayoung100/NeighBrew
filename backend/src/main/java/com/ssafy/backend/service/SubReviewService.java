@@ -1,6 +1,7 @@
 package com.ssafy.backend.service;
 
-import com.ssafy.backend.dto.SubReviewRequestDto;
+import com.ssafy.backend.dto.subReview.SubReviewRequestDto;
+import com.ssafy.backend.dto.subReview.SubReviewResponseDto;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.entity.SubReview;
 import com.ssafy.backend.entity.User;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +26,15 @@ public class SubReviewService {
     private final PushService pushService;
 
     // 리뷰의 댓글을 조회하는 API
-    public List<SubReview> findByDrinkReviewId(Long drinkReviewId) {
-        return subReviewRepository.findByDrinkReview_DrinkReviewIdOrderByCreatedAtDesc(drinkReviewId);
+    public List<SubReviewResponseDto> findByDrinkReviewId(Long drinkReviewId) {
+        return subReviewRepository.findByDrinkReview_DrinkReviewIdOrderByCreatedAtDesc(drinkReviewId)
+                .stream().map(SubReviewResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
 
     // 리뷰의 댓글을 작성하는 API
-    public SubReview writeSubReview(SubReviewRequestDto subReviewRequestDto, Long userId) {
+    public SubReviewResponseDto writeSubReview(SubReviewRequestDto subReviewRequestDto, Long userId) {
         DrinkReview drinkReview = drinkReviewRepository.findById(subReviewRequestDto.getDrinkReviewId()).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
         // 여기가 getDrinkReviewId 로 바뀌어야함
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
@@ -46,7 +50,7 @@ public class SubReviewService {
                 .user(user)
                 .build();
 
-        return subReviewRepository.save(subReview);
+        return SubReviewResponseDto.fromEntity(subReviewRepository.save(subReview));
     }
 
     @Transactional

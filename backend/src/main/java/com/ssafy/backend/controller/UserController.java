@@ -2,8 +2,8 @@ package com.ssafy.backend.controller;
 
 import com.ssafy.backend.Enum.UploadType;
 import com.ssafy.backend.authentication.application.LoginResponse;
-import com.ssafy.backend.dto.UserResponseDto;
-import com.ssafy.backend.dto.UserUpdateDto;
+import com.ssafy.backend.dto.user.UserResponseDto;
+import com.ssafy.backend.dto.user.UserUpdateDto;
 import com.ssafy.backend.service.JwtService;
 import com.ssafy.backend.service.S3Service;
 import com.ssafy.backend.service.UserService;
@@ -17,10 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -40,7 +37,6 @@ public class UserController {
     @GetMapping("/myinfo")
     public ResponseEntity<UserResponseDto> getMyInfo(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
-        log.info("userId : {}", userId);
         return ResponseEntity.ok().body(userService.findByUserId(Long.parseLong(userId)));
     }
 
@@ -74,18 +70,13 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponseDto> updateUserInfo(@RequestBody UserUpdateDto userUpdateDto,
                                                           @PathVariable Long userId) {
-        UserResponseDto userResponseDto = userService.updateUser(userId, userUpdateDto);
-        return ResponseEntity.ok(userResponseDto);
+        return ResponseEntity.ok(userService.updateUser(userId, userUpdateDto));
     }
 
     @PutMapping("/img/{userId}")
     public ResponseEntity<String> updateUserImg(@RequestParam("profile") Optional<MultipartFile> profile,
                                                 @PathVariable Long userId) throws IOException {
-        String url;
-        if(profile.isPresent()){
-            if(profile.get().getOriginalFilename().equals("")) url = "no image";
-            else url = s3Service.upload(UploadType.USERPROFILE, profile.get());
-        }else url = "no image";
+        String url = profile.isPresent() ? Objects.equals(profile.get().getOriginalFilename(), "") ? "no image" : s3Service.upload(UploadType.USERPROFILE, profile.get()) : "no image";
 
         userService.updateUserImg(userId, url);
         return ResponseEntity.ok(url);

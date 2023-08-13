@@ -1,4 +1,4 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.subReview;
 
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.entity.SubReview;
