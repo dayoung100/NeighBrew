@@ -39,6 +39,7 @@ public class UserController {
     @GetMapping("/myinfo")
     public ResponseEntity<UserResponseDto> getMyInfo(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
+        log.info("userId : {}", userId);
         return ResponseEntity.ok().body(userService.findByUserId(Long.parseLong(userId)));
     }
 
@@ -69,20 +70,28 @@ public class UserController {
         return ResponseEntity.ok(tokens);
     }
 
-    @PutMapping("/")
+    @PutMapping("/{userId}")
     public ResponseEntity<UserResponseDto> updateUserInfo(@RequestBody UserUpdateDto userUpdateDto,
-                                                          HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        UserResponseDto userResponseDto = userService.updateUser(Long.valueOf(userId), userUpdateDto);
+                                                          @PathVariable Long userId) {
+        UserResponseDto userResponseDto = userService.updateUser(userId, userUpdateDto);
         return ResponseEntity.ok(userResponseDto);
     }
 
-    @PutMapping("/img")
-    public ResponseEntity<String> updataUserImg(@RequestParam("profile") MultipartFile profile, HttpServletRequest request) throws IOException {
-        String url = s3Service.upload(UploadType.USERPROFILE, profile);
-        String userId = (String) request.getAttribute("userId");
-        userService.updateUserImg(Long.valueOf(userId), url);
+    @PutMapping("/img/{userId}")
+    public ResponseEntity<String> updateUserImg(@RequestParam("profile") MultipartFile profile,
+                                                @PathVariable Long userId) throws IOException {
 
+        String url;
+
+        if(profile.isEmpty())  {
+            log.info("이미지 업로드 안함");
+            url = "no image";
+        }
+        else {
+            url = s3Service.upload(UploadType.USERPROFILE, profile);
+        }
+
+        userService.updateUserImg(userId, url);
         return ResponseEntity.ok(url);
     }
 

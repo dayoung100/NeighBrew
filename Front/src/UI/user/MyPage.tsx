@@ -273,7 +273,7 @@ const MyPage = () => {
     navigate("/myPage/follow/" + userid);
   };
   const userInfo = () => {
-    callApi("get", `api/user/${userid}`)
+    callApi("get", `api/user/myinfo`)
       .then((res) => {
         setUserData(res.data);
       })
@@ -355,10 +355,11 @@ const MyPage = () => {
     formData.append("profile", file);
     if (file !== undefined) {
       axios
-        .put("/api/user/img", formData, {
+        .put(`/api/user/img/${localStorage.getItem("myId")}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + localStorage.getItem("token"),
+            UserID: localStorage.getItem("myId"),
           },
         })
         .then((res) => {
@@ -398,7 +399,7 @@ const MyPage = () => {
     )
       return;
 
-    callApi("put", "api/user", {
+    callApi("put", `api/user/${localStorage.getItem("myId")}`, {
       nickname: nickname,
       intro: intro,
       birth: birth,

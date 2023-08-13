@@ -48,6 +48,7 @@ api.interceptors.response.use(
         // 리프레시 토큰이 만료되었거나 재발급 요청에 문제가 있으면 로그인 페이지로 리디렉션
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
+        localStorage.removeItem("myId");
         window.location.href = "/";
         return Promise.reject(err);
       }
