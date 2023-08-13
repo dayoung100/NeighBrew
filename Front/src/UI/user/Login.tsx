@@ -3,6 +3,8 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import logo from "../../assets/logo.png";
+import CocktailGlass from "../../assets/Loading/CocktailGlass.png";
 import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
@@ -16,6 +18,9 @@ const ImgDivIcon = styled.div`
   border-radius: 50%;
   float: left;
   margin-right: 1rem;
+  position: relative;
+  bottom: -1rem;
+  z-index: 1;
 `;
 
 const Img = styled.img`
@@ -34,15 +39,23 @@ const Div = styled.div`
   font-weight: 14px;
   font-family: "JejuGothic";
   font-size: 20px;
+
+  cursor: pointer;
 `;
 
-const OrangeSection = styled.div`
+const MintSection = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: var(--c-yellow);
   width: 100%;
+`;
+
+const SubTitle = styled.div`
+  margin-top: 5rem;
+  font-family: "NanumSquareNeoBold";
+  font-size: 14px;
 `;
 
 const WhiteSection = styled.div`
@@ -55,6 +68,18 @@ const WhiteSection = styled.div`
   background-color: white;
   width: 100%;
   border-radius: 50px 50px 0 0; /* 상단만 둥글게 처리 */
+  padding-top: 6rem;
+  font-family: "NanumSquareNeo";
+  font-size: 1.15rem;
+`;
+
+const LoginBtnDiv = styled.div`
+  width: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  top: 1rem;
 `;
 
 const Login = () => {
@@ -106,61 +131,28 @@ const Login = () => {
     <div
       style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
     >
-      <OrangeSection>
-        <div style={{ marginBottom: "3rem" }}>
-          <img src={NeighBrew} style={{ marginTop: "5rem" }} />
-        </div>
-        <div style={{ marginBottom: "9rem" }}>
-          <p style={{ fontFamily: "Noto Sans KR", fontSize: "1.15rem" }}>
-            네이브루에 오신걸 환영합니다.
-          </p>
-        </div>
-      </OrangeSection>
-
-      <WhiteSection>
-        {/* 아이콘을 위치시킬 영역 */}
-        <ImgDivIcon
-          style={{
-            position: "relative",
-            top: "-4rem",
-            zIndex: 1,
-            borderRadius: "5rem 5rem 0 0",
-          }}
-        >
-          <img src={icon} />
+      <MintSection>
+        <SubTitle>주류 정보 공유 및 모임 플랫폼</SubTitle>
+        <img src={logo} style={{ width: "50vw" }} />
+        <ImgDivIcon>
+          <img src={CocktailGlass} />
         </ImgDivIcon>
-
-        {/* <div style={{ position: "relative", top: "-2rem", zIndex: 1 }}> */}
-        {/* <div>
-        <img src={LoginImg} style={{ width: "5rem"}}  />
-      </div> */}
-        {/* </div> */}
-
-        <div
-          style={{
-            width: "100%",
-            alignItems: "center",
-            display: "flex",
-            flexDirection: "column",
-            position: "relative",
-            top: "1rem",
-          }}
-        >
-          <Div
-            onClick={KakaologinHandler}
-            style={{ cursor: "pointer", marginTop: "" }}
-          >
+      </MintSection>
+      <WhiteSection>
+        <p>네이브루에 오신걸 환영합니다.</p>
+        <LoginBtnDiv>
+          <Div onClick={KakaologinHandler}>
             <Img src={kakaoLogin} />
           </Div>
 
-          <Div onClick={NaverloginHandler} style={{ cursor: "pointer" }}>
+          <Div onClick={NaverloginHandler}>
             <Img src={naverLogin} />
           </Div>
 
-          <Div onClick={GoogleloginHandler} style={{ cursor: "pointer" }}>
+          <Div onClick={GoogleloginHandler}>
             <Img src={googleLogin} />
           </Div>
-        </div>
+        </LoginBtnDiv>
       </WhiteSection>
     </div>
   );

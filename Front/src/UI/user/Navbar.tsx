@@ -1,19 +1,39 @@
-import logoNavbar from "../../assets/logoNavbar.svg";
+import logo from "../../assets/logo.png";
 import styled from "styled-components";
 import {
   alertNavIcon,
   resetUserInfo,
   searchNavIcon,
 } from "../../assets/AllIcon";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Button = styled.button`
-  /* width: 40%; */
-  display: inline-block;
+const NavCustom = styled.nav`
+  display: flex;
+  justify-content: space-between;
+  padding: 2% 0;
+  background-color: white;
+  width: 100%;
+`;
+
+const BtnDiv = styled.div`
+  width: 20%;
+  max-width: 20%;
   height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+`;
+
+const Button = styled.button`
   background-color: white;
   border: none;
+`;
+
+const Logo = styled.div`
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Navbar = () => {
@@ -25,11 +45,12 @@ const Navbar = () => {
     navigate("/userSearch");
   };
   return (
-    <nav className="nav">
-      <span className="logo">
-        <img src={logoNavbar} />
-      </span>
-      <span>
+    <NavCustom>
+      <BtnDiv></BtnDiv>
+      <Logo>
+        <img src={logo} width="50%" />
+      </Logo>
+      <BtnDiv style={{ paddingRight: "0.5rem" }}>
         <Button onClick={UserSearchHandler}>{searchButton}</Button>
         <Button
           onClick={() => {
@@ -38,8 +59,8 @@ const Navbar = () => {
         >
           {alertButton}
         </Button>
-      </span>
-    </nav>
+      </BtnDiv>
+    </NavCustom>
   );
 };
 

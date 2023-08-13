@@ -1,21 +1,36 @@
 // 술장 기능을 위한 navbar입니다. 다른 파트분들은 신경쓰지 마세요.
-
-import logoNavbar from "../../assets/logoNavbar.svg";
+import logo from "../../assets/logo.png";
 import styled from "styled-components";
 import { searchNavIcon, alertNavIcon } from "../../assets/AllIcon";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const NavCustom = styled.nav`
+  display: flex;
+  justify-content: space-between;
+  padding: 2% 0;
+  background-color: white;
+  width: 100%;
+`;
+
+const BtnDiv = styled.div`
+  width: 20%;
+  max-width: 20%;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+`;
 
 const Button = styled.button`
-  width: 40%;
-  display: inline-block;
-  height: 2.5rem;
   background-color: white;
   border: none;
+`;
 
-  &:focus {
-    outline: none;
-    border-bottom: 2px solid #000000;
-  }
+const Logo = styled.div`
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 type toDrinkpSearchProps = {
@@ -23,34 +38,32 @@ type toDrinkpSearchProps = {
 };
 
 const Navbar = (props: toDrinkpSearchProps) => {
-  const [navButton, setNavButton] = useState(0);
   const searchButton = searchNavIcon();
   const alertButton = alertNavIcon();
+  const navigate = useNavigate();
+  //알림 클릭 시 알림 창으로 이동
+  //TODO: 알림 페이지 작업 이후 네비게이터 링크 수정해야
+  const GotoAlertHandler = () => {
+    navigate(`/`);
+  };
+
   return (
-    <nav className="nav" style={{ width: "100%" }}>
-      <span className="logo">
-        <img src={logoNavbar} />
-      </span>
-      <span className="searchAndIcon">
+    <NavCustom>
+      <BtnDiv></BtnDiv>
+      <Logo>
+        <img src={logo} width="50%" />
+      </Logo>
+      <BtnDiv style={{ paddingRight: "0.5rem" }}>
         <Button
           onClick={() => {
-            setNavButton(1);
             props.toDrinkSearch();
-            // console.log("search!");
           }}
         >
           {searchButton}
         </Button>
-        <Button
-          onClick={() => {
-            setNavButton(2);
-            console.log("alert!");
-          }}
-        >
-          {alertButton}
-        </Button>
-      </span>
-    </nav>
+        <Button onClick={GotoAlertHandler}>{alertButton}</Button>
+      </BtnDiv>
+    </NavCustom>
   );
 };
 
