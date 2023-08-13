@@ -9,8 +9,6 @@ import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import { Chat, User } from "../../Type/types";
 import { callApi } from "../../utils/api";
-import sendImage from "../../assets/send.png";
-import TextareaAutosize from "react-textarea-autosize";
 
 const OtherChat = styled.div`
   position: relative;
@@ -41,7 +39,7 @@ const MyChat = styled.div`
   margin-right: 1px;
   margin-left: 0.5rem;
   font-size: 13px;
-  text-align: right;
+  text-align: left;
   font-family: "SeoulNamsan";
 `;
 
@@ -144,13 +142,14 @@ const UserDiv = styled.div`
 `;
 
 const InputDiv = styled.div`
-  display: flex;
-  background-color: #fff;
   width: 100%;
-  border-top: 0.5px solid #dfdfdf;
-  max-height: 100px;
+  background-color: white;
+  height: 2.5rem;
+  box-sizing: border-box;
+  display: flex;
   align-items: center;
   justify-content: space-around;
+  padding: 0.5rem;
 `;
 
 const Input = styled.input`
@@ -184,7 +183,7 @@ const ChatRoom = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState("");
   const [chatRoomId, setChatRoomId] = useState(0);
-  const messageHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
   // 웹소켓 연결 및 이벤트 핸들러 설정
@@ -223,15 +222,31 @@ const ChatRoom = () => {
     connectToWebSocket();
   }, []);
   // 엔터 누르면 메세지 전송
-  const sendMessageHandler = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (message.trim() === "") return;
-    client.current.send(
-      `/sub/chat/${id}/sendMessage`,
-      {},
-      JSON.stringify({ message: message, userId, user: { userId: userId } })
-    );
-    setMessage("");
-    scroll();
+  const sendMessageHandler = (
+    e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>
+  ) => {
+    if (e.type == "click") {
+      if (message.trim() === "") return;
+      client.current.send(
+        `/sub/chat/${id}/sendMessage`,
+        {},
+        JSON.stringify({ message: message, userId, user: { userId: userId } })
+      );
+      setMessage("");
+      scroll();
+    } else {
+      if (e.code === "Enter" || e.keyCode === 13) {
+        if (message.trim() === "") return;
+        // 백엔드에 메시지 전송
+        client.current.send(
+          `/sub/chat/${id}/sendMessage`,
+          {},
+          JSON.stringify({ message: message, userId, user: { userId: userId } })
+        );
+        setMessage("");
+        scroll();
+      }
+    }
   };
 
   const navigate = useNavigate();
@@ -421,26 +436,16 @@ const ChatRoom = () => {
       </div>
       <footer>
         <InputDiv>
-          <StyleAutoTextArea
-            value={message}
-            onChange={messageHandler}
-            minRows={1}
-            maxRows={4}
-          ></StyleAutoTextArea>
-
-          <SendBtnDiv>
-            {message.length > 0 ? (
-              <div onClick={sendMessageHandler}>
-                {/*<SendIcon></SendIcon>*/}
-                <SendImg src={sendImage} alt="" />
-              </div>
-            ) : (
-              <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
-                {/*<SendIcon></SendIcon>*/}
-                <SendImg src={sendImage} alt="" />
-              </div>
-            )}
-          </SendBtnDiv>
+          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
+          {message.length > 0 ? (
+            <div onClick={sendMessageHandler}>
+              <SendIcon></SendIcon>
+            </div>
+          ) : (
+            <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
+              <SendIcon></SendIcon>
+            </div>
+          )}
         </InputDiv>
       </footer>
     </div>
@@ -461,33 +466,3 @@ const SendIcon = () => {
     </svg>
   );
 };
-const StyleAutoTextArea = styled(TextareaAutosize)`
-  display: flex;
-  flex-basis: 90%;
-  border: 0.5px solid #dfdfdf;
-  background-color: #eeeeee;
-  border-radius: 5px;
-  padding: 0.3rem;
-  overflow-y: auto;
-  resize: none;
-  margin: 0.5rem 0 0.5rem 0.5rem;
-  padding: 0.3rem;
-  outline: none;
-  // 글을 아래에 배치
-  align-self: flex-end;
-  font-size: 1rem;
-
-  &:focus {
-    border: none;
-  }
-`;
-const SendBtnDiv = styled.div`
-  background-color: #ffffff;
-  border-radius: 0 5px 5px 0;
-  border: none;
-  flex-basis: 10%;
-`;
-const SendImg = styled.img`
-  width: 23px;
-  height: 23px;
-`;
