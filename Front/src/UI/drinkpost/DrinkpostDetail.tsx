@@ -43,9 +43,10 @@ const SimpleInfo = styled.div`
 `;
 
 const ImageInfo = styled.div`
+  height: 180%;
   width: 40%;
   position: absolute;
-  left: 54%;
+  left: 70%;
   transform: translateX(-50%);
   bottom: -12px;
 `;
