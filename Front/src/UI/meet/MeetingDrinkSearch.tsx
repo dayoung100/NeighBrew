@@ -9,6 +9,7 @@ import { Drink } from "../../Type/types";
 import { getTagName, encodeUrl, initialDrink } from "../common";
 import { callApi } from "../../utils/api";
 import EmptyMsg from "../components/EmptyMsg";
+import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -110,6 +111,11 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
   const [searchResultList, setSearchResultList] = useState<Drink[]>([]); //주류 검색 결과 리스트
   const [fetchDone, setFetchDone] = useState(false);
 
+  //무한스크롤 용
+  const [page, setPage] = useState(0); //페이징용, 0에서 시작
+  const [totalPage, setTotalPage] = useState(0); //페이징용, 예정된 전체 페이지 수
+  const [throttle, setThrottle] = useState(false);
+
   //검색 결과 창 애니메이션 용
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const parent = useRef(null);
@@ -139,19 +145,58 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
     }
   }, [meetTag, meetDrink]);
 
+  //무한 스크롤 로직
+  const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
+    // isIntersecting이 true면 감지했다는 뜻임
+    if (isIntersecting && !throttle) {
+      setThrottle(true);
+      setTimeout(() => {
+        setPage((prev) => prev + 1);
+        setThrottle(false);
+      }, 300);
+    }
+  };
+
+  const { setTarget } = useIntersectionObserver({ onIntersect });
+
   //inputText로 술장 검색 api
+  useEffect(() => {
+    if (page === 0) {
+      const promise = callApi(
+        "get",
+        `api/drink/search?tagId=${tag}&name=${inputText}&page=${page}&size=10`
+      );
+      promise.then((res) => {
+        setTotalPage(res.data.totalPages);
+        setSearchResultList(res.data.content); //받아온 데이터로 리스트 초기화
+      });
+    } else {
+      setPage(0);
+      setTotalPage(1);
+    }
+  }, [inputText, tag]);
+
+  //페이지가 변하면 기존 데이터에 이어서 로드
   useEffect(() => {
     const promise = callApi(
       "get",
-      `api/drink/search?tagId=${tag}&name=${inputText}`
+      `api/drink/search?tagId=${tag}&name=${inputText}&page=${page}&size=10`
     );
-    promise.then((res) => {
-      setSearchResultList(res.data.content);
-    });
-  }, [inputText, tag]);
+    if (page === 0) {
+      promise.then((res) => {
+        setTotalPage(res.data.totalPages);
+        setSearchResultList(res.data.content); //받아온 데이터로 리스트 초기화
+      });
+    } else {
+      promise.then((res) => {
+        setTotalPage(res.data.totalPages);
+        setSearchResultList((prev) => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
+      });
+    }
+  }, [page]);
 
-  //카테고리 변경 시 주류 검색 결과 및 조건 초기화
   useEffect(() => {
+    //주류 검색 결과 및 조건 초기화
     if (fetchDone) {
       setDrink(CustomInitialDrink);
       setInputText("");
@@ -206,20 +251,31 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
                     flexGrow: "1",
                   }}
                 >
-                  {searchResultList.length === 0 ? (
+                  {searchResultList.length === 0 && (
                     <EmptyMsg
                       title="검색 결과가 없습니다"
                       contents={`아직 네이브루에 등록되지 않았나봐요\n술장에서 직접 등록해보시는 건 어떤가요?`}
                     />
-                  ) : (
-                    searchResultList.map((res) => (
-                      <div onClick={() => getDrink(res)} key={res.drinkId}>
-                        <OneLineListItem
-                          content={res.name}
-                          tag={getTagName(res.tagId)}
-                        ></OneLineListItem>
-                      </div>
-                    ))
+                  )}
+                  {searchResultList.length > 0 && (
+                    <div key={searchResultList[0].drinkId}>
+                      {searchResultList.map((res) => (
+                        <div onClick={() => getDrink(res)} key={res.drinkId}>
+                          <OneLineListItem
+                            content={res.name}
+                            tag={getTagName(res.tagId)}
+                          ></OneLineListItem>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {!throttle && page < totalPage && (
+                    <div
+                      ref={setTarget}
+                      style={{
+                        height: "1px",
+                      }}
+                    ></div>
                   )}
                 </div>
                 <CloseDiv onClick={() => setIsSearchFocused(false)}>
