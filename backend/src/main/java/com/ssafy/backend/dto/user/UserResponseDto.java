@@ -1,11 +1,9 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.user;
 
 import com.ssafy.backend.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -14,14 +12,14 @@ public class UserResponseDto {
     private String email;
     private String nickname;
     private String name;
-    private LocalDate birth;
+    private String birth;
     private String intro;
     private Float liverPoint;
     private String profile;
 
     @Builder
     public UserResponseDto(Long userId, String email, String nickname, String name,
-                           LocalDate birth, String intro, Float liverPoint, String profile) {
+                           String birth, String intro, Float liverPoint, String profile) {
         this.userId = userId;
         this.email = email;
         this.nickname = nickname;
@@ -38,7 +36,7 @@ public class UserResponseDto {
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .name(user.getName())
-                .birth(user.getBirth())
+                .birth(String.valueOf(user.getBirth()))
                 .intro(user.getIntro())
                 .liverPoint(user.getLiverPoint())
                 .profile(user.getProfile())

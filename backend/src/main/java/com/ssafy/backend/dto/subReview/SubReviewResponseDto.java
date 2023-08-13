@@ -1,9 +1,12 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.subReview;
 
+import com.ssafy.backend.dto.user.UserResponseDto;
 import com.ssafy.backend.entity.SubReview;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
 public class SubReviewResponseDto {
     private Long subReviewId;

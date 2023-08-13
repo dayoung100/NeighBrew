@@ -2,9 +2,8 @@ package com.ssafy.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
-import com.ssafy.backend.dto.UserChatDto;
 import com.ssafy.backend.dto.UserDto;
-import com.ssafy.backend.dto.UserUpdateDto;
+import com.ssafy.backend.dto.user.UserUpdateDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -113,18 +112,6 @@ public class User {
                 .nickname(nickname)
                 .name(name)
                 .birth(birth)
-                .intro(intro)
-                .liverPoint(liverPoint)
-                .profile(profile)
-                .build();
-    }
-
-    public UserChatDto toChatDto() {
-        return UserChatDto.builder()
-                .userId(userId)
-                .email(email)
-                .nickname(nickname)
-                .name(name)
                 .intro(intro)
                 .liverPoint(liverPoint)
                 .profile(profile)

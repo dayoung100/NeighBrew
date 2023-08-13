@@ -5,7 +5,6 @@ import com.ssafy.backend.dto.drink.DrinkRequestDto;
 import com.ssafy.backend.dto.drink.DrinkResponseDto;
 import com.ssafy.backend.dto.drink.DrinkUpdateRequestDto;
 import com.ssafy.backend.entity.Drink;
-import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.repository.DrinkRepository;
 import com.ssafy.backend.repository.DrinkReviewRepository;
 import lombok.RequiredArgsConstructor;
