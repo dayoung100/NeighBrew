@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -78,18 +79,13 @@ public class UserController {
     }
 
     @PutMapping("/img/{userId}")
-    public ResponseEntity<String> updateUserImg(@RequestParam("profile") MultipartFile profile,
+    public ResponseEntity<String> updateUserImg(@RequestParam("profile") Optional<MultipartFile> profile,
                                                 @PathVariable Long userId) throws IOException {
-
         String url;
-
-        if(profile.isEmpty())  {
-            log.info("이미지 업로드 안함");
-            url = "no image";
-        }
-        else {
-            url = s3Service.upload(UploadType.USERPROFILE, profile);
-        }
+        if(profile.isPresent()){
+            if(profile.get().getOriginalFilename().equals("")) url = "no image";
+            else url = s3Service.upload(UploadType.USERPROFILE, profile.get());
+        }else url = "no image";
 
         userService.updateUserImg(userId, url);
         return ResponseEntity.ok(url);
