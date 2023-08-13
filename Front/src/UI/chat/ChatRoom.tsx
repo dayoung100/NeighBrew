@@ -9,6 +9,8 @@ import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import { Chat, User } from "../../Type/types";
 import { callApi } from "../../utils/api";
+import sendImage from "../../assets/send.png";
+import TextareaAutosize from "react-textarea-autosize";
 
 const OtherChat = styled.div`
   position: relative;
@@ -133,7 +135,7 @@ const UserDiv = styled.div`
   @font-face {
     font-family: "SUITE-Regular";
     src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2")
-      format("woff2");
+    format("woff2");
     font-style: normal;
   }
   font-family: "SUITE-Regular";
@@ -142,14 +144,13 @@ const UserDiv = styled.div`
 `;
 
 const InputDiv = styled.div`
-  width: 100%;
-  background-color: white;
-  height: 2.5rem;
-  box-sizing: border-box;
   display: flex;
+  background-color: #fff;
+  width: 100%;
+  border-top: 0.5px solid #dfdfdf;
+  max-height: 100px;
   align-items: center;
   justify-content: space-around;
-  padding: 0.5rem;
 `;
 
 const Input = styled.input`
@@ -183,7 +184,7 @@ const ChatRoom = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState("");
   const [chatRoomId, setChatRoomId] = useState(0);
-  const messageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const messageHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
   };
   // 웹소켓 연결 및 이벤트 핸들러 설정
@@ -207,11 +208,11 @@ const ChatRoom = () => {
               nickname: receivedMessage.userNickname,
             },
             createdAt:
-              new Date().getHours() +
-              ":" +
-              (new Date().getMinutes() < 10
-                ? "0" + new Date().getMinutes()
-                : new Date().getMinutes()),
+                new Date().getHours() +
+                ":" +
+                (new Date().getMinutes() < 10
+                    ? "0" + new Date().getMinutes()
+                    : new Date().getMinutes()),
           },
         ]);
       });
@@ -222,31 +223,15 @@ const ChatRoom = () => {
     connectToWebSocket();
   }, []);
   // 엔터 누르면 메세지 전송
-  const sendMessageHandler = (
-    e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>
-  ) => {
-    if (e.type == "click") {
-      if (message.trim() === "") return;
-      client.current.send(
+  const sendMessageHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (message.trim() === "") return;
+    client.current.send(
         `/sub/chat/${id}/sendMessage`,
         {},
         JSON.stringify({ message: message, userId, user: { userId: userId } })
-      );
-      setMessage("");
-      scroll();
-    } else {
-      if (e.code === "Enter" || e.keyCode === 13) {
-        if (message.trim() === "") return;
-        // 백엔드에 메시지 전송
-        client.current.send(
-          `/sub/chat/${id}/sendMessage`,
-          {},
-          JSON.stringify({ message: message, userId, user: { userId: userId } })
-        );
-        setMessage("");
-        scroll();
-      }
-    }
+    );
+    setMessage("");
+    scroll();
   };
 
   const navigate = useNavigate();
@@ -255,23 +240,23 @@ const ChatRoom = () => {
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
     callApi("GET", `api/chatMessage/${id}/messages`)
-      .then(res => {
-        // console.log(res.data);
-        setChatRoomName(res.data[0].chatRoom.chatRoomName);
-        setChatRoomId(res.data[0].chatRoom.chatRoomId);
-        setMessages(res.data);
-      })
-      .catch(e => {
-        console.error(e);
-      });
+        .then(res => {
+          // console.log(res.data);
+          setChatRoomName(res.data[0].chatRoom.chatRoomName);
+          setChatRoomId(res.data[0].chatRoom.chatRoomId);
+          setMessages(res.data);
+        })
+        .catch(e => {
+          console.error(e);
+        });
 
     callApi("GET", `/api/chatroom/${id}/users`)
-      .then(res => {
-        setUsers(res.data);
-      })
-      .catch(e => {
-        console.error(e);
-      });
+        .then(res => {
+          setUsers(res.data);
+        })
+        .catch(e => {
+          console.error(e);
+        });
   }, []);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
@@ -307,31 +292,31 @@ const ChatRoom = () => {
     client.current.send(`/sub/room/${chatRoomId}/leave`, {}, JSON.stringify({ userId }));
   };
   return (
-    <div ref={rapperDiv}>
-      <header>
-        <ChatNav>
-          <div
-            style={{
-              marginRight: "0rem",
-              marginLeft: "0rem",
-              textAlign: "center",
-              cursor: "pointer",
-            }}
-            onClick={OutRoomHandler}
-          >
-            {ArrowLeftIcon}
-          </div>
-          <span
-            style={{
-              marginRight: "0rem",
-              fontFamily: "JejuGothic",
-              fontSize: "20px",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              maxWidth: "80%",
-            }}
-          >
+      <div ref={rapperDiv}>
+        <header>
+          <ChatNav>
+            <div
+                style={{
+                  marginRight: "0rem",
+                  marginLeft: "0rem",
+                  textAlign: "center",
+                  cursor: "pointer",
+                }}
+                onClick={OutRoomHandler}
+            >
+              {ArrowLeftIcon}
+            </div>
+            <span
+                style={{
+                  marginRight: "0rem",
+                  fontFamily: "JejuGothic",
+                  fontSize: "20px",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  maxWidth: "80%",
+                }}
+            >
             <>
               {chatRoomName}
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
@@ -339,116 +324,126 @@ const ChatRoom = () => {
               </span>
             </>
           </span>
-          <div
-            style={{ marginLeft: "0rem", marginTop: "3px", cursor: "pointer" }}
-            onClick={chaterInfoHandler}
+            <div
+                style={{ marginLeft: "0rem", marginTop: "3px", cursor: "pointer" }}
+                onClick={chaterInfoHandler}
+            >
+              {OutRoom}
+            </div>
+          </ChatNav>
+        </header>
+        <BackDrop ismodal={ismodal} onClick={chaterInfoHandler}></BackDrop>
+        <RightModal ismodal={ismodal}>
+          <div style={{ border: "1px solid var(--c-lightgray)" }}></div>
+          <br />
+          <p
+              style={{
+                fontFamily: "JejuGothic",
+                fontSize: "1.5rem",
+                marginBottom: "1.5rem",
+              }}
           >
-            {OutRoom}
+            참여자 목록
+          </p>
+          <div>
+            {users.map((user, i) => {
+              return (
+                  <UserDiv
+                      key={i}
+                      onClick={() => {
+                        navigate(`/myPage/${user.userId}`);
+                      }}
+                  >
+                    <ImgDiv>
+                      <Img src={user.profile == "no image" ? temgif : user.profile}></Img>
+                    </ImgDiv>
+                    <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
+                  </UserDiv>
+              );
+            })}
           </div>
-        </ChatNav>
-      </header>
-      <BackDrop ismodal={ismodal} onClick={chaterInfoHandler}></BackDrop>
-      <RightModal ismodal={ismodal}>
-        <div style={{ border: "1px solid var(--c-lightgray)" }}></div>
-        <br />
-        <p
-          style={{
-            fontFamily: "JejuGothic",
-            fontSize: "1.5rem",
-            marginBottom: "1.5rem",
-          }}
+          <div style={{ position: "fixed", top: "80%" }}>
+            {/* <button onClick={OutRoomHandler}>채팅방 나가기</button> */}
+            <img src={exitImg} alt="" onClick={leaveRoom} />
+          </div>
+        </RightModal>
+        <div
+            style={{
+              backgroundColor: ismodal ? "#757575" : "var(--c-lightgray)",
+              width: "100%",
+              minHeight: "90vh",
+              overflow: "auto",
+            }}
         >
-          참여자 목록
-        </p>
-        <div>
-          {users.map((user, i) => {
+          {messages.map((message, i) => {
             return (
-              <UserDiv
-                key={i}
-                onClick={() => {
-                  navigate(`/myPage/${user.userId}`);
-                }}
-              >
-                <ImgDiv>
-                  <Img src={user.profile == "no image" ? temgif : user.profile}></Img>
-                </ImgDiv>
-                <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
-              </UserDiv>
+                <div
+                    style={{
+                      display: "flex",
+                      alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
+                      flexDirection: "column",
+                    }}
+                    key={i}
+                >
+                  {message.user?.userId === userId ? (
+                      <ChatMyBox>
+                        <ChatUserName>나</ChatUserName>
+                        <ChatMyMsg>
+                          <ChatTime>
+                            {message.createdAt.length > 5
+                                ? message.createdAt.split("T")[1].substring(0, 5)
+                                : message.createdAt}
+                          </ChatTime>
+                          <MyChat>{message.message}</MyChat>
+                        </ChatMyMsg>
+                      </ChatMyBox>
+                  ) : (
+                      <ChatOtherBox>
+                        <ChatUserName>
+                          {message.user?.nickname.includes("@")
+                              ? message.user?.nickname.split("@")[0]
+                              : message.user?.nickname}
+                        </ChatUserName>
+                        <ChatOtherMsg>
+                          <OtherChat>{message.message}</OtherChat>
+                          <ChatTime>
+                            {message.createdAt.length > 5
+                                ? message.createdAt.split("T")[1].substring(0, 5)
+                                : message.createdAt}
+                          </ChatTime>
+                        </ChatOtherMsg>
+                      </ChatOtherBox>
+                  )}
+                </div>
             );
           })}
+          <div style={{ height: "3rem" }}></div>
         </div>
-        <div style={{ position: "fixed", top: "80%" }}>
-          {/* <button onClick={OutRoomHandler}>채팅방 나가기</button> */}
-          <img src={exitImg} alt="" onClick={leaveRoom} />
-        </div>
-      </RightModal>
-      <div
-        style={{
-          backgroundColor: ismodal ? "#757575" : "var(--c-lightgray)",
-          width: "100%",
-          minHeight: "90vh",
-          overflow: "auto",
-        }}
-      >
-        {messages.map((message, i) => {
-          return (
-            <div
-              style={{
-                display: "flex",
-                alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
-                flexDirection: "column",
-              }}
-              key={i}
-            >
-              {message.user?.userId === userId ? (
-                <ChatMyBox>
-                  <ChatUserName>나</ChatUserName>
-                  <ChatMyMsg>
-                    <ChatTime>
-                      {message.createdAt.length > 5
-                        ? message.createdAt.split("T")[1].substring(0, 5)
-                        : message.createdAt}
-                    </ChatTime>
-                    <MyChat>{message.message}</MyChat>
-                  </ChatMyMsg>
-                </ChatMyBox>
+        <footer>
+          <InputDiv>
+            <StyleAutoTextArea
+                value={message}
+                onChange={messageHandler}
+                minRows={1}
+                maxRows={4}
+            ></StyleAutoTextArea>
+
+            <SendBtnDiv>
+              {message.length > 0 ? (
+                  <div onClick={sendMessageHandler}>
+                    {/*<SendIcon></SendIcon>*/}
+                    <SendImg src={sendImage} alt="" />
+                  </div>
               ) : (
-                <ChatOtherBox>
-                  <ChatUserName>
-                    {message.user?.nickname.includes("@")
-                      ? message.user?.nickname.split("@")[0]
-                      : message.user?.nickname}
-                  </ChatUserName>
-                  <ChatOtherMsg>
-                    <OtherChat>{message.message}</OtherChat>
-                    <ChatTime>
-                      {message.createdAt.length > 5
-                        ? message.createdAt.split("T")[1].substring(0, 5)
-                        : message.createdAt}
-                    </ChatTime>
-                  </ChatOtherMsg>
-                </ChatOtherBox>
+                  <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
+                    {/*<SendIcon></SendIcon>*/}
+                    <SendImg src={sendImage} alt="" />
+                  </div>
               )}
-            </div>
-          );
-        })}
-        <div style={{ height: "3rem" }}></div>
+            </SendBtnDiv>
+          </InputDiv>
+        </footer>
       </div>
-      <footer>
-        <InputDiv>
-          <Input value={message} onChange={messageHandler} onKeyUp={sendMessageHandler}></Input>
-          {message.length > 0 ? (
-            <div onClick={sendMessageHandler}>
-              <SendIcon></SendIcon>
-            </div>
-          ) : (
-            <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
-              <SendIcon></SendIcon>
-            </div>
-          )}
-        </InputDiv>
-      </footer>
-    </div>
   );
 };
 
@@ -456,13 +451,43 @@ export default ChatRoom;
 
 const SendIcon = () => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="25" viewBox="0 0 30 27" fill="none">
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M4.61325 12.302H13.1325C13.5468 12.302 13.8825 12.6378 13.8825 13.052C13.8825 13.4662 13.5467 13.802 13.1325 13.802H4.63339L-9.26055e-06 26.1577L29.4275 13.0789L-9.26055e-06 -2.1257e-05L4.61325 12.302Z"
-        fill="var(--c-yellow)"
-      />
-    </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="25" viewBox="0 0 30 27" fill="none">
+        <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M4.61325 12.302H13.1325C13.5468 12.302 13.8825 12.6378 13.8825 13.052C13.8825 13.4662 13.5467 13.802 13.1325 13.802H4.63339L-9.26055e-06 26.1577L29.4275 13.0789L-9.26055e-06 -2.1257e-05L4.61325 12.302Z"
+            fill="var(--c-yellow)"
+        />
+      </svg>
   );
 };
+const StyleAutoTextArea = styled(TextareaAutosize)`
+  display: flex;
+  flex-basis: 90%;
+  border: 0.5px solid #dfdfdf;
+  background-color: #eeeeee;
+  border-radius: 5px;
+  padding: 0.3rem;
+  overflow-y: auto;
+  resize: none;
+  margin: 0.5rem 0 0.5rem 0.5rem;
+  padding: 0.3rem;
+  outline: none;
+  // 글을 아래에 배치
+  align-self: flex-end;
+  font-size: 1rem;
+
+  &:focus {
+    border: none;
+  }
+`;
+const SendBtnDiv = styled.div`
+  background-color: #ffffff;
+  border-radius: 0 5px 5px 0;
+  border: none;
+  flex-basis: 10%;
+`;
+const SendImg = styled.img`
+  width: 23px;
+  height: 23px;
+`;
