@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.backend.Enum.MeetStatus;
 import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.dto.MeetSearchDto;
+import com.ssafy.backend.dto.user.UserResponseDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,9 +27,6 @@ public class Meet {
     @Lob
     private String description;
 
-    //    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User host;
     @ManyToOne
     @JoinColumn(name = "hostId", referencedColumnName = "userId")
     private User host;
@@ -146,7 +144,7 @@ public class Meet {
                 .meetId(this.meetId)
                 .meetName(this.meetName)
                 .description(this.description)
-                .host(this.host.toUserDto())
+                .host(UserResponseDto.fromEntity(this.host))
                 .nowParticipants(nowParticipants)
                 .maxParticipants(maxParticipants)
                 .meetDate(this.meetDate)

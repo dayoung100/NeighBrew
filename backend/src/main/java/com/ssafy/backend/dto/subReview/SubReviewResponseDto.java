@@ -4,10 +4,12 @@ import com.ssafy.backend.dto.user.UserResponseDto;
 import com.ssafy.backend.entity.SubReview;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
+@NoArgsConstructor
 public class SubReviewResponseDto {
     private Long subReviewId;
     private String content;

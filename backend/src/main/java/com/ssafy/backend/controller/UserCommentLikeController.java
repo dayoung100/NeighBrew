@@ -2,11 +2,13 @@ package com.ssafy.backend.controller;
 
 import com.ssafy.backend.service.UserCommentLikeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/like")
@@ -16,6 +18,7 @@ public class UserCommentLikeController {
     @GetMapping("/{reviewId}")
     public ResponseEntity<?> getIsLik(@PathVariable Long reviewId, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
+        log.info("userId: {}", userId);
         return ResponseEntity.ok(userCommentLikeService.getIsLike(Long.valueOf(userId), reviewId));
     }
 
