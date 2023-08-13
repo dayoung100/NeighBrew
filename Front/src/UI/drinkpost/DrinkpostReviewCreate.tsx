@@ -87,7 +87,8 @@ const DrinkpostReviewCreate = () => {
         },
       })
       .then((res) => {
-        navigate(`/drinkpost/${drinkId}`);
+        // navigate(`/drinkpost/${drinkId}`, { replace: true });
+        navigate(-1);
       });
   };
 
