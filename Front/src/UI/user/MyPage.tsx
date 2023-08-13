@@ -273,7 +273,7 @@ const MyPage = () => {
     navigate("/myPage/follow/" + userid);
   };
   const userInfo = () => {
-    callApi("get", `api/user/myinfo`)
+    callApi("get", `api/user/${userid}`)
       .then((res) => {
         setUserData(res.data);
       })
@@ -355,7 +355,7 @@ const MyPage = () => {
     formData.append("profile", file);
     if (file !== undefined) {
       axios
-        .put(`/api/user/img/${localStorage.getItem("myId")}`, formData, {
+        .put(`/api/user/img/${userid}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + localStorage.getItem("token"),
