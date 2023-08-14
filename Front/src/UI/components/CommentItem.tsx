@@ -60,7 +60,9 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
         <div style={{ fontFamily: "JejuGothic" }}>
           <b>{truncatedNickname}</b>
         </div>
-        <div style={{ fontFamily: "NanumSquareNeo", marginTop: "1vh" }}>{subReview.content}</div>
+        <div style={{ fontFamily: "NanumSquareNeo", marginTop: "1vh", whiteSpace: "pre-wrap" }}>
+          {subReview.content}
+        </div>
       </NameAndContent>
     </WholeDiv>
   );
