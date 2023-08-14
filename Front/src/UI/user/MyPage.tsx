@@ -272,7 +272,7 @@ const MyPage = () => {
   };
   const userInfo = () => {
     callApi("get", `api/user/${userid}`)
-      .then((res) => {
+      .then(res => {
         setUserData(res.data);
       })
       .then(() => {
@@ -394,8 +394,8 @@ const MyPage = () => {
         })
         .catch(err => console.log(err));
     }
-    if (userData.nickname != nickname && nickname.length > 10) {
-      alert("닉네임은 10자 까지만 가능합니다.");
+    if (userData.nickname != nickname && nickname.length > 20) {
+      alert("닉네임은 20자 까지만 가능합니다.");
       setNickname(userData.nickname);
       return;
     }
