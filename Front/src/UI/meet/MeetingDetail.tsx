@@ -15,7 +15,9 @@ import FooterBigBtn from "../footer/FooterBigBtn";
 import { callApi } from "../../utils/api";
 import { initialMeetDetail, encodeUrl } from "../common";
 import { MeetDetail, User } from "../../Type/types";
+import Modal from "react-modal";
 import defaultImg from "../../assets/defaultImg.png";
+import { WhiteModal } from "../common";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -132,6 +134,24 @@ const Description = styled.div`
   word-break: break-all;
 `;
 
+const ModalBtnDiv = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 10%;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+`;
+
+const ModalBtn = styled.div`
+  width: 5rem;
+  padding: 0.5rem;
+  margin: 0 0.5rem;
+  border-radius: 5px;
+  background: var(--c-yellow);
+`;
+
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
@@ -140,6 +160,7 @@ const MeetingDetail = () => {
   const [memberList, setMemberList] = useState<User[]>([]); //참여자 리스트
   const [userId, setUserId] = useState(0); //현재 유저의 userId
   const [userStatus, setUserStatus] = useState("");
+  const [modalOn, setModalOn] = useState(false); //모달이 열려있는가?
   const bgImg =
     meetDetailData.meet.imgSrc == "no image"
       ? "/src/assets/meetDefaultImg.jpg"
@@ -419,6 +440,36 @@ const MeetingDetail = () => {
             );
           })}
         </div>
+        <Modal
+          isOpen={modalOn}
+          onRequestClose={() => setModalOn(false)}
+          style={WhiteModal}
+        >
+          <div>
+            <div style={{ padding: "1rem 0 4rem 0" }}>
+              정말 이 모임에서 나가시겠습니까?
+            </div>
+            <ModalBtnDiv>
+              <ModalBtn
+                onClick={() => {
+                  exitMeet();
+                  console.log("삭제 완료");
+                  setModalOn(false);
+                }}
+              >
+                예
+              </ModalBtn>
+              <ModalBtn
+                onClick={() => {
+                  console.log("삭제 취소");
+                  setModalOn(false);
+                }}
+              >
+                아니오
+              </ModalBtn>
+            </ModalBtnDiv>
+          </div>
+        </Modal>
       </MeetDetailDiv>
       {userStatus === "HOST" && (
         //user 상태에 따라 버튼 변경
@@ -432,7 +483,7 @@ const MeetingDetail = () => {
       {userStatus === "GUEST" && (
         <FooterBigBtn
           content="모임 나가기"
-          reqFunc={() => exitMeet()} //모임 나가기
+          reqFunc={() => setModalOn(true)} //모임 나가기
           color="#F28F79"
           bgColor="var(--c-lightgray)"
         />
