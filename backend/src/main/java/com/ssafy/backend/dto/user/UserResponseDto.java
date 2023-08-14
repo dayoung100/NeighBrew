@@ -3,10 +3,12 @@ package com.ssafy.backend.dto.user;
 import com.ssafy.backend.entity.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class UserResponseDto {
     private Long userId;
     private String email;

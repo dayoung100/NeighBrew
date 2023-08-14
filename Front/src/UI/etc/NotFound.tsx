@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import CocktailGlass from "../../assets/Loading/CocktailGlass.png";
-import LoadingDot from "./LoadingDot";
+import { useNavigate } from "react-router-dom";
 
 const LoadingDiv = styled.div`
   background-color: var(--c-yellow);
@@ -29,23 +29,34 @@ const LoadingText = styled.div`
 const SubText = styled.div<{ size: number }>`
   font-family: "NanumSquareNeoBold";
   font-size: ${(props) => props.size}px;
-  font-style: italic;
   margin: 0.5rem auto;
 `;
 
-const Loading = () => {
+const Button = styled.div`
+  background-color: white;
+  border-radius: 5px;
+  color: var(--c-yellow);
+  width: 9rem;
+  margin: 0 auto;
+  padding: 0.5rem;
+  font-family: "NanumSquareNeoBold";
+`;
+
+const NotFound = () => {
+  const navigate = useNavigate();
+  const GotoMainHandler = () => {
+    navigate(`/`, { replace: true });
+  };
   return (
     <LoadingDiv>
-      <LoadingText>로딩중...</LoadingText>
-      <LoadingDot />
+      <LoadingText>404 Not Found</LoadingText>
       <CircleDiv>
         <img src={CocktailGlass} />
       </CircleDiv>
-
-      <SubText size={16}>Vodka martini, shaken, not stirred.</SubText>
-      <SubText size={12}>- 007, James Bond</SubText>
+      <SubText size={16}>존재하지 않는 페이지입니다</SubText>
+      <Button onClick={GotoMainHandler}>메인으로 돌아가기</Button>
     </LoadingDiv>
   );
 };
 
-export default Loading;
+export default NotFound;

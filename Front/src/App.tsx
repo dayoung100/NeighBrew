@@ -30,11 +30,16 @@ import DrinkpostReviewDetail from "./UI/drinkpost/DrinkpostReviewDetail";
 import DirectChat from "./UI/chat/DirectChat";
 import SearchUser from "./UI/user/SearchUser";
 import RatingCreate from "./UI/meetrate/RatingCreate";
+import NotFound from "./UI/etc/NotFound";
 import logo from "./assets/logoNavbar.svg";
 import DrinkpostReviewUpdate from "./UI/drinkpost/DrinkpostReviewUpdate";
+<<<<<<< HEAD
 // import "./firebase-messaging-sw.js";
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
+=======
+import AlarmPage from "./UI/etc/AlarmPage";
+>>>>>>> b1b973cdb6c7f525e170ad18aa02d9d997d49a7b
 
 function App() {
   const navigate = useNavigate();
@@ -141,6 +146,8 @@ function App() {
           path="/drinkpost/:drinkId/:reviewId/update"
           element={<DrinkpostReviewUpdate></DrinkpostReviewUpdate>}
         ></Route>
+        <Route path="/*" element={<NotFound></NotFound>}></Route>
+        <Route path="/myPage/alarm" element={<AlarmPage></AlarmPage>}></Route>
       </Routes>
     </>
   );

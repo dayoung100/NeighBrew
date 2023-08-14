@@ -1,40 +1,58 @@
-import logoNavbar from "../../assets/logoNavbar.svg";
+import logo from "../../assets/logo.png";
 import styled from "styled-components";
 import { alertNavIcon } from "../../assets/AllIcon";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const NavCustom = styled.nav`
+  display: flex;
+  justify-content: space-between;
+  padding: 2% 0;
+  background-color: white;
+  width: 100%;
+`;
+
+const BtnDiv = styled.div`
+  width: 20%;
+  max-width: 20%;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+`;
 
 const Button = styled.button`
-  width: 40%;
-  display: inline-block;
-  height: 2.5rem;
   background-color: white;
   border: none;
+`;
 
-  &:focus {
-    outline: none;
-    border-bottom: 2px solid #000000;
-  }
+const Logo = styled.div`
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const NavbarWithoutSearch = () => {
-  const [navButton, setNavButton] = useState(0);
   const alertButton = alertNavIcon();
+  const navigate = useNavigate();
+  //알림 클릭 시 알림 창으로 이동
+  //TODO: 알림 페이지 작업 이후 네비게이터 링크 수정해야
+  const GotoAlertHandler = () => {
+    navigate(`/myPage/alarm`);
+  };
+  const GotoHomeHandler = () => {
+    navigate("/");
+  };
   return (
-    <nav className="nav">
-      <span className="logo">
-        <img src={logoNavbar} />
-      </span>
-      <span className="searchAndIcon">
-        <Button
-          onClick={() => {
-            setNavButton(2);
-            console.log("alert!");
-          }}
-        >
-          {alertButton}
-        </Button>
-      </span>
-    </nav>
+    <NavCustom>
+      <BtnDiv></BtnDiv>
+      <Logo onClick={GotoHomeHandler}>
+        <img src={logo} width="50%" />
+      </Logo>
+      <BtnDiv style={{ paddingRight: "0.5rem" }}>
+        <Button onClick={GotoAlertHandler}>{alertButton}</Button>
+      </BtnDiv>
+    </NavCustom>
   );
 };
 

@@ -248,7 +248,8 @@ const DrinkpostReviewDetail = () => {
 
   const deleteHandler = () => {
     callApi("delete", `api/drinkreview/${review?.drinkReviewId}`).then(() => {
-      navigate(`/drinkpost/${drinkId}`);
+      // navigate(`/drinkpost/${drinkId}`, { replace: true });
+      navigate(-1);
     });
   };
   return (

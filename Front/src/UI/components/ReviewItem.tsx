@@ -22,8 +22,9 @@ const ReviewImg = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   border-radius: 12px;
-  width: 100%;
+  width: 95%;
   height: 150px;
+  margin: 0% auto 0.5rem auto;
 `;
 
 const UserCard = styled.div`

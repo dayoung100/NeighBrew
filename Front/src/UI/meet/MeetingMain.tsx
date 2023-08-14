@@ -35,7 +35,7 @@ const TopMenuDetail = styled.button<{ isfocused: string }>`
 `;
 
 const MainDiv = styled.div`
-  padding-bottom: 10rem;
+  padding-bottom: 25vh;
   background: white;
   min-height: 80vh;
 `;
@@ -64,6 +64,7 @@ const RoundBtn = styled.div`
 const meetingMain = () => {
   const [selectedMenu, setSelectedMenu] = useState("find");
   const navigate = useNavigate();
+  //모임 생성 페이지로 이동
   const GotoCreateHandler = () => {
     navigate(`/meet/create`);
   };

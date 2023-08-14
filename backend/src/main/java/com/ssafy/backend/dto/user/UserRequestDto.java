@@ -1,20 +1,18 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.user;
 
 import com.ssafy.backend.entity.User;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class UserDto {
+public class UserRequestDto {
     private Long userId;
 
     private String email;
@@ -23,7 +21,7 @@ public class UserDto {
 
     private String name;
 
-    private LocalDate birth;
+    private String birth;
 
     private String intro;
 
@@ -32,16 +30,27 @@ public class UserDto {
     private String profile;
 
 
-
-    public UserDto(User user) {
+    @Builder
+    public UserRequestDto(User user) {
         this.userId = user.getUserId();
         this.email = user.getEmail();
         this.nickname = user.getNickname();
         this.name = user.getName();
-        this.birth = user.getBirth();
+        this.birth = String.valueOf(user.getBirth());
         this.intro = user.getIntro();
         this.liverPoint = user.getLiverPoint();
         this.profile = user.getProfile();
+    }
 
+    public User toEntity() {
+        return User.builder()
+                .email(email)
+                .nickname(nickname)
+                .name(name)
+                .birth(LocalDate.parse(birth))
+                .intro(intro)
+                .liverPoint(liverPoint)
+                .profile(profile)
+                .build();
     }
 }
