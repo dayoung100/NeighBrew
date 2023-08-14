@@ -39,6 +39,7 @@ const Title = styled.div`
   font-family: "JejuGothic";
   font-size: 20px;
   text-align: left;
+  margin-top: 1rem;
   margin-bottom: 0.5rem;
 `;
 
@@ -132,15 +133,22 @@ const SubText = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1rem;
   font-family: "NanumSquareNeoBold";
   font-size: 13px;
   background-color: var(--c-yellow);
   width: 7rem;
   border-radius: 5px;
+  margin-top: 1rem;
 `;
 
 const MeetingInfoManage = () => {
+  const titleRef = useRef(null);
+  const sidoRef = useRef(null);
+  const dateRef = useRef(null);
+  const maxPRef = useRef(null);
+  const liverRef = useRef(null);
+  const minAgeRef = useRef(null);
+
   const navigate = useNavigate();
   //모임 수정 후 모임 상세로 이동
   const GoMeetDetailHandler = () => {
