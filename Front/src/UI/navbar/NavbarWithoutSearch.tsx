@@ -38,12 +38,15 @@ const NavbarWithoutSearch = () => {
   //알림 클릭 시 알림 창으로 이동
   //TODO: 알림 페이지 작업 이후 네비게이터 링크 수정해야
   const GotoAlertHandler = () => {
-    navigate(`/`);
+    navigate(`/myPage/alarm`);
+  };
+  const GotoHomeHandler = () => {
+    navigate("/");
   };
   return (
     <NavCustom>
       <BtnDiv></BtnDiv>
-      <Logo>
+      <Logo onClick={GotoHomeHandler}>
         <img src={logo} width="50%" />
       </Logo>
       <BtnDiv style={{ paddingRight: "0.5rem" }}>

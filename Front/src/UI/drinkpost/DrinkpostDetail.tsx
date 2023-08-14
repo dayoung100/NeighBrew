@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import whiskeyImage from "../../assets/whiskey2.svg";
+import whiskeyImage from "../../assets/whiskeyImage.png";
 import ReviewItem from "../components/ReviewItem";
 import styled from "styled-components";
 import reviewIcon from "../../assets/reviewIcon.svg";
