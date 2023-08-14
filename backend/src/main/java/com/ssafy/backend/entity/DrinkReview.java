@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -22,9 +24,13 @@ public class DrinkReview {
     @JoinColumn(name = "drinkId")
     private Drink drink;
 
-    @OneToMany(mappedBy = "drinkReview", cascade = CascadeType.ALL)
     @JsonIgnore
+    @OneToMany(mappedBy = "drinkReview", cascade = CascadeType.ALL)
     private List<UserCommentLike> userCommentLikes;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "drinkReview", cascade = CascadeType.ALL)
+    private List<SubReview> subReviews;
 
     @Lob
     @Setter
@@ -35,6 +41,11 @@ public class DrinkReview {
 
     @Column(columnDefinition = "int default 0")
     private Long likeCount;
+
+    // createdAt
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private Date createdAt;
 
     @Builder
     public DrinkReview(Long drinkReviewId, User user, Drink drink, String content, String img) {
