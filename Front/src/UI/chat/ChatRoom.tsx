@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
 import { useNavigate } from "react-router-dom";
-import temgif from "../../assets/temgif.gif";
+import defaultImg from "../../assets/defaultImg.png";
 import exitImg from "../../assets/exit.png";
 import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
@@ -113,14 +113,28 @@ const RightModal = styled.div<{ ismodal: boolean }>`
   align-items: flex-start;
   padding: 0rem 2rem;
 `;
+// const ImgDiv = styled.div`
+//   width: 15%;
+//   height: 100%;
+//   overflow: hidden;
+//   aspect-ratio: 1/1;
+//   border-radius: 50%;
+//   float: left;
+//   margin-right: 2rem;
+// `;
 const ImgDiv = styled.div`
-  width: 15%;
-  height: 100%;
+  /* width: 15%;
+  height: 100%; */
   overflow: hidden;
+  /* inline-size: 25ch; */
   aspect-ratio: 1/1;
   border-radius: 50%;
   float: left;
   margin-right: 2rem;
+  min-width: 40px;
+  min-height: 40px;
+  max-width: 40px;
+  max-height: 40px;
 `;
 
 const Img = styled.img`
@@ -356,7 +370,7 @@ const ChatRoom = () => {
                 }}
               >
                 <ImgDiv>
-                  <Img src={user.profile == "no image" ? temgif : user.profile}></Img>
+                  <Img src={user.profile == "no image" ? defaultImg : user.profile}></Img>
                 </ImgDiv>
                 <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
               </UserDiv>
