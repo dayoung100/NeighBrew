@@ -104,8 +104,8 @@ public class DrinkReviewService {
         return DrinkReviewResponseDto.fromEntity(drinkReview);
     }
 
-    public Page<DrinkReviewResponseDto> getReviewsOrderByLikes(Pageable pageable) {
-        Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findAllByOrderByLikeCountDesc(pageable);
+    public Page<DrinkReviewResponseDto> findAllByOrderByCreatedAtDesc(Pageable pageable) {
+        Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findAllByOrderByCreatedAtDesc(pageable);
         return drinkReviewPage.map(DrinkReviewResponseDto::fromEntity);
     }
 
