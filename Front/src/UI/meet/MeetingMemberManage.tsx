@@ -151,27 +151,33 @@ const MeetingMemberManage = () => {
             return (
               <div
                 key={applicant.userId}
-                style={{ display: "flex", alignItems: "center" }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
-                <UserInfoItem user={applicant} isMaster={false} width={13} />
-                <OKBtn
-                  onClick={() => {
-                    setTargetAction(true);
-                    setTargetUser(applicant);
-                    setModalOn(true);
-                  }}
-                >
-                  <img src="/src/assets/checkButtonIcon.svg" />
-                </OKBtn>
-                <NoBtn
-                  onClick={() => {
-                    setTargetAction(false);
-                    setTargetUser(applicant);
-                    setModalOn(true);
-                  }}
-                >
-                  <img src="/src/assets/XbuttonIcon.svg" />
-                </NoBtn>
+                <UserInfoItem user={applicant} isMaster={false} width={11} />
+                <div style={{ display: "flex" }}>
+                  <OKBtn
+                    onClick={() => {
+                      setTargetAction(true);
+                      setTargetUser(applicant);
+                      setModalOn(true);
+                    }}
+                  >
+                    <img src="/src/assets/checkButtonIcon.svg" />
+                  </OKBtn>
+                  <NoBtn
+                    onClick={() => {
+                      setTargetAction(false);
+                      setTargetUser(applicant);
+                      setModalOn(true);
+                    }}
+                  >
+                    <img src="/src/assets/XbuttonIcon.svg" />
+                  </NoBtn>
+                </div>
               </div>
             );
           })}
