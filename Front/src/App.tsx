@@ -36,12 +36,12 @@ import DrinkpostReviewUpdate from "./UI/drinkpost/DrinkpostReviewUpdate";
 
 function App() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
+  const [isLoading, setIsLoading] = useState(false); // 개발시 isLoading true로 두고 하기
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(true);
       console.log(isLoading);
-    }, 3000);
+    }, 1000);
   }, []);
 
   // const userid = localStorage.getItem("myId");
@@ -125,7 +125,7 @@ function App() {
           path="/"
           element={
             <>
-              {!isLoading && <FirstLoading />}
+              {!isLoading && <Loading />}
               {isLoading && <Login></Login>}
             </>
           }
@@ -133,7 +133,7 @@ function App() {
         {/* <Route path="/" element={<MeetingMain></MeetingMain>}></Route> */}
         {/* <Route path="/home" element={<Main />} /> */}
         {/* TODO: isLoading을 키면 여기 Main으로 바꿔야 */}
-        <Route path="/home" element={<Loading />} />
+        <Route path="/home" element={<Main />} />
         <Route path="/drinkpost" element={<DrinkpostMain />} />
         <Route path="/meet" element={<MeetingMain />}></Route>
         <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>

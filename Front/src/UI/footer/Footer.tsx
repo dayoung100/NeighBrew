@@ -19,8 +19,8 @@ const Button = styled.button<{ now: number; choosebutton: number }>`
 
 const Footer = () => {
   const [chooseMenu, setChooseMenu] = useState(0);
-  const meetingIcon = meetingFooterIcon(chooseMenu === 0 ? "black" : "#AAAAAA");
-  const breweryIcon = breweryFooterIcon(chooseMenu === 1 ? "black" : "#AAAAAA");
+  const breweryIcon = breweryFooterIcon(chooseMenu === 0 ? "black" : "#AAAAAA");
+  const meetingIcon = meetingFooterIcon(chooseMenu === 1 ? "black" : "#AAAAAA");
   const chatIcon = chatFooterIcon(chooseMenu === 2 ? "black" : "#AAAAAA");
   const myIcon = myPageFooterIcon(chooseMenu === 3 ? "black" : "#AAAAAA");
   const navigate = useNavigate();
@@ -46,16 +46,6 @@ const Footer = () => {
       <Button
         onClick={() => {
           chooseMenuHandler(0);
-          navigate("/meet");
-        }}
-        now={0}
-        choosebutton={chooseMenu}
-      >
-        {meetingIcon}
-      </Button>
-      <Button
-        onClick={() => {
-          chooseMenuHandler(1);
           navigate("/drinkpost");
         }}
         now={1}
@@ -63,6 +53,17 @@ const Footer = () => {
       >
         {breweryIcon}
       </Button>
+      <Button
+        onClick={() => {
+          chooseMenuHandler(1);
+          navigate("/meet");
+        }}
+        now={0}
+        choosebutton={chooseMenu}
+      >
+        {meetingIcon}
+      </Button>
+
       <Button
         onClick={() => {
           chooseMenuHandler(2);

@@ -124,7 +124,7 @@ const Description = styled.div`
   color: var(--c-black);
   font-family: "NanumSquareNeo";
   font-size: 16px;
-  text-align: justify;
+  text-align: left;
   line-height: 1.6rem;
   margin-top: 0.5rem;
   margin-bottom: 2rem;

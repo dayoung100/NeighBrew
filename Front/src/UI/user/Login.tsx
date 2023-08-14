@@ -54,6 +54,7 @@ const MintSection = styled.div`
 
 const SubTitle = styled.div`
   margin-top: 5rem;
+  margin-bottom: 0.5rem;
   font-family: "NanumSquareNeoBold";
   font-size: 14px;
 `;
@@ -92,7 +93,7 @@ const Login = () => {
       }).then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
-        navigate("/meet");
+        navigate("/drinkpost");
       });
     }
   }, []);
