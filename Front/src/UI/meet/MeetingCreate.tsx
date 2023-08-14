@@ -443,7 +443,7 @@ const MeetingCreate = () => {
         <QuestionDiv style={{ fontFamily: "NanumSquareNeo", fontSize: "16px" }}>
           <Title>조건</Title>
           <LimitDiv>
-            <SubTitle>최대 인원</SubTitle>
+            <SubTitle>최대 인원*</SubTitle>
             <InputShort
               ref={maxPRef}
               value={maxParticipants}
