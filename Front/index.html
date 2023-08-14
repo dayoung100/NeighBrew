@@ -2,11 +2,7 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-<<<<<<< HEAD
-    <meta name="theme-color" content="#8C383A" />
-=======
     <meta name="theme-color" content="#8A9D9BA" />
->>>>>>> b1b973cdb6c7f525e170ad18aa02d9d997d49a7b
     <meta
       name="viewport"
       content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width"
@@ -35,13 +31,8 @@
         // Register a service worker hosted at the root of the
         // site using the default scope.
         navigator.serviceWorker
-<<<<<<< HEAD
           .register("sw.js")
           .then(registration => {
-=======
-          .register("/sw.js")
-          .then((registration) => {
->>>>>>> b1b973cdb6c7f525e170ad18aa02d9d997d49a7b
             console.log("Service worker registration succeeded:", registration);
           })
           .catch((err) => {

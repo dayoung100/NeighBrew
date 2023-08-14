@@ -33,13 +33,10 @@ import RatingCreate from "./UI/meetrate/RatingCreate";
 import NotFound from "./UI/etc/NotFound";
 import logo from "./assets/logoNavbar.svg";
 import DrinkpostReviewUpdate from "./UI/drinkpost/DrinkpostReviewUpdate";
-<<<<<<< HEAD
 // import "./firebase-messaging-sw.js";
 import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
-=======
+import { getMessaging, getToken, onMessage } from "../firebase-messaging-sw.js";
 import AlarmPage from "./UI/etc/AlarmPage";
->>>>>>> b1b973cdb6c7f525e170ad18aa02d9d997d49a7b
 
 function App() {
   const navigate = useNavigate();
