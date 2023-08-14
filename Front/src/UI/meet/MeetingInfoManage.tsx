@@ -23,6 +23,16 @@ import {
   ModalInner,
 } from "../common";
 import { localDate, formateDate, formateTime } from "./DateTimeCommon";
+import {
+  titleCheck,
+  drinkCheck,
+  positionCheck,
+  timeCheck,
+  participantsCheck,
+  liverLimitCheck,
+  ageCheck,
+  imgcheck,
+} from "./CheckValid";
 import Modal from "react-modal";
 
 const Title = styled.div`
@@ -231,63 +241,18 @@ const MeetingInfoManage = () => {
     return isValid;
   };
 
-  //////////////api 호출 전 각종 데이터 검증//////////////
-  //제목: 필수 입력/30자 이내
-  const titleCheck = () => {
-    return !(meetTitle === "" || meetTitle == null || meetTitle.length > 30);
-  };
-
-  //술: 필수 입력
-  const drinkCheck = () => {
-    return !(selectedDrink.drinkId < 1);
-  };
-
-  //위치: 필수 입력
-  const positionCheck = () => {
-    return !(sido.sidoCode === 0 || gugun.gugunCode === 0);
-  };
-
-  //날짜: 필수 입력/현재 시점 이후로
-  const timeCheck = () => {
-    return !(date === "" || time === "" || isDateTimeBeforeNow(date, time));
-  };
-
-  //최대인원: 필수 입력/최대 8명
-  const participantsCheck = () => {
-    return !(maxParticipants === 0 || maxParticipants > 8);
-  };
-
-  //간수치: 100이하
-  const liverLimitCheck = () => {
-    return !(liverLimit > 100);
-  };
-
-  //나이: 최소나이는 20세 이상/나이는 200이하
-  const ageCheck = () => {
-    return !(minAge < 20 || maxAge > 200);
-  };
-
-  //이미지: 이미지타입/이미지크기
-  const imgcheck = () => {
-    return !(
-      file &&
-      (file.size > 1024 * 1024 * 10 || !file.type.startsWith("image/"))
-    );
-  };
-  //////////////api 호출 전 각종 데이터 검증//////////////
-
   //필수 입력값 검증(위 내용 외에 추가로 모달창 오픈)
   const checkRequiredValue = () => {
     //빨간글씨가 하나라도 있으면 모달 오픈
     let isValid =
-      titleCheck() &&
-      drinkCheck() &&
-      positionCheck() &&
-      timeCheck() &&
-      participantsCheck() &&
-      liverLimitCheck() &&
-      ageCheck() &&
-      imgcheck();
+      titleCheck(meetTitle) &&
+      drinkCheck(selectedDrink) &&
+      positionCheck(sido.sidoCode, gugun.gugunCode) &&
+      timeCheck(date, time) &&
+      participantsCheck(maxParticipants) &&
+      liverLimitCheck(liverLimit) &&
+      ageCheck(minAge, maxAge) &&
+      imgcheck(file);
     if (!isValid) {
       setErrorMsg("입력값을 확인해주세요.");
       return false;
@@ -411,7 +376,7 @@ const MeetingInfoManage = () => {
             value={meetTitle}
             onChange={(e) => setMeetTitle(e.target.value)}
           />
-          {!titleCheck() && btnClicked && (
+          {!titleCheck(meetTitle) && btnClicked && (
             <ErrorDiv>📌모임 이름은 필수로 입력해야합니다.(30자 이내)</ErrorDiv>
           )}
         </QuestionDiv>
@@ -476,7 +441,7 @@ const MeetingInfoManage = () => {
             </DropdownInput>
             구/군
           </div>
-          {!positionCheck() && btnClicked && (
+          {!positionCheck(sido.sidoCode, gugun.gugunCode) && btnClicked && (
             <ErrorDiv>📌위치는 필수 입력 사항입니다.</ErrorDiv>
           )}
         </QuestionDiv>
@@ -496,7 +461,7 @@ const MeetingInfoManage = () => {
               required
             />
           </div>
-          {!timeCheck() && btnClicked && (
+          {!timeCheck(date, time) && btnClicked && (
             <ErrorDiv>
               <div>📌날짜와 시간은 필수 입력 사항입니다.</div>
               <div>(현재 날짜와 시간 이후로만 입력 가능)</div>
@@ -524,7 +489,7 @@ const MeetingInfoManage = () => {
               }
             />
             명
-            {!participantsCheck() && btnClicked && (
+            {!participantsCheck(maxParticipants) && btnClicked && (
               <ErrorDiv>📌필수 입력사항입니다.(8명 이내)</ErrorDiv>
             )}
           </div>
@@ -543,7 +508,7 @@ const MeetingInfoManage = () => {
               onChange={(e) => setLiverLimit(parseInt(e.target.value))}
             />
             IU/L이상
-            {!liverLimitCheck() && btnClicked && (
+            {!liverLimitCheck(liverLimit) && btnClicked && (
               <ErrorDiv>📌100 IU/L 이하</ErrorDiv>
             )}
           </div>
@@ -569,7 +534,7 @@ const MeetingInfoManage = () => {
             />
             세 미만
           </div>
-          {!ageCheck() && btnClicked && (
+          {!ageCheck(minAge, maxAge) && btnClicked && (
             <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>
           )}
         </QuestionDiv>
@@ -588,7 +553,7 @@ const MeetingInfoManage = () => {
             imgSrc={newImgSrc}
             getImgSrc={setNewImgSrc}
           />
-          {!imgcheck() && btnClicked && (
+          {!imgcheck(file) && btnClicked && (
             <ErrorDiv>📌이미지만 업로드 가능합니다.(10MB 이하)</ErrorDiv>
           )}
         </div>

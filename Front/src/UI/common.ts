@@ -75,6 +75,7 @@ export const initialUser: User = {
 //모달창 디자인
 export const WhiteModal = {
   content: {
+    position: "relative",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -82,6 +83,9 @@ export const WhiteModal = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "15rem",
+    minHeight: "5rem",
+    wordBreak: "break-all",
+    height: "auto",
     padding: "0.5rem 1rem",
     borderRadius: "15px",
     background: "white",
