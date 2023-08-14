@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { forwardRef, useState } from "react";
 import { SubReview } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
+import { useNavigate } from "react-router-dom";
 
 const WholeDiv = styled.div`
   display: flex;
@@ -32,14 +33,18 @@ type CommentItemProps = {
 
 const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
   const { subReview } = props;
+  const navigate = useNavigate();
   const nickname = subReview.user.nickname.includes("@")
     ? subReview.user?.nickname.split("@")[0]
     : subReview.user?.nickname;
   const [nameLimit, setNameLimit] = useState(15);
   const truncatedNickname =
     nickname.length > nameLimit ? nickname.substring(0, nameLimit) + "..." : nickname;
+  const goReviewUser = () => {
+    navigate(`/myPage/${subReview.user.userId}`);
+  };
   return (
-    <WholeDiv>
+    <WholeDiv onClick={goReviewUser}>
       <ProfileDiv>
         <ProfileDiv2
           style={{
