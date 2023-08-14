@@ -44,35 +44,33 @@ function App() {
     }, 3000);
   }, []);
 
-  const userid = localStorage.getItem("myId");
+  // const userid = localStorage.getItem("myId");
 
-  useEffect(() => {
-    const event = new EventSource(
-      // `https://i9b310.p.ssafy.io/api/push/connect/${userid}`,
-        `http://localhost:8080/api/push/connect/${userid}`,
+  // useEffect(() => {
+  //   const event = new EventSource(
+  //     `https://i9b310.p.ssafy.io/api/push/connect/${userid}`,
+  //     {
+  //       withCredentials: true,
+  //     }
+  //   );
+  //   event.addEventListener("open", (e) => {
+  //     console.log("연결완료");
+  //   });
+  //   event.addEventListener("sse", (e) => {
+  //     console.log(e.data);
+  //   });
+  //   event.addEventListener("FOLLOW", (e) => {
+  //     console.log(JSON.parse(e.data));
+  //     noti(JSON.parse(e.data).content);
+  //   });
 
-        {
-        withCredentials: true,
-      }
-    );
-    event.addEventListener("open", (e) => {
-      console.log(">>>>>>>>>>>>>>>>>>>>>>연결완료<<<<<<<<<<<<<<<<<<<");
-    });
-    event.addEventListener("sse", (e) => {
-      console.log(e.data);
-    });
-    event.addEventListener("FOLLOW", (e) => {
-      console.log(JSON.parse(e.data));
-      noti(JSON.parse(e.data).content);
-    });
-
-    return () => {
-      event.close();
-      event.removeEventListener("open", () => {});
-      event.removeEventListener("sse", () => {});
-      event.removeEventListener("FOLLOW", () => {});
-    };
-  });
+  //   return () => {
+  //     event.close();
+  //     event.removeEventListener("open", () => {});
+  //     event.removeEventListener("sse", () => {});
+  //     event.removeEventListener("FOLLOW", () => {});
+  //   };
+  // });
 
   // useEffect(() => {
   //   subscribe();
