@@ -1,10 +1,6 @@
 import logo from "../../assets/logo.png";
 import styled from "styled-components";
-import {
-  alertNavIcon,
-  resetUserInfo,
-  searchNavIcon,
-} from "../../assets/AllIcon";
+import { alertNavIcon, resetUserInfo, searchNavIcon } from "../../assets/AllIcon";
 import { useNavigate } from "react-router-dom";
 
 const NavCustom = styled.nav`
@@ -44,21 +40,21 @@ const Navbar = () => {
   const UserSearchHandler = () => {
     navigate("/userSearch");
   };
+  const GotoAlertHandler = () => {
+    navigate("/myPage/alarm");
+  };
+  const GotoHomeHandler = () => {
+    navigate("/");
+  };
   return (
     <NavCustom>
       <BtnDiv></BtnDiv>
-      <Logo>
+      <Logo onClick={GotoHomeHandler}>
         <img src={logo} width="50%" />
       </Logo>
       <BtnDiv style={{ paddingRight: "0.5rem" }}>
         <Button onClick={UserSearchHandler}>{searchButton}</Button>
-        <Button
-          onClick={() => {
-            console.log("alert!");
-          }}
-        >
-          {alertButton}
-        </Button>
+        <Button onClick={GotoAlertHandler}>{alertButton}</Button>
       </BtnDiv>
     </NavCustom>
   );
