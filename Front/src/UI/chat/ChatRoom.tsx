@@ -29,6 +29,7 @@ const OtherChat = styled.div`
 `;
 
 const MyChat = styled.div`
+  white-space: pre-wrap;
   position: relative;
   display: inline-block;
   flex-direction: row;
@@ -135,7 +136,7 @@ const UserDiv = styled.div`
   @font-face {
     font-family: "SUITE-Regular";
     src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2")
-    format("woff2");
+      format("woff2");
     font-style: normal;
   }
   font-family: "SUITE-Regular";
@@ -208,11 +209,11 @@ const ChatRoom = () => {
               nickname: receivedMessage.userNickname,
             },
             createdAt:
-                new Date().getHours() +
-                ":" +
-                (new Date().getMinutes() < 10
-                    ? "0" + new Date().getMinutes()
-                    : new Date().getMinutes()),
+              new Date().getHours() +
+              ":" +
+              (new Date().getMinutes() < 10
+                ? "0" + new Date().getMinutes()
+                : new Date().getMinutes()),
           },
         ]);
       });
@@ -226,9 +227,9 @@ const ChatRoom = () => {
   const sendMessageHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     if (message.trim() === "") return;
     client.current.send(
-        `/sub/chat/${id}/sendMessage`,
-        {},
-        JSON.stringify({ message: message, userId, user: { userId: userId } })
+      `/sub/chat/${id}/sendMessage`,
+      {},
+      JSON.stringify({ message: message, userId, user: { userId: userId } })
     );
     setMessage("");
     scroll();
@@ -240,23 +241,23 @@ const ChatRoom = () => {
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
     callApi("GET", `api/chatMessage/${id}/messages`)
-        .then(res => {
-          // console.log(res.data);
-          setChatRoomName(res.data[0].chatRoom.chatRoomName);
-          setChatRoomId(res.data[0].chatRoom.chatRoomId);
-          setMessages(res.data);
-        })
-        .catch(e => {
-          console.error(e);
-        });
+      .then(res => {
+        // console.log(res.data);
+        setChatRoomName(res.data[0].chatRoom.chatRoomName);
+        setChatRoomId(res.data[0].chatRoom.chatRoomId);
+        setMessages(res.data);
+      })
+      .catch(e => {
+        console.error(e);
+      });
 
     callApi("GET", `/api/chatroom/${id}/users`)
-        .then(res => {
-          setUsers(res.data);
-        })
-        .catch(e => {
-          console.error(e);
-        });
+      .then(res => {
+        setUsers(res.data);
+      })
+      .catch(e => {
+        console.error(e);
+      });
   }, []);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
@@ -292,31 +293,31 @@ const ChatRoom = () => {
     client.current.send(`/sub/room/${chatRoomId}/leave`, {}, JSON.stringify({ userId }));
   };
   return (
-      <div ref={rapperDiv}>
-        <header>
-          <ChatNav>
-            <div
-                style={{
-                  marginRight: "0rem",
-                  marginLeft: "0rem",
-                  textAlign: "center",
-                  cursor: "pointer",
-                }}
-                onClick={OutRoomHandler}
-            >
-              {ArrowLeftIcon}
-            </div>
-            <span
-                style={{
-                  marginRight: "0rem",
-                  fontFamily: "JejuGothic",
-                  fontSize: "20px",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  maxWidth: "80%",
-                }}
-            >
+    <div ref={rapperDiv}>
+      <header>
+        <ChatNav>
+          <div
+            style={{
+              marginRight: "0rem",
+              marginLeft: "0rem",
+              textAlign: "center",
+              cursor: "pointer",
+            }}
+            onClick={OutRoomHandler}
+          >
+            {ArrowLeftIcon}
+          </div>
+          <span
+            style={{
+              marginRight: "0rem",
+              fontFamily: "JejuGothic",
+              fontSize: "20px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "80%",
+            }}
+          >
             <>
               {chatRoomName}
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
@@ -324,126 +325,126 @@ const ChatRoom = () => {
               </span>
             </>
           </span>
-            <div
-                style={{ marginLeft: "0rem", marginTop: "3px", cursor: "pointer" }}
-                onClick={chaterInfoHandler}
-            >
-              {OutRoom}
-            </div>
-          </ChatNav>
-        </header>
-        <BackDrop ismodal={ismodal} onClick={chaterInfoHandler}></BackDrop>
-        <RightModal ismodal={ismodal}>
-          <div style={{ border: "1px solid var(--c-lightgray)" }}></div>
-          <br />
-          <p
-              style={{
-                fontFamily: "JejuGothic",
-                fontSize: "1.5rem",
-                marginBottom: "1.5rem",
-              }}
+          <div
+            style={{ marginLeft: "0rem", marginTop: "3px", cursor: "pointer" }}
+            onClick={chaterInfoHandler}
           >
-            참여자 목록
-          </p>
-          <div>
-            {users.map((user, i) => {
-              return (
-                  <UserDiv
-                      key={i}
-                      onClick={() => {
-                        navigate(`/myPage/${user.userId}`);
-                      }}
-                  >
-                    <ImgDiv>
-                      <Img src={user.profile == "no image" ? temgif : user.profile}></Img>
-                    </ImgDiv>
-                    <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
-                  </UserDiv>
-              );
-            })}
+            {OutRoom}
           </div>
-          <div style={{ position: "fixed", top: "80%" }}>
-            {/* <button onClick={OutRoomHandler}>채팅방 나가기</button> */}
-            <img src={exitImg} alt="" onClick={leaveRoom} />
-          </div>
-        </RightModal>
-        <div
-            style={{
-              backgroundColor: ismodal ? "#757575" : "var(--c-lightgray)",
-              width: "100%",
-              minHeight: "90vh",
-              overflow: "auto",
-            }}
+        </ChatNav>
+      </header>
+      <BackDrop ismodal={ismodal} onClick={chaterInfoHandler}></BackDrop>
+      <RightModal ismodal={ismodal}>
+        <div style={{ border: "1px solid var(--c-lightgray)" }}></div>
+        <br />
+        <p
+          style={{
+            fontFamily: "JejuGothic",
+            fontSize: "1.5rem",
+            marginBottom: "1.5rem",
+          }}
         >
-          {messages.map((message, i) => {
+          참여자 목록
+        </p>
+        <div>
+          {users.map((user, i) => {
             return (
-                <div
-                    style={{
-                      display: "flex",
-                      alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
-                      flexDirection: "column",
-                    }}
-                    key={i}
-                >
-                  {message.user?.userId === userId ? (
-                      <ChatMyBox>
-                        <ChatUserName>나</ChatUserName>
-                        <ChatMyMsg>
-                          <ChatTime>
-                            {message.createdAt.length > 5
-                                ? message.createdAt.split("T")[1].substring(0, 5)
-                                : message.createdAt}
-                          </ChatTime>
-                          <MyChat>{message.message}</MyChat>
-                        </ChatMyMsg>
-                      </ChatMyBox>
-                  ) : (
-                      <ChatOtherBox>
-                        <ChatUserName>
-                          {message.user?.nickname.includes("@")
-                              ? message.user?.nickname.split("@")[0]
-                              : message.user?.nickname}
-                        </ChatUserName>
-                        <ChatOtherMsg>
-                          <OtherChat>{message.message}</OtherChat>
-                          <ChatTime>
-                            {message.createdAt.length > 5
-                                ? message.createdAt.split("T")[1].substring(0, 5)
-                                : message.createdAt}
-                          </ChatTime>
-                        </ChatOtherMsg>
-                      </ChatOtherBox>
-                  )}
-                </div>
+              <UserDiv
+                key={i}
+                onClick={() => {
+                  navigate(`/myPage/${user.userId}`);
+                }}
+              >
+                <ImgDiv>
+                  <Img src={user.profile == "no image" ? temgif : user.profile}></Img>
+                </ImgDiv>
+                <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
+              </UserDiv>
             );
           })}
-          <div style={{ height: "3rem" }}></div>
         </div>
-        <footer>
-          <InputDiv>
-            <StyleAutoTextArea
-                value={message}
-                onChange={messageHandler}
-                minRows={1}
-                maxRows={4}
-            ></StyleAutoTextArea>
-
-            <SendBtnDiv>
-              {message.length > 0 ? (
-                  <div onClick={sendMessageHandler}>
-                    {/*<SendIcon></SendIcon>*/}
-                    <SendImg src={sendImage} alt="" />
-                  </div>
+        <div style={{ position: "fixed", top: "80%" }}>
+          {/* <button onClick={OutRoomHandler}>채팅방 나가기</button> */}
+          <img src={exitImg} alt="" onClick={leaveRoom} />
+        </div>
+      </RightModal>
+      <div
+        style={{
+          backgroundColor: ismodal ? "#757575" : "var(--c-lightgray)",
+          width: "100%",
+          minHeight: "90vh",
+          overflow: "auto",
+        }}
+      >
+        {messages.map((message, i) => {
+          return (
+            <div
+              style={{
+                display: "flex",
+                alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
+                flexDirection: "column",
+              }}
+              key={i}
+            >
+              {message.user?.userId === userId ? (
+                <ChatMyBox>
+                  <ChatUserName>나</ChatUserName>
+                  <ChatMyMsg>
+                    <ChatTime>
+                      {message.createdAt.length > 5
+                        ? message.createdAt.split("T")[1].substring(0, 5)
+                        : message.createdAt}
+                    </ChatTime>
+                    <MyChat>{message.message}</MyChat>
+                  </ChatMyMsg>
+                </ChatMyBox>
               ) : (
-                  <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
-                    {/*<SendIcon></SendIcon>*/}
-                    <SendImg src={sendImage} alt="" />
-                  </div>
+                <ChatOtherBox>
+                  <ChatUserName>
+                    {message.user?.nickname.includes("@")
+                      ? message.user?.nickname.split("@")[0]
+                      : message.user?.nickname}
+                  </ChatUserName>
+                  <ChatOtherMsg>
+                    <OtherChat>{message.message}</OtherChat>
+                    <ChatTime>
+                      {message.createdAt.length > 5
+                        ? message.createdAt.split("T")[1].substring(0, 5)
+                        : message.createdAt}
+                    </ChatTime>
+                  </ChatOtherMsg>
+                </ChatOtherBox>
               )}
-            </SendBtnDiv>
-          </InputDiv>
-        </footer>
+            </div>
+          );
+        })}
+        <div style={{ height: "3rem" }}></div>
       </div>
+      <footer>
+        <InputDiv>
+          <StyleAutoTextArea
+            value={message}
+            onChange={messageHandler}
+            minRows={1}
+            maxRows={4}
+          ></StyleAutoTextArea>
+
+          <SendBtnDiv>
+            {message.length > 0 ? (
+              <div onClick={sendMessageHandler}>
+                {/*<SendIcon></SendIcon>*/}
+                <SendImg src={sendImage} alt="" />
+              </div>
+            ) : (
+              <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
+                {/*<SendIcon></SendIcon>*/}
+                <SendImg src={sendImage} alt="" />
+              </div>
+            )}
+          </SendBtnDiv>
+        </InputDiv>
+      </footer>
+    </div>
   );
 };
 
@@ -451,14 +452,14 @@ export default ChatRoom;
 
 const SendIcon = () => {
   return (
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="25" viewBox="0 0 30 27" fill="none">
-        <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M4.61325 12.302H13.1325C13.5468 12.302 13.8825 12.6378 13.8825 13.052C13.8825 13.4662 13.5467 13.802 13.1325 13.802H4.63339L-9.26055e-06 26.1577L29.4275 13.0789L-9.26055e-06 -2.1257e-05L4.61325 12.302Z"
-            fill="var(--c-yellow)"
-        />
-      </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="25" viewBox="0 0 30 27" fill="none">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M4.61325 12.302H13.1325C13.5468 12.302 13.8825 12.6378 13.8825 13.052C13.8825 13.4662 13.5467 13.802 13.1325 13.802H4.63339L-9.26055e-06 26.1577L29.4275 13.0789L-9.26055e-06 -2.1257e-05L4.61325 12.302Z"
+        fill="var(--c-yellow)"
+      />
+    </svg>
   );
 };
 const StyleAutoTextArea = styled(TextareaAutosize)`
