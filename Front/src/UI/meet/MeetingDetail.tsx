@@ -13,9 +13,12 @@ import ListInfoItem from "../components/ListInfoItem";
 import UserInfoItem from "../components/UserInfoItem";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import { callApi } from "../../utils/api";
-import { initialMeetDetail, encodeUrl } from "../common";
+import { initialMeetDetail, encodeUrl, initialUser } from "../common";
 import { MeetDetail, User } from "../../Type/types";
+import Modal from "react-modal";
 import defaultImg from "../../assets/defaultImg.png";
+import { WhiteModal, getTagName, ModalInner } from "../common";
+import { formateDate, formateTime } from "./DateTimeCommon";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -132,6 +135,24 @@ const Description = styled.div`
   word-break: break-all;
 `;
 
+const ModalBtnDiv = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 10%;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+`;
+
+const ModalBtn = styled.div`
+  width: 5rem;
+  padding: 0.5rem;
+  margin: 0 0.5rem;
+  border-radius: 5px;
+  background: var(--c-yellow);
+`;
+
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
@@ -139,7 +160,11 @@ const MeetingDetail = () => {
     useState<MeetDetail>(initialMeetDetail); //모임 데이터
   const [memberList, setMemberList] = useState<User[]>([]); //참여자 리스트
   const [userId, setUserId] = useState(0); //현재 유저의 userId
+  const [userData, setUserData] = useState(initialUser);
   const [userStatus, setUserStatus] = useState("");
+  const [exitModalOn, setExitModalOn] = useState(false); //나가기 모달이 열려있는가?
+  const [errorModalOn, setErrorModalOn] = useState(false); //오류 모달이 열려있는가?
+  const [errMsg, setErrMsg] = useState(""); //모달에 표시할 오류메시지
   const bgImg =
     meetDetailData.meet.imgSrc == "no image"
       ? "/src/assets/meetDefaultImg.jpg"
@@ -185,6 +210,18 @@ const MeetingDetail = () => {
     setUserId(parseInt(localStorage.getItem("myId")));
   }, []);
 
+  //현재 유저의 정보 가져오기
+  useEffect(() => {
+    const promise = callApi("get", `api/user/${userId}`);
+    promise
+      .then((res) => {
+        setUserData(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [userId]);
+
   //meetId가 생기면 api로 데이터 로드
   useEffect(() => {
     fetchMeetData();
@@ -205,8 +242,38 @@ const MeetingDetail = () => {
     }
   }, [meetDetailData]);
 
+  //생일을 넣으면 나이를 계산해줌
+  const calcAge = (birth: string) => {
+    const today = new Date();
+    const birthDate = new Date(birth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age + 1;
+  };
+
   //참여 신청하기
   function applyMeet() {
+    //간수치 제한 확인
+    if (meetDetailData.meet.minLiverPoint > userData.liverPoint) {
+      setErrMsg("간수치 제한에 부합하지 않습니다.");
+      setErrorModalOn(true);
+      return;
+    }
+    //나이 제한 확인
+    if (
+      meetDetailData.meet.minAge > calcAge(userData.birth) ||
+      meetDetailData.meet.maxAge < calcAge(userData.birth)
+    ) {
+      setErrMsg("나이 제한에 부합하지 않습니다.");
+      setErrorModalOn(true);
+      return;
+    }
     const promise = callApi("post", `api/meet/apply`, {
       userId: userId,
       meetId: meetId,
@@ -215,7 +282,10 @@ const MeetingDetail = () => {
       .then((res) => {
         setUserStatus("APPLY");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setErrMsg(err.response.data);
+        setErrorModalOn(true);
+      });
   }
 
   //신청 취소하기
@@ -242,22 +312,6 @@ const MeetingDetail = () => {
       .then(() => fetchMeetData());
   }
 
-  //태그ID를 태그 이름으로 변환
-  //TODO: 공용 변수로 빼기??
-  function getTagName(tagId: number) {
-    const tag = [
-      { tagId: 0, tagName: "전체" },
-      { tagId: 1, tagName: "양주" },
-      { tagId: 2, tagName: "전통주" },
-      { tagId: 3, tagName: "전체" },
-      { tagId: 4, tagName: "사케" },
-      { tagId: 5, tagName: "와인" },
-      { tagId: 6, tagName: "수제맥주" },
-      { tagId: 7, tagName: "소주/맥주" },
-    ];
-    return tag[tagId].tagName;
-  }
-
   function hasAgeLimit() {
     if (meetDetailData === undefined) return false;
     const res =
@@ -266,24 +320,6 @@ const MeetingDetail = () => {
         ? true
         : false;
     return res;
-  }
-
-  //날짜와 변환 함수
-  function formateDate(dateData: string) {
-    const date = new Date(dateData);
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    return `${month}월 ${day}일`;
-  }
-
-  //시간 변환 함수
-  function formateTime(dateData: string) {
-    const date = new Date(dateData);
-    const hour = date.getHours();
-    const minute = date.getMinutes();
-
-    return `${hour}시 ${minute}분`;
   }
 
   return (
@@ -419,6 +455,43 @@ const MeetingDetail = () => {
             );
           })}
         </div>
+        <Modal
+          isOpen={exitModalOn}
+          onRequestClose={() => setExitModalOn(false)}
+          style={WhiteModal}
+        >
+          <div>
+            <div style={{ padding: "1rem 0 4rem 0" }}>
+              정말 이 모임에서 나가시겠습니까?
+            </div>
+            <ModalBtnDiv>
+              <ModalBtn
+                onClick={() => {
+                  exitMeet();
+                  console.log("삭제 완료");
+                  setExitModalOn(false);
+                }}
+              >
+                예
+              </ModalBtn>
+              <ModalBtn
+                onClick={() => {
+                  console.log("삭제 취소");
+                  setExitModalOn(false);
+                }}
+              >
+                아니오
+              </ModalBtn>
+            </ModalBtnDiv>
+          </div>
+        </Modal>
+        <Modal
+          isOpen={errorModalOn}
+          onRequestClose={() => setErrorModalOn(false)}
+          style={WhiteModal}
+        >
+          <ModalInner>{errMsg}</ModalInner>
+        </Modal>
       </MeetDetailDiv>
       {userStatus === "HOST" && (
         //user 상태에 따라 버튼 변경
@@ -432,7 +505,7 @@ const MeetingDetail = () => {
       {userStatus === "GUEST" && (
         <FooterBigBtn
           content="모임 나가기"
-          reqFunc={() => exitMeet()} //모임 나가기
+          reqFunc={() => setExitModalOn(true)} //모임 나가기
           color="#F28F79"
           bgColor="var(--c-lightgray)"
         />

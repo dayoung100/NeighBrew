@@ -10,7 +10,6 @@ import styled, { css } from "styled-components";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
-import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
 import {
@@ -443,7 +442,7 @@ const MeetingCreate = () => {
         <QuestionDiv style={{ fontFamily: "NanumSquareNeo", fontSize: "16px" }}>
           <Title>조건</Title>
           <LimitDiv>
-            <SubTitle>최대 인원</SubTitle>
+            <SubTitle>최대 인원*</SubTitle>
             <InputShort
               ref={maxPRef}
               value={maxParticipants}
