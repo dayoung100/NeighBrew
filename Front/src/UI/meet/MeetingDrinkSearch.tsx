@@ -213,7 +213,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
 
   return (
     <div>
-      <Title>우리가 마실 것은</Title>
+      <Title>우리가 마실 것은*</Title>
       <SubTitle>카테고리를 선택해주세요</SubTitle>
       <CateDiv>
         {tag !== 0 && (

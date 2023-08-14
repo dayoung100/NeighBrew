@@ -19,7 +19,7 @@ const GoogleLogin = () => {
         localStorage.setItem("myId", JSON.stringify(res.data.userId));
       })
       .then(() => {
-        navigate("/meet");
+        navigate("/drinkpost");
       });
   };
   useEffect(() => {

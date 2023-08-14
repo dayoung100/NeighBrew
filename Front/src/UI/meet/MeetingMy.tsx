@@ -84,7 +84,9 @@ const meetingMy = () => {
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>대기</MeetTitle>
-        {applyMeet.length > 0 && <MeetingListItem data={applyMeet} />}
+        {applyMeet.length > 0 && (
+          <MeetingListItem data={applyMeet} isWaiting={true} />
+        )}
         {applyMeet.length === 0 && (
           <EmptyMsg
             title="대기 중인 모임이 없습니다"

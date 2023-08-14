@@ -8,7 +8,7 @@ import {
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Button = styled.button<{ now: number; choosebutton: number }>`
+const Button = styled.button`
   width: 40%;
   display: inline-block;
   height: 3.5rem;
@@ -19,8 +19,8 @@ const Button = styled.button<{ now: number; choosebutton: number }>`
 
 const Footer = () => {
   const [chooseMenu, setChooseMenu] = useState(0);
-  const meetingIcon = meetingFooterIcon(chooseMenu === 0 ? "black" : "#AAAAAA");
-  const breweryIcon = breweryFooterIcon(chooseMenu === 1 ? "black" : "#AAAAAA");
+  const breweryIcon = breweryFooterIcon(chooseMenu === 0 ? "black" : "#AAAAAA");
+  const meetingIcon = meetingFooterIcon(chooseMenu === 1 ? "black" : "#AAAAAA");
   const chatIcon = chatFooterIcon(chooseMenu === 2 ? "black" : "#AAAAAA");
   const myIcon = myPageFooterIcon(chooseMenu === 3 ? "black" : "#AAAAAA");
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const Footer = () => {
   };
 
   useEffect(() => {
-    setChooseMenu(parseInt(localStorage.getItem("chooseMenu") || "0"));
+    setChooseMenu(parseInt(localStorage.getItem("chooseMenu") ?? "0"));
   }, []);
   return (
     <footer
@@ -46,30 +46,25 @@ const Footer = () => {
       <Button
         onClick={() => {
           chooseMenuHandler(0);
-          navigate("/meet");
-        }}
-        now={0}
-        choosebutton={chooseMenu}
-      >
-        {meetingIcon}
-      </Button>
-      <Button
-        onClick={() => {
-          chooseMenuHandler(1);
           navigate("/drinkpost");
         }}
-        now={1}
-        choosebutton={chooseMenu}
       >
         {breweryIcon}
       </Button>
       <Button
         onClick={() => {
+          chooseMenuHandler(1);
+          navigate("/meet");
+        }}
+      >
+        {meetingIcon}
+      </Button>
+
+      <Button
+        onClick={() => {
           chooseMenuHandler(2);
           navigate("/chatList");
         }}
-        now={2}
-        choosebutton={chooseMenu}
       >
         {chatIcon}
       </Button>
@@ -78,8 +73,6 @@ const Footer = () => {
           chooseMenuHandler(3);
           navigate(`/myPage/${userid}`);
         }}
-        now={3}
-        choosebutton={chooseMenu}
       >
         {myIcon}
       </Button>

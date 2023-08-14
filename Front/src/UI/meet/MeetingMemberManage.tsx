@@ -183,7 +183,14 @@ const MeetingMemberManage = () => {
         style={WhiteModal}
       >
         <div>
-          <div style={{ padding: "1rem 0 3rem 0" }}>
+          <div
+            style={{
+              padding: "1rem 0 4rem 0",
+              wordBreak: "break-word",
+              width: "15rem",
+              height: "auto",
+            }}
+          >
             유저 {targetUser.nickname}을/를 <br />
             {targetAction ? "승인" : "거절"}
             하시겠습니까?
