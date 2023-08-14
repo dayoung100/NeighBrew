@@ -33,14 +33,13 @@ import RatingCreate from "./UI/meetrate/RatingCreate";
 import NotFound from "./UI/etc/NotFound";
 import logo from "./assets/logoNavbar.svg";
 import DrinkpostReviewUpdate from "./UI/drinkpost/DrinkpostReviewUpdate";
-// import "./firebase-messaging-sw.js";
-import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "../firebase-messaging-sw.js";
 import AlarmPage from "./UI/etc/AlarmPage";
 
 function App() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false); // 개발시 isLoading true로 두고 하기
+  const [isLoading, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
+  const [userid, setUserid] = useState(null);
+  const [isConnect, setIsConnect] = useState(false);
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(true);
@@ -49,17 +48,19 @@ function App() {
   }, []);
   const es = useRef<EventSource>();
   useEffect(() => {
-    es.current = new EventSource("https://i9b310.p.ssafy.io/api/auth/connect/10", {
-      withCredentials: true,
-    });
+    es.current = new EventSource(
+      `https://i9b310.p.ssafy.io/api/auth/connect/${userid}`,
+      {
+        withCredentials: true,
+      }
+    );
 
     console.log({ es });
     console.log(es.current);
-    es.current.onopen = e => {
+    es.current.onopen = (e) => {
       console.log("[sse] open", { e });
     };
-    es.current.onmessage = event => {
-      console.log(11);
+    es.current.onmessage = (event) => {
       // console.log(JSON.parse(event.data));
       console.log(event.data);
 
@@ -68,54 +69,21 @@ function App() {
         return;
       }
     };
-    es.current.onerror = err => {
+    es.current.onerror = (err) => {
       console.log("[sse] error", { err });
+      setIsConnect(!isConnect);
+      if (userid == null) {
+        setUserid(localStorage.getItem("myId"));
+      }
     };
 
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [isConnect]);
   const unsubscribe = async () => {
     es.current?.close();
   };
-  // const firebaseConfig = {
-  //   apiKey: "AIzaSyCpTUPIU9sf319e5LbL0FgG9Dveba3bT5I",
-  //   authDomain: "neighbrew-3b432.firebaseapp.com",
-  //   projectId: "neighbrew-3b432",
-  //   storageBucket: "neighbrew-3b432.appspot.com",
-  //   messagingSenderId: "800201290085",
-  //   appId: "1:800201290085:web:6844c8716aaadfa76cf18c",
-  // };
-
-  // const app = initializeApp(firebaseConfig);
-  // const messaging = getMessaging(app);
-
-  // async function requestPermission() {
-  //   console.log("권한 요청 중...");
-
-  //   const permission = await Notification.requestPermission();
-  //   if (permission === "denied") {
-  //     console.log("알림 권한 허용 안됨");
-  //     return;
-  //   }
-
-  //   console.log("알림 권한이 허용됨");
-
-  //   const token = await getToken(messaging, {
-  //     vapidKey:
-  //       "BLvUCWb6V-TuCqFFvhsTBrxGUrEz0o-HU4vQ8eMUdy9RkavDLE0hRId5m1Nx1KpFK7pwj6w3FwoOQm0YUr9mxjo",
-  //   });
-
-  //   if (token) console.log("token: ", token);
-  //   else console.log("Can not get Token");
-  // }
-  // onMessage(messaging, payload => {
-  //   console.log("메시지가 도착했습니다.", payload);
-  //   // ...
-  // });
-
-  // requestPermission();
 
   return (
     <>
@@ -137,33 +105,69 @@ function App() {
         <Route path="/meet" element={<MeetingMain />}></Route>
         <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>
         <Route path="/meet/create" element={<MeetingCreate />}></Route>
-        <Route path="/meet/:meetId/manage" element={<MeetingManageMain />}></Route>
-        <Route path="/meet/:meetId/manage/member" element={<MeetingMemberManage />}></Route>
-        <Route path="/meet/:meetId/manage/info" element={<MeetingInfoManage />}></Route>
+        <Route
+          path="/meet/:meetId/manage"
+          element={<MeetingManageMain />}
+        ></Route>
+        <Route
+          path="/meet/:meetId/manage/member"
+          element={<MeetingMemberManage />}
+        ></Route>
+        <Route
+          path="/meet/:meetId/manage/info"
+          element={<MeetingInfoManage />}
+        ></Route>
 
         <Route path="/myPage/:userid" element={<Mypage></Mypage>}></Route>
-        <Route path="/myPage/follower/:userid" element={<Follower></Follower>}></Route>
-        <Route path="/myPage/follow/:userid" element={<Follow></Follow>}></Route>
+        <Route
+          path="/myPage/follower/:userid"
+          element={<Follower></Follower>}
+        ></Route>
+        <Route
+          path="/myPage/follow/:userid"
+          element={<Follow></Follow>}
+        ></Route>
         <Route path="/usersearch" element={<SearchUser></SearchUser>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:id" element={<ChatRoom></ChatRoom>} />
-        <Route path="/directchat/:senderId/:receiverId" element={<DirectChat></DirectChat>}></Route>
+        <Route
+          path="/directchat/:senderId/:receiverId"
+          element={<DirectChat></DirectChat>}
+        ></Route>
 
         <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
         <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
-        <Route path="/google/:str" element={<GoogleLogin></GoogleLogin>}></Route>
+        <Route
+          path="/google/:str"
+          element={<GoogleLogin></GoogleLogin>}
+        ></Route>
 
-        <Route path="/drinkpost/:drinkId" element={<DrinkpostDetail></DrinkpostDetail>}></Route>
-        <Route path="/drinkpost/create" element={<DrinkpostCreate></DrinkpostCreate>}></Route>
-        <Route path="/drinkpost/search" element={<DrinkpostSearch></DrinkpostSearch>}></Route>
+        <Route
+          path="/drinkpost/:drinkId"
+          element={<DrinkpostDetail></DrinkpostDetail>}
+        ></Route>
+        <Route
+          path="/drinkpost/create"
+          element={<DrinkpostCreate></DrinkpostCreate>}
+        ></Route>
+        <Route
+          path="/drinkpost/search"
+          element={<DrinkpostSearch></DrinkpostSearch>}
+        ></Route>
         <Route
           path="/drinkpost/:drinkId/review/create"
           element={<DrinkpostReviewCreate></DrinkpostReviewCreate>}
         ></Route>
-        <Route path="/drinkpost/total" element={<DrinkpostTotal></DrinkpostTotal>}></Route>
+        <Route
+          path="/drinkpost/total"
+          element={<DrinkpostTotal></DrinkpostTotal>}
+        ></Route>
         <Route path="/test" element={<Test></Test>}></Route>
 
-        <Route path="/rating/:meetId" element={<RatingCreate></RatingCreate>}></Route>
+        <Route
+          path="/rating/:meetId"
+          element={<RatingCreate></RatingCreate>}
+        ></Route>
 
         <Route
           path="/drinkpost/:drinkId/:reviewId"

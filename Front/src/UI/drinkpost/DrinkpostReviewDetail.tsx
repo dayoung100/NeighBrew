@@ -10,6 +10,7 @@ import NavbarSimple from "../navbar/NavbarSimple";
 import { commentIcon, likeIcon, deleteIcon } from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
+import Modal from "react-modal";
 
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
@@ -131,11 +132,32 @@ const InfoBox = styled.div`
   justify-content: space-between;
 `;
 
+const DeleteModal = {
+  content: {
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    height: "20%",
+    padding: "0.5rem 1rem",
+    borderRadius: "15px",
+    background: "var(--c-black)",
+    textAlign: "center",
+    fontFamily: "SeoulNamsan",
+    color: "white",
+  },
+  overlay: {
+    background: "rgba(0, 0, 0, 0.5)",
+    zIndex: "11",
+  },
+};
+
 const DrinkpostReviewDetail = () => {
   const DeleteIcon = deleteIcon();
   const LikeIcon = likeIcon();
   const CommentIcon = commentIcon();
   const { drinkId, reviewId } = useParams();
+  const [deleteModalOn, setDeleteModalOn] = useState(false);
   const [review, setReview] = useState<Review>();
   const [drink, setDrink] = useState<Drink>();
   const [following, setFollowing] = useState(0);
@@ -246,6 +268,10 @@ const DrinkpostReviewDetail = () => {
     setSubReviewList(prev => [fun.data, ...prev]);
   };
 
+  const modalHandler = () => {
+    setDeleteModalOn(true);
+  };
+
   const deleteHandler = () => {
     callApi("delete", `api/drinkreview/${review?.drinkReviewId}`).then(() => {
       // navigate(`/drinkpost/${drinkId}`, { replace: true });
@@ -304,7 +330,7 @@ const DrinkpostReviewDetail = () => {
                 margin: "0.5rem",
                 borderRadius: "8px",
               }}
-              onClick={deleteHandler}
+              onClick={modalHandler}
             >
               {DeleteIcon}
             </div>
@@ -337,6 +363,51 @@ const DrinkpostReviewDetail = () => {
           })}
         </SubReviewList>
       </WholeDiv>
+      <Modal
+        isOpen={deleteModalOn}
+        onRequestClose={() => setDeleteModalOn(false)}
+        style={DeleteModal}
+        ariaHideApp={false}
+      >
+        <div>
+          <h3>후기를 삭제하시겠습니까?</h3>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            height: "50%",
+            fontSize: "1.2rem",
+          }}
+        >
+          <div
+            onClick={deleteHandler}
+            style={{
+              cursor: "pointer",
+
+              width: "40%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            예
+          </div>
+          <div
+            onClick={() => setDeleteModalOn(false)}
+            style={{
+              cursor: "pointer",
+
+              width: "40%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            아니오
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };
