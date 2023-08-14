@@ -26,6 +26,16 @@ import {
   formateDate,
   formateTime,
 } from "./DateTimeCommon";
+import {
+  titleCheck,
+  drinkCheck,
+  positionCheck,
+  timeCheck,
+  participantsCheck,
+  liverLimitCheck,
+  ageCheck,
+  imgcheck,
+} from "./CheckValid";
 import Modal from "react-modal";
 
 const Title = styled.div`
@@ -129,6 +139,18 @@ const ErrorDiv = styled.div`
   padding: 0.5rem;
 `;
 
+const SubText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  font-family: "NanumSquareNeoBold";
+  font-size: 13px;
+  background-color: var(--c-yellow);
+  width: 7rem;
+  border-radius: 5px;
+`;
+
 const MeetingCreate = () => {
   const navigate = useNavigate();
   //모임 수정 후 모임 상세로 이동
@@ -198,65 +220,36 @@ const MeetingCreate = () => {
     });
   }, [sido]);
 
-  //////////////api 호출 전 각종 데이터 검증//////////////
-  //제목: 필수 입력/30자 이내
-  const titleCheck = () => {
-    return !(meetTitle === "" || meetTitle == null || meetTitle.length > 30);
-  };
-
-  //술: 필수 입력
-  const drinkCheck = () => {
-    return !(selectedDrink.drinkId < 1);
-  };
-
-  //위치: 필수 입력
-  const positionCheck = () => {
-    return !(sido.sidoCode === 0 || gugun.gugunCode === 0);
-  };
-
-  //날짜: 필수 입력/현재 시점 이후로
-  const timeCheck = () => {
-    return !(date === "" || time === "" || isDateTimeBeforeNow(date, time));
-  };
-
-  //최대인원: 필수 입력/최대 8명
-  const participantsCheck = () => {
-    return !(maxParticipants === 0 || maxParticipants > 8);
-  };
-
-  //간수치: 100이하
-  const liverLimitCheck = () => {
-    return !(liverLimit > 100);
-  };
-
-  //나이: 최소나이는 20세 이상/나이는 200이하
-  const ageCheck = () => {
-    return !(minAge < 20 || maxAge > 200);
-  };
-
-  //이미지: 이미지타입/이미지크기(5MB)
-  const imgcheck = () => {
-    return !(
-      file &&
-      (file.size > 1024 * 1024 * 10 || !file.type.startsWith("image/"))
-    );
-  };
-  //////////////api 호출 전 각종 데이터 검증//////////////
-
   //필수 입력값 검증(위 내용 외에 추가로 모달창 오픈)
   const checkRequiredValue = () => {
     //빨간글씨가 하나라도 있으면 모달 오픈
     let isValid =
-      titleCheck() &&
-      drinkCheck() &&
-      positionCheck() &&
-      timeCheck() &&
-      participantsCheck() &&
-      liverLimitCheck() &&
-      ageCheck() &&
-      imgcheck();
+      titleCheck(meetTitle) &&
+      drinkCheck(selectedDrink) &&
+      positionCheck(sido.sidoCode, gugun.gugunCode) &&
+      timeCheck(date, time) &&
+      participantsCheck(maxParticipants) &&
+      liverLimitCheck(liverLimit) &&
+      ageCheck(minAge, maxAge) &&
+      imgcheck(file);
     if (!isValid) {
-      setErrorMsg("입력값을 확인해주세요.");
+      if (!titleCheck(meetTitle)) {
+        setErrorMsg("제목 입력을 확인해주세요");
+      } else if (!drinkCheck(selectedDrink)) {
+        setErrorMsg("주류를 선택해주세요.");
+      } else if (!positionCheck(sido.sidoCode, gugun.gugunCode)) {
+        setErrorMsg("지역 입력을 확인해주세요.");
+      } else if (!timeCheck(date, time)) {
+        setErrorMsg("시간 입력을 확인해주세요.");
+      } else if (!participantsCheck(maxParticipants)) {
+        setErrorMsg("최대 인원을 확인해주세요.");
+      } else if (!liverLimitCheck(liverLimit)) {
+        setErrorMsg("간수치 입력을 확인해주세요.");
+      } else if (!ageCheck(minAge, maxAge)) {
+        setErrorMsg("나이 입력을 확인해주세요.");
+      } else if (!imgcheck(file)) {
+        setErrorMsg("첨부한 이미지를 확인해주세요.");
+      }
       return false;
     }
     //최대인원수 < 1
@@ -326,32 +319,23 @@ const MeetingCreate = () => {
       });
   };
 
-  //날짜와 시간 입력 시 현재 날짜, 시간보다 이전인지를 반환(UTC0)
-  const isDateTimeBeforeNow = (date, time) => {
-    try {
-      const targetDateTime = new Date(`${date}T${time}:00`);
-      const currentDateTime = new Date();
-      return targetDateTime < currentDateTime;
-    } catch (error) {
-      console.error("Error:", error);
-      return false;
-    }
-  };
-
   return (
     <div>
       <header>
         <NavbarSimple title="모임 만들기" />
       </header>
       <div style={{ padding: "0 1.5rem", marginBottom: "7rem" }}>
-        <QuestionDiv>
-          <Title>모임의 이름</Title>
+        <QuestionDiv style={{ marginTop: "0.5rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Title>모임의 이름*</Title>
+            <SubText>* 표시: 필수입력</SubText>
+          </div>
           <Input
             placeholder="모임의 이름을 입력해주세요"
             value={meetTitle}
             onChange={(e) => setMeetTitle(e.target.value)}
           />
-          {!titleCheck() && btnClicked && (
+          {!titleCheck(meetTitle) && btnClicked && (
             <ErrorDiv>📌모임 이름은 필수로 입력해야합니다.(30자 이내)</ErrorDiv>
           )}
         </QuestionDiv>
@@ -373,7 +357,7 @@ const MeetingCreate = () => {
               justifyContent: "space-between",
             }}
           >
-            <Title>위치</Title>
+            <Title>위치*</Title>
             <DropdownInput
               onChange={(e) => {
                 const selectedValue = e.target.value;
@@ -413,12 +397,12 @@ const MeetingCreate = () => {
             </DropdownInput>
             구/군
           </div>
-          {!positionCheck() && btnClicked && (
+          {!positionCheck(sido.sidoCode, gugun.gugunCode) && btnClicked && (
             <ErrorDiv>📌위치는 필수 입력 사항입니다.</ErrorDiv>
           )}
         </QuestionDiv>
         <QuestionDiv>
-          <Title>시간</Title>
+          <Title>시간*</Title>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <DateInput
               value={date}
@@ -433,7 +417,7 @@ const MeetingCreate = () => {
               required
             />
           </div>
-          {!timeCheck() && btnClicked && (
+          {!timeCheck(date, time) && btnClicked && (
             <ErrorDiv>
               <div>📌날짜와 시간은 필수 입력 사항입니다.</div>
               <div>(현재 날짜와 시간 이후로만 입력 가능)</div>
@@ -455,12 +439,11 @@ const MeetingCreate = () => {
               }
             />
             명
-            {!participantsCheck() && btnClicked && (
+            {!participantsCheck(maxParticipants) && btnClicked && (
               <ErrorDiv>📌필수 입력사항입니다.(8명 이내)</ErrorDiv>
             )}
           </LimitDiv>
           <LimitDiv>
-            <img src="/src/assets/liverIcon.svg" />
             <SubTitle>간수치</SubTitle>
             <InputShort
               placeholder="40"
@@ -468,12 +451,11 @@ const MeetingCreate = () => {
               onChange={(e) => setLiverLimit(parseInt(e.target.value))}
             />
             IU/L이상
-            {!liverLimitCheck() && btnClicked && (
+            {!liverLimitCheck(liverLimit) && btnClicked && (
               <ErrorDiv>📌100 IU/L 이하</ErrorDiv>
             )}
           </LimitDiv>
           <LimitDiv>
-            <img src="/src/assets/age.svg" />
             <SubTitle>나이</SubTitle>
             <InputShort
               placeholder="20"
@@ -482,13 +464,13 @@ const MeetingCreate = () => {
             />
             세 이상
             <InputShort
-              placeholder="100"
+              placeholder="200"
               value={maxAge > 0 ? maxAge : ""}
               onChange={(e) => setMaxAge(parseInt(e.target.value))}
             />
             세 미만
           </LimitDiv>
-          {!ageCheck() && btnClicked && (
+          {!ageCheck(minAge, maxAge) && btnClicked && (
             <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>
           )}
         </QuestionDiv>
@@ -502,7 +484,7 @@ const MeetingCreate = () => {
         </QuestionDiv>
         <div>
           <ImageInput key={imgSrc} getFunc={setFile} imgSrc={imgSrc} />
-          {!imgcheck() && btnClicked && (
+          {!imgcheck(file) && btnClicked && (
             <ErrorDiv>📌이미지만 업로드 가능합니다.(10MB 이하)</ErrorDiv>
           )}
         </div>

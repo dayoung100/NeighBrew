@@ -128,6 +128,18 @@ const ErrorDiv = styled.div`
   padding: 0.5rem;
 `;
 
+const SubText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  font-family: "NanumSquareNeoBold";
+  font-size: 13px;
+  background-color: var(--c-yellow);
+  width: 7rem;
+  border-radius: 5px;
+`;
+
 const MeetingInfoManage = () => {
   const navigate = useNavigate();
   //모임 수정 후 모임 상세로 이동
@@ -254,7 +266,23 @@ const MeetingInfoManage = () => {
       ageCheck(minAge, maxAge) &&
       imgcheck(file);
     if (!isValid) {
-      setErrorMsg("입력값을 확인해주세요.");
+      if (!titleCheck(meetTitle)) {
+        setErrorMsg("제목 입력을 확인해주세요");
+      } else if (!drinkCheck(selectedDrink)) {
+        setErrorMsg("주류를 선택해주세요.");
+      } else if (!positionCheck(sido.sidoCode, gugun.gugunCode)) {
+        setErrorMsg("지역 입력을 확인해주세요.");
+      } else if (!timeCheck(date, time)) {
+        setErrorMsg("시간 입력을 확인해주세요.");
+      } else if (!participantsCheck(maxParticipants)) {
+        setErrorMsg("최대 인원을 확인해주세요.");
+      } else if (!liverLimitCheck(liverLimit)) {
+        setErrorMsg("간수치 입력을 확인해주세요.");
+      } else if (!ageCheck(minAge, maxAge)) {
+        setErrorMsg("나이 입력을 확인해주세요.");
+      } else if (!imgcheck(file)) {
+        setErrorMsg("첨부한 이미지를 확인해주세요.");
+      }
       return false;
     }
     //최대인원수 < 1
@@ -351,18 +379,6 @@ const MeetingInfoManage = () => {
       });
   };
 
-  //날짜와 시간 입력 시 현재 날짜, 시간보다 이전인지를 반환(UTC0)
-  const isDateTimeBeforeNow = (date, time) => {
-    try {
-      const targetDateTime = new Date(`${date}T${time}:00`);
-      const currentDateTime = new Date();
-      return targetDateTime < currentDateTime;
-    } catch (error) {
-      console.error("Error:", error);
-      return false;
-    }
-  };
-
   return (
     <div>
       <header>
@@ -370,7 +386,10 @@ const MeetingInfoManage = () => {
       </header>
       <div style={{ padding: "0 1.5rem", marginBottom: "7rem" }}>
         <QuestionDiv>
-          <Title>모임의 이름</Title>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Title>모임의 이름*</Title>
+            <SubText>* 표시: 필수입력</SubText>
+          </div>
           <Input
             placeholder="모임의 이름을 입력해주세요"
             value={meetTitle}
