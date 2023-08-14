@@ -11,24 +11,6 @@ import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경
 import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import naverLogin from "../../assets/Login/naverLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import { callApi } from "../../utils/api";
-<<<<<<< Updated upstream
-=======
-import naverLogin from "../../assets/Login/naverLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import NeighBrew from "../../assets/Login/NeighBrew.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-import icon from "../../assets/Login/icon.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
-
-const ImgDiv = styled.div`
-  width: 20%;
-  height: 30%;
-  overflow: hidden;
-  aspect-ratio: 1/1;
-  border-radius: 50%;
-  float: left;
-  margin-right: 1rem;
-`;
->>>>>>> Stashed changes
 
 const ImgDivIcon = styled.div`
   overflow: hidden;
@@ -57,32 +39,23 @@ const Div = styled.div`
   font-weight: 14px;
   font-family: "JejuGothic";
   font-size: 20px;
-<<<<<<< Updated upstream
 
   cursor: pointer;
 `;
 
 const MintSection = styled.div`
-=======
-`;
-
-const OrangeSection = styled.div`
->>>>>>> Stashed changes
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: var(--c-yellow);
   width: 100%;
-<<<<<<< Updated upstream
 `;
 
 const SubTitle = styled.div`
   margin-top: 5rem;
   font-family: "NanumSquareNeoBold";
   font-size: 14px;
-=======
->>>>>>> Stashed changes
 `;
 
 const WhiteSection = styled.div`
@@ -95,7 +68,6 @@ const WhiteSection = styled.div`
   background-color: white;
   width: 100%;
   border-radius: 50px 50px 0 0; /* 상단만 둥글게 처리 */
-<<<<<<< Updated upstream
   padding-top: 6rem;
   font-family: "NanumSquareNeo";
   font-size: 1.15rem;
@@ -110,10 +82,6 @@ const LoginBtnDiv = styled.div`
   top: 1rem;
 `;
 
-=======
-`;
-
->>>>>>> Stashed changes
 const Login = () => {
   const navigate = useNavigate();
 
@@ -131,23 +99,11 @@ const Login = () => {
   const KakaologinHandler = async () => {
     axios({
       method: "get",
-<<<<<<< Updated upstream
       url: "/api/auth/login/kakao",
     }).then((res) => {
       const url = res.data.URL;
       window.location.href = url;
     });
-=======
-      url: "http://localhost:8080/api/auth/login/kakao",
-    })
-      .then(res => {
-        const url = res.data.URL;
-        window.location.href = url;
-      })
-      .catch(err => {
-        console.log(err);
-      });
->>>>>>> Stashed changes
   };
   const NaverloginHandler = async () => {
     axios({
@@ -170,7 +126,6 @@ const Login = () => {
   useEffect(() => {
     localStorage.setItem("chooseMenu", "0");
   }, []);
-<<<<<<< Updated upstream
 
   return (
     <div
@@ -198,62 +153,6 @@ const Login = () => {
             <Img src={googleLogin} />
           </Div>
         </LoginBtnDiv>
-=======
-  return (
-    <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
-      <OrangeSection>
-        <div style={{ marginBottom: "3rem" }}>
-          <img src={NeighBrew} style={{ marginTop: "5rem" }} />
-        </div>
-        <div style={{ marginBottom: "9rem" }}>
-          <p style={{ fontFamily: "Noto Sans KR", fontSize: "1.15rem" }}>
-            네이브루에 오신걸 환영합니다.
-          </p>
-        </div>
-      </OrangeSection>
-
-      <WhiteSection>
-        {/* 아이콘을 위치시킬 영역 */}
-        <ImgDivIcon
-          style={{
-            position: "relative",
-            top: "-4rem",
-            zIndex: 1,
-            borderRadius: "5rem 5rem 0 0",
-          }}
-        >
-          <img src={icon} />
-        </ImgDivIcon>
-
-        {/* <div style={{ position: "relative", top: "-2rem", zIndex: 1 }}> */}
-        {/* <div>
-        <img src={LoginImg} style={{ width: "5rem"}}  />
-      </div> */}
-        {/* </div> */}
-
-        <div
-          style={{
-            width: "100%",
-            alignItems: "center",
-            display: "flex",
-            flexDirection: "column",
-            position: "relative",
-            top: "1rem",
-          }}
-        >
-          <Div onClick={KakaologinHandler} style={{ cursor: "pointer", marginTop: "" }}>
-            <Img src={kakaoLogin} />
-          </Div>
-
-          <Div onClick={NaverloginHandler} style={{ cursor: "pointer" }}>
-            <Img src={naverLogin} />
-          </Div>
-
-          <Div onClick={GoogleloginHandler} style={{ cursor: "pointer" }}>
-            <Img src={googleLogin} />
-          </Div>
-        </div>
->>>>>>> Stashed changes
       </WhiteSection>
     </div>
   );
