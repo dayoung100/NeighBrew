@@ -35,7 +35,10 @@ const UserInfoItem = (props: UserInfoItemProps) => {
 
   return (
     <div
-      style={{ display: "flex", marginTop: "0.5rem" }}
+      style={{
+        display: "flex",
+        marginTop: "0.5rem",
+      }}
       onClick={() => GotoUserDetailHandler(props.user.userId)}
     >
       <UserProfileImg

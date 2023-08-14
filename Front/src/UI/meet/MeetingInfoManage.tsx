@@ -276,18 +276,24 @@ const MeetingInfoManage = () => {
     if (!isValid) {
       if (!titleCheck(meetTitle)) {
         setErrorMsg("제목 입력을 확인해주세요");
+        titleRef.current.focus();
       } else if (!drinkCheck(selectedDrink)) {
         setErrorMsg("주류를 선택해주세요.");
       } else if (!positionCheck(sido.sidoCode, gugun.gugunCode)) {
         setErrorMsg("지역 입력을 확인해주세요.");
+        sidoRef.current.focus();
       } else if (!timeCheck(date, time)) {
         setErrorMsg("시간 입력을 확인해주세요.");
+        dateRef.current.focus();
       } else if (!participantsCheck(maxParticipants)) {
         setErrorMsg("최대 인원을 확인해주세요.");
+        maxPRef.current.focus();
       } else if (!liverLimitCheck(liverLimit)) {
         setErrorMsg("간수치 입력을 확인해주세요.");
+        liverRef.current.focus();
       } else if (!ageCheck(minAge, maxAge)) {
         setErrorMsg("나이 입력을 확인해주세요.");
+        minAgeRef.current.focus();
       } else if (!imgcheck(file)) {
         setErrorMsg("첨부한 이미지를 확인해주세요.");
       }
@@ -399,6 +405,7 @@ const MeetingInfoManage = () => {
             <SubText>* 표시: 필수입력</SubText>
           </div>
           <Input
+            ref={titleRef}
             placeholder="모임의 이름을 입력해주세요"
             value={meetTitle}
             onChange={(e) => setMeetTitle(e.target.value)}
@@ -438,6 +445,7 @@ const MeetingInfoManage = () => {
                 setSido(selectedSido);
               }}
               value={sido.sidoName}
+              ref={sidoRef}
             >
               {sidoList.map((siItem) => {
                 return (
@@ -476,6 +484,7 @@ const MeetingInfoManage = () => {
           <Title>시간</Title>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <DateInput
+              ref={dateRef}
               value={date}
               onChange={(e) => setDate(e.target.value)}
               min={localDate().toString()}
@@ -504,8 +513,9 @@ const MeetingInfoManage = () => {
               marginBottom: "0.5rem",
             }}
           >
-            <SubTitle>최대 인원</SubTitle>
+            <SubTitle>최대 인원*</SubTitle>
             <InputShort
+              ref={maxPRef}
               value={maxParticipants}
               onChange={(e) =>
                 setMaxParticipants(
@@ -530,6 +540,7 @@ const MeetingInfoManage = () => {
             <img src="/src/assets/liverIcon.svg" />
             <SubTitle>간수치</SubTitle>
             <InputShort
+              ref={liverRef}
               placeholder="40"
               value={liverLimit > 0 ? liverLimit : ""}
               onChange={(e) => setLiverLimit(parseInt(e.target.value))}
@@ -549,6 +560,7 @@ const MeetingInfoManage = () => {
             <img src="/src/assets/age.svg" />
             <SubTitle>나이</SubTitle>
             <InputShort
+              ref={minAgeRef}
               placeholder="20"
               value={minAge > 0 ? minAge : ""}
               onChange={(e) => setMinAge(parseInt(e.target.value))}

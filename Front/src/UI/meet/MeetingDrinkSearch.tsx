@@ -237,6 +237,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
                 changeFunc={(inputTxt: string) => {
                   setInputText(inputTxt);
                 }}
+                width={90}
               />
             </div>
             {!isSearchFocused && props.btnClicked && (
