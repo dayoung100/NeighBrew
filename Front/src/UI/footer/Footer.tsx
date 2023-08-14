@@ -8,7 +8,7 @@ import {
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Button = styled.button<{ now: number; choosebutton: number }>`
+const Button = styled.button`
   width: 40%;
   display: inline-block;
   height: 3.5rem;
@@ -31,7 +31,7 @@ const Footer = () => {
   };
 
   useEffect(() => {
-    setChooseMenu(parseInt(localStorage.getItem("chooseMenu") || "0"));
+    setChooseMenu(parseInt(localStorage.getItem("chooseMenu") ?? "0"));
   }, []);
   return (
     <footer
@@ -48,8 +48,6 @@ const Footer = () => {
           chooseMenuHandler(0);
           navigate("/drinkpost");
         }}
-        now={1}
-        choosebutton={chooseMenu}
       >
         {breweryIcon}
       </Button>
@@ -58,8 +56,6 @@ const Footer = () => {
           chooseMenuHandler(1);
           navigate("/meet");
         }}
-        now={0}
-        choosebutton={chooseMenu}
       >
         {meetingIcon}
       </Button>
@@ -69,8 +65,6 @@ const Footer = () => {
           chooseMenuHandler(2);
           navigate("/chatList");
         }}
-        now={2}
-        choosebutton={chooseMenu}
       >
         {chatIcon}
       </Button>
@@ -79,8 +73,6 @@ const Footer = () => {
           chooseMenuHandler(3);
           navigate(`/myPage/${userid}`);
         }}
-        now={3}
-        choosebutton={chooseMenu}
       >
         {myIcon}
       </Button>
