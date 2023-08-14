@@ -2,7 +2,7 @@ import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 import dns from "dns";
-import mkcert from "vite-plugin-mkcert";
+// import mkcert from "vite-plugin-mkcert";
 
 dns.setDefaultResultOrder("verbatim");
 //commit
@@ -10,9 +10,9 @@ dns.setDefaultResultOrder("verbatim");
 export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd()); // env 사용위해 추가
   return defineConfig({
-    plugins: [react(), VitePWA(), mkcert()],
+    plugins: [react(), VitePWA()],
     server: {
-      https: true,
+      // https: true,
       proxy: {
         "/api": {
           target: env.VITE_API_BASE_URL,

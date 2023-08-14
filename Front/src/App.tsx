@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { useNavigate, Route, Routes } from "react-router-dom";
 import FirstLoading from "./UI/etc/FirstLoading";
@@ -50,45 +50,74 @@ function App() {
       console.log(isLoading);
     }, 3000);
   }, []);
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAj-406BFv0qHt8L-vpW7Ath__ZDGO1rsY",
-    authDomain: "neighbrew-b1e78.firebaseapp.com",
-    projectId: "neighbrew-b1e78",
-    storageBucket: "neighbrew-b1e78.appspot.com",
-    messagingSenderId: "735404055230",
-    appId: "1:735404055230:web:2e96cd5b4a74eb6f8bdcef",
-    measurementId: "G-P18G2K2JJN",
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const messaging = getMessaging(app);
-
-  async function requestPermission() {
-    console.log("권한 요청 중...");
-
-    const permission = await Notification.requestPermission();
-    if (permission === "denied") {
-      console.log("알림 권한 허용 안됨");
-      return;
-    }
-
-    console.log("알림 권한이 허용됨");
-
-    const token = await getToken(messaging, {
-      vapidKey:
-        "BIx1uyEnAZKWSIOmMoK7gtdqA2ERTXDHJBLz9u6qNUaO-GTOLSlBcGj1bbH_XHYGA6pG5bgaFXZZzBADzsgNFWo",
+  const es = useRef<EventSource>();
+  useEffect(() => {
+    es.current = new EventSource("http://i9b310.p.ssafy.io/api/auth/connect/10", {
+      withCredentials: true,
     });
 
-    if (token) console.log("token: ", token);
-    else console.log("Can not get Token");
-  }
-  onMessage(messaging, payload => {
-    console.log("메시지가 도착했습니다.", payload);
-    // ...
-  });
+    console.log({ es });
+    console.log(es.current);
+    es.current.onopen = e => {
+      console.log("[sse] open", { e });
+    };
+    es.current.onmessage = event => {
+      console.log(11);
+      console.log(JSON.parse(event.data));
 
-  requestPermission();
+      if (event.data === "finished") {
+        es.current?.close();
+        return;
+      }
+    };
+    es.current.onerror = err => {
+      console.log("[sse] error", { err });
+    };
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+  const unsubscribe = async () => {
+    es.current?.close();
+  };
+  // const firebaseConfig = {
+  //   apiKey: "AIzaSyCpTUPIU9sf319e5LbL0FgG9Dveba3bT5I",
+  //   authDomain: "neighbrew-3b432.firebaseapp.com",
+  //   projectId: "neighbrew-3b432",
+  //   storageBucket: "neighbrew-3b432.appspot.com",
+  //   messagingSenderId: "800201290085",
+  //   appId: "1:800201290085:web:6844c8716aaadfa76cf18c",
+  // };
+
+  // const app = initializeApp(firebaseConfig);
+  // const messaging = getMessaging(app);
+
+  // async function requestPermission() {
+  //   console.log("권한 요청 중...");
+
+  //   const permission = await Notification.requestPermission();
+  //   if (permission === "denied") {
+  //     console.log("알림 권한 허용 안됨");
+  //     return;
+  //   }
+
+  //   console.log("알림 권한이 허용됨");
+
+  //   const token = await getToken(messaging, {
+  //     vapidKey:
+  //       "BLvUCWb6V-TuCqFFvhsTBrxGUrEz0o-HU4vQ8eMUdy9RkavDLE0hRId5m1Nx1KpFK7pwj6w3FwoOQm0YUr9mxjo",
+  //   });
+
+  //   if (token) console.log("token: ", token);
+  //   else console.log("Can not get Token");
+  // }
+  // onMessage(messaging, payload => {
+  //   console.log("메시지가 도착했습니다.", payload);
+  //   // ...
+  // });
+
+  // requestPermission();
 
   return (
     <>
