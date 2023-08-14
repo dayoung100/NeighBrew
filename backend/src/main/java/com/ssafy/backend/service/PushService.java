@@ -67,17 +67,17 @@ public class PushService {
     //SseEmitter 객체를 사용하여 SSE를 클라이언트에게 전송하는 역할
     private void sendEventToClient(SseEmitter sseEmmitter, String eventId, String sseEmitterId, String eventName, Object data) {
         try {
-            if(!eventName.equals("sse")){
-                sseEmmitter.send(SseEmitter.event()
-                        .id(eventId) //이벤트 고유 식별자
-                        .name(eventName) //이벤트 이름 지정
-                        .data(data)); //이벤트로 전송할 데이터 설정
-            }else{
+            // if(eventName.equals("sse")){
+            //     sseEmmitter.send(SseEmitter.event()
+            //             .id(eventId) //이벤트 고유 식별자
+            //             .name(eventName) //이벤트 이름 지정
+            //             .data(data)); //이벤트로 전송할 데이터 설정
+            // }else{
                 sseEmmitter.send(SseEmitter.event()
                         .id(eventId) //이벤트 고유 식별자
                         //.name(eventName) //이벤트 이름 지정
                         .data(data)); //이벤트로 전송할 데이터 설정
-            }
+            // }
 
         } catch (IOException e) {
             emitterRepository.deleteById(sseEmitterId);
