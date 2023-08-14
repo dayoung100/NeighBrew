@@ -51,9 +51,6 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
 
   const position = `${meetData.sido.sidoName} ${meetData.gugun.gugunName}`;
   const formattedDate = formateDate(meetData.meetDate);
-  const hasAgeLimit =
-    (meetData.minAge ?? 0) > 0 || (meetData.maxAge ?? 0) > 0 ? true : false;
-  const hasLiverLimit = (meetData.minLiverPoint ?? 0) > 0 ? true : false;
 
   return (
     <div
@@ -97,20 +94,6 @@ const meetingDetail = ({ meetData }: { meetData: Meeting }) => {
           {meetData.drink.name}
         </div>
       </InnerText>
-      {/* <div style={{ display: "flex" }}>
-        {hasLiverLimit && (
-          <div style={{ display: "flex", alignItems: "center", width: "50%" }}>
-            <img src="/src/assets/liverIcon.svg" width="10rem" />
-            간수치 제한
-          </div>
-        )}
-        {hasAgeLimit && (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <img src="/src/assets/age.svg" width="10rem" />
-            연령제한
-          </div>
-        )}
-      </div> */}
     </div>
   );
 };

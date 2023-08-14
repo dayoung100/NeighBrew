@@ -54,6 +54,7 @@ const MintSection = styled.div`
 
 const SubTitle = styled.div`
   margin-top: 5rem;
+  margin-bottom: 0.5rem;
   font-family: "NanumSquareNeoBold";
   font-size: 14px;
 `;
@@ -92,7 +93,7 @@ const Login = () => {
       }).then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
-        navigate("/meet");
+        navigate("/drinkpost");
       });
     }
   }, []);
@@ -133,7 +134,7 @@ const Login = () => {
     >
       <MintSection>
         <SubTitle>주류 정보 공유 및 모임 플랫폼</SubTitle>
-        <img src={logo} style={{ width: "50vw" }} />
+        <img src={logo} style={{ width: "50%" }} />
         <ImgDivIcon>
           <img src={CocktailGlass} />
         </ImgDivIcon>

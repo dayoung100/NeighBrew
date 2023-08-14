@@ -50,12 +50,6 @@ const meetingFind = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("throttle:" + throttle);
-    console.log("page:" + page);
-    console.log("total:" + totalPage);
-  }, [throttle, page, totalPage]);
-
   const { setTarget } = useIntersectionObserver({ onIntersect });
 
   //초기 로딩
@@ -77,24 +71,34 @@ const meetingFind = () => {
       "get",
       `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`
     );
-    promise.then((res) => {
-      setTotalPage(res.data.totalPages);
-      setMeetAllData((prev) => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
-    });
+    if (page === 0) {
+      promise.then((res) => {
+        setTotalPage(res.data.totalPages);
+        setMeetAllData(res.data.content); //받아온 데이터 meetAllData에 추가
+      });
+    } else {
+      promise.then((res) => {
+        setTotalPage(res.data.totalPages);
+        setMeetAllData((prev) => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
+      });
+    }
   }, [page]);
 
   //카테고리 변경 시 새로 데이터 로드
   useEffect(() => {
-    setPage(0);
-    setTotalPage(1);
-    const promise = callApi(
-      "get",
-      `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`
-    );
-    promise.then((res) => {
-      setTotalPage(res.data.totalPages);
-      setMeetAllData(res.data.content); //받아온 데이터로 meetAllData 초기화
-    });
+    if (page === 0) {
+      const promise = callApi(
+        "get",
+        `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`
+      );
+      promise.then((res) => {
+        setTotalPage(res.data.totalPages);
+        setMeetAllData(res.data.content); //받아온 데이터로 meetAllData 초기화
+      });
+    } else {
+      setPage(0);
+      setTotalPage(1);
+    }
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -188,8 +192,6 @@ const meetingFind = () => {
   }, [selectedCategory, sido, gugun, startDate, endDate, inputText]);
 
   return (
-    //TODO: 날짜 세팅에 props 설정
-    //TODO: 검색창 인풋에 props 설정
     <div>
       <CateDiv>
         <DrinkCategory getFunc={getDrinkCategory} />

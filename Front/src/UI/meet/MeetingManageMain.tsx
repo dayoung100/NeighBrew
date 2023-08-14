@@ -130,7 +130,7 @@ const MeetingManageMain = () => {
         style={WhiteModal}
       >
         <div>
-          <div style={{ padding: "1rem 0 3rem 0" }}>
+          <div style={{ padding: "1rem 0 4rem 0" }}>
             이 모임을 정말 삭제하시겠습니까?
           </div>
           <ModalBtnDiv>
