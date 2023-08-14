@@ -183,9 +183,9 @@ const MeetingDetail = () => {
   const GotoDrinkPostHandler = (drinkId: number) => {
     navigate(`/drinkpost/${drinkId}`);
   };
-  //없는 모임일 경우 모임 메인으로 이동
+  //없는 모임일 경우 뒤로가기(모임 메인으로 이동?)
   const GotoMainHandler = () => {
-    navigate(`/meet`, { replace: true });
+    navigate(-1);
   };
 
   //api호출
@@ -212,6 +212,7 @@ const MeetingDetail = () => {
 
   //현재 유저의 정보 가져오기
   useEffect(() => {
+    if (userId === 0) return;
     const promise = callApi("get", `api/user/${userId}`);
     promise
       .then((res) => {

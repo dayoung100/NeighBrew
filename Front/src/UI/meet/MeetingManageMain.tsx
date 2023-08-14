@@ -58,7 +58,7 @@ const MeetingManageMain = () => {
   };
   //모임 삭제 후 메인으로 이동
   const GoMeetMainHandler = () => {
-    navigate(`/meet`, { replace: true });
+    navigate(-1);
   };
 
   useEffect(() => {
