@@ -102,14 +102,16 @@ const User = styled.div`
   display: flex;
 `;
 const ImgDiv = styled.div`
-  width: 15%;
-  height: 100%;
   overflow: hidden;
   /* inline-size: 25ch; */
   aspect-ratio: 1/1;
   border-radius: 50%;
   float: left;
   margin-right: 2rem;
+  min-width: 50px;
+  min-height: 50px;
+  max-width: 50px;
+  max-height: 50px;
 `;
 
 const Img = styled.img`
