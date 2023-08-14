@@ -45,6 +45,7 @@ const Chat = (props: {
   user1: User;
   user2: User;
   chatRoomDetail(user1: number, user2: number): void;
+  lastMessageTime: string;
 }) => {
   const navigate = useNavigate();
   const [user1, setUsers1] = useState<User>({
@@ -75,7 +76,14 @@ const Chat = (props: {
     setUsers1(props.user1);
     setUsers2(props.user2);
   }, [props.user1, props.user2]);
-
+  const [lastMessageTime, setLastMessageTime] = useState("");
+  useEffect(() => {
+    setLastMessageTime(
+      props.lastMessageTime.split("T")[0].slice(5, 10) +
+        "   " +
+        props.lastMessageTime.split("T")[1].slice(0, 5)
+    );
+  });
   return (
     <ChatDiv onClick={() => props.chatRoomDetail(user1.userId, user2.userId)}>
       <ImgDiv>
@@ -112,6 +120,7 @@ const Chat = (props: {
             님과의 채팅
           </span>
           <span style={{ color: "var(--c-gray", fontSize: "12px", marginLeft: "0.5rem" }}>2</span>{" "}
+          <p>{lastMessageTime}</p>
           <span></span>
         </div>
       </div>
