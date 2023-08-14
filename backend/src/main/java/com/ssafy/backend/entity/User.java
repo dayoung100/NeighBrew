@@ -2,7 +2,6 @@ package com.ssafy.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
-import com.ssafy.backend.dto.UserDto;
 import com.ssafy.backend.dto.user.UserUpdateDto;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -103,18 +102,5 @@ public class User {
 
     public void updateLiverPoint(Float newLiverPoint) {
         this.liverPoint = newLiverPoint;
-    }
-
-    public UserDto toUserDto() {
-        return UserDto.builder()
-                .userId(userId)
-                .email(email)
-                .nickname(nickname)
-                .name(name)
-                .birth(birth)
-                .intro(intro)
-                .liverPoint(liverPoint)
-                .profile(profile)
-                .build();
     }
 }

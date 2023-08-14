@@ -20,8 +20,8 @@ public interface ChatDmRoomRepository extends JpaRepository<ChatDmRoom, Long> {
                                      @Param("user2") User user2);
 
     @Modifying
-    @Query("select cdr from ChatDmRoom cdr where cdr.user1.userId = :userId or cdr.user2.userId = :userId")
-    Optional<List<ChatDmRoom>> findChatDmRoomByIdOOrderByLastMessageTimeDesc(@Param("userId") Long userId);
+    @Query("select cdr from ChatDmRoom cdr where cdr.user1.userId = :userId or cdr.user2.userId = :userId order by cdr.lastMessageTime desc")
+    Optional<List<ChatDmRoom>> findChatDmRoomByIdOrderByLastMessageTimeDesc(@Param("userId") Long userId);
 
     Optional<ChatDmRoom> findByUser1_UserIdAndUser2_UserId(Long user1Id, Long user2Id);
 }

@@ -260,11 +260,13 @@ const DirectChat = () => {
   }, []);
   // 엔터 누르면 메세지 전송
   const sendMessageHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+
     client.current.send(
       `/sub/dm/${user1}/${user2}`,
       {},
       JSON.stringify({ message: message, senderId: userId, nickname: "닉네임" })
     );
+
     setMessage("");
     scroll();
   };
@@ -467,12 +469,10 @@ const DirectChat = () => {
           <SendBtnDiv>
             {message.length > 0 ? (
               <div onClick={sendMessageHandler}>
-                {/*<SendIcon></SendIcon>*/}
                 <SendImg src={sendImage} alt="" />
               </div>
             ) : (
               <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
-                {/*<SendIcon></SendIcon>*/}
                 <SendImg src={sendImage} alt="" />
               </div>
             )}

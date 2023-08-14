@@ -4,10 +4,12 @@ import com.ssafy.backend.entity.Follow;
 import com.ssafy.backend.entity.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class FollowRequestDto {
     private Long followingId;
     private Long followerId;
