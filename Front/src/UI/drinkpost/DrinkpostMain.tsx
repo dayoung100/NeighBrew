@@ -153,9 +153,9 @@ const drinkpostMain = () => {
             </TotalDiv>
           </Total>
         </div>
-        <div style={{ margin: "0px 5vw 0px 5vw" }}>
+        <div style={{ margin: "0px 3vw" }}>
           <div style={{ textAlign: "start" }}>
-            <h3>후기 모아보기</h3>
+            <h3>🔥인기 있는 후기🔥</h3>
           </div>
           <ReviewList>
             {Array.isArray(reviewList) &&
