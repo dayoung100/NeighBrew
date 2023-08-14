@@ -49,7 +49,7 @@ function App() {
   }, []);
   const es = useRef<EventSource>();
   useEffect(() => {
-    es.current = new EventSource("http://i9b310.p.ssafy.io/api/auth/connect/10", {
+    es.current = new EventSource("https://i9b310.p.ssafy.io/api/auth/connect/10", {
       withCredentials: true,
     });
 
@@ -60,7 +60,8 @@ function App() {
     };
     es.current.onmessage = event => {
       console.log(11);
-      console.log(JSON.parse(event.data));
+      // console.log(JSON.parse(event.data));
+      console.log(event.data);
 
       if (event.data === "finished") {
         es.current?.close();
