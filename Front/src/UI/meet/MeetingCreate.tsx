@@ -10,7 +10,6 @@ import styled, { css } from "styled-components";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
-import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
 import {

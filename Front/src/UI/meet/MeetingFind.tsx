@@ -271,13 +271,16 @@ const meetingFind = () => {
                   />
                 </FilterElement>
                 <div style={{ gridColumn: "span 2" }}>
-                  <SearchBox
-                    placeholder="정확한 술의 이름 또는 모임의 이름"
-                    value={inputText}
-                    changeFunc={(inputTxt: string) => {
-                      setInputText(inputTxt);
-                    }}
-                  />
+                  <div style={{ width: "100%", margin: "0 auto" }}>
+                    <SearchBox
+                      placeholder="정확한 술의 이름 또는 모임의 이름"
+                      value={inputText}
+                      changeFunc={(inputTxt: string) => {
+                        setInputText(inputTxt);
+                      }}
+                      width={90}
+                    />
+                  </div>
                 </div>
               </FilterBg>
             </FilterDiv>
