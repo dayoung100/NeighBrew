@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+import java.util.UUID;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -68,6 +70,7 @@ public class OAuthLoginService {
         if (oAuthInfoResponse.getEmail() == null) {
             String uuid = String.valueOf(UUID.randomUUID()).substring(0, 7);
 
+
             User user = User.builder()
                     .email(oAuthInfoResponse.getName())
                     .name(oAuthInfoResponse.getName())
@@ -86,6 +89,7 @@ public class OAuthLoginService {
             return userRepository.save(user).getUserId();
 
         }
+
     }
 
     public String redirectApiUrl(OAuthLoginParams params) {
