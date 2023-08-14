@@ -7,12 +7,14 @@
 import styled from "styled-components";
 import { searchNavIcon } from "../../assets/AllIcon";
 
-const SearchDiv = styled.div`
+const SearchDiv = styled.div<{ width: number }>`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-around;
   background: var(--c-lightgray);
   border-radius: 20px;
   padding: 0.5rem 1rem;
+  width: ${(props) => props.width}%;
+  max-width: 100%;
 `;
 
 const SearchDivInput = styled.input.attrs({ type: "text" })`
@@ -36,6 +38,7 @@ type InputProps = {
   placeholder: string; //아무것도 입력하지 않았을 때 표시될 문구
   value?: string; //입력창에 입력된 값
   changeFunc?(input: string): void; //변경될때 시행할 함수
+  width?: number; //너비, 기본은 100%
 };
 
 /**
@@ -47,12 +50,12 @@ const searchBox = (props: InputProps) => {
   const searchButton = searchNavIcon();
 
   return (
-    <SearchDiv>
+    <SearchDiv width={props.width ?? 100}>
       <SearchDivInput
         type="text"
         placeholder={props.placeholder}
         value={props.value}
-        onChange={(e) => props.changeFunc(e.target.value)}
+        onChange={e => props.changeFunc(e.target.value)}
       />
       <SearchBtn
         onClick={() => {

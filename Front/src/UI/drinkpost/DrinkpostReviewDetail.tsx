@@ -384,7 +384,6 @@ const DrinkpostReviewDetail = () => {
             onClick={deleteHandler}
             style={{
               cursor: "pointer",
-
               width: "40%",
               display: "flex",
               alignItems: "center",
@@ -397,7 +396,6 @@ const DrinkpostReviewDetail = () => {
             onClick={() => setDeleteModalOn(false)}
             style={{
               cursor: "pointer",
-
               width: "40%",
               display: "flex",
               alignItems: "center",

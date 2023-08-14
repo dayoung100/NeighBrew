@@ -63,6 +63,7 @@ function App() {
     es.current.onmessage = (event) => {
       // console.log(JSON.parse(event.data));
       console.log(event.data);
+      noti(JSON.parse(event.data));
 
       if (event.data === "finished") {
         es.current?.close();
@@ -83,6 +84,52 @@ function App() {
   }, [isConnect]);
   const unsubscribe = async () => {
     es.current?.close();
+  };
+  useEffect(() => {
+    subscribe();
+  }, []);
+  const subscribe = () => {
+    if (!("Notification" in window)) {
+      // 브라우저가 Notification API를 지원하는지 확인한다.
+      alert("알림을 지원하지 않는 데스크탑 브라우저입니다");
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      // 이미 알림 권한이 허가됐는지 확인한다.
+      // 그렇다면, 알림을 표시한다.
+      // const notification = new Notification("안녕하세요!");
+      return;
+    }
+
+    // 알림 권한이 거부된 상태는 아니라면
+    if (Notification.permission !== "denied") {
+      // 사용자에게 알림 권한 승인을 요청한다
+      Notification.requestPermission().then(permission => {
+        // 사용자가 승인하면, 알림을 표시한다
+        if (permission === "granted") {
+          const notification = new Notification("알림을 허용하셨습니다.");
+        }
+      });
+    }
+  };
+  const noti = (message: string) => {
+    navigator.serviceWorker.ready.then(registration => {
+      const notiAlarm = registration.showNotification("NeighBrew", {
+        body: message,
+        icon: logo,
+        actions: [
+          {
+            title: "화면 이동",
+            action: "goTab",
+          },
+          {
+            title: "닫기",
+            action: "close",
+          },
+        ],
+      });
+    });
   };
 
   return (

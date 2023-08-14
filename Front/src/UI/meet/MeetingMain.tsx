@@ -68,10 +68,6 @@ const meetingMain = () => {
   const GotoCreateHandler = () => {
     navigate(`/meet/create`);
   };
-  useEffect(() => {
-    callApi("POST", "api/user/refresh-token");
-    localStorage.setItem("chooseMenu", "0");
-  }, []);
 
   return (
     <div>

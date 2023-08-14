@@ -26,9 +26,10 @@ const Desc = styled.div`
 `;
 
 const Tag = styled.div`
+  font-family: "NanumSquareNeoBold";
   background: var(--c-yellow);
   padding: 1.5% 3%;
-  font-size: 7px;
+  font-size: 10px;
   border-radius: 10px;
   width: 3rem;
 `;
