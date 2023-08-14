@@ -52,7 +52,7 @@ const searchBox = (props: InputProps) => {
         type="text"
         placeholder={props.placeholder}
         value={props.value}
-        onChange={(e) => props.changeFunc(e.target.value)}
+        onChange={e => props.changeFunc(e.target.value)}
       />
       <SearchBtn
         onClick={() => {
