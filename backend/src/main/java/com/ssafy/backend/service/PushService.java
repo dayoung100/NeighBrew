@@ -97,8 +97,6 @@ public class PushService {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
     }
 
     private Push createPush(User sender, User receiver, PushType pushType, String content, String url) {
