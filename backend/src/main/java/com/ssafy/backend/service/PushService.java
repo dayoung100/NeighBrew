@@ -8,12 +8,14 @@ import com.ssafy.backend.repository.PushRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -126,5 +128,9 @@ public class PushService {
     @Transactional
     public void deletePushLog(PushType pushType, Long senderId, Long receiverId){
         pushRepository.deleteByPushTypeAndSender_UserIdAndReceiver_UserId(pushType, senderId, receiverId);
+    }
+
+    public List<Push> getUserPushLog(Long userId) {
+        return pushRepository.findByReceiver_UserIdOrderByCreatedAtDesc(userId);
     }
 }
