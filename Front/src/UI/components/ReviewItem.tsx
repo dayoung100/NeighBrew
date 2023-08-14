@@ -24,6 +24,7 @@ const ReviewImg = styled.div`
   border-radius: 12px;
   width: 100%;
   height: 150px;
+  margin: 0% auto 0.5rem auto;
 `;
 
 const UserCard = styled.div`
