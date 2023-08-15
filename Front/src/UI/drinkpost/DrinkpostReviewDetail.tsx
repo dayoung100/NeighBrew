@@ -7,10 +7,12 @@ import defaultImg from "../../assets/defaultImg.png";
 import fancyDrinkImage from "../../assets/fancydrinkImage.jpg";
 import { callApi } from "../../utils/api";
 import NavbarSimple from "../navbar/NavbarSimple";
-import { commentIcon, likeIcon, deleteIcon } from "./../../assets/AllIcon";
+import { commentIcon, likeIcon, deleteIcon, editIcon, moreIcon } from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
 import Modal from "react-modal";
+
+import { autoAnimate } from "@formkit/auto-animate";
 
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
@@ -96,7 +98,7 @@ const CommentBox = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 9999;
+  z-index: 999;
   background-color: #fff;
   display: flex;
   flex-direction: row;
@@ -152,12 +154,35 @@ const DeleteModal = {
   },
 };
 
+const ThreeDotModal = {
+  content: {
+    top: "90%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "90%",
+    height: "16%",
+    borderRadius: "24px 24px 0px 0px",
+    backgroundColor: "var(--c-black)",
+    fontFamily: "SeoulNamsan",
+    fontSize: "1.5rem",
+    color: "white",
+    transition: "top 2s ease-in-out",
+  },
+  overlay: {
+    background: "rgba(0, 0, 0, 0.5)",
+    zIndex: "1001",
+  },
+};
+
 const DrinkpostReviewDetail = () => {
+  const MoreIcon = moreIcon();
+  const EditIcon = editIcon();
   const DeleteIcon = deleteIcon();
   const LikeIcon = likeIcon();
   const CommentIcon = commentIcon();
   const { drinkId, reviewId } = useParams();
   const [deleteModalOn, setDeleteModalOn] = useState(false);
+  const [threeDotOn, setThreeDotOn] = useState(false);
   const [review, setReview] = useState<Review>();
   const [drink, setDrink] = useState<Drink>();
   const [following, setFollowing] = useState(0);
@@ -166,6 +191,7 @@ const DrinkpostReviewDetail = () => {
   const navigate = useNavigate();
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
@@ -269,7 +295,17 @@ const DrinkpostReviewDetail = () => {
   };
 
   const modalHandler = () => {
+    setThreeDotOn(true);
+    // setDeleteModalOn(true);
+  };
+
+  const toDeleteQuestionHandler = () => {
     setDeleteModalOn(true);
+    setThreeDotOn(false);
+  };
+
+  const toUpdateHandler = () => {
+    navigate("update/");
   };
 
   const deleteHandler = () => {
@@ -332,7 +368,7 @@ const DrinkpostReviewDetail = () => {
               }}
               onClick={modalHandler}
             >
-              {DeleteIcon}
+              {MoreIcon}
             </div>
           ) : null}
         </InfoBox>
@@ -364,10 +400,33 @@ const DrinkpostReviewDetail = () => {
         </SubReviewList>
       </WholeDiv>
       <Modal
+        isOpen={threeDotOn}
+        onRequestClose={() => setThreeDotOn(false)}
+        style={ThreeDotModal}
+        ariaHideApp={false}
+      >
+        <div style={{ fontSize: "1rem", color: "var(--c-gray)" }}>후기</div>
+        <div
+          onClick={toUpdateHandler}
+          style={{ display: "flex", alignItems: "center", height: "40%" }}
+        >
+          <div style={{ marginRight: "0.5rem" }}>{EditIcon}</div>
+          <div>수정하기</div>
+        </div>
+
+        <div
+          onClick={toDeleteQuestionHandler}
+          style={{ display: "flex", alignItems: "center", height: "40%" }}
+        >
+          <div style={{ marginRight: "0.5rem" }}>{DeleteIcon}</div>
+          <div>삭제하기</div>
+        </div>
+      </Modal>
+      <Modal
         isOpen={deleteModalOn}
         onRequestClose={() => setDeleteModalOn(false)}
         style={DeleteModal}
-        ariaHideApp={false}
+        ariaHideApp={true}
       >
         <div>
           <h3>후기를 삭제하시겠습니까?</h3>
