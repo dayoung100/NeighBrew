@@ -11,7 +11,8 @@ import NavbarSimple from "../navbar/NavbarSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
 import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
-import { initialMeet, WhiteModal } from "../common";
+import { initialMeet } from "../common";
+import { WhiteModal } from "../../style/common";
 import { Meeting } from "../../Type/types";
 
 const BigBtn = styled.div`

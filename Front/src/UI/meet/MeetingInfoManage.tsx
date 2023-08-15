@@ -19,9 +19,14 @@ import {
   initialDrink,
   initialSido,
   initialGugun,
+} from "../common";
+import {
   WhiteModal,
   ModalInner,
-} from "../common";
+  InputText,
+  DateInput,
+  TimeInput,
+} from "../../style/common";
 import { localDate, formateDate, formateTime } from "./DateTimeCommon";
 import {
   titleCheck,
@@ -54,22 +59,7 @@ const QuestionDiv = styled.div`
   margin-top: 1.5rem;
 `;
 
-const Input = styled.input`
-  width: 100%;
-  background: white;
-  text-align: left;
-  padding: 2% 0;
-  border: none;
-  border-bottom: 1px solid var(--c-gray);
-  font-family: "SeoulNamsan";
-  font-size: 14px;
-  outline: none;
-  &::placeholder {
-    color: var(--c-gray);
-  }
-`;
-
-const InputShort = styled(Input)`
+const InputShort = styled(InputText)`
   width: 4rem;
   padding: 1% 3%;
   text-align: right;
@@ -87,26 +77,6 @@ const DropdownInput = styled.select`
   -webkit-appearance: none; /* 화살표 없애기 for chrome*/
   -moz-appearance: none; /* 화살표 없애기 for firefox*/
   appearance: none; /* 화살표 없애기 공통*/
-`;
-
-const DateAndTimeInputStyle = css`
-  color: var(--c-black);
-  width: 45%;
-  font-family: "SeoulNamsan";
-  text-align: right;
-  border: none;
-  border-bottom: 1px solid var(--c-gray);
-  background: white;
-  font-size: 14px;
-  outline: none;
-`;
-
-const DateInput = styled.input.attrs({ type: "date" })`
-  ${DateAndTimeInputStyle}
-`;
-
-const TimeInput = styled.input.attrs({ type: "time" })`
-  ${DateAndTimeInputStyle}
 `;
 
 const InfoTextArea = styled.textarea`
@@ -371,25 +341,10 @@ const MeetingInfoManage = () => {
     f.append("description", meetDesc);
 
     //이미지 수정을 위한 분기
-    if (newImgSrc === "no image") {
+    if (file !== null) f.append("image", file);
+    if (file === null && newImgSrc === "no image") {
       f.append("imgSrc", "no image");
     }
-    f.append("image", file);
-    //1. 파일이 null이 아님 -> 이미지를 변경한 것 -> 새파일을 담아서 전송
-    // if (file !== null) {
-    //   f.append("image", file);
-    // } else
-    //   //2. 파일이 null이지만 newImgSrc가 no image임
-    //   //-> 이미지 첨부를 취소하고 기본이미지로 돌리려는 것
-    //   //-> image와 함께 변경된 imgSrc 정보도 담아야
-    //   f.append("image", file);
-    //   f.append("imgSrc", "no image");
-    // } else {
-    //   //3. 파일이 null이고 imgSrc가 no image가 아님
-    //   //-> 첨부 취소 버튼을 누르지도 않고, 파일 첨부도 하지 않음 = 이미지 수정하지 않음
-    //   //-> image만 null로 담아 보내기
-    //   f.append("image", file);
-    // }
 
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
     promise
@@ -413,7 +368,7 @@ const MeetingInfoManage = () => {
             <Title>모임의 이름*</Title>
             <SubText>* 표시: 필수입력</SubText>
           </div>
-          <Input
+          <InputText
             ref={titleRef}
             placeholder="모임의 이름을 입력해주세요"
             value={meetTitle}

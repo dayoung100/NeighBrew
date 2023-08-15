@@ -13,7 +13,8 @@ import Footer from "../footer/Footer";
 import UserInfoItem from "../components/UserInfoItem";
 import { callApi } from "../../utils/api";
 import { MeetDetail, User } from "../../Type/types";
-import { initialMeetDetail, initialUser, WhiteModal } from "../common";
+import { initialMeetDetail, initialUser } from "../common";
+import { WhiteModal } from "../../style/common";
 
 const SubTitle = styled.div`
   font-size: 20px;

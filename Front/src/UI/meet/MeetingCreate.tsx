@@ -17,8 +17,13 @@ import {
   initialDrink,
   initialSido,
   initialGugun,
-  WhiteModal,
 } from "../common";
+import {
+  WhiteModal,
+  DateInput,
+  TimeInput,
+  InputText,
+} from "../../style/common";
 import {
   localDate,
   localTime,
@@ -56,22 +61,7 @@ const QuestionDiv = styled.div`
   margin-top: 1.5rem;
 `;
 
-const Input = styled.input`
-  width: 100%;
-  background: white;
-  text-align: left;
-  padding: 2% 0;
-  border: none;
-  border-bottom: 1px solid var(--c-gray);
-  font-family: "NanumSquareNeo";
-  font-size: 16px;
-  outline: none;
-  &::placeholder {
-    color: var(--c-gray);
-  }
-`;
-
-const InputShort = styled(Input)`
+const InputShort = styled(InputText)`
   width: 4rem;
   padding: 1% 3%;
   text-align: right;
@@ -90,26 +80,6 @@ const DropdownInput = styled.select`
   -webkit-appearance: none; /* 화살표 없애기 for chrome*/
   -moz-appearance: none; /* 화살표 없애기 for firefox*/
   appearance: none; /* 화살표 없애기 공통*/
-`;
-
-const DateAndTimeInputStyle = css`
-  color: var(--c-black);
-  width: 45%;
-  font-family: "NanumSquareNeo";
-  text-align: right;
-  border: none;
-  border-bottom: 1px solid var(--c-gray);
-  background: white;
-  font-size: 16px;
-  outline: none;
-`;
-
-const DateInput = styled.input.attrs({ type: "date" })`
-  ${DateAndTimeInputStyle}
-`;
-
-const TimeInput = styled.input.attrs({ type: "time" })`
-  ${DateAndTimeInputStyle}
 `;
 
 const LimitDiv = styled.div`
@@ -347,7 +317,7 @@ const MeetingCreate = () => {
             <Title>모임의 이름*</Title>
             <SubText>* 표시: 필수입력</SubText>
           </div>
-          <Input
+          <InputText
             ref={titleRef}
             placeholder="모임의 이름을 입력해주세요"
             value={meetTitle}

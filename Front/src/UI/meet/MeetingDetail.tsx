@@ -17,7 +17,8 @@ import { initialMeetDetail, encodeUrl, initialUser } from "../common";
 import { MeetDetail, User } from "../../Type/types";
 import Modal from "react-modal";
 import defaultImg from "../../assets/defaultImg.png";
-import { WhiteModal, getTagName, ModalInner } from "../common";
+import { getTagName } from "../common";
+import { WhiteModal, ModalInner } from "../../style/common";
 import { formateDate, formateTime } from "./DateTimeCommon";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`

@@ -15,6 +15,7 @@ import DrinkpostMain from "./DrinkPostUseInUser";
 import MeetingMy from "./MeetingMyUseInUser";
 import Navbar from "./Navbar";
 import { Tooltip } from "react-tooltip";
+import { InputText, DateInput } from "../../style/common";
 
 const QuestionDiv = styled.div`
   margin-top: 1.5rem;
@@ -46,8 +47,8 @@ const ImageArea = styled.div<{ src: string }>`
   background-size: cover;
   border-radius: 50%;
   position: relative;
-  width: 30%;
-  padding-bottom: 30%;
+  width: 50%;
+  padding-bottom: 50%;
   overflow: hidden;
 `;
 const SirenArea = styled.div`
@@ -110,7 +111,7 @@ const UserImgDiv = styled.div`
 `;
 
 const Button = styled.button`
-  width: 50%;
+  width: 45%;
   display: inline-block;
   height: 3rem;
   background-color: white;
@@ -179,13 +180,14 @@ const BottleDiv = styled.div<{}>`
   align-items: center;
   justify-content: center;
 `;
+
 const WhiteModal = {
   content: {
+    position: "relative",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "80%",
-    height: "80%",
     padding: "0.5rem 1rem",
     borderRadius: "15px",
     background: "white",
@@ -215,6 +217,19 @@ const ImageInputBtn = styled.div`
   background-color: var(--c-yellow);
   padding: 0.5rem;
   margin-left: 0.5rem;
+`;
+
+const TitleLabel = styled.label`
+  font-family: "JejuGothic";
+  font-size: 18px;
+  text-align: left;
+  margin-bottom: 0.5rem;
+`;
+
+const BtnDiv = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin: 1.5rem 0;
 `;
 
 const MyPage = () => {
@@ -700,102 +715,123 @@ const MyPage = () => {
         style={WhiteModal}
         ariaHideApp={false}
       >
-        <FlexDiv>
-          <label htmlFor="nickname">닉네임</label>
-          <input
-            type="text"
-            id="nickname"
-            value={nickname}
-            onInput={nicknameHandler}
-          />
-        </FlexDiv>
-        <FlexDiv>
-          <label htmlFor="intro">한줄 설명</label>
-          <input type="text" id="intro" value={intro} onInput={introHandler} />
-        </FlexDiv>
-        <FlexDiv>
-          <label htmlFor="date">생년월일</label>
-          <input
-            type="date"
-            id="date"
-            value={birth}
-            onInput={birthHandler}
-            max="2005-01-01"
-          />
-        </FlexDiv>
-        <QuestionDiv style={{ textAlign: "left", marginBottom: "2rem" }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Title style={{ margin: "0" }}>프로필 이미지</Title>
-            <ImgInput>
-              <label htmlFor="img_file">
-                <ImageInputBtn>
-                  <img src="/src/assets/imagePlusIcon.svg" width="90%" />
-                </ImageInputBtn>
-              </label>
-              <input
-                type="file"
-                id="img_file"
-                accept="image/jpg, image/png, image/jpeg"
-                onChange={saveImgFile}
-                ref={imgRef}
-              />
-            </ImgInput>
+        <div>
+          <QuestionDiv style={{ textAlign: "left", marginBottom: "2rem" }}>
+            <Title>프로필 이미지</Title>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              {imgFile == null ? (
+                userData.profile == "no image" ? (
+                  <ImageArea src={defaultImg}></ImageArea>
+                ) : (
+                  <ImageArea src={userData.profile}></ImageArea>
+                )
+              ) : (
+                <ImageArea src={imgFile}></ImageArea>
+              )}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "1rem",
+              }}
+            >
+              <ImgInput>
+                <label htmlFor="img_file">
+                  <ImageInputBtn>
+                    <img src="/src/assets/imagePlusIcon.svg" width="90%" />
+                  </ImageInputBtn>
+                </label>
+                <input
+                  type="file"
+                  id="img_file"
+                  accept="image/jpg, image/png, image/jpeg"
+                  onChange={saveImgFile}
+                  ref={imgRef}
+                />
+              </ImgInput>
+              <Button
+                onClick={() => {
+                  changeUserProfiletoDefault();
+                }}
+                style={{
+                  backgroundColor: "var(--c-lightgray)",
+                  borderRadius: "0.5rem",
+                  width: "40%",
+                  marginLeft: "1rem",
+                }}
+              >
+                기본 이미지로 변경
+              </Button>
+            </div>
+          </QuestionDiv>
+          <FlexDiv>
+            <TitleLabel htmlFor="nickname">닉네임</TitleLabel>
+            <InputText
+              type="text"
+              id="nickname"
+              value={nickname}
+              onInput={nicknameHandler}
+            />
+          </FlexDiv>
+          <FlexDiv>
+            <TitleLabel htmlFor="intro">한줄 설명</TitleLabel>
+            <InputText
+              type="text"
+              id="intro"
+              value={intro}
+              onInput={introHandler}
+              placeholder="한줄 설명을 입력해주세요"
+            />
+          </FlexDiv>
+          <FlexDiv
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <TitleLabel htmlFor="date">생년월일</TitleLabel>
+            <DateInput
+              type="date"
+              id="date"
+              value={birth}
+              onInput={birthHandler}
+              max="2005-01-01"
+              style={{ width: "70%", marginRight: "1rem" }}
+            />
+          </FlexDiv>
+          <BtnDiv>
             <Button
               onClick={() => {
-                changeUserProfiletoDefault();
+                changeUserInfo();
+                setDeleteModalOn(false);
+              }}
+              style={{
+                backgroundColor: "var(--c-yellow)",
+                color: "var(--c-black)",
+                borderRadius: "8px",
+                marginBottom: "1rem",
+              }}
+            >
+              유저 정보 변경
+            </Button>
+            <Button
+              onClick={() => {
+                setDeleteModalOn(false);
+                localStorage.removeItem("token");
+                localStorage.removeItem("myId");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("chooseMenu");
+                navigate("/");
               }}
               style={{
                 backgroundColor: "var(--c-lightgray)",
-                borderRadius: "0.5rem",
-                width: "40%",
-                marginLeft: "1rem",
+                color: "var(--c-black)",
+                borderRadius: "8px",
               }}
             >
-              기본 이미지로 변경
+              로그아웃
             </Button>
-          </div>
-          {imgFile == null ? (
-            userData.profile == "no image" ? (
-              <ImageArea src={defaultImg}></ImageArea>
-            ) : (
-              <ImageArea src={userData.profile}></ImageArea>
-            )
-          ) : (
-            <ImageArea src={imgFile}></ImageArea>
-          )}
-        </QuestionDiv>
-        <Button
-          onClick={() => {
-            changeUserInfo();
-            setDeleteModalOn(false);
-          }}
-          style={{
-            backgroundColor: "var(--c-yellow)",
-            color: "var(--c-black)",
-            borderRadius: "8px",
-            marginBottom: "1rem",
-          }}
-        >
-          유저 정보 변경
-        </Button>
-        <br />
-        <Button
-          onClick={() => {
-            setDeleteModalOn(false);
-            localStorage.removeItem("token");
-            localStorage.removeItem("myId");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("chooseMenu");
-            navigate("/");
-          }}
-          style={{
-            backgroundColor: "var(--c-lightgray)",
-            color: "var(--c-black)",
-            borderRadius: "8px",
-          }}
-        >
-          로그아웃
-        </Button>
+          </BtnDiv>
+        </div>
       </Modal>
       <Footer />
     </nav>
