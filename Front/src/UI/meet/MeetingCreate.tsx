@@ -85,7 +85,6 @@ const DropdownInput = styled.select`
 const LimitDiv = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 0.7rem;
 `;
 
 const InfoTextArea = styled.textarea`
@@ -262,9 +261,7 @@ const MeetingCreate = () => {
 
   //수정 완료 버튼 클릭 api
   const createMeeting = () => {
-    if (isClick) return;
-
-    console.log("생성함");
+    if (isClick) return; //throttle역할
     setBtnClicked(true);
     //api 요청 전에 확인
     //입력 값들이 적절한가?
@@ -423,79 +420,86 @@ const MeetingCreate = () => {
         </QuestionDiv>
         <QuestionDiv style={{ fontFamily: "NanumSquareNeo", fontSize: "16px" }}>
           <Title>조건</Title>
-          <LimitDiv>
-            <SubTitle>최대 인원*</SubTitle>
-            <InputShort
-              ref={maxPRef}
-              value={maxParticipants}
-              onChange={(e) =>
-                setMaxParticipants(
-                  !Number.isNaN(parseInt(e.target.value))
-                    ? parseInt(e.target.value)
-                    : 0
-                )
-              }
-            />
-            명
+          <div style={{ marginBottom: "0.7rem" }}>
+            <LimitDiv>
+              <SubTitle>최대 인원*</SubTitle>
+              <InputShort
+                ref={maxPRef}
+                value={maxParticipants}
+                onChange={(e) =>
+                  setMaxParticipants(
+                    !Number.isNaN(parseInt(e.target.value))
+                      ? parseInt(e.target.value)
+                      : 0
+                  )
+                }
+              />
+              명
+            </LimitDiv>
             {!participantsCheck(maxParticipants) && btnClicked && (
               <ErrorDiv>📌필수 입력사항입니다.(8명 이내)</ErrorDiv>
             )}
-          </LimitDiv>
-          <LimitDiv>
-            <SubTitle>간수치</SubTitle>
-            <InputShort
-              ref={liverRef}
-              placeholder="40"
-              value={liverLimit > 0 ? liverLimit : ""}
-              onChange={(e) => setLiverLimit(parseInt(e.target.value))}
-            />
-            IU/L이상
-            <TooltipBtn data-tooltip-id="liver-tooltip">❓</TooltipBtn>
+          </div>
+          <div style={{ marginBottom: "0.7rem" }}>
+            <LimitDiv>
+              <SubTitle>간수치</SubTitle>
+              <InputShort
+                ref={liverRef}
+                type="number"
+                placeholder="40"
+                value={liverLimit > 0 ? liverLimit : ""}
+                onChange={(e) => setLiverLimit(parseInt(e.target.value))}
+              />
+              IU/L이상
+              <TooltipBtn data-tooltip-id="liver-tooltip">❓</TooltipBtn>
+            </LimitDiv>
             {!liverLimitCheck(liverLimit) && btnClicked && (
-              <ErrorDiv>📌100 IU/L 이하</ErrorDiv>
+              <ErrorDiv>📌100IU/L이하</ErrorDiv>
             )}
-          </LimitDiv>
-          <Tooltip
-            id="liver-tooltip"
-            style={{
-              backgroundColor: "var(--c-pink)",
-              color: "black",
-              fontSize: "12px",
-              width: "10rem",
-              textAlign: "justify",
-              wordBreak: "break-word",
-            }}
-          >
-            <div style={{ fontWeight: "700", marginTop: "0.3rem" }}>
-              간수치?
-            </div>
-            <div style={{ marginTop: "0.3rem" }}>
-              네이브루 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을 종합해서
-              만든 매너 지표입니다.
-            </div>
-            <div style={{ margin: "0.3rem 0" }}>
-              간수치는 40 IU/L에서 시작해서 0~100 IU/L 사이의 값을 가집니다.
-            </div>
-          </Tooltip>
-          <LimitDiv>
-            <SubTitle>나이</SubTitle>
-            <InputShort
-              ref={minAgeRef}
-              placeholder="20"
-              value={minAge > 0 ? minAge : ""}
-              onChange={(e) => setMinAge(parseInt(e.target.value))}
-            />
-            세 이상
-            <InputShort
-              placeholder="200"
-              value={maxAge > 0 ? maxAge : ""}
-              onChange={(e) => setMaxAge(parseInt(e.target.value))}
-            />
-            세 미만
-          </LimitDiv>
-          {!ageCheck(minAge, maxAge) && btnClicked && (
-            <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>
-          )}
+            <Tooltip
+              id="liver-tooltip"
+              style={{
+                backgroundColor: "var(--c-pink)",
+                color: "black",
+                fontSize: "12px",
+                width: "10rem",
+                textAlign: "justify",
+                wordBreak: "break-word",
+              }}
+            >
+              <div style={{ fontWeight: "700", marginTop: "0.3rem" }}>
+                간수치?
+              </div>
+              <div style={{ marginTop: "0.3rem" }}>
+                네이브루 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을 종합해서
+                만든 매너 지표입니다.
+              </div>
+              <div style={{ margin: "0.3rem 0" }}>
+                간수치는 40 IU/L에서 시작해서 0~100 IU/L 사이의 값을 가집니다.
+              </div>
+            </Tooltip>
+          </div>
+          <div style={{ marginBottom: "0.7rem" }}>
+            <LimitDiv>
+              <SubTitle>나이</SubTitle>
+              <InputShort
+                ref={minAgeRef}
+                placeholder="20"
+                value={minAge > 0 ? minAge : ""}
+                onChange={(e) => setMinAge(parseInt(e.target.value))}
+              />
+              세 이상
+              <InputShort
+                placeholder="200"
+                value={maxAge > 0 ? maxAge : ""}
+                onChange={(e) => setMaxAge(parseInt(e.target.value))}
+              />
+              세 미만
+            </LimitDiv>
+            {!ageCheck(minAge, maxAge) && btnClicked && (
+              <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>
+            )}
+          </div>
         </QuestionDiv>
         <QuestionDiv>
           <Title>설명</Title>
@@ -517,7 +521,6 @@ const MeetingCreate = () => {
         color="var(--c-yellow)"
         bgColor="white"
         reqFunc={() => {
-          console.log("클릭!");
           createMeeting();
         }}
       />
