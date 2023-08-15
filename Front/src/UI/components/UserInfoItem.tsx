@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import React from "react";
 import styled from "styled-components";
 import { User } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
@@ -76,4 +77,4 @@ const UserInfoItem = (props: UserInfoItemProps) => {
     </div>
   );
 };
-export default UserInfoItem;
+export default React.memo(UserInfoItem);
