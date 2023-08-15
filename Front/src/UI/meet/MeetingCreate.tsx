@@ -165,6 +165,7 @@ const MeetingCreate = () => {
 
   //생성 버튼 클릭했는지 - 버튼 한번이라도 클릭 시에만 빨간 가이드 글씨 오픈
   const [btnClicked, setBtnClicked] = useState(false);
+  const [isClick, setIsClick] = useState(false);
 
   //모임의 정보 초기 세팅
   useEffect(() => {
@@ -260,7 +261,10 @@ const MeetingCreate = () => {
   };
 
   //수정 완료 버튼 클릭 api
-  const createMeeting = async () => {
+  const createMeeting = () => {
+    if (isClick) return;
+
+    console.log("생성함");
     setBtnClicked(true);
     //api 요청 전에 확인
     //입력 값들이 적절한가?
@@ -268,6 +272,8 @@ const MeetingCreate = () => {
       setIsModalOn(true);
       return;
     }
+
+    setIsClick(true);
 
     let f = new FormData();
     //필수 입력o
@@ -303,6 +309,7 @@ const MeetingCreate = () => {
       .catch((error) => {
         setErrorMsg(error.response.data);
         setIsModalOn(true);
+        setIsClick(false);
       });
   };
 
@@ -510,6 +517,7 @@ const MeetingCreate = () => {
         color="var(--c-yellow)"
         bgColor="white"
         reqFunc={() => {
+          console.log("클릭!");
           createMeeting();
         }}
       />
