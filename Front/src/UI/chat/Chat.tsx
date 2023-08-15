@@ -29,6 +29,10 @@ const ImgDiv = styled.div`
   border-radius: 50%;
   float: left;
   margin-right: 1rem;
+  min-width: 50px;
+  min-height: 50px;
+  max-width: 50px;
+  max-height: 50px;
 `;
 
 const Img = styled.img`
@@ -45,14 +49,11 @@ const Chat = (props: {
   const navigate = useNavigate();
   const [user, setUsers] = useState([]);
   useEffect(() => {
-    callApi(
-      "GET",
-      `/api/chatroom/${props.chatRoomId}/${localStorage.getItem("myId")}/users`
-    )
-      .then((res) => {
+    callApi("GET", `/api/chatroom/${props.chatRoomId}/${localStorage.getItem("myId")}/users`)
+      .then(res => {
         setUsers(res.data);
       })
-      .catch((e) => {
+      .catch(e => {
         console.error(e);
       });
   }, []);
