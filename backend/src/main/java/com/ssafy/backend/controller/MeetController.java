@@ -72,7 +72,7 @@ public class MeetController {
         return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
     }
 
-        private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
+    private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
         if (multipartFile.isPresent()) {
             if (multipartFile.get().getSize() > 1024 * 1024 * 20)
                 throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
