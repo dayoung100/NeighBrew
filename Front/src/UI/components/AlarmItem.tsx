@@ -1,9 +1,7 @@
 import styled from "styled-components";
 import defaultImg from "../../assets/defaultImg.png";
+import { AlarmLog } from "../../Type/types";
 // 임시 타입입니다. 후에 api를 받아오고 형식이 정해지면 types에 interface로 만들겠습니다.
-type AlarmProps = {
-  alarm: string;
-};
 
 const ItemDiv = styled.div`
   display: flex;
@@ -27,14 +25,14 @@ const AlarmContent = styled.div`
   text-align: start;
 `;
 
-const alarmItem: React.FC<AlarmProps> = ({ alarm }) => {
+const alarmItem = ({ alarm }: { alarm: AlarmLog }) => {
   return (
     <>
       <ItemDiv>
         <div style={{ width: "36px", height: "36px", marginRight: "12px" }}>
           <ProfileDiv style={{ backgroundImage: `url(${defaultImg})` }}></ProfileDiv>
         </div>
-        <AlarmContent>{alarm}</AlarmContent>
+        <AlarmContent>{alarm.content}</AlarmContent>
       </ItemDiv>
     </>
   );
