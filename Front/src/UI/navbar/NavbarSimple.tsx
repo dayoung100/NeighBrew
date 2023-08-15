@@ -6,7 +6,7 @@ const Title = styled.div`
   text-align: center;
   font-family: "JejuGothic";
   font-size: 20px;
-  width: 95%;
+  width: 60%;
 `;
 
 const ArrowBtn = styled.div`
@@ -14,7 +14,9 @@ const ArrowBtn = styled.div`
   /* position: absolute; */
   top: 1rem;
   left: 1rem;
-  width: 5%;
+  padding-left: 1rem;
+
+  text-align: start;
 `;
 
 /**
@@ -34,12 +36,15 @@ const NavbarSimple = ({ title }: { title: string }) => {
     <div
       style={{
         display: "flex",
-        padding: "1rem",
+        padding: "1rem 0rem 1rem 0rem",
         background: "white",
       }}
     >
-      <ArrowBtn onClick={GoBackHandler}>{ArrowLeftIcon}</ArrowBtn>
+      <div style={{ width: "20%" }}>
+        <ArrowBtn onClick={GoBackHandler}>{ArrowLeftIcon}</ArrowBtn>
+      </div>
       <Title>{title}</Title>
+      <div style={{ width: "20%", visibility: "hidden", paddingRight: "0.5rem" }}></div>
     </div>
   );
 };

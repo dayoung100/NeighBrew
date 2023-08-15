@@ -157,9 +157,9 @@ const DrinkpostReviewCreate = () => {
     const file = imgFile;
     const formData = new FormData();
 
-    formData.append("drinkId", drinkId);
+    formData.append("drinkReviewId", reviewId);
     formData.append("content", review);
-    formData.append("image", file);
+    formData.append("upload", file);
     if (review === "") {
       alert("내용을 입력해주세요.");
       return;
