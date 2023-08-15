@@ -6,6 +6,7 @@
 */
 import styled from "styled-components";
 import { searchNavIcon } from "../../assets/AllIcon";
+import _debounce from "lodash/debounce";
 
 const SearchDiv = styled.div<{ width: number }>`
   display: flex;
@@ -49,21 +50,17 @@ type InputProps = {
 const searchBox = (props: InputProps) => {
   const searchButton = searchNavIcon();
 
+  const debouncedChangeFunc = _debounce(props.changeFunc, 200);
+
   return (
     <SearchDiv width={props.width ?? 100}>
       <SearchDivInput
         type="text"
         placeholder={props.placeholder}
         value={props.value}
-        onChange={e => props.changeFunc(e.target.value)}
+        onChange={(e) => debouncedChangeFunc(e.target.value)}
       />
-      <SearchBtn
-        onClick={() => {
-          console.log("search!");
-        }}
-      >
-        {searchButton}
-      </SearchBtn>
+      <SearchBtn>{searchButton}</SearchBtn>
     </SearchDiv>
   );
 };
