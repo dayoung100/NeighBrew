@@ -254,7 +254,7 @@ const DrinkpostDetail = () => {
             </div>
           </SimpleInfo>
           <ImageInfo>
-            <img src={transImage(detail?.image)} alt="" style={{ width: "28vh", height: "40vh" }} />
+            <img src={transImage(detail?.image)} alt="" style={{ width: "100%", height: "100%" }} />
           </ImageInfo>
         </InfoDiv>
 

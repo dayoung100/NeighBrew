@@ -106,3 +106,14 @@ export interface DrinkFestival {
   name: string;
   redirectUri: string;
 }
+
+export interface AlarmLog {
+  pushId: number;
+  pushType: string;
+  content: string;
+  url: string;
+  receiver: User;
+  sender: User;
+  createdAt: string;
+  read: boolean;
+}
