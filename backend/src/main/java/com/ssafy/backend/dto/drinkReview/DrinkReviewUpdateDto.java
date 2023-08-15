@@ -12,5 +12,5 @@ import lombok.ToString;
 public class DrinkReviewUpdateDto {
     private Long drinkReviewId;
     private String content;
-    private String img;
+    private String imgSrc;
 }
