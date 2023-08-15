@@ -19,7 +19,7 @@ const Title = styled.div`
 `;
 
 const SubTitle = styled.div`
-  font-family: SeoulNamsan;
+  font-family: "NanumSquareNeo";
   font-size: 14px;
   text-align: left;
 `;

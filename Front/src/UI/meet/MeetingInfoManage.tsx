@@ -34,6 +34,7 @@ import {
   imgcheck,
 } from "./CheckValid";
 import Modal from "react-modal";
+import { Tooltip } from "react-tooltip";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -75,7 +76,7 @@ const InputShort = styled(Input)`
 `;
 
 const DropdownInput = styled.select`
-  width: 4rem;
+  width: 5rem;
   background: white;
   text-align: right;
   padding: 1% 3%;
@@ -139,6 +140,10 @@ const SubText = styled.div`
   width: 7rem;
   border-radius: 5px;
   margin-top: 1rem;
+`;
+
+const TooltipBtn = styled.div`
+  padding: 0 0.5rem;
 `;
 
 const MeetingInfoManage = () => {
@@ -537,7 +542,6 @@ const MeetingInfoManage = () => {
               marginBottom: "0.5rem",
             }}
           >
-            <img src="/src/assets/liverIcon.svg" />
             <SubTitle>간수치</SubTitle>
             <InputShort
               ref={liverRef}
@@ -546,9 +550,32 @@ const MeetingInfoManage = () => {
               onChange={(e) => setLiverLimit(parseInt(e.target.value))}
             />
             IU/L이상
+            <TooltipBtn data-tooltip-id="liver-tooltip">❓</TooltipBtn>
             {!liverLimitCheck(liverLimit) && btnClicked && (
               <ErrorDiv>📌100 IU/L 이하</ErrorDiv>
             )}
+            <Tooltip
+              id="liver-tooltip"
+              style={{
+                backgroundColor: "var(--c-pink)",
+                color: "black",
+                fontSize: "12px",
+                width: "10rem",
+                textAlign: "justify",
+                wordBreak: "break-word",
+              }}
+            >
+              <div style={{ fontWeight: "700", marginTop: "0.3rem" }}>
+                간수치?
+              </div>
+              <div style={{ marginTop: "0.3rem" }}>
+                네이브루 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을 종합해서
+                만든 매너 지표입니다.
+              </div>
+              <div style={{ margin: "0.3rem 0" }}>
+                간수치는 40 IU/L에서 시작해서 0~100 IU/L 사이의 값을 가집니다.
+              </div>
+            </Tooltip>
           </div>
           <div
             style={{
@@ -557,7 +584,6 @@ const MeetingInfoManage = () => {
               marginBottom: "0.5rem",
             }}
           >
-            <img src="/src/assets/age.svg" />
             <SubTitle>나이</SubTitle>
             <InputShort
               ref={minAgeRef}

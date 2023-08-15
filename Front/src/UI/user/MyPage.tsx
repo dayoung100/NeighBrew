@@ -14,6 +14,7 @@ import Footer from "../footer/Footer";
 import DrinkpostMain from "./DrinkPostUseInUser";
 import MeetingMy from "./MeetingMyUseInUser";
 import Navbar from "./Navbar";
+import { Tooltip } from "react-tooltip";
 
 const QuestionDiv = styled.div`
   margin-top: 1.5rem;
@@ -41,7 +42,7 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 50%;
   position: relative;
@@ -140,7 +141,7 @@ const LiverDiv = styled.div<{ liverpoint: number }>`
   overflow: hidden;
   /* background-image: linear-gradient(to top, #e591a1 50%, #ececec 50%); */
   background-image: linear-gradient(to top, var(--c-pink) 50%, #ececec 50%);
-  background-size: ${props => "50% " + (props.liverpoint + 80) + "%"};
+  background-size: ${(props) => "50% " + (props.liverpoint + 80) + "%"};
   /* background-size: 50% 150%; */
   animation: fillAnimation 5s forwards;
   @keyframes fillAnimation {
@@ -220,7 +221,9 @@ const MyPage = () => {
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const [following, setFollowing] = useState(0); // 팔로잉,팔로워 목록
   const { userid } = useParams();
-  const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
+  const MeetingIcon = meetingicon(
+    chooseChat === 0 ? "var(--c-black)" : "#AAAAAA"
+  );
   const Brewery = brewery(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
   const [deleteModalOn, setDeleteModalOn] = useState(false);
   const [nickname, setNickname] = useState("");
@@ -232,20 +235,20 @@ const MyPage = () => {
   // 팔로우 하기
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/${userid}`)
-      .then(res => {
+      .then((res) => {
         followers();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
   // 팔로워, 팔로잉 인원 수 세기 (팔로우 버튼 색깔 변경)
   const followers = async () => {
-    callApi("get", `api/follow/follower/${userid}`).then(res => {
+    callApi("get", `api/follow/follower/${userid}`).then((res) => {
       if (res.data.length == 0) {
-        setUserData(userData => ({ ...userData, follower: res.data.length }));
+        setUserData((userData) => ({ ...userData, follower: res.data.length }));
         setFollowing(0);
         return;
       }
-      setUserData(userData => ({ ...userData, follower: res.data.length }));
+      setUserData((userData) => ({ ...userData, follower: res.data.length }));
       res.data.map((item, i) => {
         if (item.follower.userId == parseInt(localStorage.getItem("myId"))) {
           setFollowing(1);
@@ -255,13 +258,13 @@ const MyPage = () => {
         }
       });
     });
-    callApi("get", `api/follow/following/${userid}`).then(res => {
-      setUserData(userData => ({ ...userData, following: res.data.length }));
+    callApi("get", `api/follow/following/${userid}`).then((res) => {
+      setUserData((userData) => ({ ...userData, following: res.data.length }));
     });
   };
   const myDrinks = () => {
-    callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
-      setUserData(userData => ({ ...userData, drinkcount: res.data.length }));
+    callApi("get", `api/drink/user/${userid}/review-drink`).then((res) => {
+      setUserData((userData) => ({ ...userData, drinkcount: res.data.length }));
     });
   };
   const goFollowerPage = () => {
@@ -272,7 +275,7 @@ const MyPage = () => {
   };
   const userInfo = () => {
     callApi("get", `api/user/${userid}`)
-      .then(res => {
+      .then((res) => {
         setUserData(res.data);
       })
       .then(() => {
@@ -282,13 +285,13 @@ const MyPage = () => {
         myDrinks();
         followers();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
   const refresh = () => {
     if (localStorage.getItem("token") != null) {
       callApi("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
-      }).then(res => {
+      }).then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
       });
@@ -361,7 +364,7 @@ const MyPage = () => {
             UserID: localStorage.getItem("myId"),
           },
         })
-        .then(res => {
+        .then((res) => {
           userInfo();
         })
         .then(() => {
@@ -370,7 +373,7 @@ const MyPage = () => {
         .then(() => {
           myDrinks();
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     }
     if (profile == null) {
       const formData = new FormData();
@@ -383,7 +386,7 @@ const MyPage = () => {
             UserID: localStorage.getItem("myId"),
           },
         })
-        .then(res => {
+        .then((res) => {
           userInfo();
         })
         .then(() => {
@@ -392,7 +395,7 @@ const MyPage = () => {
         .then(() => {
           myDrinks();
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     }
     if (userData.nickname != nickname && nickname.length > 20) {
       alert("닉네임은 20자 까지만 가능합니다.");
@@ -413,14 +416,19 @@ const MyPage = () => {
       alert("빈 값이 존재합니다.");
       return;
     }
-    if (userData.nickname == nickname && userData.intro == intro && userData.birth == birth) return;
+    if (
+      userData.nickname == nickname &&
+      userData.intro == intro &&
+      userData.birth == birth
+    )
+      return;
 
     callApi("put", `api/user/${localStorage.getItem("myId")}`, {
       nickname: nickname,
       intro: intro,
       birth: birth,
     })
-      .then(res => {
+      .then((res) => {
         userInfo();
       })
       .then(() => {
@@ -429,7 +437,7 @@ const MyPage = () => {
       .then(() => {
         myDrinks();
       })
-      .catch(err => {
+      .catch((err) => {
         if (err.response.data == "중복") {
           alert("중복된 닉네임입니다. 다시 입력해주세요.");
         }
@@ -451,7 +459,7 @@ const MyPage = () => {
   const changeUserProfiletoDefault = () => {
     setProfile(null);
     setImgFile(null);
-    setUserData(prev => {
+    setUserData((prev) => {
       return { ...prev, profile: "no image" };
     });
   };
@@ -470,23 +478,83 @@ const MyPage = () => {
         <UserDiv>
           <FlexDivRow>
             <ImgDiv>
-              <Img src={userData.profile == "no image" ? defaultImg : userData.profile}></Img>
+              <Img
+                src={
+                  userData.profile == "no image" ? defaultImg : userData.profile
+                }
+              ></Img>
             </ImgDiv>
             <InfoDiv>
-              <UserImgDiv>
-                <p style={{ marginBottom: "0.5rem" }}>{userData!.liverPoint} IU/L</p>
+              <UserImgDiv data-tooltip-id="liver-tooltip">
+                <p style={{ marginBottom: "0.5rem" }}>
+                  {userData!.liverPoint} IU/L
+                </p>
                 <LiverDiv liverpoint={userData!.liverPoint ?? 40}>
                   <Img src={liver} alt="" />
                 </LiverDiv>
                 <p style={{ marginTop: "0.2rem" }}>간수치</p>
               </UserImgDiv>
-              <UserImgDiv>
-                <p style={{ marginBottom: "0.5rem" }}>{userData.drinkcount}병</p>
+              <Tooltip
+                id="liver-tooltip"
+                style={{
+                  backgroundColor: "var(--c-pink)",
+                  color: "black",
+                  fontSize: "12px",
+                  width: "10rem",
+                  textAlign: "justify",
+                  wordBreak: "break-all",
+                }}
+              >
+                <div
+                  style={{
+                    fontWeight: "700",
+                    marginTop: "0.3rem",
+                    textAlign: "center",
+                  }}
+                >
+                  간수치?
+                </div>
+                <div style={{ marginTop: "0.3rem" }}>
+                  네이브루 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을
+                  종합해서 만든 매너 지표입니다.
+                </div>
+                <div style={{ margin: "0.3rem 0" }}>
+                  간수치는 40 IU/L에서 시작해서 0~100 IU/L 사이의 값을 가집니다.
+                </div>
+              </Tooltip>
+              <UserImgDiv data-tooltip-id="drink-tooltip">
+                <p style={{ marginBottom: "0.5rem" }}>
+                  {userData.drinkcount}병
+                </p>
                 <BottleDiv>
                   <Img src={bottle} alt="" />
                 </BottleDiv>
                 <p style={{ marginTop: "0.2rem" }}>술병</p>
               </UserImgDiv>
+              <Tooltip
+                id="drink-tooltip"
+                style={{
+                  backgroundColor: "var(--c-yellow)",
+                  color: "black",
+                  fontSize: "12px",
+                  width: "8rem",
+                  textAlign: "justify",
+                  wordBreak: "break-all",
+                }}
+              >
+                <div
+                  style={{
+                    fontWeight: "700",
+                    marginTop: "0.3rem",
+                    textAlign: "center",
+                  }}
+                >
+                  술병?
+                </div>
+                <div style={{ margin: "0.3rem 0" }}>
+                  사용자가 술을 마시고 남긴 후기 수를 의미합니다.
+                </div>
+              </Tooltip>
             </InfoDiv>
           </FlexDivRow>
         </UserDiv>
@@ -510,7 +578,9 @@ const MyPage = () => {
             marginTop: "0.5rem",
           }}
         >
-          <span onClick={goFollowPage}>팔로잉 {userData.following} &nbsp;&nbsp; </span>{" "}
+          <span onClick={goFollowPage}>
+            팔로잉 {userData.following} &nbsp;&nbsp;{" "}
+          </span>{" "}
           <span onClick={goFollowerPage}>팔로워 {userData.follower}</span>
         </div>
         <div
@@ -529,7 +599,8 @@ const MyPage = () => {
           <FollowDiv>
             <button
               style={{
-                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+                backgroundColor:
+                  following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
                 border: "none",
                 borderRadius: "8px",
                 fontFamily: "JejuGothic",
@@ -583,7 +654,8 @@ const MyPage = () => {
             setChooseChat(0);
           }}
           style={{
-            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+            borderBottom:
+              chooseChat === 0 ? "2px solid var(--c-black)" : "none",
           }}
         >
           {MeetingIcon}
@@ -594,7 +666,8 @@ const MyPage = () => {
             setChooseChat(1);
           }}
           style={{
-            borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
+            borderBottom:
+              chooseChat === 0 ? "none" : "2px solid var(--c-black)",
           }}
         >
           {Brewery}
@@ -616,7 +689,12 @@ const MyPage = () => {
       >
         <FlexDiv>
           <label htmlFor="nickname">닉네임</label>
-          <input type="text" id="nickname" value={nickname} onInput={nicknameHandler} />
+          <input
+            type="text"
+            id="nickname"
+            value={nickname}
+            onInput={nicknameHandler}
+          />
         </FlexDiv>
         <FlexDiv>
           <label htmlFor="intro">한줄 설명</label>
@@ -624,14 +702,23 @@ const MyPage = () => {
         </FlexDiv>
         <FlexDiv>
           <label htmlFor="date">생년월일</label>
-          <input type="date" id="date" value={birth} onInput={birthHandler} max="2005-01-01" />
+          <input
+            type="date"
+            id="date"
+            value={birth}
+            onInput={birthHandler}
+            max="2005-01-01"
+          />
         </FlexDiv>
         <QuestionDiv style={{ textAlign: "left", marginBottom: "2rem" }}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Title style={{ margin: "0" }}>프로필 이미지</Title>
             <ImgInput>
               <label htmlFor="img_file">
-                <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
+                <img
+                  src="/src/assets/imageButton.svg"
+                  style={{ margin: "0 0.5rem" }}
+                />
               </label>
               <input
                 type="file"
