@@ -29,11 +29,8 @@ public class KakaoLoginParams implements OAuthLoginParams {
         return body;
     }
 
-
     @Override
     public String code() {
         return null;
     }
-
-
 }

@@ -1,6 +1,6 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.entity.Gugun;
+import com.ssafy.backend.dto.code.GugunResponseDto;
 import com.ssafy.backend.service.GugunService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class GugunController {
     private final GugunService gugunService;
 
     @GetMapping("/{sidoCode}")
-    public List<Gugun> getGugunsBySidoCode(@PathVariable Integer sidoCode) {
+    public List<GugunResponseDto> getGugunsBySidoCode(@PathVariable Integer sidoCode) {
         return gugunService.getGugunsBySidoCode(sidoCode);
     }
 }

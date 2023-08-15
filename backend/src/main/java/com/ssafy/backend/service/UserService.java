@@ -20,14 +20,16 @@ public class UserService {
     private final S3Service s3Service;
 
     public UserResponseDto findByUserId(Long userId) {
-        return UserResponseDto.fromEntity(userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다.")));
+        return UserResponseDto.fromEntity(userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId)
+        ));
     }
 
     @Transactional
     public UserResponseDto updateUser(Long userId, UserUpdateDto updateDto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId)
+        );
 
         if (userRepository.existsByNickname(updateDto.getNickname()) && !updateDto.getNickname().equals(user.getNickname())) {
             throw new IllegalArgumentException("닉네임 중복");
@@ -35,7 +37,7 @@ public class UserService {
 
         if (!userRepository.existsByNickname(updateDto.getNickname()) && updateDto.getNickname().equals(user.getNickname())
                 && updateDto.getBirth().equals(user.getBirth()) && updateDto.getIntro().equals(user.getIntro())) {
-            throw new IllegalArgumentException("변경 사항이 없습니다.");
+            throw new IllegalArgumentException("변경사항이 없습니다.");
         }
 
         user.updateFromDto(updateDto);
@@ -44,8 +46,9 @@ public class UserService {
 
     @Transactional
     public void updateUserImg(Long userId, String url) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저 정보가 올바르지 않습니다."));
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId)
+        );
 
         //프로필이 존재하면 기존 이미지 제거한다.
         if (!user.getProfile().equals("no image")) s3Service.deleteImg(user.getProfile());

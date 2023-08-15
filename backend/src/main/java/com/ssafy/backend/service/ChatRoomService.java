@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,11 +24,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatRoomService {
     private final ChatMessageRepository chatMessageRepository;
-
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final UserRepository userRepository;
-    private final PushService pushService;
     private final ObjectMapper mapper = new ObjectMapper();
 
     public List<ChatRoom> findUserChatRooms(Long userId) {
@@ -41,30 +38,12 @@ public class ChatRoomService {
 
     @Transactional
     public ChatRoom createChatRoom(Map<String, Object> map) {
-        ChatRoom room = ChatRoom.builder()
+        ChatRoom room = chatRoomRepository.save(ChatRoom
+                .builder()
                 .chatRoomName((String) map.get("name"))
-                .build();
-
-        chatRoomRepository.save(room);
-        chatMessageRepository.save(ChatMessage.builder()
-                .chatRoom(room)
-                .user(null)
-                .message("채팅방이 생성되었습니다.")
-                .createdAt(LocalDateTime.now())
                 .build());
-
-        List<Integer> userIdList = (List<Integer>) map.get("userIdList");
-
-        for (Integer userId : userIdList) {
-            User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-            ChatRoomUser chatRoomUser = ChatRoomUser.builder()
-                    .chatRoom(room)
-                    .user(user)
-                    .build();
-
-            chatRoomUserRepository.save(chatRoomUser);
-
-        }
+        chatMessageRepository.save(ChatMessage.builder().chatRoom(room).message("채팅방이 생성되었습니다.").createdAt(LocalDateTime.now()).build());
+        ((List<Integer>) map.get("userIdList")).forEach(userId -> chatRoomUserRepository.save(ChatRoomUser.builder().chatRoom(room).user(userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."))).build()));
         return room;
     }
 
@@ -72,21 +51,17 @@ public class ChatRoomService {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
         JsonNode jsonNode = mapper.readTree(data);
         User user = userRepository.findById(jsonNode.get("userId").asLong()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-        Map<String, Object> map = mapper.convertValue(jsonNode, Map.class);
-        map.put("userNickname", user.getNickname());
-
-        if (chatRoomUserRepository.findByChatRoomAndUser_UserId(chatRoom, jsonNode.get("userId").asLong()).isEmpty()) {
+        if (chatRoomUserRepository.findByChatRoomAndUser_UserId(chatRoom, jsonNode.get("userId").asLong()).isEmpty())
             throw new IllegalArgumentException("채팅방에 참여하지 않은 유저입니다.");
-        }
-
-        ChatMessage chatMessage = ChatMessage.builder()
+        chatMessageRepository.save(ChatMessage
+                .builder()
                 .chatRoom(chatRoom)
                 .message(jsonNode.get("message").asText())
                 .user(user)
                 .createdAt(LocalDateTime.now())
-                .build();
-
-        chatMessageRepository.save(chatMessage);
+                .build());
+        Map<String, Object> map = mapper.convertValue(jsonNode, Map.class);
+        map.put("userNickname", user.getNickname());
         return mapper.writeValueAsString(map);
     }
 
@@ -94,33 +69,28 @@ public class ChatRoomService {
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
         Long userId = Long.valueOf(new ObjectMapper().readTree(data).get("userId").asText());
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-
         chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, roomId);
-        chatRoomUserRepository.flush();
 
-        if (room.getUsers().isEmpty())
-            chatRoomRepository.delete(room);
+        if (room.getUsers().isEmpty()) chatRoomRepository.delete(room);
 
-        ChatMessage message = ChatMessage.builder()
+        return mapper.writeValueAsString(chatMessageRepository.save(ChatMessage
+                .builder()
                 .message(user.getNickname() + "님이 채팅방을 나갔습니다.")
                 .createdAt(LocalDateTime.now())
                 .user(user)
-                .build();
-        chatMessageRepository.save(message);
-        return new ObjectMapper().writeValueAsString(message);
+                .build()));
     }
 
     public List<User> getUsersInChatRoom(Long chatRoomId) {
         return chatRoomRepository
                 .findById(chatRoomId)
-                .orElseThrow(()
-                        -> new IllegalArgumentException("존재하지 않는 채팅방입니다."))
+                .orElseThrow(
+                        () -> new IllegalArgumentException("존재하지 않는 채팅방입니다."))
                 .getUsers()
                 .stream()
                 .map(ChatRoomUser::getUser)
                 .collect(Collectors.toList());
     }
-
 
     public ChatRoom save(ChatRoom chatRoom) {
         return chatRoomRepository.save(chatRoom);
@@ -128,18 +98,12 @@ public class ChatRoomService {
 
     public void deleteExistUser(ChatRoom chatRoom, Long userId) {
         chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, chatRoom.getChatRoomId());
-        chatRoomUserRepository.flush();
-
         User findUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-
-        if (chatRoom.getUsers().isEmpty())
-            chatRoomRepository.delete(chatRoom);
-
-        ChatMessage message = ChatMessage.builder()
+        if (chatRoom.getUsers().isEmpty()) chatRoomRepository.delete(chatRoom);
+        chatMessageRepository.save(ChatMessage.builder()
                 .message(findUser.getNickname() + "님이 채팅방을 나갔습니다.")
                 .createdAt(LocalDateTime.now())
                 .user(findUser)
-                .build();
-        chatMessageRepository.save(message);
+                .build());
     }
 }

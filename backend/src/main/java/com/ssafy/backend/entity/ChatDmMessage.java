@@ -1,7 +1,5 @@
 package com.ssafy.backend.entity;
 
-import com.ssafy.backend.Enum.DmVisible;
-import com.ssafy.backend.Enum.PushType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,7 +14,7 @@ public class ChatDmMessage {
     private Long chatDmMessageId;
 
     @ManyToOne
-    @JoinColumn(name="chat_dm_room_id")
+    @JoinColumn(name = "chat_dm_room_id")
     private ChatDmRoom chatDmRoom;
 
     @ManyToOne

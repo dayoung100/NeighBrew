@@ -1,10 +1,11 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.dto.MeetDto;
+import com.ssafy.backend.dto.meet.MeetRequestDto;
+import com.ssafy.backend.dto.meet.MeetResponseDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.service.MeetService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 
 //모임 생성, 수정, 삭제를 관장하는 컨트롤러
-@Slf4j
 @RestController
 @RequestMapping("/api/meet")
 @RequiredArgsConstructor
@@ -25,37 +25,31 @@ public class MeetController {
 
     //태그별로 데이터 조회
     @GetMapping()
-    public ResponseEntity<?> getTagMeet(@RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId,
-                                        Pageable pageable) {
-        if (tagId > 7L || tagId < 0L) return ResponseEntity.badRequest().body("태그ID가 존재하지 않습니다.");
-
-        if (tagId == 0L) return ResponseEntity.ok(meetService.findAll(pageable));
-        return ResponseEntity.ok(meetService.findByTagId(tagId, pageable));
+    public ResponseEntity<Page<MeetResponseDto>> getTagMeet(@RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId, Pageable pageable) {
+        return ResponseEntity.ok(meetService.findMeetsByTagId(tagId, pageable));
     }
 
     // meetId에 해당하는 모임 상세 정보 조회
     @GetMapping("/{meetId}")
     public ResponseEntity<?> getMeetById(@PathVariable Long meetId) {
-        log.info("모임 정보 상세 출력 : {} ", meetId);
         return ResponseEntity.ok(meetService.findMeetdetailByMeetId(meetId));
-
     }
 
     //유저와 관련된 모임 모두 출력
     @GetMapping("/mymeet/{userId}")
     public ResponseEntity<?> getMyMeetsById(@PathVariable Long userId) {
-        return ResponseEntity.ok(meetService.findByUserId(userId));
+        return ResponseEntity.ok(meetService.findUserMeetByUserId(userId));
     }
 
     //모임 생성
     @PostMapping("/create")
     public ResponseEntity<?> saveMeet(Long userId,
-                                      MeetDto meetDto,
+                                      MeetRequestDto meetRequestDto,
                                       Long drinkId,
                                       @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException, IOException {
 
         checkCapacityFile(multipartFile);
-        Meet createdMeet = meetService.saveMeet(meetDto, userId, drinkId, multipartFile.orElse(null));
+        Meet createdMeet = meetService.saveMeet(meetRequestDto, userId, drinkId, multipartFile.orElse(null));
         return ResponseEntity.ok(createdMeet);
     }
 
@@ -63,12 +57,12 @@ public class MeetController {
     @PutMapping("/modify/{userId}/{meetId}")
     public ResponseEntity<?> updateMeet(@PathVariable("userId") Long userId,
                                         @PathVariable("meetId") Long meetId,
-                                        MeetDto meetDto,
+                                        MeetRequestDto meetRequestDto,
                                         Long drinkId,
                                         @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IOException {
         checkCapacityFile(multipartFile);
 
-        meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.orElse(null));
+        meetService.updateMeet(meetRequestDto, userId, meetId, drinkId, multipartFile.orElse(null));
         return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
     }
 

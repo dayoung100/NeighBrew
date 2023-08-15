@@ -24,8 +24,6 @@ public class SidoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Sido> getSidoById(@PathVariable Integer id) {
-        return sidoService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(sidoService.findById(id));
     }
 }

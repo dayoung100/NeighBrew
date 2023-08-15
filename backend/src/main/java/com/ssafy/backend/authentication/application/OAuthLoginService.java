@@ -1,6 +1,7 @@
 package com.ssafy.backend.authentication.application;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
@@ -9,15 +10,12 @@ import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.UserRepository;
 import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
+import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class OAuthLoginService {
 
@@ -31,17 +29,13 @@ public class OAuthLoginService {
     private final RequestOAuthInfoService requestOAuthInfoService;
 
 
-    public LoginResponse login(OAuthLoginParams params) {
+    public LoginResponse login(OAuthLoginParams params) throws JsonProcessingException, UnsupportedEncodingException {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
 
         // 받아온 정보를 기반으로  userId를 추출
         ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            String jsonString = objectMapper.writeValueAsString(oAuthInfoResponse);
+        objectMapper.writeValueAsString(oAuthInfoResponse);
 
-        } catch (Exception e) {
-
-        }
 
         Long userId = findOrCreateUser(oAuthInfoResponse);
         // 그 아이디를 기반으로 token 생성
@@ -54,13 +48,8 @@ public class OAuthLoginService {
         return loginResponse;
     }
 
-
     // 해당 이메일로 user의 id를 반환
     private Long findOrCreateUser(OAuthInfoResponse oAuthInfoResponse) {
-        log.info(oAuthInfoResponse.getEmail());
-        log.info(oAuthInfoResponse.getNickname());
-        log.info(oAuthInfoResponse.getName());
-
         return userRepository.findByEmail(oAuthInfoResponse.getEmail())
                 .map(User::getUserId)
                 .orElseGet(() -> newUser(oAuthInfoResponse));
@@ -78,7 +67,6 @@ public class OAuthLoginService {
                     .oAuthProvider(oAuthInfoResponse.getOAuthProvider())
                     .build();
             return userRepository.save(user).getUserId();
-
         } else {
             User user = User.builder()
                     .email(oAuthInfoResponse.getEmail())

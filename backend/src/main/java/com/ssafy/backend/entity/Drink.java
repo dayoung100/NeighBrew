@@ -32,13 +32,6 @@ public class Drink {
     // 주종 태그 id
     private Long tagId;
 
-    @PrePersist
-    public void prePersist() {
-        if (this.image == null) this.image = "no image";
-        if (this.degree == null) this.degree = 0.0f;
-    }
-
-
     @Builder
     public Drink(Long drinkId, String name, String image, Float degree, String description, Long tagId) {
         this.drinkId = drinkId;
@@ -47,6 +40,12 @@ public class Drink {
         this.degree = degree;
         this.description = description;
         this.tagId = tagId;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.image == null) this.image = "no image";
+        if (this.degree == null) this.degree = 0.0f;
     }
 
     @Override

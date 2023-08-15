@@ -3,7 +3,9 @@ package com.ssafy.backend.dto.drinkReview;
 import com.ssafy.backend.entity.Drink;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.entity.User;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter

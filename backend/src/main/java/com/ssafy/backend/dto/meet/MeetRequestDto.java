@@ -1,16 +1,19 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.meet;
 
-import com.ssafy.backend.entity.*;
-import lombok.*;
+import com.ssafy.backend.entity.Drink;
+import com.ssafy.backend.entity.Meet;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
-@ToString
-public class MeetDto {
+@NoArgsConstructor
+public class MeetRequestDto {
     private Long meetId;
     private String meetName;
     private String description;
@@ -29,10 +32,8 @@ public class MeetDto {
     private String imgSrc;
     private Long chatRoomId;
 
-    public MeetDto() {}
-
     @Builder
-    public MeetDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, Integer sidoCode, Integer gugunCode,Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
+    public MeetRequestDto(Long meetId, String meetName, String description, Long hostId, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, Integer sidoCode, Integer gugunCode, Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
         this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;
@@ -51,20 +52,20 @@ public class MeetDto {
         this.chatRoomId = chatRoomId;
     }
 
-    public Meet toEntity(){
+    public Meet toEntity() {
         return Meet.builder()
-                .meetName(this.meetName)
-                .description(this.description)
-                .nowParticipants(this.nowParticipants)
-                .maxParticipants(this.maxParticipants)
-                .meetDate(this.meetDate)
-                .sidoCode(this.sidoCode)
-                .gugunCode(this.gugunCode)
-                .minAge(this.minAge)
-                .maxAge(this.maxAge)
-                .minLiverPoint(this.minLiverPoint)
-                .drink(this.drink)
-                .imgSrc(this.imgSrc)
+                .meetName(meetName)
+                .description(description)
+                .nowParticipants(nowParticipants)
+                .maxParticipants(maxParticipants)
+                .meetDate(meetDate)
+                .sidoCode(sidoCode)
+                .gugunCode(gugunCode)
+                .minAge(minAge)
+                .maxAge(maxAge)
+                .minLiverPoint(minLiverPoint)
+                .drink(drink)
+                .imgSrc(imgSrc)
                 .build();
     }
 }

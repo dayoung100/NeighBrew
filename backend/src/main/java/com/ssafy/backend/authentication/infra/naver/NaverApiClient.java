@@ -21,25 +21,17 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @RequiredArgsConstructor
 public class NaverApiClient implements OAuthApiClient {
-
     private static final String GRANT_TYPE = "authorization_code";
-
-    @Value("${oauth.naver.url.auth}")
-    private String authUrl;
-
-    @Value("${oauth.naver.url.api}")
-    private String apiUrl;
-
-    @Value("${oauth.naver.client-id}")
-    private String clientId;
-
-    @Value("${oauth.naver.secret}")
-    private String clientSecret;
-//    @Value("${oauth.naver.url.redirect}")
-//    private String redirectUri;
-
     @Qualifier("restTemplate")
     private final RestTemplate restTemplate;
+    @Value("${oauth.naver.url.auth}")
+    private String authUrl;
+    @Value("${oauth.naver.url.api}")
+    private String apiUrl;
+    @Value("${oauth.naver.client-id}")
+    private String clientId;
+    @Value("${oauth.naver.secret}")
+    private String clientSecret;
 
     @Override
     public OAuthProvider oAuthProvider() {

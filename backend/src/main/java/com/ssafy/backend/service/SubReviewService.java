@@ -10,7 +10,6 @@ import com.ssafy.backend.repository.DrinkReviewRepository;
 import com.ssafy.backend.repository.SubReviewRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class SubReviewService {
     private final SubReviewRepository subReviewRepository;
     private final UserRepository userRepository;
@@ -37,7 +35,6 @@ public class SubReviewService {
     // 리뷰의 댓글을 작성하는 API
     public SubReviewResponseDto writeSubReview(SubReviewRequestDto subReviewRequestDto, Long userId) {
         DrinkReview drinkReview = drinkReviewRepository.findById(subReviewRequestDto.getDrinkReviewId()).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
-        // 여기가 getDrinkReviewId 로 바뀌어야함
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
         // content가 비어있는지 확인
@@ -51,7 +48,7 @@ public class SubReviewService {
                 .user(user)
                 .build();
 
-        pushService.send(user, drinkReview.getUser(), PushType.SUBREVIEW, user.getName() + "님이 회원님의 후기에 댓글을 남겼습니다.",  "drinkpost/" + drinkReview.getDrink().getDrinkId() + "/" +drinkReview.getDrinkReviewId());
+        pushService.send(user, drinkReview.getUser(), PushType.SUBREVIEW, user.getName() + "님이 회원님의 후기에 댓글을 남겼습니다.", "drinkpost/" + drinkReview.getDrink().getDrinkId() + "/" + drinkReview.getDrinkReviewId());
         return SubReviewResponseDto.fromEntity(subReviewRepository.save(subReview));
     }
 
@@ -71,7 +68,6 @@ public class SubReviewService {
     // 아이디 수정
     @Transactional
     public SubReview updateSubReview(SubReviewRequestDto subReviewRequestDto, Long userId) {
-        log.info(subReviewRequestDto.toString());
         SubReview subReview = subReviewRepository.findById(subReviewRequestDto.getSubReviewId()).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 

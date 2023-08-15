@@ -11,7 +11,6 @@ import com.ssafy.backend.repository.DrinkRepository;
 import com.ssafy.backend.repository.DrinkReviewRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,10 +20,8 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DrinkReviewService {
@@ -43,8 +40,7 @@ public class DrinkReviewService {
 
         User user = userRepository.findById(drinkReviewRequestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-        Drink drink = drinkRepository.findById(drinkReviewRequestDto.getDrinkId())
-                .orElseThrow(() -> new IllegalArgumentException("음료가 존재하지 않습니다."));
+        Drink drink = getDrink(drinkReviewRequestDto.getDrinkId());
 
         DrinkReview drinkReview = drinkReviewRequestDto.toEntity(user, drink);
         drinkReviewRepository.save(drinkReview);
@@ -52,8 +48,13 @@ public class DrinkReviewService {
         return DrinkReviewResponseDto.fromEntity(drinkReview);
     }
 
+    private Drink getDrink(Long drinkId) {
+        return drinkRepository.findById(drinkId)
+                .orElseThrow(() -> new IllegalArgumentException("음료가 존재하지 않습니다."));
+    }
+
     public Page<DrinkReviewResponseDto> getReviewsByDrinkId(Long drinkId, Pageable pageable) {
-        Drink drink = drinkRepository.findById(drinkId).orElseThrow(() -> new IllegalArgumentException("음료가 존재하지 않습니다."));
+        Drink drink = getDrink(drinkId);
         Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findByDrink(drink, pageable);
 
         return drinkReviewPage.map(DrinkReviewResponseDto::fromEntity);
@@ -63,9 +64,7 @@ public class DrinkReviewService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
-        Drink drink = drinkRepository.findById(drinkId).orElseThrow(
-                () -> new IllegalArgumentException("해당 음료가 존재하지 않습니다.")
-        );
+        Drink drink = getDrink(drinkId);
 
         List<DrinkReview> drinkReviewList = drinkReviewRepository.findAllByUserAndDrink(user, drink);
         return drinkReviewList.stream().map(DrinkReviewResponseDto::fromEntity).collect(Collectors.toList());
@@ -92,19 +91,17 @@ public class DrinkReviewService {
         if (!Objects.equals(drinkReview.getUser().getUserId(), userId)) {
             throw new IllegalArgumentException("해당 리뷰의 작성자가 아닙니다.");
         }
-        log.info("{}",request);
         //업로드 이미지가 존재
-        if(multipartFile != null){
+        if (multipartFile != null) {
             //모임 이미지가 기본 이미지가 아니면 S3에서 삭제
-            if(!drinkReview.getImg().equals("no image")) s3Service.deleteImg(drinkReview.getImg());
+            if (!drinkReview.getImg().equals("no image")) s3Service.deleteImg(drinkReview.getImg());
 
             //새로운 이미지로 업로드
             request.setImgSrc(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
-        }else{//업로드 이미지 없음
+        } else {//업로드 이미지 없음
             //기본 이미지로 설정하는 것이 아니면 기존 이미지 유지
-            if(request.getImgSrc() == null) request.setImgSrc(drinkReview.getImg());
+            if (request.getImgSrc() == null) request.setImgSrc(drinkReview.getImg());
         }
-        log.info("{}",request);
 
         drinkReview.updateContent(request.getContent());
         drinkReview.updateImg(request.getImgSrc());

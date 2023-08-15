@@ -21,22 +21,17 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @RequiredArgsConstructor
 public class KakaoApiClient implements OAuthApiClient {
-
     private static final String GRANT_TYPE = "authorization_code";
-
+    @Qualifier("restTemplate")
+    private final RestTemplate restTemplate;
     @Value("${oauth.kakao.url.auth}")
     private String authUrl;
-
     @Value("${oauth.kakao.url.api}")
     private String apiUrl;
-
     @Value("${oauth.kakao.client-id}")
     private String clientId;
     @Value("${oauth.kakao.url.redirect}")
     private String redirectUri;
-
-    @Qualifier("restTemplate")
-    private final RestTemplate restTemplate;
 
     @Override
     public OAuthProvider oAuthProvider() {

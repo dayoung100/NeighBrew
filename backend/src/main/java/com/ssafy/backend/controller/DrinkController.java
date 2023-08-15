@@ -6,7 +6,6 @@ import com.ssafy.backend.dto.drink.DrinkUpdateRequestDto;
 import com.ssafy.backend.service.DrinkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +32,9 @@ public class DrinkController {
     public ResponseEntity<Page<DrinkResponseDto>> searchDrinksByCriteria(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long tagId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            Pageable pageable
     ) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<DrinkResponseDto> drinkPage = drinkService.searchDrinksByCriteria(name, tagId, pageRequest);
-
-
+        Page<DrinkResponseDto> drinkPage = drinkService.searchDrinksByCriteria(name, tagId, pageable);
         return ResponseEntity.ok(drinkPage);
     }
 

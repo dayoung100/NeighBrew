@@ -2,7 +2,6 @@ package com.ssafy.backend.repository;
 
 import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.entity.Push;
-import com.ssafy.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,8 +21,6 @@ public interface PushRepository extends JpaRepository<Push, Long> {
     void deleteByPushTypeAndSender_UserIdAndReceiver_UserId(@Param("pushType") PushType pushType,
                                                             @Param("senderId") Long senderId,
                                                             @Param("receiverId") Long receiverId);
-
-
 
 
     //void deleteByPushTypeAndReceiver_UserIdAndSender_UserId(PushType pushType, Long receiverId, Long senderId);

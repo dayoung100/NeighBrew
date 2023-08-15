@@ -8,31 +8,12 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NaverInfoResponse implements OAuthInfoResponse {
 
     @JsonProperty("response")
     private Response response;
-
-    @Getter
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    static class Response {
-        private final String email;
-        private final String nickname;
-        private final String name;
-
-
-
-        @JsonCreator
-        Response(String email, String nickname, String name) {
-            this.email = email;
-            this.nickname = nickname;
-            this.name = name;
-        }
-    }
 
     @Override
     public String getEmail() {
@@ -54,5 +35,19 @@ public class NaverInfoResponse implements OAuthInfoResponse {
         return OAuthProvider.NAVER;
     }
 
+    @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    static class Response {
+        private final String email;
+        private final String nickname;
+        private final String name;
 
+
+        @JsonCreator
+        Response(String email, String nickname, String name) {
+            this.email = email;
+            this.nickname = nickname;
+            this.name = name;
+        }
+    }
 }

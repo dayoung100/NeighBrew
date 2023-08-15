@@ -1,21 +1,19 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.meet;
 
+import com.ssafy.backend.dto.code.GugunResponseDto;
+import com.ssafy.backend.dto.code.SidoResponseDto;
+import com.ssafy.backend.dto.drink.DrinkResponseDto;
 import com.ssafy.backend.dto.user.UserResponseDto;
-import com.ssafy.backend.entity.Drink;
-import com.ssafy.backend.entity.Gugun;
-import com.ssafy.backend.entity.Sido;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString
-public class MeetSearchDto {
+public class MeetResponseDto {
     private Long meetId;
     private String meetName;
     private String description;
@@ -25,19 +23,18 @@ public class MeetSearchDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime meetDate;
     private Long tagId;
-    private Sido sido;
-    private Gugun gugun;
+    private SidoResponseDto sido;
+    private GugunResponseDto gugun;
     private Integer minAge;
     private Integer maxAge;
     private Float minLiverPoint;
-    private Drink drink;
+    private DrinkResponseDto drink;
     private String imgSrc;
     private Long chatRoomId;
 
-    public MeetSearchDto() {}
 
     @Builder
-    public MeetSearchDto(Long meetId, String meetName, String description, UserResponseDto host, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, Sido sido, Gugun gugun, Integer minAge, Integer maxAge, Float minLiverPoint, Drink drink, String imgSrc, Long chatRoomId) {
+    public MeetResponseDto(Long meetId, String meetName, String description, UserResponseDto host, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, SidoResponseDto sido, GugunResponseDto gugun, Integer minAge, Integer maxAge, Float minLiverPoint, DrinkResponseDto drink, String imgSrc, Long chatRoomId) {
         this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;

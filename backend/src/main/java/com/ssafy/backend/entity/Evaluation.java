@@ -42,11 +42,6 @@ public class Evaluation {
     private Date createdAt;
 
 
-    @PrePersist
-    public void createdAt() {
-        this.createdAt = new Date();
-    }
-
     @Builder
     public Evaluation(Long evaluationId, User ratedUser, User reviewer, Meet meet, EvaluationType evaluationType, String description, Date createdAt) {
         this.evaluationId = evaluationId;
@@ -56,5 +51,10 @@ public class Evaluation {
         this.evaluationType = evaluationType;
         this.description = description;
         this.createdAt = createdAt;
+    }
+
+    @PrePersist
+    public void createdAt() {
+        this.createdAt = new Date();
     }
 }

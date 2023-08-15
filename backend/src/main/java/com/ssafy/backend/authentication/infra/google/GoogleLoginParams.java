@@ -33,8 +33,4 @@ public class GoogleLoginParams implements OAuthLoginParams {
     public void setCode(String code) {
         this.code = code;
     }
-
-
-
-
 }

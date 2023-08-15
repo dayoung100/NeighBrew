@@ -1,4 +1,4 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.meet;
 
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.entity.User;
@@ -12,10 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class MeetUserDto {
-
-    //private Long meetUserId;
-
-    private MeetDto meetDto;
+    private MeetRequestDto meetRequestDto;
 
     private List<User> users;
 
@@ -23,8 +20,8 @@ public class MeetUserDto {
     private List<Status> statuses;
 
     @Builder
-    public MeetUserDto(MeetDto meetDto) {
-        this.meetDto = meetDto;
+    public MeetUserDto(MeetRequestDto meetRequestDto) {
+        this.meetRequestDto = meetRequestDto;
         this.users = new ArrayList<>();
         this.statuses = new ArrayList<>();
     }

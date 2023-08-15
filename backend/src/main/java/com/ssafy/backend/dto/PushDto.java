@@ -1,22 +1,17 @@
 package com.ssafy.backend.dto;
 
 import com.ssafy.backend.Enum.PushType;
-import com.ssafy.backend.entity.User;
-import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.stereotype.Service;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 @Getter
 @Setter
-@ToString
+@NoArgsConstructor
 public class PushDto {
     private Long pushId;
     private String userName;
@@ -27,9 +22,6 @@ public class PushDto {
     private Long receiver_id;
     private Long sender_id;
     private LocalDateTime createdAt;
-
-    public PushDto() {
-    }
 
     @Builder
     public PushDto(Long pushId, String userName, PushType pushType, String content, String url, boolean isRead, Long receiver_id, Long sender_id, LocalDateTime createdAt) {

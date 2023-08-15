@@ -58,10 +58,6 @@ public class UserCommentLikeService {
 
         Optional<UserCommentLike> existingLike = userCommentLikeRepository.findByUser_UserIdAndDrinkReview_DrinkReviewId(userId, reviewId);
 
-        if (existingLike.isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
+        return existingLike.isPresent();
     }
 }

@@ -10,22 +10,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.List;
 
 @Service
 public class MeetUserService {
 
     private final MeetUserRepository meetUserRepository;
+
     @Autowired
     public MeetUserService(MeetUserRepository meetUserRepository) {
         this.meetUserRepository = meetUserRepository;
     }
 
-    public List<MeetUser> findAll(){
+    public List<MeetUser> findAll() {
         return meetUserRepository.findAll();
     }
 
-    public void saveMeetUser(Meet newMeet, User host, Status status){
+    public void saveMeetUser(Meet newMeet, User host, Status status) {
         meetUserRepository.save(
                 MeetUser.builder()
                         .user(host)
@@ -35,7 +36,7 @@ public class MeetUserService {
     }
 
     @Transactional
-    public void deleteMeetUser(Meet deleteMeet){
+    public void deleteMeetUser(Meet deleteMeet) {
         meetUserRepository.deleteByMeet_MeetId(deleteMeet.getMeetId());
     }
 
@@ -47,7 +48,6 @@ public class MeetUserService {
         findMeetUser.setStatus(status);
         meetUserRepository.save(findMeetUser);
     }
-
 
 
     @Transactional

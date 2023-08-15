@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NaverTokens {
     //인증 API 응답
-
     @JsonProperty("access_token")
     private String accessToken;
 
