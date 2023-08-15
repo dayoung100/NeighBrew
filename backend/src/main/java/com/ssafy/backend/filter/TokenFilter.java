@@ -46,18 +46,8 @@ public class TokenFilter implements Filter {
         }
 
         String tokenUserId = claims.getSubject();
-        String requestUserId = request.getHeader("UserID");
-
-        if (requestUserId == null || !requestUserId.equals(tokenUserId)) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰의 사용자가 일치하지 않습니다");
-            return;
-        }
 
         request.setAttribute("userId", tokenUserId);
         filterChain.doFilter(request, response);
-    }
-
-    @Override
-    public void destroy() {
     }
 }

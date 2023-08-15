@@ -1,17 +1,15 @@
-package com.ssafy.backend.dto.meet;
+package com.ssafy.backend.dto;
 
-import com.ssafy.backend.entity.Drink;
-import com.ssafy.backend.entity.Meet;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.ssafy.backend.entity.*;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class MeetDto {
     private Long meetId;
     private String meetName;

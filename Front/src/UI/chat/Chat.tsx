@@ -45,11 +45,14 @@ const Chat = (props: {
   const navigate = useNavigate();
   const [user, setUsers] = useState([]);
   useEffect(() => {
-    callApi("GET", `/api/chatroom/${props.chatRoomId}/users`)
-      .then(res => {
+    callApi(
+      "GET",
+      `/api/chatroom/${props.chatRoomId}/${localStorage.getItem("myId")}/users`
+    )
+      .then((res) => {
         setUsers(res.data);
       })
-      .catch(e => {
+      .catch((e) => {
         console.error(e);
       });
   }, []);
@@ -69,7 +72,13 @@ const Chat = (props: {
           >
             {props.chatRoomName}
           </span>
-          <span style={{ color: "var(--c-gray", fontSize: "12px", marginLeft: "0.5rem" }}>
+          <span
+            style={{
+              color: "var(--c-gray",
+              fontSize: "12px",
+              marginLeft: "0.5rem",
+            }}
+          >
             {user.length}
           </span>{" "}
           <span></span>

@@ -4,10 +4,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.Key;
 import java.util.Date;
 
+@Slf4j
 public class JwtUtil {
 
     private static final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
@@ -36,5 +38,19 @@ public class JwtUtil {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public static Long parseUserIdFromToken(String token) {
+        StringBuilder sb = new StringBuilder(token);
+        sb.delete(0, 7);
+        Claims claims = getClaims(sb.toString());
+        return Long.parseLong(claims.getSubject());
+    }
+
+    public static void validateToken(String token, Long userId) {
+        Long subject = parseUserIdFromToken(token);
+        if (!subject.equals(userId)) {
+            throw new RuntimeException("토큰 정보가 유효하지 않습니다.");
+        }
     }
 }
