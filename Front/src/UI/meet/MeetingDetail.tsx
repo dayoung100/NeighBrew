@@ -268,8 +268,8 @@ const MeetingDetail = () => {
     }
     //나이 제한 확인
     if (
-      meetDetailData.meet.minAge > calcAge(userData.birth) ||
-      meetDetailData.meet.maxAge < calcAge(userData.birth)
+      (meetDetailData.meet.minAge ?? 0) > calcAge(userData.birth) ||
+      (meetDetailData.meet.maxAge ?? 200) < calcAge(userData.birth)
     ) {
       setErrMsg("나이 제한에 부합하지 않습니다.");
       setErrorModalOn(true);
