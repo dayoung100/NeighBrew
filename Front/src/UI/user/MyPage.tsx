@@ -157,13 +157,13 @@ const LiverDiv = styled.div<{ liverpoint: number }>`
   align-items: center;
   justify-content: center;
 `;
-const BottleDiv = styled.div<{}>`
+const BottleDiv = styled.div<{ drinkcount: number }>`
   /* position: relative; */
   /* height: 100%; */
   overflow: hidden;
   background-image: linear-gradient(to top, #d5a002 50%, #ececec 50%);
-  background-size: 20% 80%;
-  animation: fillAnimation 5s forwards;
+  background-size: ${props => "50% " + (props.drinkcount * 8 + 80) + "%"};
+  animation: fillAnimation 0.2s forwards;
   @keyframes fillAnimation {
     0% {
       background-position: 0 0;
@@ -482,7 +482,7 @@ const MyPage = () => {
               </UserImgDiv>
               <UserImgDiv>
                 <p style={{ marginBottom: "0.5rem" }}>{userData.drinkcount}병</p>
-                <BottleDiv>
+                <BottleDiv drinkcount={userData.drinkcount ?? 2}>
                   <Img src={bottle} alt="" />
                 </BottleDiv>
                 <p style={{ marginTop: "0.2rem" }}>술병</p>
