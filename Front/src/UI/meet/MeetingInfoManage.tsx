@@ -157,7 +157,7 @@ const MeetingInfoManage = () => {
   const navigate = useNavigate();
   //모임 수정 후 모임 상세로 이동
   const GoMeetDetailHandler = () => {
-    navigate(`/meet/${meetId}`, { replace: true });
+    navigate(-2);
   };
   //호스트가 아닌데 편집하려고 할 시 모임 메인으로 이동
   const GoMeetMainHandler = () => {
@@ -187,7 +187,7 @@ const MeetingInfoManage = () => {
   const [maxAge, setMaxAge] = useState(0); //최대나이
   const [meetDesc, setMeetDesc] = useState(""); //모임 소개
   const [imgSrc, setImgSrc] = useState<string>(""); //이미지 경로
-  const [file, setFile] = useState(null); //파일 타입
+  const [file, setFile] = useState<File>(); //파일 타입
 
   //이미지 수정용
   const [newImgSrc, setNewImgSrc] = useState("");
@@ -371,21 +371,25 @@ const MeetingInfoManage = () => {
     f.append("description", meetDesc);
 
     //이미지 수정을 위한 분기
-    //1. 파일이 null이 아님 -> 이미지를 변경한 것 -> 새파일을 담아서 전송
-    if (file !== null) {
-      f.append("image", file);
-    } else if (newImgSrc === "no image") {
-      //2. 파일이 null이지만 newImgSrc가 no image임
-      //-> 이미지 첨부를 취소하고 기본이미지로 돌리려는 것
-      //-> image와 함께 변경된 imgSrc 정보도 담아야
-      f.append("image", null);
+    if (newImgSrc === "no image") {
       f.append("imgSrc", "no image");
-    } else {
-      //3. 파일이 null이고 imgSrc가 no image가 아님
-      //-> 첨부 취소 버튼을 누르지도 않고, 파일 첨부도 하지 않음 = 이미지 수정하지 않음
-      //-> image만 null로 담아 보내기
-      f.append("image", null);
     }
+    f.append("image", file);
+    //1. 파일이 null이 아님 -> 이미지를 변경한 것 -> 새파일을 담아서 전송
+    // if (file !== null) {
+    //   f.append("image", file);
+    // } else
+    //   //2. 파일이 null이지만 newImgSrc가 no image임
+    //   //-> 이미지 첨부를 취소하고 기본이미지로 돌리려는 것
+    //   //-> image와 함께 변경된 imgSrc 정보도 담아야
+    //   f.append("image", file);
+    //   f.append("imgSrc", "no image");
+    // } else {
+    //   //3. 파일이 null이고 imgSrc가 no image가 아님
+    //   //-> 첨부 취소 버튼을 누르지도 않고, 파일 첨부도 하지 않음 = 이미지 수정하지 않음
+    //   //-> image만 null로 담아 보내기
+    //   f.append("image", file);
+    // }
 
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
     promise

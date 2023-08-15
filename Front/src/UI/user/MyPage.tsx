@@ -190,7 +190,7 @@ const WhiteModal = {
     borderRadius: "15px",
     background: "white",
     textAlign: "center",
-    fontFamily: "SeoulNamsan",
+    fontFamily: "NanumSquareNeo",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",
@@ -204,6 +204,19 @@ const FlexDiv = styled.div`
   flex-direction: column;
   margin: 1rem auto;
 `;
+
+const ImageInputBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 10px;
+  background-color: var(--c-yellow);
+  padding: 0.5rem;
+  margin-left: 0.5rem;
+`;
+
 const MyPage = () => {
   const [userData, setUserData] = useState<User>({
     birth: "2003-01-01",
@@ -562,7 +575,7 @@ const MyPage = () => {
           style={{
             textAlign: "left",
             padding: "0 1rem",
-            fontFamily: "SeoulNamsan",
+            fontFamily: "NanumSquareNeo",
             fontWeight: "800",
             fontSize: "1.3rem",
           }}
@@ -715,10 +728,9 @@ const MyPage = () => {
             <Title style={{ margin: "0" }}>프로필 이미지</Title>
             <ImgInput>
               <label htmlFor="img_file">
-                <img
-                  src="/src/assets/imageButton.svg"
-                  style={{ margin: "0 0.5rem" }}
-                />
+                <ImageInputBtn>
+                  <img src="/src/assets/imagePlusIcon.svg" width="90%" />
+                </ImageInputBtn>
               </label>
               <input
                 type="file"
