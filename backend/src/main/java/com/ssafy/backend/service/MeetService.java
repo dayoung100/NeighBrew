@@ -65,13 +65,15 @@ public class MeetService {
         });
     }
 
-    public Map<String, Object> findMeetdetailByMeetId(Long meetId) throws NoSuchFieldException {
+    public Map<String, Object> findMeetdetailByMeetId(Long meetId) {
         Map<String, Object> result = new HashMap<>();
         List<User> users = new ArrayList<>();
         List<Status> statuses = new ArrayList<>();
 
 
-        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(NoSuchFieldException::new);
+        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(
+                () -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다.")
+        );
         for (MeetUser meetUser : meetUsers) {
             users.add(meetUser.getUser());
             statuses.add(meetUser.getStatus());
@@ -84,8 +86,12 @@ public class MeetService {
     }
 
     public MeetSearchDto findByMeetId(Long meetId) {
-        Meet findMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
-        return findMeet.toSearchDto(sidoRepository.findById(findMeet.getSidoCode()).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 정보 입니다.")),
+        Meet findMeet = meetRepository.findById(meetId).orElseThrow(
+                () -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다.")
+        );
+        return findMeet.toSearchDto(sidoRepository.findById(findMeet.getSidoCode()).orElseThrow(
+                        () -> new IllegalArgumentException("올바르지 않은 정보 입니다.")
+                ),
                 gugunRepository.findBySidoCodeAndGugunCode(findMeet.getSidoCode(), findMeet.getGugunCode()).orElseThrow(
                         () -> new IllegalArgumentException("올바르지 않은 정보 입니다.")
                 ));
@@ -194,39 +200,60 @@ public class MeetService {
 
     public void updateMeet(MeetDto meetDto, Long userId, Long meetId, Long drinkId, MultipartFile multipartFile) throws IOException {
         validateMeetRequest(meetDto, drinkId);
-        //기존 Meet를 가져온다
+
         String prevMeetImgSrc = meetRepository.findImgSrcByMeetId(meetId);
-        User host = userRepository.findByUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다."));
+        User host = getValidatedUser(userId);
 
-        if (multipartFile != null) {// FormData에 ("image", "?") 있을 때
-            boolean uploadImgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
+        handleImageUpdate(meetDto, multipartFile, prevMeetImgSrc);
 
-            if (uploadImgExist) { //모임 이미지 변경 - 업로드한 이미지가 존재하면 DB와 S3에 존재하는 이미지를 제거한다.
-                s3Service.deleteImg(prevMeetImgSrc);
-                meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-            } else { // 업로드한 이미지가 없을 떄 imgSrc를 통해 기본 이미지, 기존 이미지 선택한다.
-                if (meetDto.getImgSrc() == null) meetDto.setImgSrc(prevMeetImgSrc);
-                else s3Service.deleteImg(prevMeetImgSrc); //imgSrc가 no image -> 기존 이미지 지운다.
-            }
-        } else {
+        Meet updateMeet = prepareMeetForUpdate(meetDto, meetId, drinkId);
+        log.info("수정된 Meet 정보 : {}", updateMeet.getImgSrc());
+
+        notifyMeetParticipantsAboutUpdate(meetDto, meetId, host);
+    }
+
+    private User getValidatedUser(Long userId) {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다."));
+    }
+
+    private void handleImageUpdate(MeetDto meetDto, MultipartFile multipartFile, String prevMeetImgSrc) throws IOException {
+        if (multipartFile == null) {
             meetDto.setImgSrc(prevMeetImgSrc);
+            return;
         }
 
-        //기존 데이터를 가져온 뒤 업데이트 한다.
-        Meet updateMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
-        updateMeet.update(meetDto.toEntity()); //업데이트한다.
+        boolean uploadImgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
+
+        if (uploadImgExist) {
+            s3Service.deleteImg(prevMeetImgSrc);
+            meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+        } else if (meetDto.getImgSrc() == null) {
+            meetDto.setImgSrc(prevMeetImgSrc);
+        } else {
+            s3Service.deleteImg(prevMeetImgSrc);
+        }
+    }
+
+    private Meet prepareMeetForUpdate(MeetDto meetDto, Long meetId, Long drinkId) {
+        Meet updateMeet = meetRepository.findById(meetId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
+
+        updateMeet.update(meetDto.toEntity());
         updateMeet.setMeetId(meetId);
         updateMeet.setTag(tagService.findById(meetDto.getTagId()));
         updateMeet.setDrink(drinkRepository.findById(drinkId).orElse(null));
 
-        Meet result = meetRepository.save(updateMeet);
-        log.info("수정된 Meet 정보 : {}", result.getImgSrc());
+        return meetRepository.save(updateMeet);
+    }
 
-        List<MeetUser> meetUser = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(() -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
+    private void notifyMeetParticipantsAboutUpdate(MeetDto meetDto, Long meetId, User host) {
+        List<MeetUser> meetUser = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId)
+                .orElseThrow(() -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
 
-        //방장에게는 알림을 전송하지 않는다.
-        meetUser.stream().filter(user -> !user.getUser().getUserId().equals(meetDto.getHostId())).forEach(user -> pushService.send(host, user.getUser(), PushType.MEETMODIFIDE, "모임( " + meetDto.getMeetName() + ")의 내용이 수정되었습니다. 확인해 주세요.", "https://i9b310.p.ssafy.io"));
+        meetUser.stream()
+                .filter(user -> !user.getUser().getUserId().equals(meetDto.getHostId()))
+                .forEach(user -> pushService.send(host, user.getUser(), PushType.MEETMODIFIDE, "모임( " + meetDto.getMeetName() + ")의 내용이 수정되었습니다. 확인해 주세요.", "https://i9b310.p.ssafy.io"));
     }
 
     @Transactional
@@ -257,110 +284,123 @@ public class MeetService {
         log.info("모임 신청할 정보를 출력한다. : {}, {}", userId, meetId);
 
         MeetUserDto meetUser = findMeetUserByMeetId(meetId);
-        Meet attendMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
-        Long hostId = meetUser.getMeetDto().getHostId();
+        Meet attendMeet = getValidatedMeet(meetId);
+        User attendUser = getValidatedUser(userId);
+        User host = getValidatedUser(meetUser.getMeetDto().getHostId());
 
-        User attendUser = userRepository.findByUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다.")
-        );
-        User host = userRepository.findByUserId(hostId).orElseThrow(
-                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다.")
-        );
+        checkParticipation(meetUser, userId);
 
-        //모임의 인원수 체크
+        meetUserService.saveMeetUser(attendMeet, attendUser, Status.APPLY);
+        sendNotificationToHost(attendUser, host, meetUser);
+    }
+
+    private Meet getValidatedMeet(Long meetId) {
+        return meetRepository.findById(meetId)
+                .orElseThrow(() -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
+    }
+
+    private void checkParticipation(MeetUserDto meetUser, Long userId) {
         if (meetUser.getMeetDto().getNowParticipants() >= meetUser.getMeetDto().getMaxParticipants())
             throw new IllegalArgumentException("해당 모임에 참여 인원이 가득 찼습니다.");
 
-        //모임에 참가 했을 경우 제외한다.
         for (User user : meetUser.getUsers()) {
             if (userId.equals(user.getUserId())) throw new IllegalArgumentException("이미 참여하신 모임 입니다.");
         }
-
-        //참가자의 모임 상태 추가 -> 데이터를 추가해야한다.
-        meetUserService.saveMeetUser(attendMeet, attendUser, Status.APPLY);
-
-        //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
-        pushService.send(attendUser, host, PushType.MEETACCESS, attendUser.getName() + "님께서 " + meetUser.getMeetDto().getMeetName() + "모임에 참여하고 싶어 합니다.", "이동할 url");
     }
+
+    private void sendNotificationToHost(User attendUser, User host, MeetUserDto meetUser) {
+        pushService.send(attendUser, host, PushType.MEETACCESS,
+                attendUser.getName() + "님께서 " + meetUser.getMeetDto().getMeetName() + "모임에 참여하고 싶어 합니다.",
+                "이동할 url");
+    }
+
 
     @Transactional
     public void applyCancelMeet(Long userId, Long meetId) {
-        Meet meet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("미팅 정보를 찾을 수 없습니다."));
+        Meet meet = meetRepository.findById(meetId)
+                .orElseThrow(() -> new IllegalArgumentException("미팅 정보를 찾을 수 없습니다."));
 
         Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
         log.info("현재 {}유저의 {}모임 신청 상태 : {}", userId, meetId, applyUserStatus);
 
-        if (applyUserStatus != Status.APPLY) throw new IllegalArgumentException("가입신청중인 유저만 모임 신청을 취소할 수 있습니다.");
+        validateCancellation(applyUserStatus);
 
-        //신청 취소할 경우 참여자 수 -1로 변경
-        meet.setNowParticipants(meet.getNowParticipants() - 1);
-        meetRepository.save(meet);
-
-        //모임-유저테이블에서 해당 정보 삭제
+        decrementParticipants(meet);
         meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
-        //푸시알림 로그 삭제
         pushService.deletePushLog(PushType.MEETACCESS, userId, meet.getHost().getUserId());
     }
 
+    private void validateCancellation(Status applyUserStatus) {
+        if (applyUserStatus != Status.APPLY) {
+            throw new IllegalArgumentException("가입신청중인 유저만 모임 신청을 취소할 수 있습니다.");
+        }
+    }
+
+
     @Transactional
     public void exitMeet(Long userId, Long meetId) {
-        Status applyUserStatus = meetUserService.findUserStatus(userId, meetId);
-        if (applyUserStatus == Status.HOST)
+        if (meetUserService.findUserStatus(userId, meetId) == Status.HOST) {
             throw new IllegalArgumentException("죄송합니다.. 방장님은 나가실 수 없으십니다. 모임 삭제를 요청하세요.");
+        }
 
-        //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.GUEST);
 
-        //chat_room_user도 사라진다.
-        Meet nowMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 모임 정보입니다."));
+        Meet nowMeet = meetRepository.findById(meetId)
+                .orElseThrow(() -> new IllegalArgumentException("올바르지 않은 모임 정보입니다."));
 
-        //모임에서 나갈 경우 참여자 수 -1로 변경
-        nowMeet.setNowParticipants(nowMeet.getNowParticipants() - 1);
-        meetRepository.save(nowMeet);
-
+        decrementParticipants(nowMeet);
         chatRoomService.deleteExistUser(nowMeet.getChatRoom(), userId);
     }
 
+    private void decrementParticipants(Meet meet) {
+        meet.setNowParticipants(meet.getNowParticipants() - 1);
+        meetRepository.save(meet);
+    }
+
     public String manageMeet(Long userId, Long meetId, boolean applyResult) {
-        Meet managementMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("미팅 정보를 찾을 수 없습니다."));
+        Meet managementMeet = meetRepository.findById(meetId)
+                .orElseThrow(() -> new IllegalArgumentException("미팅 정보를 찾을 수 없습니다."));
 
-        //Host유저와 관리할유저 리스트 반환(1개의 쿼리를 사용 하기 위함) 0번 : 호스트, 1번 : 관리할 유저
         User host = managementMeet.getHost();
-        User manageUser = userRepository.findByUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다.")
-        );
+        User manageUser = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다."));
 
-        if (applyResult) {//신청 결과가 true
-            //모임 상태를 변경 시킨다.
-            meetUserService.updateMeetStatus(userId, meetId, Status.GUEST);
-            //모임 참여 인원수 1증가 시킨다.
-            updateParticipants(meetId);
-
-            //채팅방에 참여 시킨다
-            chatRoomUserService.save(ChatRoomUser.builder()
-                    .user(manageUser)
-                    .chatRoom(managementMeet.getChatRoom())
-                    .build());
-
-            chatMessageService.save(ChatMessage.builder()
-                    .chatRoom(managementMeet.getChatRoom())
-                    .user(null)
-                    .message(manageUser.getName() + "님이 모임에 참여하셨습니다.")
-                    .createdAt(LocalDateTime.now())
-                    .build());
-
-            pushService.send(host, manageUser, PushType.MEETACCESS, "회원님께서 모임(" + managementMeet.getMeetName() + ")참여 되셨습니다.\n 즐거운 시간 되세요.", "http://i9b310.p.ssafy.");
-
+        if (applyResult) {
+            processAcceptance(userId, meetId, managementMeet, manageUser, host);
             return userId + "유저 " + meetId + "모임 신청 승인";
-        } else {//신청 결과가 false
-            //모임-유저 테이블에 해당 유저 데이터 삭제
-            meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
-            //유저에게 push 알림 전송
-
-            pushService.send(host, manageUser, PushType.MEETREJECT, "회원님께서 모임(" + managementMeet.getMeetName() + ")참여에 거절당했습니다.", "");
-
+        } else {
+            processRejection(userId, meetId, managementMeet);
             return userId + "유저 " + meetId + "모임 신청 거절";
         }
+    }
+
+    private void processAcceptance(Long userId, Long meetId, Meet managementMeet, User manageUser, User host) {
+        meetUserService.updateMeetStatus(userId, meetId, Status.GUEST);
+        updateParticipants(meetId);
+
+        chatRoomUserService.save(ChatRoomUser.builder()
+                .user(manageUser)
+                .chatRoom(managementMeet.getChatRoom())
+                .build());
+
+        chatMessageService.save(ChatMessage.builder()
+                .chatRoom(managementMeet.getChatRoom())
+                .message(manageUser.getName() + "님이 모임에 참여하셨습니다.")
+                .createdAt(LocalDateTime.now())
+                .build());
+
+        pushService.send(host, manageUser, PushType.MEETACCESS,
+                "회원님께서 모임(" + managementMeet.getMeetName() + ")참여 되셨습니다.\n 즐거운 시간 되세요.",
+                "http://i9b310.p.ssafy.");
+    }
+
+    private void processRejection(Long userId, Long meetId, Meet managementMeet) {
+        meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
+
+        pushService.send(managementMeet.getHost(),
+                userRepository.findByUserId(userId).get(),
+                PushType.MEETREJECT,
+                "회원님께서 모임(" + managementMeet.getMeetName() + ")참여에 거절당했습니다.", "");
     }
 
     public void updateParticipants(Long meetId) {
