@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -28,23 +27,39 @@ public class MeetController {
     @GetMapping()
     public ResponseEntity<?> getTagMeet(@RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId,
                                         Pageable pageable) {
+        log.info("{}", pageable.toString());
         if (tagId > 7L || tagId < 0L) return ResponseEntity.badRequest().body("태그ID가 존재하지 않습니다.");
 
-        if (tagId == 0L) return ResponseEntity.ok(meetService.findAll(pageable));
-        return ResponseEntity.ok(meetService.findByTagId(tagId, pageable));
+        if (pageable.getPageSize() == 20) pageable = Pageable.ofSize(10);
+        try {
+            if (tagId == 0L) return ResponseEntity.ok(meetService.findAll(pageable));
+            return ResponseEntity.ok(meetService.findByTagId(tagId, pageable));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("모임 조회중 문제가 발생했습니다.\n" + e.getMessage());
+        }
     }
 
     // meetId에 해당하는 모임 상세 정보 조회
     @GetMapping("/{meetId}")
-    public ResponseEntity<?> getMeetById(@PathVariable Long meetId) throws NoSuchFieldException {
-        return ResponseEntity.ok(meetService.findMeetdetailByMeetId(meetId));
+    public ResponseEntity<?> getMeetById(@PathVariable Long meetId) {
+        log.info("모임 정보 상세 출력 : {} ", meetId);
+        try {
+            return ResponseEntity.ok(meetService.findMeetdetailByMeetId(meetId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("모임 정보를 찾을 수 없습니다." + e.getMessage());
+        }
 
     }
 
     //유저와 관련된 모임 모두 출력
     @GetMapping("/mymeet/{userId}")
     public ResponseEntity<?> getMyMeetsById(@PathVariable Long userId) {
-        return ResponseEntity.ok(meetService.findByUserId(userId));
+        log.info("나의 모임 정보 상세 출력 : {} ", userId);
+        try {
+            return ResponseEntity.ok(meetService.findByUserId(userId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(userId + "님에 해당되는 모임 정보를 조회할 수 없습니다.\n" + e.getMessage());
+        }
     }
 
     //모임 생성
@@ -52,16 +67,38 @@ public class MeetController {
     public ResponseEntity<?> saveMeet(Long userId,
                                       MeetDto meetDto,
                                       Long drinkId,
-                                      @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException, IOException {
-        Meet createdMeet;
-        if (multipartFile.isPresent()) {
-            if (multipartFile.get().getSize() > 1024 * 1024 * 20)
-                return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
+                                      @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException {
+        if (meetDto.getMeetName() == null) return ResponseEntity.badRequest().body("모임 이름이 등록되지 않았습니다.");
+        if (meetDto.getMeetDate() == null) return ResponseEntity.badRequest().body("모임 날짜 정보가 누락되었습니다.");
+        if (meetDto.getMeetDate().toLocalDate() == null) return ResponseEntity.badRequest().body("모임 날짜가 입력되지 않았습니다.");
+        if (meetDto.getMeetDate().toLocalTime() == null) return ResponseEntity.badRequest().body("모임 시간이 입력되지 않았습니다.");
+        if (meetDto.getMaxParticipants() == null)
+            return ResponseEntity.badRequest().body("모임 최대 인원 수용 정보가 입력되지 않았습니다.");
+        if (meetDto.getMaxParticipants() > 8) return ResponseEntity.badRequest().body("모임 최대 인원 수용치를 초과했습니다.");
+        if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
+        if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
+        if (meetDto.getMinAge() < 20) return ResponseEntity.badRequest().body("모임 최소나이를 다시 입력해 주세요.");
+        if (meetDto.getMinAge() >= 200) return ResponseEntity.badRequest().body("모임 최대 나이를 다시 입력해 주세요.");
 
-            createdMeet = meetService.saveMeet(meetDto, userId, drinkId, multipartFile.get());
-        } else createdMeet = meetService.saveMeet(meetDto, userId, drinkId, null);
+        if (meetDto.getMeetDate().isBefore(LocalDateTime.now())){
+            return ResponseEntity.badRequest().body("모임 날짜 및 시간을 확인해 주세요.");
+        }
 
-        return ResponseEntity.ok(createdMeet);
+        try {
+            Meet createdMeet = null;
+
+            if (multipartFile.isPresent()) {
+                if (multipartFile.get().getSize() > 1024 * 1024 * 20)
+                    return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
+
+                createdMeet = meetService.saveMeet(meetDto, userId, drinkId, multipartFile.get());
+            } else createdMeet = meetService.saveMeet(meetDto, userId, drinkId, null);
+
+            return ResponseEntity.ok(createdMeet);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("모임 생성에 실패했습니다." + e.getMessage());
+        }
     }
 
     //모임 수정
@@ -70,16 +107,37 @@ public class MeetController {
                                         @PathVariable("meetId") Long meetId,
                                         MeetDto meetDto,
                                         Long drinkId,
-                                        @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IOException, NoSuchFieldException {
-        if (multipartFile.isPresent()) {
-            if (multipartFile.get().getSize() > 1024 * 1024 * 20)
-                return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
-            meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());
-        } else { //FormData에 ("image", "?") 없을 때
-            meetService.updateMeet(meetDto, userId, meetId, drinkId, null);
+                                        @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) {
+        //모임이름, 날짜, 시간, 최대인원
+        if (meetDto.getMeetName() == null) return ResponseEntity.badRequest().body("모임 이름이 등록되지 않았습니다.");
+        if (meetDto.getMeetDate() == null) return ResponseEntity.badRequest().body("모임 날짜 정보가 누락되었습니다.");
+        if (meetDto.getMeetDate().toLocalDate() == null) return ResponseEntity.badRequest().body("모임 날짜가 입력되지 않았습니다.");
+        if (meetDto.getMeetDate().toLocalTime() == null) return ResponseEntity.badRequest().body("모임 시간이 입력되지 않았습니다.");
+        if (meetDto.getMaxParticipants() == null)
+            return ResponseEntity.badRequest().body("모임 최대 인원 수용 정보가 입력되지 않았습니다.");
+        if (meetDto.getMaxParticipants() > 8) return ResponseEntity.badRequest().body("모임 최대 인원 수용치를 초과했습니다.");
+        if (drinkId == null) return ResponseEntity.badRequest().body("모임에 등록할 술 정보가 포함되지 않았습니다.");
+        if (meetDto.getTagId() == null) return ResponseEntity.badRequest().body("모임에 등록할 태그 정보가 포함되지 않았습니다.");
+        if (meetDto.getMinAge() < 20) return ResponseEntity.badRequest().body("모임 최소나이를 다시 입력해 주세요.");
+        if (meetDto.getMinAge() >= 200) return ResponseEntity.badRequest().body("모임 최대 나이를 다시 입력해 주세요.");
+
+        if (meetDto.getMeetDate().isBefore(LocalDateTime.now())){
+            return ResponseEntity.badRequest().body("모임 날짜 및 시간을 확인해 주세요.");
         }
 
-        return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
+        try {
+            if (multipartFile.isPresent()) { //FormData.append("image", "?") 있을 때
+                if (multipartFile.get().getSize() > 1024 * 1024 * 20)
+                    return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
+                meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());
+            } else{ //FormData에 ("image", "?") 없을 때
+                meetService.updateMeet(meetDto, userId, meetId, drinkId, null);
+            }
+
+            return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("모임 수정에 실패했습니다." + e.getMessage());
+        }
     }
 
     //모임 삭제하기
@@ -87,18 +145,27 @@ public class MeetController {
     public ResponseEntity<?> deleteMeet(@PathVariable Long meetId,
                                         @RequestBody Map<String, Long> requestBody) {
         Long hostId = requestBody.get("userId");
-        meetService.deleteMeet(hostId, meetId);
-        return ResponseEntity.ok(meetId + " 모임이 삭제 되었습니다.");
+        try {
+            meetService.deleteMeet(hostId, meetId);
+
+            return ResponseEntity.ok(meetId + " 모임이 삭제 되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.ok("모임 삭제 중 문제가 발생했습니다.\n" + e.getMessage());
+        }
     }
 
     // 참가자 : 모임 신청
     @PostMapping("/apply")
     public ResponseEntity<?> applyMeet(@RequestBody Map<String, Long> requestBody) {
-        Long userId = requestBody.get("userId");
-        Long meetId = requestBody.get("meetId");
+        try {
+            Long userId = requestBody.get("userId");
+            Long meetId = requestBody.get("meetId");
 
-        meetService.applyMeet(userId, meetId);
-        return ResponseEntity.ok(meetId + "모임에 신청 완료");
+            meetService.applyMeet(userId, meetId);
+            return ResponseEntity.ok(meetId + "모임에 신청 완료");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("모임에 신청 실패!" + e.getMessage());
+        }
 
     }
 
@@ -108,8 +175,12 @@ public class MeetController {
         Long userId = requestBody.get("userId");
         Long meetId = requestBody.get("meetId");
 
-        meetService.applyCancelMeet(userId, meetId);
-        return ResponseEntity.ok("모임 신청 취소가 완료됐습니다.");
+        try {
+            meetService.applyCancelMeet(userId, meetId);
+            return ResponseEntity.ok("모임 신청 취소가 완료됐습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("모임 신청 취소에 문제가 발생했습니다.\n" + e.getMessage());
+        }
     }
 
     // 유저 : 모임 나가기
@@ -118,8 +189,13 @@ public class MeetController {
         Long userId = requestBody.get("userId");
         Long meetId = requestBody.get("meetId");
 
-        meetService.exitMeet(userId, meetId);
-        return ResponseEntity.ok("모임(" + meetId + ")에서 정상적으로 나가졌습니다.");
+        try {
+            meetService.exitMeet(userId, meetId);
+
+            return ResponseEntity.ok("모임(" + meetId + ")에서 정상적으로 나가졌습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("모임 탈퇴 중 문제가 발생했습니다.\n" + e.getMessage());
+        }
     }
 
     // 방장 : 모임 신청 관리
@@ -129,7 +205,11 @@ public class MeetController {
         Long meetId = ((Number) requestBody.get("meetId")).longValue();
         boolean applyResult = (boolean) requestBody.get("applyResult");
 
-        return ResponseEntity.ok(meetService.manageMeet(userId, meetId, applyResult));
+        try {
+            return ResponseEntity.ok(meetService.manageMeet(userId, meetId, applyResult));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("모임 관리에 실패했습니다." + e.getMessage());
+        }
     }
 
     // 1시간마다
