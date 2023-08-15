@@ -9,7 +9,7 @@
 /* 사용되는 컬러 변수화 */
 /* 사용예시: background: var(--c-lightgray); */
 :root {
-  --c-black: #322d29;
+  --c-black: black;
   --c-gray: #aaaaaa;
   --c-lightgray: #f4f4f4;
   --c-beige: #efe9e1;

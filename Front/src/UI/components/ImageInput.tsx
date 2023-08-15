@@ -87,7 +87,6 @@ const ImageInput = (props: ImageInputProps) => {
         }
       };
     } else {
-      console.log("여기도 들어와요");
       props.getImgSrc("no image");
       props.getFunc(null);
     }
