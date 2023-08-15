@@ -52,47 +52,31 @@ public class MeetController {
     public ResponseEntity<?> saveMeet(Long userId,
                                       MeetDto meetDto,
                                       Long drinkId,
-                                      @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws IllegalArgumentException, IOException {
+                                      @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException, IOException {
 
         checkCapacityFile(multipartFile);
-        Meet createdMeet = meetService.saveMeet(meetDto, userId, drinkId, multipartFile);
+        Meet createdMeet = meetService.saveMeet(meetDto, userId, drinkId, multipartFile.orElse(null));
         return ResponseEntity.ok(createdMeet);
     }
 
     //모임 수정
-//    @PutMapping("/modify/{userId}/{meetId}")
-//    public ResponseEntity<?> updateMeet(@PathVariable("userId") Long userId,
-//                                        @PathVariable("meetId") Long meetId,
-//                                        MeetDto meetDto,
-//                                        Long drinkId,
-//                                        @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IOException {
-//        checkCapacityFile(multipartFile);
-//
-//        meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.orElse(null));
-//        return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
-//    }
     @PutMapping("/modify/{userId}/{meetId}")
     public ResponseEntity<?> updateMeet(@PathVariable("userId") Long userId,
                                         @PathVariable("meetId") Long meetId,
                                         MeetDto meetDto,
                                         Long drinkId,
-                                        @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws IOException {
+                                        @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IOException {
         checkCapacityFile(multipartFile);
 
-        meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile);
+        meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.orElse(null));
         return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
     }
 
-    //    private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
-//        if (multipartFile.isPresent()) {
-//            if (multipartFile.get().getSize() > 1024 * 1024 * 20)
-//                throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
-//        }
-//    }
-    private void checkCapacityFile(MultipartFile multipartFile) {
-        if (multipartFile.getSize() > 1024 * 1024 * 20)
-            throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
-
+        private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
+        if (multipartFile.isPresent()) {
+            if (multipartFile.get().getSize() > 1024 * 1024 * 20)
+                throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
+        }
     }
 
     //모임 삭제하기
