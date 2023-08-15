@@ -153,9 +153,11 @@ public class MeetService {
     public Meet saveMeet(MeetDto meetDto, Long userId, Long drinkId, MultipartFile multipartFile) throws IOException {
         valdateMeet(meetDto, drinkId);
         meetDto.setHostId(userId);
-        if (multipartFile != null && !multipartFile.isEmpty()) {
-            meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-        } else meetDto.setImgSrc("no image");
+
+        //업로드한 이미지가 있으면 이미지로
+        if (multipartFile != null)meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+        //업로드 이미지 없으면 기본 이미지로
+        else meetDto.setImgSrc("no image");
 
         ChatRoom createChatRoom = chatRoomService.save(ChatRoom.builder()
                 .chatRoomName(meetDto.getMeetName() + "모임의 채팅방")
@@ -211,35 +213,17 @@ public class MeetService {
         User host = userRepository.findByUserId(userId).orElseThrow(
                 () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다."));
 
-        //업로드 파일이 존재하는지
-        boolean uploadImgExist = !multipartFile.isEmpty();
+        //업로드 이미지가 존재
+        if(multipartFile != null){
+            //모임 이미지가 기본 이미지가 아니면 S3에서 삭제
+            if(!prevMeetImgSrc.equals("no image")) s3Service.deleteImg(prevMeetImgSrc);
 
-        //이미지 업로드 유무에 따른 모임 이미지 변경
-        if(meetDto.getImgSrc() == null){
-            //이미지가 존재하므로 업로드된 이미지 삭제 후 새 이미지로 변경
-            if(uploadImgExist) {
-                //imgSrc가 s3에 url형태면 제거
-                if(!prevMeetImgSrc.equals("no image")) s3Service.deleteImg(prevMeetImgSrc);
-
-                meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-            }else{
-                meetDto.setImgSrc(prevMeetImgSrc);
-            }
+            //새로운 이미지로 업로드
+            meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+        }else{//업로드 이미지 없음
+            //기본 이미지로 설정하는 것이 아니면 기존 이미지 유지
+            if(!meetDto.getImgSrc().equals("no image")) meetDto.setImgSrc(prevMeetImgSrc);
         }
-
-//        if (multipartFile != null) {// FormData에 ("image", "?")일 때
-//
-//            //업로드된 이미지 존재 +  S3에서 기존 이미지 제거 후 새롭게 업데이트 한다.
-//            if (uploadImgExist) {
-//                s3Service.deleteImg(prevMeetImgSrc);
-//                meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-//            } else if(){
-//                if (meetDto.getImgSrc() == null) meetDto.setImgSrc(prevMeetImgSrc);
-//                else s3Service.deleteImg(prevMeetImgSrc);
-//            }
-//        } else {
-//            meetDto.setImgSrc(prevMeetImgSrc);
-//        }
 
         //기존 데이터를 가져온 뒤 업데이트 한다.
         Meet updateMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
