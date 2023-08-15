@@ -122,6 +122,7 @@ const ReselectBtn = styled.div`
 
 const DrinkpostReviewCreate = () => {
   const navigate = useNavigate();
+  const [newImgSrc, setNewImgSrc] = useState("");
   const { drinkId, reviewId } = useParams();
   const [drink, setDrink] = useState<Drink>();
   const [review, setReview] = useState("");
@@ -130,7 +131,7 @@ const DrinkpostReviewCreate = () => {
     setReview(e.target.value);
   };
   const myId = localStorage.getItem("myId");
-  const [imgFile, setImgFile] = useState(null);
+  const [file, setFile] = useState(null);
   const imgRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -142,7 +143,7 @@ const DrinkpostReviewCreate = () => {
       .catch(err => console.log(err));
     callApi("get", `api/drinkreview/review/${reviewId}`).then(res => {
       setReview(res.data.content);
-      setImgFile(res.data.img);
+      setNewImgSrc(res.data.img);
     });
   }, []);
   useEffect(() => {
@@ -153,13 +154,17 @@ const DrinkpostReviewCreate = () => {
       .catch(err => console.log(err));
   }, []);
 
+  // useEffect(() => {
+  //   console.dir(file);
+  // }, [file]);
+
   const reviewSubmit = () => {
-    const file = imgFile;
+    // const file = imgFile;
     const formData = new FormData();
 
     formData.append("drinkReviewId", reviewId);
     formData.append("content", review);
-    formData.append("upload", file);
+
     if (review === "") {
       alert("내용을 입력해주세요.");
       return;
@@ -171,8 +176,13 @@ const DrinkpostReviewCreate = () => {
       }
     }
 
+    if (file !== null) formData.append("image", file);
+    if (file === null && newImgSrc === "no image") {
+      formData.append("imgSrc", "no image");
+    }
+
     axios
-      .put(`/api/drinkreview/${reviewId}`, formData, {
+      .put(`/api/drinkreview/${reviewId}/${localStorage.getItem("myId")}`, formData, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
           userId: localStorage.getItem("myId"),
@@ -190,25 +200,26 @@ const DrinkpostReviewCreate = () => {
     navigate(`/drinkpost/${drinkId}`);
   };
 
-  const saveImgFile = () => {
-    const file = imgRef.current.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        setImgFile(reader.result);
-      }
-    };
-  };
+  // const saveImgFile = () => {
+  //   const file = imgRef.current.files[0];
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+  //   reader.onloadend = () => {
+  //     if (typeof reader.result === "string") {
+  //       setImgFile(reader.result);
+  //     }
+  //   };
+  // };
 
-  const resetImgFile = () => {
-    console.log("취소버튼 눌렀어요");
-    imgRef.current.value = null;
-    setImgFile(null); // 미리보기 초기화
-    saveImgFile(); //부모 객체로 전달
-    // props.getFunc(null);
-    // props.getImgSrc("no image");
-  };
+  // const resetImgFile = () => {
+  //   console.log("취소버튼 눌렀어요");
+  //   imgRef.current.value = null;
+  //   setImgSrc("no image"); // 미리보기 초기화
+  //   saveImgFile(); //부모 객체로 전달
+  //   setImgFile(null);
+  //   // props.getFunc(null);
+  //   // props.getImgSrc("no image");
+  // };
 
   return (
     <>
@@ -229,7 +240,7 @@ const DrinkpostReviewCreate = () => {
           ></LongTextInput>
         </InputDiv>
         <div style={{ marginLeft: "36px" }}>
-          <QuestionDiv style={{ textAlign: "left" }}>
+          {/* <QuestionDiv style={{ textAlign: "left" }}>
             <div style={{ display: "flex", alignItems: "center" }}>
               <Title style={{ margin: "0" }}>대표 이미지</Title>
               <ImgInput>
@@ -249,7 +260,13 @@ const DrinkpostReviewCreate = () => {
               {imgFile && <ReselectBtn onClick={resetImgFile}>취소</ReselectBtn>}
             </div>
             {imgFile && <ImageArea src={imgFile}></ImageArea>}
-          </QuestionDiv>
+          </QuestionDiv> */}
+          <ImageInput
+            key={newImgSrc}
+            getFunc={setFile}
+            imgSrc={newImgSrc}
+            getImgSrc={setNewImgSrc}
+          />
         </div>
       </CreateBody>
       <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />

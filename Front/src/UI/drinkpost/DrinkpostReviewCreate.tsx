@@ -50,12 +50,12 @@ const DrinkpostReviewCreate = () => {
   const [imgFile, setImgFile] = useState(null);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then((res) => {
+    callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
   }, []);
   useEffect(() => {
-    callApi("get", `api/user/myinfo`).then((res) => {
+    callApi("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);
     });
   }, []);
@@ -86,9 +86,8 @@ const DrinkpostReviewCreate = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then((res) => {
-        // navigate(`/drinkpost/${drinkId}`, { replace: true });
-        navigate(-1);
+      .then(res => {
+        navigate(`/drinkpost/${drinkId}/${res.data.drinkReviewId}`);
       });
   };
 
@@ -122,11 +121,7 @@ const DrinkpostReviewCreate = () => {
           </QuestionDiv>
         </div>
       </CreateBody>
-      <FooterBigBtn
-        content="등록하기"
-        color="var(--c-yellow)"
-        reqFunc={reviewSubmit}
-      />
+      <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />
     </>
   );
 };

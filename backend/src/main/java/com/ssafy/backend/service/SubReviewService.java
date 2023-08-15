@@ -1,5 +1,6 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.dto.subReview.SubReviewRequestDto;
 import com.ssafy.backend.dto.subReview.SubReviewResponseDto;
 import com.ssafy.backend.entity.DrinkReview;
@@ -39,6 +40,7 @@ public class SubReviewService {
         // 여기가 getDrinkReviewId 로 바뀌어야함
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
+        sub
         // content가 비어있는지 확인
         if (subReviewRequestDto.getContent().isEmpty()) {
             throw new IllegalArgumentException("댓글 내용이 비어있습니다.");
@@ -50,6 +52,7 @@ public class SubReviewService {
                 .user(user)
                 .build();
 
+        pushService.send(user, drinkReview.getUser(), PushType.SUBREVIEW, user.getName() + "님이 회원님의 후기에 댓글을 남겼습니다.",  "drinkpost/" + drinkReview.getDrink().getDrinkId() + "/" +reviewId);
         return SubReviewResponseDto.fromEntity(subReviewRepository.save(subReview));
     }
 
