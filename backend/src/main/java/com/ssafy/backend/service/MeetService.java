@@ -4,10 +4,10 @@ import com.ssafy.backend.Enum.MeetStatus;
 import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.Enum.UploadType;
+import com.ssafy.backend.dto.MeetDto;
+import com.ssafy.backend.dto.MeetSearchDto;
+import com.ssafy.backend.dto.MeetUserDto;
 import com.ssafy.backend.dto.follow.FollowResponseDto;
-import com.ssafy.backend.dto.meet.MeetDto;
-import com.ssafy.backend.dto.meet.MeetSearchDto;
-import com.ssafy.backend.dto.meet.MeetUserDto;
 import com.ssafy.backend.entity.*;
 import com.ssafy.backend.repository.DrinkRepository;
 import com.ssafy.backend.repository.MeetRepository;
@@ -137,7 +137,7 @@ public class MeetService {
         if (multipartFile != null) {
             //Optinal로 get한 MultipartFile이 있을 떄
             if (!multipartFile.isEmpty()) meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-                //Optinal로 get한 MultipartFile이 없을 때
+            //Optinal로 get한 MultipartFile이 없을 때
             else meetDto.setImgSrc("no image");
         } else meetDto.setImgSrc("no image"); //image 자체를 Formdata에 추가하지 않았을 때
 
@@ -204,12 +204,12 @@ public class MeetService {
             if (uploadImgExist) { //모임 이미지 변경 - 업로드한 이미지가 존재하면 DB와 S3에 존재하는 이미지를 제거한다.
                 s3Service.deleteImg(prevMeetImgSrc);
                 meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-            } else { // 업로드한 이미지가 없을 떄 imgSrc를 통해 기본 이미지, 기존 이미지 선택한다.
-                if (meetDto.getImgSrc() == null) meetDto.setImgSrc(prevMeetImgSrc);
+            } else{ // 업로드한 이미지가 없을 떄 imgSrc를 통해 기본 이미지, 기존 이미지 선택한다.
+                if(meetDto.getImgSrc() == null) meetDto.setImgSrc(prevMeetImgSrc);
                 else s3Service.deleteImg(prevMeetImgSrc); //imgSrc가 no image -> 기존 이미지 지운다.
             }
 
-        } else {// FormData에 ("image", "?") 없을 때
+        } else{// FormData에 ("image", "?") 없을 때
             meetDto.setImgSrc(prevMeetImgSrc);
         }
 

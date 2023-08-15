@@ -1,6 +1,6 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.dto.meet.MeetDto;
+import com.ssafy.backend.dto.MeetDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.service.MeetService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
 import java.util.Optional;
 
