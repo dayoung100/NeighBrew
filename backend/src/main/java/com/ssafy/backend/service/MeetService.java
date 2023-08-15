@@ -34,6 +34,7 @@ public class MeetService {
     private final MeetUserService meetUserService;
     private final PushService pushService;
     private final FollowService followService;
+    private final FollowRepository followRepository;
     private final TagRepository tagRepository;
     private final SidoRepository sidoRepository;
     private final GugunRepository gugunRepository;
@@ -195,8 +196,11 @@ public class MeetService {
                 .build());
 
         //팔로워에게 메세지를 보낸다
-        List<FollowResponseDto> followers = followService.findByFollower(userId);
-        followers.forEach(fw -> pushService.send(hostUser, fw.getFollower(), PushType.MEETCREATED, hostUser.getName() + "님께서 회원님께서 모임(" + createdMeet.getMeetName() + ")을 생성했습니다.", "이동할 url"));
+        List<Follow> followers = followRepository.findByFollowing_UserId(userId).orElseThrow(
+                ()-> new IllegalArgumentException("팔로잉 정보를 찾을 수 없습니다.")
+        );
+
+        followers.forEach(fw -> pushService.send(hostUser, fw.getFollower(), PushType.MEETCREATED, hostUser.getNickname() + "님께서 회원님께서 모임(" + createdMeet.getMeetName() + ")을 생성했습니다.", "meet/" + meet.getMeetId()));
         return createdMeet;
     }
 
@@ -239,7 +243,10 @@ public class MeetService {
         List<MeetUser> meetUser = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(() -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
 
         //방장에게는 알림을 전송하지 않는다.
-        meetUser.stream().filter(user -> !user.getUser().getUserId().equals(meetDto.getHostId())).forEach(user -> pushService.send(host, user.getUser(), PushType.MEETMODIFIDE, "모임( " + meetDto.getMeetName() + ")의 내용이 수정되었습니다. 확인해 주세요.", "https://i9b310.p.ssafy.io"));
+        meetUser.stream()
+                .filter(user -> !user.getUser().getUserId().equals(meetDto.getHostId()))
+                .forEach(user ->
+                        pushService.send(host, user.getUser(), PushType.MEETMODIFIDE, "모임( " + meetDto.getMeetName() + ")의 내용이 수정되었습니다. 확인해 주세요.", "meet/" + updateMeet.getMeetId()));
 
     }
 
@@ -263,7 +270,10 @@ public class MeetService {
 
         //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
         //방장에게는 알림을 전송하지 않는다.
-        meetUser.stream().filter(user -> !user.getUser().getUserId().equals(hostId)).forEach(user -> pushService.send(deleteMeet.getHost(), user.getUser(), PushType.MEETDELETED, deleteMeet.getHost().getName() + "님 께서 생성한 모임" + "(" + deleteMeet.getMeetName() + ")이 삭제되었습니다.", ""));
+        meetUser.stream()
+                .filter(user -> !user.getUser().getUserId().equals(hostId))
+                .forEach(user ->
+                        pushService.send(deleteMeet.getHost(), user.getUser(), PushType.MEETDELETED, deleteMeet.getHost().getNickname() + "님 께서 생성한 모임" + "(" + deleteMeet.getMeetName() + ")이 삭제되었습니다.", "meet"));
 
     }
 
@@ -292,7 +302,7 @@ public class MeetService {
         meetUserService.saveMeetUser(attendMeet, attendUser, Status.APPLY);
 
         //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
-        pushService.send(attendUser, host, PushType.MEETACCESS, attendUser.getName() + "님께서 " + meetUser.getMeetDto().getMeetName() + "모임에 참여하고 싶어 합니다.", "이동할 url");
+        pushService.send(attendUser, host, PushType.MEETACCESS, attendUser.getNickname() + "님께서 " + meetUser.getMeetDto().getMeetName() + "모임에 참여하고 싶어 합니다.", "meet/" + attendMeet.getMeetId() + "/manage");
     }
 
     @Transactional
@@ -331,6 +341,8 @@ public class MeetService {
         meetRepository.save(nowMeet);
 
         chatRoomService.deleteExistUser(nowMeet.getChatRoom(), userId);
+
+        //모임 나가면 채팅방에 나갔다고 메세지 남기기
     }
 
     public String manageMeet(Long userId, Long meetId, boolean applyResult) {
@@ -356,16 +368,16 @@ public class MeetService {
             chatMessageService.save(ChatMessage.builder()
                     .chatRoom(managementMeet.getChatRoom())
                     .user(null)
-                    .message(manageUser.getName() + "님이 모임에 참여하셨습니다.")
+                    .message(manageUser.getNickname() + "님이 모임에 참여하셨습니다.")
                     .createdAt(LocalDateTime.now())
                     .build());
 
-            pushService.send(host, manageUser, PushType.MEETACCESS, "회원님께서 모임(" + managementMeet.getMeetName() + ")참여 되셨습니다.\n 즐거운 시간 되세요.", "http://i9b310.p.ssafy.");
+            pushService.send(host, manageUser, PushType.MEETACCESS, "회원님께서 모임(" + managementMeet.getMeetName() + ")참여 되셨습니다.\n 즐거운 시간 되세요.", "meet/" + managementMeet.getMeetId());
 
             return userId + "유저 " + meetId + "모임 신청 승인";
         } else {//신청 결과가 false
             meetUserService.deleteExitUser(userId, meetId, Status.APPLY);
-            pushService.send(host, manageUser, PushType.MEETREJECT, "회원님께서 모임(" + managementMeet.getMeetName() + ")참여에 거절당했습니다.", "");
+            pushService.send(host, manageUser, PushType.MEETREJECT, "회원님께서 모임(" + managementMeet.getMeetName() + ")참여에 거절당했습니다.", "meet");
 
             return userId + "유저 " + meetId + "모임 신청 거절";
         }
