@@ -48,35 +48,34 @@ function App() {
   }, []);
   const es = useRef<EventSource>();
   useEffect(() => {
-    es.current = new EventSource(
-      `https://i9b310.p.ssafy.io/api/auth/connect/${userid}`,
-      {
-        withCredentials: true,
-      }
-    );
-
-    console.log({ es });
-    console.log(es.current);
-    es.current.onopen = (e) => {
-      console.log("[sse] open", { e });
-    };
-    es.current.onmessage = (event) => {
-      // console.log(JSON.parse(event.data));
-      console.log(event.data);
-      noti(JSON.parse(event.data));
-
-      if (event.data === "finished") {
-        es.current?.close();
-        return;
-      }
-    };
-    es.current.onerror = (err) => {
-      console.log("[sse] error", { err });
+    if (userid == null) {
       setIsConnect(!isConnect);
-      if (userid == null) {
-        setUserid(localStorage.getItem("myId"));
-      }
-    };
+      setUserid(localStorage.getItem("myId"));
+    } else {
+      es.current = new EventSource(`https://i9b310.p.ssafy.io/api/auth/connect/${userid}`, {
+        withCredentials: true,
+      });
+
+      // console.log({ es });
+      // console.log(es.current);
+      es.current.onopen = e => {
+        // console.log("[sse] open", { e });
+      };
+      es.current.onmessage = event => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log(data);
+          noti(data.content, data.url);
+        } catch {}
+        if (event.data === "finished") {
+          es.current?.close();
+          return;
+        }
+      };
+      es.current.onerror = err => {
+        console.log("[sse] error", { err });
+      };
+    }
 
     return () => {
       unsubscribe();
@@ -113,24 +112,35 @@ function App() {
       });
     }
   };
-  const noti = (message: string) => {
-    navigator.serviceWorker.ready.then(registration => {
-      const notiAlarm = registration.showNotification("NeighBrew", {
-        body: message,
-        icon: logo,
-        actions: [
-          {
-            title: "화면 이동",
-            action: "goTab",
-          },
-          {
-            title: "닫기",
-            action: "close",
-          },
-        ],
-      });
+  const noti = (message: string, url: string) => {
+    const notifi = new Notification("NeighBrew", {
+      icon: logo,
+      body: message,
+      badge: logo,
     });
+    notifi.onclick = () => {
+      navigate(url);
+    };
   };
+
+  // const noti = (message: string) => {
+  //   navigator.serviceWorker.ready.then(registration => {
+  //     const notiAlarm = registration.showNotification("NeighBrew", {
+  //       body: message,
+  //       icon: logo,
+  //       actions: [
+  //         {
+  //           title: "화면 이동",
+  //           action: "test",
+  //         },
+  //         {
+  //           title: "닫기",
+  //           action: "close",
+  //         },
+  //       ],
+  //     });
+  //   });
+  // };
 
   return (
     <>
@@ -152,69 +162,33 @@ function App() {
         <Route path="/meet" element={<MeetingMain />}></Route>
         <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>
         <Route path="/meet/create" element={<MeetingCreate />}></Route>
-        <Route
-          path="/meet/:meetId/manage"
-          element={<MeetingManageMain />}
-        ></Route>
-        <Route
-          path="/meet/:meetId/manage/member"
-          element={<MeetingMemberManage />}
-        ></Route>
-        <Route
-          path="/meet/:meetId/manage/info"
-          element={<MeetingInfoManage />}
-        ></Route>
+        <Route path="/meet/:meetId/manage" element={<MeetingManageMain />}></Route>
+        <Route path="/meet/:meetId/manage/member" element={<MeetingMemberManage />}></Route>
+        <Route path="/meet/:meetId/manage/info" element={<MeetingInfoManage />}></Route>
 
         <Route path="/myPage/:userid" element={<Mypage></Mypage>}></Route>
-        <Route
-          path="/myPage/follower/:userid"
-          element={<Follower></Follower>}
-        ></Route>
-        <Route
-          path="/myPage/follow/:userid"
-          element={<Follow></Follow>}
-        ></Route>
+        <Route path="/myPage/follower/:userid" element={<Follower></Follower>}></Route>
+        <Route path="/myPage/follow/:userid" element={<Follow></Follow>}></Route>
         <Route path="/usersearch" element={<SearchUser></SearchUser>}></Route>
         <Route path="/chatList" element={<ChatList></ChatList>}></Route>
         <Route path="/chatList/:id" element={<ChatRoom></ChatRoom>} />
-        <Route
-          path="/directchat/:senderId/:receiverId"
-          element={<DirectChat></DirectChat>}
-        ></Route>
+        <Route path="/directchat/:senderId/:receiverId" element={<DirectChat></DirectChat>}></Route>
 
         <Route path="/kakao/:str" element={<KakaoLogin></KakaoLogin>}></Route>
         <Route path="/naver/:str" element={<NaverLogin></NaverLogin>}></Route>
-        <Route
-          path="/google/:str"
-          element={<GoogleLogin></GoogleLogin>}
-        ></Route>
+        <Route path="/google/:str" element={<GoogleLogin></GoogleLogin>}></Route>
 
-        <Route
-          path="/drinkpost/:drinkId"
-          element={<DrinkpostDetail></DrinkpostDetail>}
-        ></Route>
-        <Route
-          path="/drinkpost/create"
-          element={<DrinkpostCreate></DrinkpostCreate>}
-        ></Route>
-        <Route
-          path="/drinkpost/search"
-          element={<DrinkpostSearch></DrinkpostSearch>}
-        ></Route>
+        <Route path="/drinkpost/:drinkId" element={<DrinkpostDetail></DrinkpostDetail>}></Route>
+        <Route path="/drinkpost/create" element={<DrinkpostCreate></DrinkpostCreate>}></Route>
+        <Route path="/drinkpost/search" element={<DrinkpostSearch></DrinkpostSearch>}></Route>
         <Route
           path="/drinkpost/:drinkId/review/create"
           element={<DrinkpostReviewCreate></DrinkpostReviewCreate>}
         ></Route>
-        <Route
-          path="/drinkpost/total"
-          element={<DrinkpostTotal></DrinkpostTotal>}
-        ></Route>
+        <Route path="/drinkpost/total" element={<DrinkpostTotal></DrinkpostTotal>}></Route>
         <Route path="/test" element={<Test></Test>}></Route>
 
-        <Route
-          path="/rating/:meetId"
-          element={<RatingCreate></RatingCreate>}
-        ></Route>
+        <Route path="/rating/:meetId" element={<RatingCreate></RatingCreate>}></Route>
 
         <Route
           path="/drinkpost/:drinkId/:reviewId"
