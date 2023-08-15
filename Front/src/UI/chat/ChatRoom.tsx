@@ -370,7 +370,7 @@ const ChatRoom = () => {
         >
           참여자 목록
         </p>
-        <div>
+        <div style={{ width: "80%" }}>
           {users.map((user, i) => {
             return (
               <UserDiv
