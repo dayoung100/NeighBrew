@@ -1,5 +1,6 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.entity.DrinkReview;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.entity.UserCommentLike;
@@ -18,6 +19,7 @@ public class UserCommentLikeService {
     private final UserCommentLikeRepository userCommentLikeRepository;
     private final UserRepository userRepository;
     private final DrinkReviewRepository drinkReviewRepository;
+    private final PushService pushService;
 
     @Transactional
     public boolean toggleUserLike(Long userId, Long reviewId) {
@@ -41,6 +43,7 @@ public class UserCommentLikeService {
             userCommentLikeRepository.save(UserCommentLike.builder().user(user).drinkReview(drinkReview).build());
             drinkReview.increaseLikeCount();
             drinkReviewRepository.save(drinkReview);
+            pushService.send(user, drinkReview.getUser(), PushType.REVIEWLIKE, user.getName() + "님이 회원님의 후기를 좋아합니다. ", "drinkpost/" + drinkReview.getDrink().getDrinkId() + "/" + reviewId);
             return true;
         }
     }

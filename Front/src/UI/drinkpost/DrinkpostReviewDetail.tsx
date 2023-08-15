@@ -428,7 +428,7 @@ const DrinkpostReviewDetail = () => {
           style={{ display: "flex", alignItems: "center", height: "40%" }}
         >
           <div style={{ marginRight: "0.5rem" }}>{EditIcon}</div>
-          <div>수정하기</div>
+          <div style={{color : "black"}}>수정하기</div>
         </div>
 
         <div
