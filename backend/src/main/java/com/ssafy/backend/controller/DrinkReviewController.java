@@ -60,11 +60,19 @@ public class DrinkReviewController {
     @PutMapping("/{drinkReviewId}/{userId}")
     public ResponseEntity<DrinkReviewResponseDto> updateDrinkReview(@PathVariable Long drinkReviewId,
                                                                     @ModelAttribute DrinkReviewUpdateDto drinkReviewUpdateDto,
-                                                                    @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile,
+                                                                    @RequestPart(value = "upload", required = false) Optional<MultipartFile> multipartFile,
                                                                     @PathVariable Long userId,
                                                                     @RequestHeader("Authorization") String token) throws IOException {
         JwtUtil.validateToken(token, userId);
-        return ResponseEntity.ok().body(drinkReviewService.updateDrinkReview(drinkReviewId, drinkReviewUpdateDto, multipartFile, userId));
+        checkCapacityFile(multipartFile);
+        return ResponseEntity.ok().body(drinkReviewService.updateDrinkReview(drinkReviewId, drinkReviewUpdateDto, multipartFile.orElse(null), userId));
+    }
+
+    private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
+        if (multipartFile.isPresent()) {
+            if (multipartFile.get().getSize() > 1024 * 1024 * 20)
+                throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
+        }
     }
 
 
