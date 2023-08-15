@@ -474,7 +474,7 @@ export const deleteIcon = () => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       height="32"
-      fill="#ffffff"
+      fill="#eb0505"
       viewBox="0 -960 960 960"
       width="32"
     >
