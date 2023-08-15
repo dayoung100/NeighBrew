@@ -70,15 +70,15 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-//    @GetMapping("/access-token/{userId}")
-//    public ResponseEntity<Map<String, String>> jwtMaker(@PathVariable Long userId) {
-//        String accessToken = JwtUtil.generateToken(String.valueOf(userId));
-//        String refreshToken = JwtUtil.generateRefreshToken(String.valueOf(userId));
-//        Map<String, String> tokens = new HashMap<>();
-//        tokens.put("accessToken", accessToken);
-//        tokens.put("refreshToken", refreshToken);
-//        return ResponseEntity.ok(tokens);
-//    }
+    @GetMapping("/access-token/{userId}")
+    public ResponseEntity<Map<String, String>> jwtMaker(@PathVariable Long userId) {
+        String accessToken = JwtUtil.generateToken(String.valueOf(userId));
+        String refreshToken = JwtUtil.generateRefreshToken(String.valueOf(userId));
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        return ResponseEntity.ok(tokens);
+    }
 
     @GetMapping(value = "/connect/{userId}", produces = "text/event-stream")
     @ResponseStatus(HttpStatus.OK)

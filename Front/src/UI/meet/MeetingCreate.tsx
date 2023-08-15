@@ -115,7 +115,7 @@ const SubText = styled.div`
   align-items: center;
   font-family: "NanumSquareNeoBold";
   font-size: 13px;
-  background-color: var(--c-yellow);
+  background-color: var(--c-lightgray);
   width: 7rem;
   border-radius: 5px;
   margin-top: 1rem;

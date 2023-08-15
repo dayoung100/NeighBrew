@@ -11,7 +11,18 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   console.log("[Service Worker] fetched resource " + e.request.url);
 });
-
+// self.addEventListener("notificationclick", function (event) {
+//   console.log(event);
+//   //알림 팝업의 버튼 액션
+//   switch (event.action) {
+//     case "goTab":
+//       event.waitUntil(self.clients.openWindow("http://naver.com"));
+//       break;
+//     default:
+//       console.log(`Unknown action clicked: '${event.action}'`);
+//       break;
+//   }
+// });
 // navigator.serviceWorker
 //   .register("sw.js")
 //   .then(function (registration) {
