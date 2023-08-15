@@ -2,6 +2,7 @@ package com.ssafy.backend.entity;
 
 
 import com.ssafy.backend.Enum.Status;
+import com.ssafy.backend.dto.MeetUserDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +34,7 @@ public class MeetUser {
     }
 
     @Builder
-    public MeetUser(User user, Meet meet, Status status) {
+    public MeetUser( User user, Meet meet, Status status) {
         this.user = user;
         this.meet = meet;
         this.status = status;
