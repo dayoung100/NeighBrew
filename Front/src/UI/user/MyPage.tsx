@@ -609,6 +609,7 @@ const MyPage = () => {
       {/* Footer에 의해 가려지는게 없게 하기위해 존재하는 div */}
       <div style={{ height: "3rem" }}></div>
       <Modal
+        closeTimeoutMS={1000}
         isOpen={deleteModalOn}
         onRequestClose={() => setDeleteModalOn(false)}
         style={WhiteModal}
