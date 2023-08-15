@@ -1,6 +1,6 @@
 package com.ssafy.backend.service;
 
-import com.ssafy.backend.dto.EvaluationRequestDto;
+import com.ssafy.backend.dto.evaluation.EvaluationRequestDto;
 import com.ssafy.backend.entity.Evaluation;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.User;

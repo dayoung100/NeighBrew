@@ -2,11 +2,11 @@ package com.ssafy.backend.controller;
 
 import com.ssafy.backend.dto.follow.FollowResponseDto;
 import com.ssafy.backend.service.FollowService;
+import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -16,9 +16,9 @@ public class FollowController {
     private final FollowService followService;
 
     @GetMapping("/followers")
-    public ResponseEntity<List<FollowResponseDto>> getFollowers(HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        return ResponseEntity.ok(followService.getFollowers(Long.valueOf(userId)));
+    public ResponseEntity<List<FollowResponseDto>> getFollowers(@RequestHeader("Authorization") String token) {
+        Long userId = JwtUtil.parseUserIdFromToken(token);
+        return ResponseEntity.ok(followService.getFollowers(userId));
     }
 
     @GetMapping("/follower/{userId}")
@@ -32,9 +32,10 @@ public class FollowController {
     }
 
     @PostMapping("/{followingId}")
-    public ResponseEntity<String> followUser(HttpServletRequest request, @PathVariable Long followingId) {
-        String userId = (String) request.getAttribute("userId");
-        return ResponseEntity.ok(followService.toggleFollow(Long.valueOf(userId), followingId));
+    public ResponseEntity<String> followUser(@RequestHeader("Authorization") String token,
+                                             @PathVariable Long followingId) {
+        Long userId = JwtUtil.parseUserIdFromToken(token);
+        return ResponseEntity.ok(followService.toggleFollow(userId, followingId));
     }
 
 }

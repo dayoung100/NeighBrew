@@ -1,4 +1,4 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.evaluation;
 
 import com.ssafy.backend.dto.user.UserResponseDto;
 import com.ssafy.backend.entity.Evaluation;
