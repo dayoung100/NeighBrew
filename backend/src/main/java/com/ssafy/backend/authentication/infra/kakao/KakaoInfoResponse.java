@@ -7,22 +7,38 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true) // 필요한 데이터만 가져옴
 public class KakaoInfoResponse implements OAuthInfoResponse {
-
     @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
+
+    @Override
+    public String getEmail() {
+        return kakaoAccount.email;
+    }
+
+    @Override
+    public String getNickname() {
+        return kakaoAccount.email;
+    }
+
+    @Override
+    public String getName() {
+        return kakaoAccount.profile.nickname;
+    }
+
+    @Override
+    public OAuthProvider getOAuthProvider() {
+        return OAuthProvider.KAKAO;
+    }
 
     @Getter
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class KakaoAccount {
-        private  KakaoProfile profile;
-        private  String email;
+        private final KakaoProfile profile;
+        private final String email;
         private final String name;
-
 
         @JsonCreator
         public KakaoAccount(
@@ -46,26 +62,4 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
             this.nickname = nickname;
         }
     }
-
-    @Override
-    public String getEmail() {
-        return kakaoAccount.email;
-    }
-
-    @Override
-    public String getNickname() {
-        return kakaoAccount.email;
-    }
-
-    @Override
-    public String getName() {
-        return kakaoAccount.profile.nickname;
-    }
-
-    @Override
-    public OAuthProvider getOAuthProvider() {
-        return OAuthProvider.KAKAO;
-    }
-
-
 }

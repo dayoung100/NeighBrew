@@ -1,20 +1,18 @@
 package com.ssafy.backend.service;
 
-import com.ssafy.backend.entity.Push;
 import com.ssafy.backend.Enum.PushType;
+import com.ssafy.backend.entity.Push;
 import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.EmitterRepositoryImpl;
 import com.ssafy.backend.repository.PushRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +27,8 @@ public class PushService {
     private final PushRepository pushRepository;
     private final UserRepository userRepository;
 
-
     public SseEmitter connect(Long userId, String lastEventId) {
-        log.info("연결 : {}",lastEventId);
+        log.info("연결 : {}", lastEventId);
         //새로운 Ssemitter를 만든 후, userId에 맞는 emitter 저장
         String sseEmitterId = makeTimeIncludeId(userId);
         SseEmitter sseEmitter = emitterRepository.save(sseEmitterId, new SseEmitter(DEFAULT_TIMEOUT));
@@ -42,7 +39,7 @@ public class PushService {
 
         // 503 에러가 발생하지 않도록 더미 데이터를 보내 연결을 유지한다.
         String eventId = makeTimeIncludeId(userId); //개별 알림 이벤트를 식별하기 위한 값
-        sendEventToClient(sseEmitter, eventId, sseEmitterId, "sse","EventStream Created. [userId= " + userId + "]");
+        sendEventToClient(sseEmitter, eventId, sseEmitterId, "sse", "EventStream Created. [userId= " + userId + "]");
 
         //클라이언트가 미수신한 Event목록이 있을 경우 전송해 event 유실을 예방한다.
         if (!lastEventId.isEmpty()) {
@@ -75,10 +72,10 @@ public class PushService {
             //             .name(eventName) //이벤트 이름 지정
             //             .data(data)); //이벤트로 전송할 데이터 설정
             // }else{
-                sseEmmitter.send(SseEmitter.event()
-                        .id(eventId) //이벤트 고유 식별자
-                        //.name(eventName) //이벤트 이름 지정
-                        .data(data)); //이벤트로 전송할 데이터 설정
+            sseEmmitter.send(SseEmitter.event()
+                    .id(eventId) //이벤트 고유 식별자
+                    //.name(eventName) //이벤트 이름 지정
+                    .data(data)); //이벤트로 전송할 데이터 설정
             // }
 
         } catch (IOException e) {
@@ -90,7 +87,7 @@ public class PushService {
     //알림을 생성하고 지정된 수신자에게 알림을 전송하는 기능 수행
     public void send(User sender, User receiver, PushType pushType, String content, String url) {
         //Push 객체를 생성 및 저장
-        try{
+        try {
             Push push = pushRepository.save(createPush(sender, receiver, pushType, content, url));
             Long receiverId = receiver.getUserId();
             String eventId = makeTimeIncludeId(receiverId);
@@ -99,12 +96,12 @@ public class PushService {
             Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(String.valueOf(receiverId));
             sseEmitters.forEach(
                     (key, emitter) -> {
-                        log.info("전송 key {} ", key );
+                        log.info("전송 key {} ", key);
                         emitterRepository.saveEventCache(key, push.toDto());//데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
                         sendEventToClient(emitter, eventId, key, pushType.name(), push.toDto());//데이터를 receiver에게 전송
                     }
             );
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -126,7 +123,7 @@ public class PushService {
     }
 
     @Transactional
-    public void deletePushLog(PushType pushType, Long senderId, Long receiverId){
+    public void deletePushLog(PushType pushType, Long senderId, Long receiverId) {
         pushRepository.deleteByPushTypeAndSender_UserIdAndReceiver_UserId(pushType, senderId, receiverId);
     }
 

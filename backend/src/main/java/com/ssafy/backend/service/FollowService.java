@@ -8,7 +8,6 @@ import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.PushRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
@@ -29,13 +27,6 @@ public class FollowService {
 
         return followRepository.findByFollowing_UserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."))
-                .stream()
-                .map(FollowResponseDto::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    public List<FollowResponseDto> findByFollower(Long userId) {
-        return followRepository.findByFollower_UserId(userId).orElseThrow(() -> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."))
                 .stream()
                 .map(FollowResponseDto::fromEntity)
                 .collect(Collectors.toList());

@@ -146,7 +146,7 @@ const Img = styled.img`
 const UserDiv = styled.div`
   display: flex;
   margin-bottom: 1rem;
-  font-size: 18px;
+  font-size: 16px;
   @font-face {
     font-family: "SUITE-Regular";
     src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2")
@@ -154,8 +154,18 @@ const UserDiv = styled.div`
     font-style: normal;
   }
   font-family: "SUITE-Regular";
-  width: 75%;
   align-items: center;
+  width: 75%;
+  /* white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; */
+`;
+const UserNameP = styled.p`
+  width: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
 `;
 
 const InputDiv = styled.div`
@@ -254,7 +264,7 @@ const ChatRoom = () => {
 
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
-    callApi("GET", `api/chatMessage/${id}/messages`)
+    callApi("GET", `api/chatMessage/${id}/${localStorage.getItem("myId")}/messages`)
       .then(res => {
         // console.log(res.data);
         setChatRoomName(res.data[0].chatRoom.chatRoomName);
@@ -265,7 +275,7 @@ const ChatRoom = () => {
         console.error(e);
       });
 
-    callApi("GET", `/api/chatroom/${id}/users`)
+    callApi("GET", `/api/chatroom/${id}/${localStorage.getItem("myId")}/users`)
       .then(res => {
         setUsers(res.data);
       })
@@ -360,7 +370,7 @@ const ChatRoom = () => {
         >
           참여자 목록
         </p>
-        <div>
+        <div style={{ width: "80%" }}>
           {users.map((user, i) => {
             return (
               <UserDiv
@@ -372,7 +382,9 @@ const ChatRoom = () => {
                 <ImgDiv>
                   <Img src={user.profile == "no image" ? defaultImg : user.profile}></Img>
                 </ImgDiv>
-                <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
+                <UserNameP>
+                  {user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}
+                </UserNameP>
               </UserDiv>
             );
           })}

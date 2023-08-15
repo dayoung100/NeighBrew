@@ -4,6 +4,7 @@ import com.ssafy.backend.dto.drinkReview.DrinkReviewRequestDto;
 import com.ssafy.backend.dto.drinkReview.DrinkReviewResponseDto;
 import com.ssafy.backend.dto.drinkReview.DrinkReviewUpdateDto;
 import com.ssafy.backend.service.DrinkReviewService;
+import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -47,11 +47,12 @@ public class DrinkReviewController {
     }
 
     @PostMapping("")
-    public ResponseEntity<DrinkReviewResponseDto> createDrinkReview(HttpServletRequest request,
+    public ResponseEntity<DrinkReviewResponseDto> createDrinkReview(@RequestHeader("Authorization") String token,
                                                                     @ModelAttribute DrinkReviewRequestDto drinkReviewRequestDto,
                                                                     @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws IOException {
-        String userId = (String) request.getAttribute("userId");
-        drinkReviewRequestDto.setUserId(Long.valueOf(userId));
+
+        Long userId = JwtUtil.parseUserIdFromToken(token);
+        drinkReviewRequestDto.setUserId(userId);
 
         return ResponseEntity.ok().body(drinkReviewService.createDrinkReview(drinkReviewRequestDto, multipartFile));
     }
@@ -60,15 +61,25 @@ public class DrinkReviewController {
     public ResponseEntity<DrinkReviewResponseDto> updateDrinkReview(@PathVariable Long drinkReviewId,
                                                                     @ModelAttribute DrinkReviewUpdateDto drinkReviewUpdateDto,
                                                                     @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile,
-                                                                    @PathVariable Long userId) throws IOException {
-        return ResponseEntity.ok().body(drinkReviewService.updateDrinkReview(drinkReviewId, drinkReviewUpdateDto, multipartFile, Long.valueOf(userId)));
+                                                                    @PathVariable Long userId,
+                                                                    @RequestHeader("Authorization") String token) throws IOException {
+        JwtUtil.validateToken(token, userId);
+        checkCapacityFile(multipartFile);
+        return ResponseEntity.ok().body(drinkReviewService.updateDrinkReview(drinkReviewId, drinkReviewUpdateDto, multipartFile.orElse(null), userId));
     }
 
+    private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
+        if (multipartFile.isPresent()) {
+            if (multipartFile.get().getSize() > 1024 * 1024 * 20)
+                throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
+        }
+    }
 
     @DeleteMapping("/{drinkReviewId}")
-    public ResponseEntity<String> deleteDrinkReview(HttpServletRequest request, @PathVariable Long drinkReviewId) throws IllegalArgumentException {
-        String userId = (String) request.getAttribute("userId");
-        drinkReviewService.deleteDrinkReview(drinkReviewId, Long.valueOf(userId));
+    public ResponseEntity<String> deleteDrinkReview(@RequestHeader("Authorization") String token,
+                                                    @PathVariable Long drinkReviewId) throws IllegalArgumentException {
+        Long userId = JwtUtil.parseUserIdFromToken(token);
+        drinkReviewService.deleteDrinkReview(drinkReviewId, userId);
         return ResponseEntity.ok("삭제 완료");
     }
 }

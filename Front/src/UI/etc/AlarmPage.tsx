@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import AlarmItem from "../components/AlarmItem";
 import Footer from "../footer/Footer";
 import { useNavigate } from "react-router-dom";
+import { AlarmLog } from "../../Type/types";
 
 const NavbarDiv = styled.div`
   display: flex;
@@ -15,22 +16,16 @@ const NavbarDiv = styled.div`
 const alarmPage = () => {
   const BackIcon = backIcon();
   const navigate = useNavigate();
-
+  const myId = localStorage.getItem("myId");
   // 현재 더미 텍스트로 이루어져 있습니다. api가 있으면 비어두면 될 것 같습니다.
-  const [alarmList, setAlarmList] = useState([
-    "이현욱님이 당신을 팔로우했습니다. 프로필을 확인해보세요 ",
-    "최준서의 LightWeight 소맥파티 채팅방에 새로운 메세지가 있습니다.",
-    "여현빈의 꽐라 모임의 참여가 승인되었습니다. 채팅방을 확인해보세요.",
-    "인영교의 취중코딩 모임에 새로운 참가 신청이 도착했습니다.",
-    "이다영 님이 새로운 모임을 주최하고있습니다. 프로필을 확인해보세요.",
-  ]);
+  const [alarmList, setAlarmList] = useState<AlarmLog[]>([]);
 
   // 비동기 통신으로 알림을 불러옵니다. api가 있을 때 까지 주석처리.
-  // useEffect(() => {
-  //   callApi("get", "alarmListUrl")
-  //     .then(res => setAlarmList(res.data.content))
-  //     .catch(err => console.error(err));
-  // }, []);
+  useEffect(() => {
+    callApi("get", `api/push/${myId}`)
+      .then(res => setAlarmList(res.data))
+      .catch(err => console.error(err));
+  }, [alarmList]);
 
   const toBackHandler = () => {
     navigate(-1);

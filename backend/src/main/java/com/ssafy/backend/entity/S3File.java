@@ -1,6 +1,5 @@
 package com.ssafy.backend.entity;
 
-
 import lombok.*;
 
 import javax.persistence.*;

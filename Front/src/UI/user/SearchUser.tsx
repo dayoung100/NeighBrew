@@ -23,7 +23,7 @@ const SearchUser = () => {
   }, [parent]);
 
   const search = (name: string) => {
-    callApi("get", `api/user/search/${name}`).then(res => {
+    callApi("get", `api/user/search/${name}`).then((res) => {
       setUsers(res.data);
     });
   };
@@ -41,7 +41,13 @@ const SearchUser = () => {
           >
             {ArrowLeftIcon}
           </div>
-          <span style={{ marginRight: "0rem", fontFamily: "JejuGothic", fontSize: "20px" }}>
+          <span
+            style={{
+              marginRight: "0rem",
+              fontFamily: "JejuGothic",
+              fontSize: "20px",
+            }}
+          >
             유저 검색
           </span>
           <div></div>
@@ -49,7 +55,11 @@ const SearchUser = () => {
         </ChatNav>
       </header>
       <div style={{ width: "90%", margin: "0 auto" }}>
-        <SearchBox placeholder="유저 닉네임 검색" changeFunc={search} />
+        <SearchBox
+          placeholder="유저 닉네임 검색"
+          changeFunc={search}
+          width={90}
+        />
       </div>
       <div ref={parent}>
         {users.map((user, idx) => {
@@ -65,10 +75,18 @@ const SearchUser = () => {
                 <Img src={user.profile == "no image" ? temgif : user.profile} />
               </ImgDiv>
               <div style={{ textAlign: "left" }}>
-                <p style={{ fontFamily: "JejuGothic", fontSize: "16px", marginBottom: "0.5rem" }}>
+                <p
+                  style={{
+                    fontFamily: "JejuGothic",
+                    fontSize: "16px",
+                    marginBottom: "0.5rem",
+                  }}
+                >
                   {user.nickname}
                 </p>
-                <p style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>{user.intro}</p>
+                <p style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>
+                  {user.intro}
+                </p>
               </div>
             </User>
           );

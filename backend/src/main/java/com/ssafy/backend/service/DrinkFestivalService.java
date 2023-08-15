@@ -1,6 +1,6 @@
 package com.ssafy.backend.service;
 
-import com.ssafy.backend.entity.Festival;
+import com.ssafy.backend.entity.DrinkFestival;
 import com.ssafy.backend.repository.DrinkFestivalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import java.util.List;
 public class DrinkFestivalService {
     private final DrinkFestivalRepository drinkFestivalRepository;
 
-    public List<Festival> getAllFestival() {
+    public List<DrinkFestival> getAllFestival() {
         return drinkFestivalRepository.findAll();
     }
 }

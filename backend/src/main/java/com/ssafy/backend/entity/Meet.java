@@ -2,8 +2,11 @@ package com.ssafy.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.backend.Enum.MeetStatus;
-import com.ssafy.backend.dto.meet.MeetDto;
-import com.ssafy.backend.dto.meet.MeetSearchDto;
+import com.ssafy.backend.dto.code.GugunResponseDto;
+import com.ssafy.backend.dto.code.SidoResponseDto;
+import com.ssafy.backend.dto.drink.DrinkResponseDto;
+import com.ssafy.backend.dto.meet.MeetRequestDto;
+import com.ssafy.backend.dto.meet.MeetResponseDto;
 import com.ssafy.backend.dto.user.UserResponseDto;
 import lombok.*;
 
@@ -12,12 +15,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class Meet {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter
     @GeneratedValue
     private Long meetId;
 
@@ -29,10 +30,12 @@ public class Meet {
 
     @ManyToOne
     @JoinColumn(name = "hostId", referencedColumnName = "userId")
+    @Setter
     private User host;
 
     //현재 참여 인원
     @Column(nullable = false, columnDefinition = "int default 1")
+    @Setter
     private Integer nowParticipants;
 
     //최대 참여 인원
@@ -44,8 +47,8 @@ public class Meet {
 
     @ManyToOne
     @JoinColumn(name = "tagId")
+    @Setter
     private Tag tag;
-
 
     @Column(nullable = false)
     private Integer sidoCode;
@@ -59,6 +62,7 @@ public class Meet {
     //술ID
     @OneToOne
     @JoinColumn(name = "drinkId")
+    @Setter
     private Drink drink;
 
     //미팅 이미지 url
@@ -74,9 +78,11 @@ public class Meet {
     // 채팅과 모임 간의 양방향 일대일 연관관계 - 연관관계 주인은 chatRoom
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
+    @Setter
     private ChatRoom chatRoom;
 
     @Enumerated(EnumType.STRING)
+    @Setter
     @JsonIgnore
     private MeetStatus meetStatus;
 
@@ -118,51 +124,51 @@ public class Meet {
         this.imgSrc = meet.getImgSrc();
     }
 
-    public MeetDto toDto() {
-        return MeetDto.builder()
-                .meetId(this.meetId)
-                .meetName(this.meetName)
-                .description(this.description)
-                .hostId(this.host.getUserId())
+    public MeetRequestDto toDto() {
+        return MeetRequestDto.builder()
+                .meetId(meetId)
+                .meetName(meetName)
+                .description(description)
+                .hostId(host.getUserId())
                 .nowParticipants(nowParticipants)
                 .maxParticipants(maxParticipants)
-                .meetDate(this.meetDate)
-                .tagId(this.tag.getTagId())
-                .sidoCode(this.sidoCode)
-                .gugunCode(this.gugunCode)
-                .minAge(this.minAge)
-                .maxAge(this.maxAge)
-                .minLiverPoint(this.minLiverPoint)
-                .drink(this.drink)
-                .imgSrc(this.imgSrc)
-                .chatRoomId(this.chatRoom.getChatRoomId())
+                .meetDate(meetDate)
+                .tagId(tag.getTagId())
+                .sidoCode(sidoCode)
+                .gugunCode(gugunCode)
+                .minAge(minAge)
+                .maxAge(maxAge)
+                .minLiverPoint(minLiverPoint)
+                .drink(drink)
+                .imgSrc(imgSrc)
+                .chatRoomId(chatRoom.getChatRoomId())
                 .build();
     }
 
-    public MeetSearchDto toSearchDto(Sido sido, Gugun gugun) {
-        return MeetSearchDto.builder()
-                .meetId(this.meetId)
-                .meetName(this.meetName)
-                .description(this.description)
-                .host(UserResponseDto.fromEntity(this.host))
+    public MeetResponseDto toMeetResponseDto(Sido sido, Gugun gugun) {
+        return MeetResponseDto.builder()
+                .meetId(meetId)
+                .meetName(meetName)
+                .description(description)
+                .host(UserResponseDto.fromEntity(host))
                 .nowParticipants(nowParticipants)
                 .maxParticipants(maxParticipants)
-                .meetDate(this.meetDate)
-                .tagId(this.tag.getTagId())
-                .sido(sido)
-                .gugun(gugun)
-                .minAge(this.minAge)
-                .maxAge(this.maxAge)
-                .minLiverPoint(this.minLiverPoint)
-                .drink(this.drink)
-                .imgSrc(this.imgSrc)
-                .chatRoomId(this.chatRoom.getChatRoomId())
+                .meetDate(meetDate)
+                .tagId(tag.getTagId())
+                .sido(SidoResponseDto.fromEntity(sido))
+                .gugun(GugunResponseDto.fromEntity(gugun))
+                .minAge(minAge)
+                .maxAge(maxAge)
+                .minLiverPoint(minLiverPoint)
+                .drink(DrinkResponseDto.fromEntity(drink))
+                .imgSrc(imgSrc)
+                .chatRoomId(chatRoom.getChatRoomId())
                 .build();
     }
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 }

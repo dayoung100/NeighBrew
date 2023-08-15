@@ -11,7 +11,8 @@ import NavbarSimple from "../navbar/NavbarSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
 import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
-import { initialMeet, WhiteModal } from "../common";
+import { initialMeet } from "../common";
+import { WhiteModal } from "../../style/common";
 import { Meeting } from "../../Type/types";
 
 const BigBtn = styled.div`
@@ -58,7 +59,7 @@ const MeetingManageMain = () => {
   };
   //모임 삭제 후 메인으로 이동
   const GoMeetMainHandler = () => {
-    navigate(`/meet`, { replace: true });
+    navigate(-2);
   };
 
   useEffect(() => {

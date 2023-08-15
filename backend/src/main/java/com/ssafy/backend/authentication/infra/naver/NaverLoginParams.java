@@ -1,6 +1,5 @@
 package com.ssafy.backend.authentication.infra.naver;
 
-
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.Getter;

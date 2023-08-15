@@ -1,6 +1,5 @@
 package com.ssafy.backend.authentication.infra.google;
 
-
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.Getter;
@@ -33,8 +32,4 @@ public class GoogleLoginParams implements OAuthLoginParams {
     public void setCode(String code) {
         this.code = code;
     }
-
-
-
-
 }
