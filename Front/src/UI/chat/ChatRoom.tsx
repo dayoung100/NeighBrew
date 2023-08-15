@@ -100,7 +100,8 @@ const ChatNav = styled.div`
 `;
 
 const RightModal = styled.div<{ ismodal: boolean }>`
-  transform: ${props => (props.ismodal ? "translateX(16%)" : "translateX(100%)")};
+  transform: ${(props) =>
+    props.ismodal ? "translateX(16%)" : "translateX(100%)"};
   position: fixed;
   width: 95%;
   overflow-x: scroll;
@@ -178,7 +179,7 @@ const Input = styled.input`
 `;
 
 const BackDrop = styled.div<{ ismodal: boolean }>`
-  display: ${props => (props.ismodal ? "block" : "none")};
+  display: ${(props) => (props.ismodal ? "block" : "none")};
   transition: all 1s;
   width: 100%;
   max-width: 430px;
@@ -211,7 +212,7 @@ const ChatRoom = () => {
 
     client.current.connect({}, () => {
       // 웹소켓 이벤트 핸들러 설정
-      client.current!.subscribe(`/pub/room/${id}`, res => {
+      client.current!.subscribe(`/pub/room/${id}`, (res) => {
         const receivedMessage = JSON.parse(res.body);
         setMessages((prevMessages: any) => [
           ...prevMessages,
@@ -254,22 +255,25 @@ const ChatRoom = () => {
 
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
-    callApi("GET", `api/chatMessage/${id}/messages`)
-      .then(res => {
+    callApi(
+      "GET",
+      `api/chatMessage/${id}/${localStorage.getItem("myId")}/messages`
+    )
+      .then((res) => {
         // console.log(res.data);
         setChatRoomName(res.data[0].chatRoom.chatRoomName);
         setChatRoomId(res.data[0].chatRoom.chatRoomId);
         setMessages(res.data);
       })
-      .catch(e => {
+      .catch((e) => {
         console.error(e);
       });
 
-    callApi("GET", `/api/chatroom/${id}/users`)
-      .then(res => {
+    callApi("GET", `/api/chatroom/${id}/${localStorage.getItem("myId")}/users`)
+      .then((res) => {
         setUsers(res.data);
       })
-      .catch(e => {
+      .catch((e) => {
         console.error(e);
       });
   }, []);
@@ -304,7 +308,11 @@ const ChatRoom = () => {
   };
   const leaveRoom = () => {
     navigate("/chatList");
-    client.current.send(`/sub/room/${chatRoomId}/leave`, {}, JSON.stringify({ userId }));
+    client.current.send(
+      `/sub/room/${chatRoomId}/leave`,
+      {},
+      JSON.stringify({ userId })
+    );
   };
   return (
     <div ref={rapperDiv}>
@@ -370,9 +378,15 @@ const ChatRoom = () => {
                 }}
               >
                 <ImgDiv>
-                  <Img src={user.profile == "no image" ? defaultImg : user.profile}></Img>
+                  <Img
+                    src={user.profile == "no image" ? defaultImg : user.profile}
+                  ></Img>
                 </ImgDiv>
-                <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
+                <p>
+                  {user.nickname.includes("@")
+                    ? user.nickname.split("@")[0]
+                    : user.nickname}
+                </p>
               </UserDiv>
             );
           })}
@@ -395,7 +409,8 @@ const ChatRoom = () => {
             <div
               style={{
                 display: "flex",
-                alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
+                alignItems:
+                  message.user?.userId == userId ? "flex-end" : "flex-start",
                 flexDirection: "column",
               }}
               key={i}
@@ -450,7 +465,10 @@ const ChatRoom = () => {
                 <SendImg src={sendImage} alt="" />
               </div>
             ) : (
-              <div onClick={sendMessageHandler} style={{ visibility: "hidden" }}>
+              <div
+                onClick={sendMessageHandler}
+                style={{ visibility: "hidden" }}
+              >
                 {/*<SendIcon></SendIcon>*/}
                 <SendImg src={sendImage} alt="" />
               </div>
@@ -466,7 +484,13 @@ export default ChatRoom;
 
 const SendIcon = () => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="25" viewBox="0 0 30 27" fill="none">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="28"
+      height="25"
+      viewBox="0 0 30 27"
+      fill="none"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
