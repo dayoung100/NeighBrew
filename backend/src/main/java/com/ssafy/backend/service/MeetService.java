@@ -222,7 +222,7 @@ public class MeetService {
             meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
         }else{//업로드 이미지 없음
             //기본 이미지로 설정하는 것이 아니면 기존 이미지 유지
-            if(!meetDto.getImgSrc().equals("no image")) meetDto.setImgSrc(prevMeetImgSrc);
+            if(meetDto.getImgSrc() == null) meetDto.setImgSrc(prevMeetImgSrc);
         }
 
         //기존 데이터를 가져온 뒤 업데이트 한다.
