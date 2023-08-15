@@ -90,6 +90,7 @@ public class MeetController {
         }
     }
 
+
     //모임 삭제하기
     @DeleteMapping("/delete/{meetId}")
     public ResponseEntity<?> deleteMeet(@PathVariable Long meetId,
