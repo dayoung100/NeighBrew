@@ -99,15 +99,15 @@ public class DrinkReviewService {
             if(!drinkReview.getImg().equals("no image")) s3Service.deleteImg(drinkReview.getImg());
 
             //새로운 이미지로 업로드
-            request.setImg(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
+            request.setImgSrc(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
         }else{//업로드 이미지 없음
             //기본 이미지로 설정하는 것이 아니면 기존 이미지 유지
-            if(request.getImg() == null) request.setImg(drinkReview.getImg());
+            if(request.getImgSrc() == null) request.setImgSrc(drinkReview.getImg());
         }
         log.info("{}",request);
 
         drinkReview.updateContent(request.getContent());
-        drinkReview.updateImg(request.getImg());
+        drinkReview.updateImg(request.getImgSrc());
 
         drinkReviewRepository.save(drinkReview);
         return DrinkReviewResponseDto.fromEntity(drinkReview);
