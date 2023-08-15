@@ -15,6 +15,8 @@ function SlideComponent() {
     slidesToScroll: 1,
     adaptiveHeight: false,
     arrows: false,
+    autoplay: true,
+    autoplaySpeed: 5000,
   };
   const [bannerList, setBannerList] = useState<DrinkFestival[]>([]);
   useEffect(() => {
