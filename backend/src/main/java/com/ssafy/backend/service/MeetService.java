@@ -198,28 +198,48 @@ public class MeetService {
         return createdMeet;
     }
 
-    public void updateMeet(MeetDto meetDto, Long userId, Long meetId, Long drinkId, MultipartFile multipartFile) throws
-            IOException {
+    public void updateMeet(MeetDto meetDto,
+                           Long userId,
+                           Long meetId,
+                           Long drinkId,
+                           MultipartFile multipartFile) throws IOException {
         valdateMeet(meetDto, drinkId);
-        //기존 Meet를 가져온다
+
+        //기존 Meet imgSrc를 가져온다
         String prevMeetImgSrc = meetRepository.findImgSrcByMeetId(meetId);
+
         User host = userRepository.findByUserId(userId).orElseThrow(
                 () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다."));
 
-        if (multipartFile != null) {// FormData에 ("image", "?") 있을 때
-            boolean uploadImgExist = !Objects.equals(multipartFile.getOriginalFilename(), "");
+        //업로드 파일이 존재하는지
+        boolean uploadImgExist = !multipartFile.isEmpty();
 
-            if (uploadImgExist) {
-                s3Service.deleteImg(prevMeetImgSrc);
+        //이미지 업로드 유무에 따른 모임 이미지 변경
+        if(meetDto.getImgSrc() == null){
+            //이미지가 존재하므로 업로드된 이미지 삭제 후 새 이미지로 변경
+            if(uploadImgExist) {
+                //imgSrc가 s3에 url형태면 제거
+                if(!prevMeetImgSrc.equals("no image")) s3Service.deleteImg(prevMeetImgSrc);
+
                 meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-            } else {
-                if (meetDto.getImgSrc() == null) meetDto.setImgSrc(prevMeetImgSrc);
-                else s3Service.deleteImg(prevMeetImgSrc);
+            }else{
+                meetDto.setImgSrc(prevMeetImgSrc);
             }
-
-        } else {
-            meetDto.setImgSrc(prevMeetImgSrc);
         }
+
+//        if (multipartFile != null) {// FormData에 ("image", "?")일 때
+//
+//            //업로드된 이미지 존재 +  S3에서 기존 이미지 제거 후 새롭게 업데이트 한다.
+//            if (uploadImgExist) {
+//                s3Service.deleteImg(prevMeetImgSrc);
+//                meetDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
+//            } else if(){
+//                if (meetDto.getImgSrc() == null) meetDto.setImgSrc(prevMeetImgSrc);
+//                else s3Service.deleteImg(prevMeetImgSrc);
+//            }
+//        } else {
+//            meetDto.setImgSrc(prevMeetImgSrc);
+//        }
 
         //기존 데이터를 가져온 뒤 업데이트 한다.
         Meet updateMeet = meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
@@ -300,7 +320,6 @@ public class MeetService {
         if (applyUserStatus != Status.APPLY) throw new IllegalArgumentException("가입신청중인 유저만 모임 신청을 취소할 수 있습니다.");
 
         //신청 취소할 경우 참여자 수 -1로 변경
-        meet.setNowParticipants(meet.getNowParticipants() - 1);
         meetRepository.save(meet);
 
         //모임-유저테이블에서 해당 정보 삭제

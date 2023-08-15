@@ -66,7 +66,9 @@ public class MeetController {
                                         MeetDto meetDto,
                                         Long drinkId,
                                         @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IOException {
+        log.info("meetDto : {}, multipart : {}",meetDto.toString(), multipartFile.get().isEmpty());
         checkCapacityFile(multipartFile);
+
         meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.orElse(null));
         return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
     }
