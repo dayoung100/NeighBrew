@@ -216,6 +216,13 @@ const BackDrop = styled.div<{ ismodal: boolean }>`
   z-index: 15;
   background-color: rgba(89, 88, 88, 0.11);
 `;
+const UserNameP = styled.p`
+  width: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+`;
 
 const DirectChat = () => {
   const { senderId, receiverId } = useParams();
@@ -408,7 +415,9 @@ const DirectChat = () => {
                 <ImgDiv>
                   <Img src={user.profile == "no image" ? defaultImg : user.profile}></Img>
                 </ImgDiv>
-                <p>{user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}</p>
+                <UserNameP>
+                  {user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}
+                </UserNameP>
               </UserDiv>
             );
           })}
