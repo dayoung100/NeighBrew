@@ -1,6 +1,5 @@
 package com.ssafy.backend.authentication.application;
 
-
 import lombok.Getter;
 import lombok.Setter;
 

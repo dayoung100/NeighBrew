@@ -1,6 +1,5 @@
 package com.ssafy.backend.authentication.application;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
@@ -28,14 +27,12 @@ public class OAuthLoginService {
     private final UserRepository userRepository;
     private final RequestOAuthInfoService requestOAuthInfoService;
 
-
     public LoginResponse login(OAuthLoginParams params) throws JsonProcessingException, UnsupportedEncodingException {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
 
         // 받아온 정보를 기반으로  userId를 추출
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValueAsString(oAuthInfoResponse);
-
 
         Long userId = findOrCreateUser(oAuthInfoResponse);
         // 그 아이디를 기반으로 token 생성
@@ -58,7 +55,6 @@ public class OAuthLoginService {
     private Long newUser(OAuthInfoResponse oAuthInfoResponse) {
         if (oAuthInfoResponse.getEmail() == null) {
             String uuid = String.valueOf(UUID.randomUUID()).substring(0, 7);
-
 
             User user = User.builder()
                     .email(oAuthInfoResponse.getName())

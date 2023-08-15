@@ -51,7 +51,6 @@ public class DrinkController {
         return ResponseEntity.ok(drinkResponseDtos);
     }
 
-
     // 술 추가
     @PostMapping()
     public ResponseEntity<DrinkResponseDto> save(

@@ -27,7 +27,6 @@ public class PushService {
     private final PushRepository pushRepository;
     private final UserRepository userRepository;
 
-
     public SseEmitter connect(Long userId, String lastEventId) {
         log.info("연결 : {}", lastEventId);
         //새로운 Ssemitter를 만든 후, userId에 맞는 emitter 저장

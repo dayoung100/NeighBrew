@@ -1,6 +1,5 @@
 package com.ssafy.backend.authentication.application;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.backend.authentication.infra.google.GoogleLoginParams;
 import com.ssafy.backend.authentication.infra.kakao.KakaoLoginParams;
@@ -35,12 +34,10 @@ public class AuthController {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
 
-
     @PostMapping("/google")
     public ResponseEntity<?> loginGoogle(@RequestBody GoogleLoginParams params) throws JsonProcessingException, UnsupportedEncodingException {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
-
 
     @GetMapping("/login/kakao")
     public ResponseEntity<Map<String, String>> loginRequset(KakaoLoginParams params) {
@@ -55,7 +52,6 @@ public class AuthController {
         response.put("URL", oAuthLoginService.redirectApiUrl(params));
         return ResponseEntity.ok(response);
     }
-
 
     @GetMapping("/login/google")
     public ResponseEntity<Map<String, String>> loginRequsetResponse(GoogleLoginParams params) {

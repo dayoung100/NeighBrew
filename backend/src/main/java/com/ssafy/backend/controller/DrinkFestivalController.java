@@ -1,6 +1,5 @@
 package com.ssafy.backend.controller;
 
-
 import com.ssafy.backend.service.DrinkFestivalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

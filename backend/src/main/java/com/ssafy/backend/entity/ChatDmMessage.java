@@ -37,7 +37,6 @@ public class ChatDmMessage {
         this.createdAt = createdAt;
     }
 
-
     @PrePersist
     public void createdAt() {
         this.createdAt = LocalDateTime.now();

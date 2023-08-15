@@ -47,7 +47,6 @@ public class MeetService {
     private final ChatMessageService chatMessageService;
     private final ModelMapper modelMapper;
 
-
     public Page<MeetResponseDto> findMeetsByTagId(Long tagId, Pageable pageable) {
         validateTagId(tagId);
         return tagId == 0L ? findAll(pageable) : findByTagId(tagId, pageable);

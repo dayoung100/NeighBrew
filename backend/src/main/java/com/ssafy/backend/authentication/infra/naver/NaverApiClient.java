@@ -1,6 +1,5 @@
 package com.ssafy.backend.authentication.infra.naver;
 
-
 import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
@@ -52,11 +51,9 @@ public class NaverApiClient implements OAuthApiClient {
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
-
         NaverTokens response = restTemplate.postForObject(url, request, NaverTokens.class);
 
         assert response != null;
-
 
         return response.getAccessToken();
     }
@@ -72,7 +69,6 @@ public class NaverApiClient implements OAuthApiClient {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
-
 
         return restTemplate.postForObject(url, request, NaverInfoResponse.class);
     }

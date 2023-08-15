@@ -120,7 +120,6 @@ public class DrinkService {
                 .collect(Collectors.toList());
     }
 
-
     public List<DrinkResponseDto> getRandomMDPicks() {
         int numToPick = 3;
         List<Drink> randomDrinks = drinkRepository.findRandomDrinks(numToPick);

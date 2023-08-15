@@ -49,7 +49,6 @@ public class EvaluationService {
                 () -> new IllegalArgumentException(ERR_INVALID_MEET_ID)
         );
 
-
         if (totalUsers <= 1L) {
             throw new IllegalArgumentException(ERR_NO_USERS);
         }

@@ -30,7 +30,6 @@ public class Evaluation {
     @JoinColumn(name = "meetId")
     private Meet meet;
 
-
     @Enumerated(EnumType.STRING)
     private EvaluationType evaluationType;
 
@@ -40,7 +39,6 @@ public class Evaluation {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date createdAt;
-
 
     @Builder
     public Evaluation(Long evaluationId, User ratedUser, User reviewer, Meet meet, EvaluationType evaluationType, String description, Date createdAt) {

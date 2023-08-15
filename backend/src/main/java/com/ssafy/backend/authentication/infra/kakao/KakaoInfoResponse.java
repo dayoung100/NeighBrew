@@ -40,7 +40,6 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
         private final String email;
         private final String name;
 
-
         @JsonCreator
         public KakaoAccount(
                 @JsonProperty("profile") KakaoProfile profile,

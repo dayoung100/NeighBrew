@@ -1,6 +1,5 @@
 package com.ssafy.backend.authentication.infra.google;
 
-
 import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
@@ -61,7 +60,6 @@ public class GoogleApiClient implements OAuthApiClient {
 
         GoogleTokens response = restTemplate.postForObject(url, request, GoogleTokens.class);
 
-
         assert response != null;
 
         return response.getAccessToken();
@@ -95,5 +93,4 @@ public class GoogleApiClient implements OAuthApiClient {
         String responseType = "code";
         return authUrl + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType + "&scope=email profile";
     }
-
 }

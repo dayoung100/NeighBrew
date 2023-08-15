@@ -57,14 +57,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-
     public List<UserResponseDto> findAll() {
         return userRepository.findAll()
                 .stream()
                 .map(UserResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
-
 
     public List<UserResponseDto> searchUsers(String nickName) {
         return userRepository.findByNicknameContaining(nickName)

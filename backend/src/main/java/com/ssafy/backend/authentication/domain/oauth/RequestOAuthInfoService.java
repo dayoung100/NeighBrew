@@ -37,7 +37,6 @@ public class RequestOAuthInfoService {
         return client.requestOauthInfo(accessToken);
     }
 
-
     public String authApiUrl(OAuthLoginParams params) {
         OAuthApiClient client = clients.get(params.oAuthProvider());
         return client.authApiUrl(params);

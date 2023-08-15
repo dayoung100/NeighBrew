@@ -1,6 +1,5 @@
 package com.ssafy.backend.authentication.infra.kakao;
 
-
 import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
@@ -45,17 +44,13 @@ public class KakaoApiClient implements OAuthApiClient {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-
         MultiValueMap<String, String> body = params.makeBody();
         body.add("grant_type", GRANT_TYPE);
         body.add("client_id", clientId);
 
-
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
-
         KakaoTokens response = restTemplate.postForObject(url, request, KakaoTokens.class);
-
 
         assert response != null;
 

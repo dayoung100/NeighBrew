@@ -45,7 +45,6 @@ public class UserController {
         return ResponseEntity.ok().body(userService.findByUserId(userId));
     }
 
-
     // refresh token을 이용한 access token 재발급
     @PostMapping("/refresh-token")
     public ResponseEntity<Map<String, String>> refreshAccessToken(@RequestBody LoginResponse refreshToken) {

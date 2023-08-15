@@ -34,7 +34,6 @@ public interface MeetRepository extends JpaRepository<Meet, Long> {
     Page<Meet> findByTag_TagIdOrderByCreatedAtDesc(@Param("tagId") Long tagId,
                                                    Pageable pageable);
 
-
     // 현재시간보다 모임시간이 빠른경우
     @Query("SELECT m FROM Meet m WHERE m.meetDate < CURRENT_TIMESTAMP")
     List<Meet> findMeetByMeetDateBefore();

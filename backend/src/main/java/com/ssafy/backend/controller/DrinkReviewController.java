@@ -75,7 +75,6 @@ public class DrinkReviewController {
         }
     }
 
-
     @DeleteMapping("/{drinkReviewId}")
     public ResponseEntity<String> deleteDrinkReview(@RequestHeader("Authorization") String token,
                                                     @PathVariable Long drinkReviewId) throws IllegalArgumentException {

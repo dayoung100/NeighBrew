@@ -50,7 +50,6 @@ public class Meet {
     @Setter
     private Tag tag;
 
-
     @Column(nullable = false)
     private Integer sidoCode;
     @Column(nullable = false)

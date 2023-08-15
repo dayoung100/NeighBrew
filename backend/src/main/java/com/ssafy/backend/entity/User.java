@@ -36,9 +36,7 @@ public class User {
     @Column(nullable = false, length = 20)
     private String name;
 
-
     private LocalDate birth;
-
 
     @Lob
     private String intro;

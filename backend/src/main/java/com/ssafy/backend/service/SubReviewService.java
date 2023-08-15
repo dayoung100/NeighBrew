@@ -31,7 +31,6 @@ public class SubReviewService {
                 .collect(Collectors.toList());
     }
 
-
     // 리뷰의 댓글을 작성하는 API
     public SubReviewResponseDto writeSubReview(SubReviewRequestDto subReviewRequestDto, Long userId) {
         DrinkReview drinkReview = drinkReviewRepository.findById(subReviewRequestDto.getDrinkReviewId()).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));

@@ -22,7 +22,6 @@ public interface PushRepository extends JpaRepository<Push, Long> {
                                                             @Param("senderId") Long senderId,
                                                             @Param("receiverId") Long receiverId);
 
-
     //void deleteByPushTypeAndReceiver_UserIdAndSender_UserId(PushType pushType, Long receiverId, Long senderId);
 }
 

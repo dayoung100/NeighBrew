@@ -20,7 +20,6 @@ public class EvaluationResponseDto {
     private String evaluationType;
     private String description;
 
-
     public static EvaluationResponseDto fromEntity(Evaluation evaluation) {
         return EvaluationResponseDto.builder()
                 .evaluationId(evaluation.getEvaluationId())

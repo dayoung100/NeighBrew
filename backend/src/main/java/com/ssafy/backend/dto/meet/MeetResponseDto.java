@@ -32,7 +32,6 @@ public class MeetResponseDto {
     private String imgSrc;
     private Long chatRoomId;
 
-
     @Builder
     public MeetResponseDto(Long meetId, String meetName, String description, UserResponseDto host, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, SidoResponseDto sido, GugunResponseDto gugun, Integer minAge, Integer maxAge, Float minLiverPoint, DrinkResponseDto drink, String imgSrc, Long chatRoomId) {
         this.meetId = meetId;

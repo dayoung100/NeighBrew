@@ -1,6 +1,5 @@
 package com.ssafy.backend.service;
 
-
 import com.ssafy.backend.Enum.Status;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.MeetUser;
@@ -48,7 +47,6 @@ public class MeetUserService {
         findMeetUser.setStatus(status);
         meetUserRepository.save(findMeetUser);
     }
-
 
     @Transactional
     public void deleteExitUser(Long userId, Long meetId, Status status) {

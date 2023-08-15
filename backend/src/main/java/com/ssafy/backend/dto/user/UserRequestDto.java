@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,7 +27,6 @@ public class UserRequestDto {
     private Float liverPoint;
 
     private String profile;
-
 
     @Builder
     public UserRequestDto(User user) {

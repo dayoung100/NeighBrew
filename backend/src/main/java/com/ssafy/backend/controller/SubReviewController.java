@@ -24,7 +24,6 @@ public class SubReviewController {
         return ResponseEntity.ok().body(subReviewService.findByDrinkReviewId(reviewId));
     }
 
-
     // 리뷰의 댓글을 작성하는 API
     @PostMapping("/write")
     public ResponseEntity<SubReviewResponseDto> writeSubReview(@RequestBody SubReviewRequestDto subReviewRequestDto, @RequestHeader("Authorization") String token) {
