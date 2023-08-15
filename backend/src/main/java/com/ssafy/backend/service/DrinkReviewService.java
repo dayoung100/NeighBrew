@@ -81,7 +81,7 @@ public class DrinkReviewService {
         drinkReviewRepository.deleteById(drinkReviewId);
     }
 
-    public DrinkReviewResponseDto updateDrinkReview(Long drinkReviewId, DrinkReviewUpdateDto request, Optional<MultipartFile> multipartFile, Long userId) throws IOException {
+    public DrinkReviewResponseDto updateDrinkReview(Long drinkReviewId, DrinkReviewUpdateDto request, MultipartFile multipartFile, Long userId) throws IOException {
         if (!drinkReviewId.equals(request.getDrinkReviewId())) {
             throw new IllegalArgumentException("요청한 리뷰 ID와 전송된 데이터의 리뷰 ID가 일치하지 않습니다.");
         }
@@ -92,13 +92,22 @@ public class DrinkReviewService {
         if (!Objects.equals(drinkReview.getUser().getUserId(), userId)) {
             throw new IllegalArgumentException("해당 리뷰의 작성자가 아닙니다.");
         }
+        log.info("{}",request);
+        //업로드 이미지가 존재
+        if(multipartFile != null){
+            //모임 이미지가 기본 이미지가 아니면 S3에서 삭제
+            if(!drinkReview.getImg().equals("no image")) s3Service.deleteImg(drinkReview.getImg());
 
-        if (multipartFile.isPresent()) {
-            String uploadedImageUrl = s3Service.upload(UploadType.DRINKREVIEW, multipartFile.get());
-            drinkReview.updateImg(uploadedImageUrl);
+            //새로운 이미지로 업로드
+            request.setImg(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
+        }else{//업로드 이미지 없음
+            //기본 이미지로 설정하는 것이 아니면 기존 이미지 유지
+            if(request.getImg() == null) request.setImg(drinkReview.getImg());
         }
+        log.info("{}",request);
 
         drinkReview.updateContent(request.getContent());
+        drinkReview.updateImg(request.getImg());
 
         drinkReviewRepository.save(drinkReview);
         return DrinkReviewResponseDto.fromEntity(drinkReview);
