@@ -261,7 +261,7 @@ const MeetingDetail = () => {
   //참여 신청하기
   function applyMeet() {
     //간수치 제한 확인
-    if (meetDetailData.meet.minLiverPoint > userData.liverPoint) {
+    if ((meetDetailData.meet.minLiverPoint ?? 0) > userData.liverPoint) {
       setErrMsg("간수치 제한에 부합하지 않습니다.");
       setErrorModalOn(true);
       return;
