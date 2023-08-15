@@ -3,15 +3,13 @@ package com.ssafy.backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.entity.ChatMessage;
-import com.ssafy.backend.entity.ChatRoom;
-import com.ssafy.backend.entity.ChatRoomUser;
-import com.ssafy.backend.entity.User;
+import com.ssafy.backend.entity.*;
 import com.ssafy.backend.repository.ChatMessageRepository;
 import com.ssafy.backend.repository.ChatRoomRepository;
 import com.ssafy.backend.repository.ChatRoomUserRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -27,6 +25,7 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final UserRepository userRepository;
+    private final MongoTemplate mongoTemplate;
     private final ObjectMapper mapper = new ObjectMapper();
 
     public List<ChatRoom> findUserChatRooms(Long userId) {
@@ -60,6 +59,16 @@ public class ChatRoomService {
                 .user(user)
                 .createdAt(LocalDateTime.now())
                 .build());
+
+        Mongo mongo = Mongo.builder()
+                .chatRoomId(chatRoom.getChatRoomId())
+                .chatRoomName(chatRoom.getChatRoomName())
+                .message(jsonNode.get("message").asText())
+                .userId(user.getUserId())
+                .userNickname(user.getNickname())
+                .createdAt(String.valueOf(LocalDateTime.now()))
+                .build();
+        mongoTemplate.insert(mongo);
         Map<String, Object> map = mapper.convertValue(jsonNode, Map.class);
         map.put("userNickname", user.getNickname());
         return mapper.writeValueAsString(map);
