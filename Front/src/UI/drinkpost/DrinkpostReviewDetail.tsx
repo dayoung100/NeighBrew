@@ -11,6 +11,7 @@ import { commentIcon, likeIcon, deleteIcon, editIcon, moreIcon } from "./../../a
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
 import Modal from "react-modal";
+import { WhiteModal } from "../../style/common";
 
 import { autoAnimate } from "@formkit/auto-animate";
 
@@ -140,13 +141,13 @@ const DeleteModal = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "80%",
-    height: "20%",
+    height: "16%",
     padding: "0.5rem 1rem",
     borderRadius: "15px",
-    background: "var(--c-black)",
+    background: "#ffffff",
     textAlign: "center",
     fontFamily: "SeoulNamsan",
-    color: "white",
+    color: "#000000",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",
@@ -162,10 +163,10 @@ const ThreeDotModal = {
     width: "90%",
     height: "16%",
     borderRadius: "24px 24px 0px 0px",
-    backgroundColor: "var(--c-black)",
+    backgroundColor: "#ffffff",
     fontFamily: "SeoulNamsan",
     fontSize: "1.5rem",
-    color: "white",
+    color: "black",
     transition: "top 2s ease-in-out",
   },
   overlay: {
@@ -181,6 +182,7 @@ const DrinkpostReviewDetail = () => {
   const LikeIcon = likeIcon();
   const CommentIcon = commentIcon();
   const { drinkId, reviewId } = useParams();
+  const [followRejection, setFollowRejection] = useState(false);
   const [deleteModalOn, setDeleteModalOn] = useState(false);
   const [threeDotOn, setThreeDotOn] = useState(false);
   const [review, setReview] = useState<Review>();
@@ -252,6 +254,11 @@ const DrinkpostReviewDetail = () => {
   };
 
   const followHandler = () => {
+    if (review?.user.userId.toString() === localStorage.getItem("myId")) {
+      setFollowRejection(true);
+      setTimeout(() => setFollowRejection(false), 1000);
+      return;
+    }
     callApi("post", `api/follow/${review?.user.userId}`)
       .then(() => {
         followers();
@@ -329,14 +336,24 @@ const DrinkpostReviewDetail = () => {
               <b>{review?.user.nickname}</b>
             </div>
           </div>
-          <FollowDiv
+          {review?.user.userId.toString() !== localStorage.getItem("myId") ? (
+            <FollowDiv
+              style={{
+                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+              }}
+              onClick={followHandler}
+            >
+              {following === 0 ? "팔로우" : "언팔로우"}
+            </FollowDiv>
+          ) : null}
+          {/* <FollowDiv
             style={{
               backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
             }}
             onClick={followHandler}
           >
             {following === 0 ? "팔로우" : "언팔로우"}
-          </FollowDiv>
+          </FollowDiv> */}
         </Usercard>
         <ImageDiv
         // style={{
@@ -419,7 +436,7 @@ const DrinkpostReviewDetail = () => {
           style={{ display: "flex", alignItems: "center", height: "40%" }}
         >
           <div style={{ marginRight: "0.5rem" }}>{DeleteIcon}</div>
-          <div style={{color : "#eb0505"}}>삭제하기</div>
+          <div style={{ color: "#eb0505" }}>삭제하기</div>
         </div>
       </Modal>
       <Modal
@@ -429,14 +446,14 @@ const DrinkpostReviewDetail = () => {
         ariaHideApp={true}
       >
         <div>
-          <h3>후기를 삭제하시겠습니까?</h3>
+          <p style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>후기를 삭제하시겠습니까?</p>
         </div>
         <div
           style={{
             display: "flex",
             justifyContent: "space-around",
             height: "50%",
-            fontSize: "1.2rem",
+            fontSize: "1.4rem",
           }}
         >
           <div
