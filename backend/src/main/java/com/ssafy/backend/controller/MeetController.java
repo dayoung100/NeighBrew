@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,7 +35,7 @@ public class MeetController {
 
     // meetId에 해당하는 모임 상세 정보 조회
     @GetMapping("/{meetId}")
-    public ResponseEntity<?> getMeetById(@PathVariable Long meetId) throws NoSuchFieldException {
+    public ResponseEntity<?> getMeetById(@PathVariable Long meetId) {
         return ResponseEntity.ok(meetService.findMeetdetailByMeetId(meetId));
 
     }
@@ -71,13 +70,13 @@ public class MeetController {
                                         MeetDto meetDto,
                                         Long drinkId,
                                         @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IOException, NoSuchFieldException {
-        if (multipartFile.isPresent()) {
-            if (multipartFile.get().getSize() > 1024 * 1024 * 20)
-                return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
-            meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());
-        } else { //FormData에 ("image", "?") 없을 때
-            meetService.updateMeet(meetDto, userId, meetId, drinkId, null);
+
+        if (multipartFile.isPresent() && multipartFile.get().getSize() > 1024 * 1024 * 20) {
+            return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
         }
+
+        MultipartFile file = multipartFile.orElse(null);
+        meetService.updateMeet(meetDto, userId, meetId, drinkId, file);
 
         return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
     }
