@@ -2,8 +2,8 @@ package com.ssafy.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.backend.Enum.MeetStatus;
-import com.ssafy.backend.dto.meet.MeetDto;
-import com.ssafy.backend.dto.meet.MeetSearchDto;
+import com.ssafy.backend.dto.MeetDto;
+import com.ssafy.backend.dto.MeetSearchDto;
 import com.ssafy.backend.dto.user.UserResponseDto;
 import lombok.*;
 
