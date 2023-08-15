@@ -1,6 +1,6 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.dto.EvaluationDto;
+import com.ssafy.backend.dto.EvaluationRequestDto;
 import com.ssafy.backend.service.EvaluationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +22,8 @@ public class EvaluationController {
 
     //
     @PostMapping("/")
-    public ResponseEntity<?> goodEvaluation(@RequestBody EvaluationDto evaluationDto,  HttpServletRequest request) {
+    public ResponseEntity<?> goodEvaluation(@RequestBody EvaluationRequestDto evaluationRequestDto, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
-        return ResponseEntity.ok(evaluationService.calculateScoreByMeetId(evaluationDto, Long.valueOf(userId)));
+        return ResponseEntity.ok(evaluationService.calculateScoreByMeetId(evaluationRequestDto, Long.valueOf(userId)));
     }
-
-
 }

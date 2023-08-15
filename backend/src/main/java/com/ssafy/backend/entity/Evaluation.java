@@ -1,15 +1,17 @@
 package com.ssafy.backend.entity;
 
 import com.ssafy.backend.Enum.EvaluationType;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
 public class Evaluation {
 
     @Id
@@ -26,7 +28,7 @@ public class Evaluation {
 
     @ManyToOne
     @JoinColumn(name = "meetId")
-    private Meet meetId;
+    private Meet meet;
 
 
     @Enumerated(EnumType.STRING)
@@ -43,5 +45,16 @@ public class Evaluation {
     @PrePersist
     public void createdAt() {
         this.createdAt = new Date();
+    }
+
+    @Builder
+    public Evaluation(Long evaluationId, User ratedUser, User reviewer, Meet meet, EvaluationType evaluationType, String description, Date createdAt) {
+        this.evaluationId = evaluationId;
+        this.ratedUser = ratedUser;
+        this.reviewer = reviewer;
+        this.meet = meet;
+        this.evaluationType = evaluationType;
+        this.description = description;
+        this.createdAt = createdAt;
     }
 }
