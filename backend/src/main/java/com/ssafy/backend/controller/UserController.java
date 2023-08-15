@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
@@ -35,9 +34,9 @@ public class UserController {
     }
 
     @GetMapping("/myinfo")
-    public ResponseEntity<UserResponseDto> getMyInfo(HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        return ResponseEntity.ok().body(userService.findByUserId(Long.parseLong(userId)));
+    public ResponseEntity<UserResponseDto> getMyInfo(@RequestHeader("Authorization") String token) {
+        Long userId = JwtUtil.parseUserIdFromToken(token);
+        return ResponseEntity.ok().body(userService.findByUserId(userId));
     }
 
     // userId로 유저 검색

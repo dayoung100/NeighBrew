@@ -1,4 +1,4 @@
-package com.ssafy.backend.dto;
+package com.ssafy.backend.dto.evaluation;
 
 import com.ssafy.backend.Enum.EvaluationType;
 import com.ssafy.backend.entity.Evaluation;
