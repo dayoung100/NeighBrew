@@ -216,7 +216,9 @@ const DrinkpostReviewDetail = () => {
     callApi("get", `api/subreview/list/${reviewId}`).then(res => {
       setSubReviewList(res.data);
     });
+  }, [subReviewList]);
 
+  useEffect(() => {
     async function summonReview() {
       // 술 상세 후기 조회 요청
       const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
