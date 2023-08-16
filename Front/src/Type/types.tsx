@@ -27,7 +27,9 @@ export interface Chat {
   user?: User;
   createdAt?: string;
   chatRoom?: ChatRoom;
-  userid?: number;
+  userId?: number;
+  userNickname?: string;
+  chatRoomName?: string;
 }
 
 export interface ChatRoom {
