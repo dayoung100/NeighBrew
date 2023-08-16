@@ -340,7 +340,7 @@ const MeetingCreate = () => {
         GoMeetDetailHandler(res.data.meetId); //모임 상세 페이지로 이동
       })
       .catch((error) => {
-        setErrorMsg(error.response.data);
+        setErrorMsg(error);
         setIsModalOn(true);
         setIsClick(false);
       });

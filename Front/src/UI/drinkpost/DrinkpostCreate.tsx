@@ -11,6 +11,10 @@ import axios from "axios";
 import TextareaAutosize from "react-textarea-autosize";
 import NavbarSimple from "../navbar/NavbarSimple";
 import FooterBigBtn from "../footer/FooterBigBtn";
+import imageCompression from "browser-image-compression";
+import LoadingDot from "../etc/LoadingDot";
+import Modal from "react-modal";
+import { WhiteModal } from "../../style/common";
 
 // 여기부터 지정한 부분까지 style 부분입니다.
 // GuideText는 h3 tag가 상하 margin을 너무 많이 잡아서 새로 만든 겁니다.
@@ -167,6 +171,9 @@ const DrinkpostCreate = () => {
   const [drinkAlcohol, setDrinkAlcohol] = useState<any>();
   const [inputCheck, setInputCheck] = useState(false);
 
+  const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중 모달
+  const [isClick, setIsClick] = useState(false); //throttle 역할, 폼 중복 제출 막아주기
+
   const navigate = useNavigate();
 
   const drinkNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,7 +203,14 @@ const DrinkpostCreate = () => {
   //   };
   // };
 
+  //이미지 압축에 사용하는 옵션
+  const options = {
+    maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
+  };
+
   const drinkSubmitHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isClick) return; //클릭했다면(api 중복호출방지)
+
     const file = imgFile;
     const formData = new FormData();
 
@@ -206,18 +220,40 @@ const DrinkpostCreate = () => {
         return;
       }
     }
+
+    setIsClick(true); //클릭했음(api 중복호출방지)
+
     formData.append("name", drinkName.trim());
-    formData.append("upload", file);
     formData.append("description", drinkDescription.trim());
     formData.append("degree", drinkAlcohol);
     formData.append("tagId", selectedCategory.toString());
 
-    callApi("post", "api/drink", formData)
-      .then((res) => {
-        console.log(res.data);
-        navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
-      })
-      .catch((err) => console.error(err));
+    if (file === null) {
+      formData.append("image", file);
+      createApi(formData);
+    } else {
+      setLoadingModalOn(true);
+      //압축하면 blob 타입-> file 타입으로 변환
+      const uploadFile = imageCompression(file, options);
+      uploadFile
+        .then((res) => {
+          const resizingFile = new File([res], file.name, {
+            type: file.type,
+          });
+          formData.append("image", resizingFile);
+        })
+        .then(() => {
+          createApi(formData);
+        })
+        .catch((e) => {
+          console.dir(e);
+          setLoadingModalOn(false);
+          setIsClick(false);
+        });
+    }
+
+    // formData.append("upload", file);
+
     // axios
     //   .post("/api/drink", formData, {
     //     headers: {
@@ -236,6 +272,17 @@ const DrinkpostCreate = () => {
     //     console.log(res.data);
     //   })
     //   .catch(err => console.error(err));
+  };
+
+  const createApi = (f: FormData) => {
+    callApi("post", "api/drink", f)
+      .then((res) => {
+        navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsClick(false);
+      });
   };
 
   // const uploadImageToServer = async imgFile => {
@@ -385,6 +432,20 @@ const DrinkpostCreate = () => {
         color="var(--c-yellow)"
         reqFunc={drinkSubmitHandler}
       />
+      <Modal
+        isOpen={loadingModalOn}
+        onRequestClose={() => {}} //닫히지 않아야함
+        style={WhiteModal}
+      >
+        <div
+          style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}
+        >
+          <div style={{ paddingBottom: "0.5rem" }}>
+            이미지 압축중입니다. <br /> 잠시만 기다려주세요.
+          </div>
+          <LoadingDot color="var(--c-yellow)" />
+        </div>
+      </Modal>
     </div>
   );
 };

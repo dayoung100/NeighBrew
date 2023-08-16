@@ -7,6 +7,10 @@ import { callApi } from "../../utils/api";
 import ImageInput from "../components/ImageInput";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import NavbarSimple from "../navbar/NavbarSimple";
+import imageCompression from "browser-image-compression";
+import LoadingDot from "../etc/LoadingDot";
+import Modal from "react-modal";
+import { WhiteModal } from "../../style/common";
 
 const CreateBody = styled.div`
   width: 100%;
@@ -48,25 +52,36 @@ const DrinkpostReviewCreate = () => {
   };
   const myId = localStorage.getItem("myId");
   const [imgFile, setImgFile] = useState(null);
+  const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중일 때 모달(이미지 압축중일때)
+  const [isClick, setIsClick] = useState(false);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    callApi("get", `api/drink/${drinkId}`).then((res) => {
       setDrink(res.data);
     });
   }, []);
   useEffect(() => {
-    callApi("get", `api/user/myinfo`).then(res => {
+    callApi("get", `api/user/myinfo`).then((res) => {
       setMyInfo(res.data);
     });
   }, []);
 
+  //이미지 압축에 사용하는 옵션
+  const options = {
+    // maxSizeMB: 5, // 허용하는 최대 사이즈 지정
+    maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
+    // fileType: "image/webp",
+  };
+
   const reviewSubmit = () => {
+    if (isClick) return; //클릭했음(api 중복호출방지)
+    setIsClick(true); //클릭했음(api 중복호출방지)
+
     const file = imgFile;
     const formData = new FormData();
 
     formData.append("drinkId", drinkId);
     formData.append("content", review);
-    formData.append("image", file);
     if (review === "") {
       alert("내용을 입력해주세요.");
       return;
@@ -78,15 +93,39 @@ const DrinkpostReviewCreate = () => {
       }
     }
 
+    if (file === null) {
+      formData.append("image", file);
+      createApi(formData);
+    } else {
+      setLoadingModalOn(true);
+      const uploadFile = imageCompression(file, options);
+      uploadFile
+        .then((res) => {
+          const resizingFile = new File([res], file.name, {
+            type: file.type,
+          });
+          formData.append("image", resizingFile);
+        })
+        .then(() => {
+          createApi(formData);
+        })
+        .catch(() => {
+          setLoadingModalOn(false);
+          setIsClick(false);
+        });
+    }
+  };
+
+  const createApi = (f: FormData) => {
     axios
-      .post(`/api/drinkreview`, formData, {
+      .post(`/api/drinkreview`, f, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
           UserID: myId,
           "Content-Type": "multipart/form-data",
         },
       })
-      .then(res => {
+      .then((res) => {
         navigate(`/drinkpost/${drinkId}/${res.data.drinkReviewId}`);
       });
   };
@@ -121,7 +160,25 @@ const DrinkpostReviewCreate = () => {
           </QuestionDiv>
         </div>
       </CreateBody>
-      <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />
+      <FooterBigBtn
+        content="등록하기"
+        color="var(--c-yellow)"
+        reqFunc={reviewSubmit}
+      />
+      <Modal
+        isOpen={loadingModalOn}
+        onRequestClose={() => {}} //닫히지 않아야함
+        style={WhiteModal}
+      >
+        <div
+          style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}
+        >
+          <div style={{ paddingBottom: "0.5rem" }}>
+            이미지 압축중입니다. <br /> 잠시만 기다려주세요.
+          </div>
+          <LoadingDot color="var(--c-yellow)" />
+        </div>
+      </Modal>
     </>
   );
 };
