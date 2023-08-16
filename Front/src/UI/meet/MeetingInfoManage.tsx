@@ -40,6 +40,8 @@ import {
 } from "./CheckValid";
 import Modal from "react-modal";
 import { Tooltip } from "react-tooltip";
+import imageCompression from "browser-image-compression";
+import LoadingDot from "../etc/LoadingDot";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -137,6 +139,7 @@ const MeetingInfoManage = () => {
   const [isModalOn, setIsModalOn] = useState(false);
   const [isGotoMainModalOn, setIsGotoMainModalOn] = useState(false); //모임 메인으로 이동시키는 모달은 따로 관리
   const [errorMsg, setErrorMsg] = useState(""); //모달에 띄울 에러메시지
+  const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중 모달
 
   //미팅 기존 정보
   const [meetData, setMeetData] = useState<MeetDetail>(initialMeetDetail);
@@ -168,6 +171,7 @@ const MeetingInfoManage = () => {
 
   //생성 버튼 클릭했는지 - 버튼 한번이라도 클릭 시에만 빨간 가이드 글씨 오픈
   const [btnClicked, setBtnClicked] = useState(false);
+  const [isClick, setIsClick] = useState(false);
 
   //첫 로딩 시
   useEffect(() => {
@@ -301,8 +305,14 @@ const MeetingInfoManage = () => {
     return res;
   };
 
+  //이미지 압축에 사용하는 옵션
+  const options = {
+    maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
+  };
+
   //수정 완료 버튼 클릭 api
   const updateMeeting = async () => {
+    if (isClick) return; //throttle역할
     setBtnClicked(true);
     //api 요청 전에 확인
     //호스트가 맞는가?
@@ -315,6 +325,8 @@ const MeetingInfoManage = () => {
       setIsModalOn(true);
       return;
     }
+
+    setIsClick(true);
 
     let f = new FormData();
     //필수 입력o
@@ -341,19 +353,42 @@ const MeetingInfoManage = () => {
     f.append("description", meetDesc);
 
     //이미지 수정을 위한 분기
-    if (file !== null) f.append("image", file);
     if (file === null && newImgSrc === "no image") {
       f.append("imgSrc", "no image");
     }
+    if (file !== null) {
+      setLoadingModalOn(true);
+      //압축하면 blob 타입-> file 타입으로 변환
+      const uploadFile = imageCompression(file, options);
+      uploadFile
+        .then((res) => {
+          const resizingFile = new File([res], file.name, {
+            type: file.type,
+          });
+          f.append("image", resizingFile);
+        })
+        .then(() => {
+          updateApi(f);
+        })
+        .catch((e) => {
+          setErrorMsg(e);
+          setLoadingModalOn(false);
+          setIsModalOn(true);
+          setIsClick(false);
+        });
+    }
+  };
 
+  const updateApi = (f: FormData) => {
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
     promise
       .then((res) => {
         GoMeetDetailHandler(); //모임 상세 페이지로 이동
       })
       .catch((error) => {
-        setErrorMsg(error.response.data);
+        setErrorMsg(error);
         setIsModalOn(true);
+        setIsClick(false);
       });
   };
 
@@ -606,6 +641,20 @@ const MeetingInfoManage = () => {
         style={WhiteModal}
       >
         <ModalInner>{errorMsg}</ModalInner>
+      </Modal>
+      <Modal
+        isOpen={loadingModalOn}
+        onRequestClose={() => {}} //닫히지 않아야함
+        style={WhiteModal}
+      >
+        <div
+          style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}
+        >
+          <div style={{ paddingBottom: "0.5rem" }}>
+            이미지 압축중입니다. <br /> 잠시만 기다려주세요.
+          </div>
+          <LoadingDot color="var(--c-yellow)" />
+        </div>
       </Modal>
     </div>
   );
