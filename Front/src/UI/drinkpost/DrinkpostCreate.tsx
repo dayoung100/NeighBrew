@@ -233,7 +233,7 @@ const DrinkpostCreate = () => {
       return;
     }
     formData.append("name", drinkName.trim());
-    formData.append("upload", file);
+    formData.append("image", file);
     formData.append("description", drinkDescription.trim());
     formData.append("degree", drinkAlcohol.toString());
     formData.append("tagId", selectedCategory.toString());
