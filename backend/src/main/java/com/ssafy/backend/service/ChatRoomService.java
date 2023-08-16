@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.entity.*;
-import com.ssafy.backend.repository.ChatMessageRepository;
-import com.ssafy.backend.repository.ChatRoomRepository;
-import com.ssafy.backend.repository.ChatRoomUserRepository;
-import com.ssafy.backend.repository.UserRepository;
+import com.ssafy.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -26,7 +23,9 @@ public class ChatRoomService {
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final UserRepository userRepository;
     private final MongoTemplate mongoTemplate;
+    private final ChatMessageMongoRepository chatMessageMongoRepository;
     private final ObjectMapper mapper = new ObjectMapper();
+    private final ChatDmMessageRepository chatDmMessageRepository;
 
     public List<ChatRoom> findUserChatRooms(Long userId) {
         return chatRoomUserRepository.findByUser_UserId(userId)
@@ -41,8 +40,24 @@ public class ChatRoomService {
                 .builder()
                 .chatRoomName((String) map.get("name"))
                 .build());
-        chatMessageRepository.save(ChatMessage.builder().chatRoom(room).message("채팅방이 생성되었습니다.").createdAt(LocalDateTime.now()).build());
-        ((List<Integer>) map.get("userIdList")).forEach(userId -> chatRoomUserRepository.save(ChatRoomUser.builder().chatRoom(room).user(userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."))).build()));
+//        chatMessageRepository.save(ChatMessage.builder()
+//                .chatRoom(room)
+//                .message("채팅방이 생성되었습니다.")
+//                .createdAt(LocalDateTime.now())
+//                .build());
+
+        chatMessageMongoRepository.save(ChatMessageMongo.builder()
+                .chatRoomId(room.getChatRoomId())
+                .chatRoomName(room.getChatRoomName())
+                .message("채팅방이 생성되었습니다.")
+                .createdAt(String.valueOf(LocalDateTime.now()))
+                .build());
+
+        ((List<Integer>) map.get("userIdList")).forEach(userId -> chatRoomUserRepository.save(ChatRoomUser.builder()
+                .chatRoom(room)
+                .user(userRepository.findById(Long.valueOf(userId)).orElseThrow(
+                        () -> new IllegalArgumentException("존재하지 않는 유저입니다.")))
+                .build()));
         return room;
     }
 
@@ -52,15 +67,8 @@ public class ChatRoomService {
         User user = userRepository.findById(jsonNode.get("userId").asLong()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         if (chatRoomUserRepository.findByChatRoomAndUser_UserId(chatRoom, jsonNode.get("userId").asLong()).isEmpty())
             throw new IllegalArgumentException("채팅방에 참여하지 않은 유저입니다.");
-        chatMessageRepository.save(ChatMessage
-                .builder()
-                .chatRoom(chatRoom)
-                .message(jsonNode.get("message").asText())
-                .user(user)
-                .createdAt(LocalDateTime.now())
-                .build());
 
-        Mongo mongo = Mongo.builder()
+        ChatMessageMongo chatMessageMongo = ChatMessageMongo.builder()
                 .chatRoomId(chatRoom.getChatRoomId())
                 .chatRoomName(chatRoom.getChatRoomName())
                 .message(jsonNode.get("message").asText())
@@ -68,7 +76,7 @@ public class ChatRoomService {
                 .userNickname(user.getNickname())
                 .createdAt(String.valueOf(LocalDateTime.now()))
                 .build();
-        mongoTemplate.insert(mongo);
+        mongoTemplate.insert(chatMessageMongo);
         Map<String, Object> map = mapper.convertValue(jsonNode, Map.class);
         map.put("userNickname", user.getNickname());
         return mapper.writeValueAsString(map);
@@ -81,6 +89,15 @@ public class ChatRoomService {
         chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, roomId);
 
         if (room.getUsers().isEmpty()) chatRoomRepository.delete(room);
+
+        mongoTemplate.insert(ChatMessageMongo.builder()
+                .userId(userId)
+                .userNickname(user.getNickname())
+                .message(user.getNickname() + "님이 채팅방을 나갔습니다.")
+                .chatRoomId(room.getChatRoomId())
+                .chatRoomName(room.getChatRoomName())
+                .createdAt(String.valueOf(LocalDateTime.now()))
+                .build());
 
         return mapper.writeValueAsString(chatMessageRepository.save(ChatMessage
                 .builder()

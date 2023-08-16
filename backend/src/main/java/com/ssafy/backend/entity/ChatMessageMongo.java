@@ -10,7 +10,7 @@ import javax.persistence.Id;
 @Document(collection = "chat")
 @Getter
 @NoArgsConstructor
-public class Mongo {
+public class ChatMessageMongo {
     @Id
     private String id;
     private Long chatRoomId;
@@ -21,7 +21,7 @@ public class Mongo {
     private String createdAt;
 
     @Builder
-    public Mongo(String id, Long chatRoomId, String chatRoomName, Long userId, String userNickname, String message, String createdAt) {
+    public ChatMessageMongo(String id, Long chatRoomId, String chatRoomName, Long userId, String userNickname, String message, String createdAt) {
         this.id = id;
         this.chatRoomId = chatRoomId;
         this.chatRoomName = chatRoomName;

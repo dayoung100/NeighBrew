@@ -1,6 +1,6 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.entity.Mongo;
+import com.ssafy.backend.entity.ChatMessageMongo;
 import com.ssafy.backend.service.ChatMessageService;
 import com.ssafy.backend.util.JwtUtil;
 import lombok.AllArgsConstructor;
@@ -17,11 +17,11 @@ public class ChatMessageController {
 
     //단체 채팅방 메세지 가져온다.
     @GetMapping("{chatRoomId}/{userId}/messages")
-    public ResponseEntity<List<Mongo>> getChatMessages(@PathVariable Long chatRoomId,
-                                                       @PathVariable Long userId,
-                                                       @RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<ChatMessageMongo>> getChatMessages(@PathVariable Long chatRoomId,
+                                                                  @PathVariable Long userId,
+                                                                  @RequestHeader("Authorization") String token) {
         JwtUtil.validateToken(token, userId);
-        List<Mongo> messages = chatMessageService.getChatMessages(chatRoomId);
+        List<ChatMessageMongo> messages = chatMessageService.getChatMessages(chatRoomId);
         return ResponseEntity.ok(messages);
     }
 }

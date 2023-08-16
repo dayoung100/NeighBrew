@@ -1,9 +1,9 @@
 package com.ssafy.backend.service;
 
 import com.ssafy.backend.entity.ChatMessage;
-import com.ssafy.backend.entity.Mongo;
+import com.ssafy.backend.entity.ChatMessageMongo;
 import com.ssafy.backend.repository.ChatMessageRepository;
-import com.ssafy.backend.repository.MongoRepository;
+import com.ssafy.backend.repository.ChatMessageMongoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +14,10 @@ import java.util.List;
 public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
-    private final MongoRepository mongoRepository;
+    private final ChatMessageMongoRepository chatMessageMongoRepository;
 
-    public List<Mongo> getChatMessages(Long chatRoomId) {
-        return mongoRepository.findByChatRoomIdOrderByCreatedAt(chatRoomId);
+    public List<ChatMessageMongo> getChatMessages(Long chatRoomId) {
+        return chatMessageMongoRepository.findByChatRoomIdOrderByCreatedAt(chatRoomId);
     }
 
     public void save(ChatMessage chatMessage) {
