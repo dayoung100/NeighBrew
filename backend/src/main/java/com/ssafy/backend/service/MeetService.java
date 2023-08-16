@@ -46,7 +46,6 @@ public class MeetService {
     private final MongoTemplate mongoTemplate;
 
     private final ChatRoomService chatRoomService;
-    private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserService chatRoomUserService;
     private final ModelMapper modelMapper;
 
