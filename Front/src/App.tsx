@@ -64,7 +64,7 @@ function App() {
       es.current.onmessage = event => {
         try {
           const data = JSON.parse(event.data);
-          console.log(data);
+          // console.log(data);
           noti(data.content, data.url);
         } catch {}
         if (event.data === "finished") {
@@ -87,6 +87,7 @@ function App() {
   useEffect(() => {
     subscribe();
   }, []);
+
   const subscribe = () => {
     if (!("Notification" in window)) {
       // 브라우저가 Notification API를 지원하는지 확인한다.
@@ -112,35 +113,36 @@ function App() {
       });
     }
   };
-  const noti = (message: string, url: string) => {
-    const notifi = new Notification("NeighBrew", {
-      icon: logo,
-      body: message,
-      badge: logo,
-    });
-    notifi.onclick = () => {
-      navigate(url);
-    };
-  };
-
-  // const noti = (message: string) => {
-  //   navigator.serviceWorker.ready.then(registration => {
-  //     const notiAlarm = registration.showNotification("NeighBrew", {
-  //       body: message,
-  //       icon: logo,
-  //       actions: [
-  //         {
-  //           title: "화면 이동",
-  //           action: "test",
-  //         },
-  //         {
-  //           title: "닫기",
-  //           action: "close",
-  //         },
-  //       ],
-  //     });
+  // const noti = (message: string, url: string) => {
+  //   const notifi = new Notification("NeighBrew", {
+  //     icon: logo,
+  //     body: message,
+  //     badge: logo,
   //   });
+  //   notifi.onclick = () => {
+  //     navigate(url);
+  //   };
   // };
+
+  const noti = (message: string, url: string) => {
+    navigator.serviceWorker.ready.then(registration => {
+      registration.showNotification("NeighBrew", {
+        body: message,
+        icon: logo,
+        data: url,
+        actions: [
+          {
+            title: "aa",
+            action: "goTab",
+          },
+          {
+            title: "닫기",
+            action: "close",
+          },
+        ],
+      });
+    });
+  };
 
   return (
     <>

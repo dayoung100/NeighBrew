@@ -51,14 +51,13 @@ const DmInfoDiv = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
 `;
 
 const Chat = (props: {
   user1: User;
   user2: User;
   chatRoomDetail(user1: number, user2: number): void;
-  lastMessageTime : string;
+  lastMessageTime: string;
 }) => {
   const navigate = useNavigate();
   const [user1, setUsers1] = useState<User>({
@@ -90,7 +89,8 @@ const Chat = (props: {
     setUsers2(props.user2);
   }, [props.user1, props.user2]);
 
-  const timeFilter = props.lastMessageTime.substring(6, 10) + " " + props.lastMessageTime.substring(11, 16)
+  const timeFilter =
+    props.lastMessageTime.substring(6, 10) + " " + props.lastMessageTime.substring(11, 16);
 
   return (
     <ChatDiv onClick={() => props.chatRoomDetail(user1.userId, user2.userId)}>
@@ -130,7 +130,9 @@ const Chat = (props: {
           <span style={{ color: "var(--c-gray", fontSize: "12px", marginLeft: "0.5rem" }}>2</span>{" "}
         </div>
 
-        <div style={{ textAlign:"right", color:"var(--c-gray)" ,fontSize:"14px"}}>{timeFilter}</div>
+        <div style={{ textAlign: "right", color: "var(--c-gray)", fontSize: "14px" }}>
+          {timeFilter}
+        </div>
         {/*<div style={{ textAlign:"right"}}>{props.lastMessageTime}</div>*/}
       </DmInfoDiv>
     </ChatDiv>
