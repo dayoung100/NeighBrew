@@ -607,10 +607,10 @@ const MyPage = () => {
           }}
         >
           <span onClick={goFollowerPage}>팔로워 {userData.follower}</span>
-
+          {" "}
           <span onClick={goFollowPage}>
             팔로잉 {userData.following} &nbsp;&nbsp;{" "}
-          </span>{" "}
+          </span>
         </div>
         <div
           style={{
