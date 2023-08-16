@@ -31,7 +31,7 @@ public class PushController {
         return pushService.getUserPushLog(userId);
     }
 
-    @GetMapping("/delete/{pushId}")
+    @DeleteMapping("/{pushId}")
     @ResponseStatus(HttpStatus.OK)
     public String deletePushLog(@PathVariable Long pushId){
         try{
