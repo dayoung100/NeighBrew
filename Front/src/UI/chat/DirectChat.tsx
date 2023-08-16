@@ -307,7 +307,7 @@ const DirectChat = () => {
             ? res.data.user2.nickname
             : res.data.user1.nickname
         );
-        setMessages(res.data.messages);
+        setMessages(res.data.messages ?? []);
       })
       .catch(e => {
         console.error(e);
