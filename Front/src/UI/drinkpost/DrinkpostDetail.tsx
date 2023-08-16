@@ -43,7 +43,7 @@ const SimpleInfo = styled.div`
 `;
 
 const ImageInfo = styled.div`
-  height: 180%;
+  height: 200%;
   width: 40%;
   position: absolute;
   left: 70%;
@@ -145,6 +145,10 @@ const DrinkpostDetail = () => {
   // const drinkUrl = `http://34.64.126.58:5173/drink/${drinkId}`;
   // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
     callApi("get", `api/drink/${drinkId}`)
       .then(res => {
         console.log(res.data);
@@ -254,7 +258,7 @@ const DrinkpostDetail = () => {
             </div>
           </SimpleInfo>
           <ImageInfo>
-            <img src={transImage(detail?.image)} alt="" style={{ width: "100%", height: "100%" }} />
+            <img src={transImage(detail?.image)} alt="" style={{ width: "auto", height: "100%" }} />
           </ImageInfo>
         </InfoDiv>
 
