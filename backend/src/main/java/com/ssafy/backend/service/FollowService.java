@@ -60,7 +60,7 @@ public class FollowService {
     private void followUser(User follower, User following) {
         Follow follow = Follow.builder().follower(follower).following(following).build();
         followRepository.save(follow);
-        pushService.send(follower, following, PushType.FOLLOW, follower.getNickname() + "님이 회원님을 팔로우하기 시작했습니다.", "http://localhost/mypage/" + follower.getUserId());
+        pushService.send(follower, following, PushType.FOLLOW, follower.getNickname() + "님이 회원님을 팔로우하기 시작했습니다.", "https://i9b310.p.ssafy.io/mypage/" + follower.getUserId());
     }
 
     public List<FollowResponseDto> getFollowing(Long userId) {
