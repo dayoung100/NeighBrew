@@ -5,6 +5,7 @@ import com.ssafy.backend.dto.meet.MeetResponseDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.service.MeetService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/meet")
 @RequiredArgsConstructor
+@Slf4j
 public class MeetController {
     private final MeetService meetService;
 
@@ -78,6 +80,7 @@ public class MeetController {
     public ResponseEntity<?> deleteMeet(@PathVariable Long meetId,
                                         @RequestBody Map<String, Long> requestBody) {
         Long hostId = requestBody.get("userId");
+        log.info("meetId : {}, hostId : {}", meetId, hostId);
         meetService.deleteMeet(hostId, meetId);
 
         return ResponseEntity.ok(meetId + " 모임이 삭제 되었습니다.");

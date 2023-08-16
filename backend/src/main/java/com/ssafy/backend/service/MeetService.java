@@ -318,12 +318,13 @@ public class MeetService {
             throw new IllegalArgumentException("방장이 아니면 방을 삭제할 수 없습니다.");
 
         List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(() -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
+        log.info("meetUser 사이즈 : {}", meetUsers.size());
 
         //MeetUser 정보를 삭제한다.
         meetUserService.deleteMeetUser(deleteMeet);
 
         //meet 이미지를 지운다
-        s3Service.deleteImg(deleteMeet.getImgSrc());
+        if(!deleteMeet.getImgSrc().equals("no image")) s3Service.deleteImg(deleteMeet.getImgSrc());
 
         //마지막에 모임 정보를 제거한다.
         meetRepository.findById(meetId).ifPresent(meetRepository::delete);
@@ -333,7 +334,6 @@ public class MeetService {
         meetUsers.stream()
                 .filter(user -> !user.getUser().getUserId().equals(hostId))
                 .forEach(user -> pushService.send(deleteMeet.getHost(), user.getUser(), PushType.MEETDELETED, deleteMeet.getHost().getNickname() + "님 께서 생성한 모임" + "(" + deleteMeet.getMeetName() + ")이 삭제되었습니다.", "meet"));
-
     }
 
     public void applyMeet(Long userId, Long meetId) {

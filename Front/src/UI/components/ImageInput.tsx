@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 
 const QuestionDiv = styled.div`
@@ -126,4 +126,4 @@ const ImageInput = (props: ImageInputProps) => {
     </QuestionDiv>
   );
 };
-export default ImageInput;
+export default React.memo(ImageInput);

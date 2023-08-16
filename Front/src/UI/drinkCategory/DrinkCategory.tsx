@@ -5,7 +5,7 @@
 
 // 이 외 추가사항 : 전통주인 Tradition의 소스 파일인 'assets/AllDrinkCategories/Tradition.tsx에 오류 출력이 되는데 기능상 문제는 없어보입니다.
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { TotalDrink } from "../../assets/AllDrinkCategories/TotalDrink";
 import { Whiskey } from "../../assets/AllDrinkCategories/Whiskey";
@@ -150,4 +150,4 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
     </div>
   );
 };
-export default DrinkCategory;
+export default React.memo(DrinkCategory);

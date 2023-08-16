@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import styled from "styled-components";
 import SearchBox from "../components/SearchBox";
@@ -218,6 +218,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
       <CateDiv>
         {tag !== 0 && (
           <DrinkCategory
+            key={tag}
             getFunc={getDrinkCategory}
             selectedId={tag}
             isSearch={false}
@@ -316,4 +317,4 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
   );
 };
 
-export default MeetingDrinkSearch;
+export default React.memo(MeetingDrinkSearch);
