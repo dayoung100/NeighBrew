@@ -1,13 +1,13 @@
 import styled from "styled-components";
 
-const LoadingDiv = styled.div`
+const LoadingDiv = styled.div<{ $color: string }>`
   span {
     display: inline-block;
     vertical-align: middle;
     width: 0.6em;
     height: 0.6em;
     margin: 0.19em;
-    background: white;
+    background: ${(props) => props.$color};
     border-radius: 0.6em;
     animation: loading 1s infinite alternate;
   }
@@ -40,9 +40,13 @@ const LoadingDiv = styled.div`
   }
 `;
 
-const LoadingRing = () => {
+type LoadingDotProps = {
+  color: string;
+};
+
+const LoadingDot = ({ color }: LoadingDotProps) => {
   return (
-    <LoadingDiv>
+    <LoadingDiv $color={color}>
       <span></span>
       <span></span>
       <span></span>
@@ -54,4 +58,4 @@ const LoadingRing = () => {
   );
 };
 
-export default LoadingRing;
+export default LoadingDot;
