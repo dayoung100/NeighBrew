@@ -1,6 +1,5 @@
 package com.ssafy.backend.authentication.infra.kakao;
 
-
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import lombok.Getter;
@@ -29,11 +28,8 @@ public class KakaoLoginParams implements OAuthLoginParams {
         return body;
     }
 
-
     @Override
     public String code() {
         return null;
     }
-
-
 }

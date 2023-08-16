@@ -1,5 +1,4 @@
 import { Meeting, MeetDetail, Drink, User } from "../Type/types";
-import styled from "styled-components";
 
 export const initialSido = {
   sidoCode: 0,
@@ -71,41 +70,6 @@ export const initialUser: User = {
   follower: 0,
   following: 0,
 };
-
-//모달창 디자인
-export const WhiteModal = {
-  content: {
-    position: "relative",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "15rem",
-    minHeight: "5rem",
-    wordBreak: "break-all",
-    height: "auto",
-    padding: "0.5rem 1rem",
-    borderRadius: "15px",
-    background: "white",
-    overflow: "auto",
-    textAlign: "center",
-    fontFamily: "NanumSquareNeo",
-    WebkitOverflowScrolling:
-      "touch" /* overflow가 일어날 경우 모바일 기기에서 부드러운 가속이 적용된 스크롤이 되도록 해주는 속성 */,
-  },
-  overlay: {
-    background: "rgba(0, 0, 0, 0.5)",
-    zIndex: "11",
-  },
-};
-
-//모달 안에 div
-export const ModalInner = styled.div`
-  white-space: pre-line;
-  overflow: auto;
-`;
 
 //이미지 경로에 공백 있을 시 제거
 export const encodeUrl = (url: string) => {

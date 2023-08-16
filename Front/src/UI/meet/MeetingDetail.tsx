@@ -17,7 +17,8 @@ import { initialMeetDetail, encodeUrl, initialUser } from "../common";
 import { MeetDetail, User } from "../../Type/types";
 import Modal from "react-modal";
 import defaultImg from "../../assets/defaultImg.png";
-import { WhiteModal, getTagName, ModalInner } from "../common";
+import { getTagName } from "../common";
+import { WhiteModal, ModalInner } from "../../style/common";
 import { formateDate, formateTime } from "./DateTimeCommon";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
@@ -163,7 +164,7 @@ const MeetingDetail = () => {
   const [userData, setUserData] = useState(initialUser);
   const [userStatus, setUserStatus] = useState("");
   const [exitModalOn, setExitModalOn] = useState(false); //나가기 모달이 열려있는가?
-  const [errorModalOn, setErrorModalOn] = useState(false); //오류 모달이 열려있는가?
+  const [simpleModalOn, setSimpleModalOn] = useState(false); //오류 모달이 열려있는가?
   const [errMsg, setErrMsg] = useState(""); //모달에 표시할 오류메시지
   const bgImg =
     meetDetailData.meet.imgSrc == "no image"
@@ -183,9 +184,9 @@ const MeetingDetail = () => {
   const GotoDrinkPostHandler = (drinkId: number) => {
     navigate(`/drinkpost/${drinkId}`);
   };
-  //없는 모임일 경우 모임 메인으로 이동
+  //없는 모임일 경우 뒤로가기(모임 메인으로 이동?)
   const GotoMainHandler = () => {
-    navigate(`/meet`, { replace: true });
+    navigate(-1);
   };
 
   //api호출
@@ -212,6 +213,7 @@ const MeetingDetail = () => {
 
   //현재 유저의 정보 가져오기
   useEffect(() => {
+    if (userId === 0) return;
     const promise = callApi("get", `api/user/${userId}`);
     promise
       .then((res) => {
@@ -260,18 +262,18 @@ const MeetingDetail = () => {
   //참여 신청하기
   function applyMeet() {
     //간수치 제한 확인
-    if (meetDetailData.meet.minLiverPoint > userData.liverPoint) {
+    if ((meetDetailData.meet.minLiverPoint ?? 0) > userData.liverPoint) {
       setErrMsg("간수치 제한에 부합하지 않습니다.");
-      setErrorModalOn(true);
+      setSimpleModalOn(true);
       return;
     }
     //나이 제한 확인
     if (
-      meetDetailData.meet.minAge > calcAge(userData.birth) ||
-      meetDetailData.meet.maxAge < calcAge(userData.birth)
+      (meetDetailData.meet.minAge ?? 0) > calcAge(userData.birth) ||
+      (meetDetailData.meet.maxAge ?? 200) < calcAge(userData.birth)
     ) {
       setErrMsg("나이 제한에 부합하지 않습니다.");
-      setErrorModalOn(true);
+      setSimpleModalOn(true);
       return;
     }
     const promise = callApi("post", `api/meet/apply`, {
@@ -281,10 +283,14 @@ const MeetingDetail = () => {
     promise
       .then((res) => {
         setUserStatus("APPLY");
+        setErrMsg(
+          `모임에 참여 신청하였습니다!\n신청 취소는 '승인 대기중' 버튼을 클릭해주세요.`
+        );
+        setSimpleModalOn(true);
       })
       .catch((err) => {
         setErrMsg(err.response.data);
-        setErrorModalOn(true);
+        setSimpleModalOn(true);
       });
   }
 
@@ -486,8 +492,8 @@ const MeetingDetail = () => {
           </div>
         </Modal>
         <Modal
-          isOpen={errorModalOn}
-          onRequestClose={() => setErrorModalOn(false)}
+          isOpen={simpleModalOn}
+          onRequestClose={() => setSimpleModalOn(false)}
           style={WhiteModal}
         >
           <ModalInner>{errMsg}</ModalInner>

@@ -36,9 +36,7 @@ public class User {
     @Column(nullable = false, length = 20)
     private String name;
 
-
     private LocalDate birth;
-
 
     @Lob
     private String intro;
@@ -55,15 +53,6 @@ public class User {
     @Column(nullable = false, columnDefinition = "varchar(255) default 'no image'")
     private String profile;
 
-    @PrePersist
-    public void prePersist() {
-        this.liverPoint = 40.0f;
-        this.profile = "no image";
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-
     @Builder
     public User(String email, String nickname, String name, Float liverPoint, OAuthProvider oAuthProvider, LocalDate birth, String intro, String profile) {
         this.email = email;
@@ -74,6 +63,14 @@ public class User {
         this.birth = birth;
         this.intro = intro;
         this.profile = profile;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.liverPoint = 40.0f;
+        this.profile = "no image";
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void updateFromDto(UserUpdateDto updateDto) {

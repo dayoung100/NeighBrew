@@ -33,6 +33,10 @@ const ImgDiv = styled.div`
   border-radius: 50%;
   float: left;
   margin-right: 1rem;
+  min-width: 50px;
+  min-height: 50px;
+  max-width: 50px;
+  max-height: 50px;
 `;
 
 const Img = styled.img`

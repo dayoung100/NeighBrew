@@ -7,10 +7,13 @@ import defaultImg from "../../assets/defaultImg.png";
 import fancyDrinkImage from "../../assets/fancydrinkImage.jpg";
 import { callApi } from "../../utils/api";
 import NavbarSimple from "../navbar/NavbarSimple";
-import { commentIcon, likeIcon, deleteIcon } from "./../../assets/AllIcon";
+import { commentIcon, likeIcon, deleteIcon, editIcon, moreIcon } from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
 import Modal from "react-modal";
+import { WhiteModal } from "../../style/common";
+
+import { autoAnimate } from "@formkit/auto-animate";
 
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
@@ -96,7 +99,7 @@ const CommentBox = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 9999;
+  z-index: 999;
   background-color: #fff;
   display: flex;
   flex-direction: row;
@@ -138,13 +141,13 @@ const DeleteModal = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "80%",
-    height: "20%",
+    height: "16%",
     padding: "0.5rem 1rem",
     borderRadius: "15px",
-    background: "var(--c-black)",
+    background: "#ffffff",
     textAlign: "center",
     fontFamily: "SeoulNamsan",
-    color: "white",
+    color: "#000000",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",
@@ -152,12 +155,36 @@ const DeleteModal = {
   },
 };
 
+const ThreeDotModal = {
+  content: {
+    top: "90%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "90%",
+    height: "16%",
+    borderRadius: "24px 24px 0px 0px",
+    backgroundColor: "#ffffff",
+    fontFamily: "SeoulNamsan",
+    fontSize: "1.5rem",
+    color: "black",
+    transition: "top 2s ease-in-out",
+  },
+  overlay: {
+    background: "rgba(0, 0, 0, 0.5)",
+    zIndex: "1001",
+  },
+};
+
 const DrinkpostReviewDetail = () => {
+  const MoreIcon = moreIcon();
+  const EditIcon = editIcon();
   const DeleteIcon = deleteIcon();
   const LikeIcon = likeIcon();
   const CommentIcon = commentIcon();
   const { drinkId, reviewId } = useParams();
+  const [followRejection, setFollowRejection] = useState(false);
   const [deleteModalOn, setDeleteModalOn] = useState(false);
+  const [threeDotOn, setThreeDotOn] = useState(false);
   const [review, setReview] = useState<Review>();
   const [drink, setDrink] = useState<Drink>();
   const [following, setFollowing] = useState(0);
@@ -166,6 +193,7 @@ const DrinkpostReviewDetail = () => {
   const navigate = useNavigate();
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
@@ -226,6 +254,11 @@ const DrinkpostReviewDetail = () => {
   };
 
   const followHandler = () => {
+    if (review?.user.userId.toString() === localStorage.getItem("myId")) {
+      setFollowRejection(true);
+      setTimeout(() => setFollowRejection(false), 1000);
+      return;
+    }
     callApi("post", `api/follow/${review?.user.userId}`)
       .then(() => {
         followers();
@@ -269,7 +302,17 @@ const DrinkpostReviewDetail = () => {
   };
 
   const modalHandler = () => {
+    setThreeDotOn(true);
+    // setDeleteModalOn(true);
+  };
+
+  const toDeleteQuestionHandler = () => {
     setDeleteModalOn(true);
+    setThreeDotOn(false);
+  };
+
+  const toUpdateHandler = () => {
+    navigate("update/");
   };
 
   const deleteHandler = () => {
@@ -293,14 +336,24 @@ const DrinkpostReviewDetail = () => {
               <b>{review?.user.nickname}</b>
             </div>
           </div>
-          <FollowDiv
+          {review?.user.userId.toString() !== localStorage.getItem("myId") ? (
+            <FollowDiv
+              style={{
+                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+              }}
+              onClick={followHandler}
+            >
+              {following === 0 ? "팔로우" : "언팔로우"}
+            </FollowDiv>
+          ) : null}
+          {/* <FollowDiv
             style={{
               backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
             }}
             onClick={followHandler}
           >
             {following === 0 ? "팔로우" : "언팔로우"}
-          </FollowDiv>
+          </FollowDiv> */}
         </Usercard>
         <ImageDiv
         // style={{
@@ -332,7 +385,7 @@ const DrinkpostReviewDetail = () => {
               }}
               onClick={modalHandler}
             >
-              {DeleteIcon}
+              {MoreIcon}
             </div>
           ) : null}
         </InfoBox>
@@ -364,20 +417,43 @@ const DrinkpostReviewDetail = () => {
         </SubReviewList>
       </WholeDiv>
       <Modal
+        isOpen={threeDotOn}
+        onRequestClose={() => setThreeDotOn(false)}
+        style={ThreeDotModal}
+        ariaHideApp={false}
+      >
+        <div style={{ fontSize: "1rem", color: "var(--c-gray)" }}>후기</div>
+        <div
+          onClick={toUpdateHandler}
+          style={{ display: "flex", alignItems: "center", height: "40%" }}
+        >
+          <div style={{ marginRight: "0.5rem" }}>{EditIcon}</div>
+          <div style={{color : "black"}}>수정하기</div>
+        </div>
+
+        <div
+          onClick={toDeleteQuestionHandler}
+          style={{ display: "flex", alignItems: "center", height: "40%" }}
+        >
+          <div style={{ marginRight: "0.5rem" }}>{DeleteIcon}</div>
+          <div style={{ color: "#eb0505" }}>삭제하기</div>
+        </div>
+      </Modal>
+      <Modal
         isOpen={deleteModalOn}
         onRequestClose={() => setDeleteModalOn(false)}
         style={DeleteModal}
-        ariaHideApp={false}
+        ariaHideApp={true}
       >
         <div>
-          <h3>후기를 삭제하시겠습니까?</h3>
+          <p style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>후기를 삭제하시겠습니까?</p>
         </div>
         <div
           style={{
             display: "flex",
             justifyContent: "space-around",
             height: "50%",
-            fontSize: "1.2rem",
+            fontSize: "1.4rem",
           }}
         >
           <div

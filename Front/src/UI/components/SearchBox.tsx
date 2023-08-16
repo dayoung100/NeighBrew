@@ -5,6 +5,8 @@
 자세한 props는 type InputProps 참고
 */
 import styled from "styled-components";
+import React, { useState, useEffect } from "react";
+import useDebounce from "../../hooks/useDebounce";
 import { searchNavIcon } from "../../assets/AllIcon";
 
 const SearchDiv = styled.div<{ width: number }>`
@@ -48,6 +50,11 @@ type InputProps = {
  */
 const searchBox = (props: InputProps) => {
   const searchButton = searchNavIcon();
+  const [searchValue, setSearchValue] = useState("");
+  const debouncedSearchValue = useDebounce(searchValue, 200);
+  useEffect(() => {
+    props.changeFunc(debouncedSearchValue);
+  }, [debouncedSearchValue]);
 
   return (
     <SearchDiv width={props.width ?? 100}>
@@ -55,17 +62,11 @@ const searchBox = (props: InputProps) => {
         type="text"
         placeholder={props.placeholder}
         value={props.value}
-        onChange={e => props.changeFunc(e.target.value)}
+        onChange={(e) => setSearchValue(e.target.value)}
       />
-      <SearchBtn
-        onClick={() => {
-          console.log("search!");
-        }}
-      >
-        {searchButton}
-      </SearchBtn>
+      <SearchBtn>{searchButton}</SearchBtn>
     </SearchDiv>
   );
 };
 
-export default searchBox;
+export default React.memo(searchBox);

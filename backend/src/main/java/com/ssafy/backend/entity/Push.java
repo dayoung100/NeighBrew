@@ -2,17 +2,16 @@ package com.ssafy.backend.entity;
 
 import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.dto.PushDto;
-import lombok.*;
-import org.hibernate.annotations.Where;
+import lombok.Builder;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
-public class Push{
+public class Push {
     //알림 : "누구 : ~에 대한 알림이 도착했습니다.", 클릭하면 해당 페이지로 이동하도록.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +27,7 @@ public class Push{
     @Lob
     private String url;
 
-    @Column(name="push_read_YN", nullable = false)
+    @Column(name = "push_read_YN", nullable = false)
     private boolean isRead = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,7 +56,7 @@ public class Push{
         this.createdAt = LocalDateTime.now();
     }
 
-    public PushDto toDto(){
+    public PushDto toDto() {
         return PushDto.builder()
                 .pushId(this.pushId)
                 .sender_id(this.sender.getUserId())

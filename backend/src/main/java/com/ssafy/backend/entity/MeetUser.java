@@ -1,6 +1,5 @@
 package com.ssafy.backend.entity;
 
-
 import com.ssafy.backend.Enum.Status;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class MeetUser {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long meetUserId;

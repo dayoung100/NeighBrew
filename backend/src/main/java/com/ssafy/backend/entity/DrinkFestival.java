@@ -6,9 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Table(name = "drink_festival")
-public class Festival {
-
+public class DrinkFestival {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long drinkFestivalId;
@@ -16,12 +14,9 @@ public class Festival {
     @Column(length = 50)
     private String name;
 
-    @Column(length = 255)
+    @Lob
     private String image;
 
-    @Column(length = 255)
+    @Lob
     private String redirectUri;
-
-
-
 }

@@ -17,8 +17,13 @@ import {
   initialDrink,
   initialSido,
   initialGugun,
-  WhiteModal,
 } from "../common";
+import {
+  WhiteModal,
+  DateInput,
+  TimeInput,
+  InputText,
+} from "../../style/common";
 import {
   localDate,
   localTime,
@@ -36,6 +41,7 @@ import {
   imgcheck,
 } from "./CheckValid";
 import Modal from "react-modal";
+import { Tooltip } from "react-tooltip";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -55,22 +61,7 @@ const QuestionDiv = styled.div`
   margin-top: 1.5rem;
 `;
 
-const Input = styled.input`
-  width: 100%;
-  background: white;
-  text-align: left;
-  padding: 2% 0;
-  border: none;
-  border-bottom: 1px solid var(--c-gray);
-  font-family: "NanumSquareNeo";
-  font-size: 16px;
-  outline: none;
-  &::placeholder {
-    color: var(--c-gray);
-  }
-`;
-
-const InputShort = styled(Input)`
+const InputShort = styled(InputText)`
   width: 4rem;
   padding: 1% 3%;
   text-align: right;
@@ -91,30 +82,9 @@ const DropdownInput = styled.select`
   appearance: none; /* 화살표 없애기 공통*/
 `;
 
-const DateAndTimeInputStyle = css`
-  color: var(--c-black);
-  width: 45%;
-  font-family: "NanumSquareNeo";
-  text-align: right;
-  border: none;
-  border-bottom: 1px solid var(--c-gray);
-  background: white;
-  font-size: 16px;
-  outline: none;
-`;
-
-const DateInput = styled.input.attrs({ type: "date" })`
-  ${DateAndTimeInputStyle}
-`;
-
-const TimeInput = styled.input.attrs({ type: "time" })`
-  ${DateAndTimeInputStyle}
-`;
-
 const LimitDiv = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 0.7rem;
 `;
 
 const InfoTextArea = styled.textarea`
@@ -144,10 +114,14 @@ const SubText = styled.div`
   align-items: center;
   font-family: "NanumSquareNeoBold";
   font-size: 13px;
-  background-color: var(--c-yellow);
+  background-color: var(--c-lightgray);
   width: 7rem;
   border-radius: 5px;
   margin-top: 1rem;
+`;
+
+const TooltipBtn = styled.div`
+  padding: 0 0.5rem;
 `;
 
 const MeetingCreate = () => {
@@ -190,6 +164,7 @@ const MeetingCreate = () => {
 
   //생성 버튼 클릭했는지 - 버튼 한번이라도 클릭 시에만 빨간 가이드 글씨 오픈
   const [btnClicked, setBtnClicked] = useState(false);
+  const [isClick, setIsClick] = useState(false);
 
   //모임의 정보 초기 세팅
   useEffect(() => {
@@ -285,7 +260,8 @@ const MeetingCreate = () => {
   };
 
   //수정 완료 버튼 클릭 api
-  const createMeeting = async () => {
+  const createMeeting = () => {
+    if (isClick) return; //throttle역할
     setBtnClicked(true);
     //api 요청 전에 확인
     //입력 값들이 적절한가?
@@ -293,6 +269,8 @@ const MeetingCreate = () => {
       setIsModalOn(true);
       return;
     }
+
+    setIsClick(true);
 
     let f = new FormData();
     //필수 입력o
@@ -328,6 +306,7 @@ const MeetingCreate = () => {
       .catch((error) => {
         setErrorMsg(error.response.data);
         setIsModalOn(true);
+        setIsClick(false);
       });
   };
 
@@ -342,7 +321,7 @@ const MeetingCreate = () => {
             <Title>모임의 이름*</Title>
             <SubText>* 표시: 필수입력</SubText>
           </div>
-          <Input
+          <InputText
             ref={titleRef}
             placeholder="모임의 이름을 입력해주세요"
             value={meetTitle}
@@ -441,56 +420,86 @@ const MeetingCreate = () => {
         </QuestionDiv>
         <QuestionDiv style={{ fontFamily: "NanumSquareNeo", fontSize: "16px" }}>
           <Title>조건</Title>
-          <LimitDiv>
-            <SubTitle>최대 인원*</SubTitle>
-            <InputShort
-              ref={maxPRef}
-              value={maxParticipants}
-              onChange={(e) =>
-                setMaxParticipants(
-                  !Number.isNaN(parseInt(e.target.value))
-                    ? parseInt(e.target.value)
-                    : 0
-                )
-              }
-            />
-            명
+          <div style={{ marginBottom: "0.7rem" }}>
+            <LimitDiv>
+              <SubTitle>최대 인원*</SubTitle>
+              <InputShort
+                ref={maxPRef}
+                value={maxParticipants}
+                onChange={(e) =>
+                  setMaxParticipants(
+                    !Number.isNaN(parseInt(e.target.value))
+                      ? parseInt(e.target.value)
+                      : 0
+                  )
+                }
+              />
+              명
+            </LimitDiv>
             {!participantsCheck(maxParticipants) && btnClicked && (
               <ErrorDiv>📌필수 입력사항입니다.(8명 이내)</ErrorDiv>
             )}
-          </LimitDiv>
-          <LimitDiv>
-            <SubTitle>간수치</SubTitle>
-            <InputShort
-              ref={liverRef}
-              placeholder="40"
-              value={liverLimit > 0 ? liverLimit : ""}
-              onChange={(e) => setLiverLimit(parseInt(e.target.value))}
-            />
-            IU/L이상
+          </div>
+          <div style={{ marginBottom: "0.7rem" }}>
+            <LimitDiv>
+              <SubTitle>간수치</SubTitle>
+              <InputShort
+                ref={liverRef}
+                type="number"
+                placeholder="40"
+                value={liverLimit > 0 ? liverLimit : ""}
+                onChange={(e) => setLiverLimit(parseInt(e.target.value))}
+              />
+              IU/L이상
+              <TooltipBtn data-tooltip-id="liver-tooltip">❓</TooltipBtn>
+            </LimitDiv>
             {!liverLimitCheck(liverLimit) && btnClicked && (
-              <ErrorDiv>📌100 IU/L 이하</ErrorDiv>
+              <ErrorDiv>📌100IU/L이하</ErrorDiv>
             )}
-          </LimitDiv>
-          <LimitDiv>
-            <SubTitle>나이</SubTitle>
-            <InputShort
-              ref={minAgeRef}
-              placeholder="20"
-              value={minAge > 0 ? minAge : ""}
-              onChange={(e) => setMinAge(parseInt(e.target.value))}
-            />
-            세 이상
-            <InputShort
-              placeholder="200"
-              value={maxAge > 0 ? maxAge : ""}
-              onChange={(e) => setMaxAge(parseInt(e.target.value))}
-            />
-            세 미만
-          </LimitDiv>
-          {!ageCheck(minAge, maxAge) && btnClicked && (
-            <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>
-          )}
+            <Tooltip
+              id="liver-tooltip"
+              style={{
+                backgroundColor: "var(--c-pink)",
+                color: "black",
+                fontSize: "12px",
+                width: "10rem",
+                textAlign: "justify",
+                wordBreak: "break-word",
+              }}
+            >
+              <div style={{ fontWeight: "700", marginTop: "0.3rem" }}>
+                간수치?
+              </div>
+              <div style={{ marginTop: "0.3rem" }}>
+                네이브루 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을 종합해서
+                만든 매너 지표입니다.
+              </div>
+              <div style={{ margin: "0.3rem 0" }}>
+                간수치는 40 IU/L에서 시작해서 0~100 IU/L 사이의 값을 가집니다.
+              </div>
+            </Tooltip>
+          </div>
+          <div style={{ marginBottom: "0.7rem" }}>
+            <LimitDiv>
+              <SubTitle>나이</SubTitle>
+              <InputShort
+                ref={minAgeRef}
+                placeholder="20"
+                value={minAge > 0 ? minAge : ""}
+                onChange={(e) => setMinAge(parseInt(e.target.value))}
+              />
+              세 이상
+              <InputShort
+                placeholder="200"
+                value={maxAge > 0 ? maxAge : ""}
+                onChange={(e) => setMaxAge(parseInt(e.target.value))}
+              />
+              세 미만
+            </LimitDiv>
+            {!ageCheck(minAge, maxAge) && btnClicked && (
+              <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>
+            )}
+          </div>
         </QuestionDiv>
         <QuestionDiv>
           <Title>설명</Title>

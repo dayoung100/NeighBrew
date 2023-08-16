@@ -29,6 +29,10 @@ const ImgDiv = styled.div`
   border-radius: 50%;
   float: left;
   margin-right: 1rem;
+  min-width: 50px;
+  min-height: 50px;
+  max-width: 50px;
+  max-height: 50px;
 `;
 
 const Img = styled.img`
@@ -45,7 +49,7 @@ const Chat = (props: {
   const navigate = useNavigate();
   const [user, setUsers] = useState([]);
   useEffect(() => {
-    callApi("GET", `/api/chatroom/${props.chatRoomId}/users`)
+    callApi("GET", `/api/chatroom/${props.chatRoomId}/${localStorage.getItem("myId")}/users`)
       .then(res => {
         setUsers(res.data);
       })
@@ -69,7 +73,13 @@ const Chat = (props: {
           >
             {props.chatRoomName}
           </span>
-          <span style={{ color: "var(--c-gray", fontSize: "12px", marginLeft: "0.5rem" }}>
+          <span
+            style={{
+              color: "var(--c-gray",
+              fontSize: "12px",
+              marginLeft: "0.5rem",
+            }}
+          >
             {user.length}
           </span>{" "}
           <span></span>

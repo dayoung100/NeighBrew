@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +17,7 @@ public class SidoService {
         return sidoRepository.findAll();
     }
 
-    public Optional<Sido> findById(Integer id) {
-        return sidoRepository.findById(id);
+    public Sido findById(Integer id) {
+        return sidoRepository.findById(id).orElse(null);
     }
 }

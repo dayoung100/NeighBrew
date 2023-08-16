@@ -1,6 +1,7 @@
 package com.ssafy.backend.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,11 @@ public class Gugun {
     @Id
     @Column(name = "sido_code")
     private Integer sidoCode;
+
+    @Builder
+    public Gugun(Integer gugunCode, String gugunName, Integer sidoCode) {
+        this.gugunCode = gugunCode;
+        this.gugunName = gugunName;
+        this.sidoCode = sidoCode;
+    }
 }

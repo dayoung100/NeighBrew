@@ -14,6 +14,8 @@ import Footer from "../footer/Footer";
 import DrinkpostMain from "./DrinkPostUseInUser";
 import MeetingMy from "./MeetingMyUseInUser";
 import Navbar from "./Navbar";
+import { Tooltip } from "react-tooltip";
+import { InputText, DateInput } from "../../style/common";
 
 const QuestionDiv = styled.div`
   margin-top: 1.5rem;
@@ -41,12 +43,12 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 50%;
   position: relative;
-  width: 30%;
-  padding-bottom: 30%;
+  width: 50%;
+  padding-bottom: 50%;
   overflow: hidden;
 `;
 const SirenArea = styled.div`
@@ -109,7 +111,7 @@ const UserImgDiv = styled.div`
 `;
 
 const Button = styled.button`
-  width: 50%;
+  width: 45%;
   display: inline-block;
   height: 3rem;
   background-color: white;
@@ -140,7 +142,7 @@ const LiverDiv = styled.div<{ liverpoint: number }>`
   overflow: hidden;
   /* background-image: linear-gradient(to top, #e591a1 50%, #ececec 50%); */
   background-image: linear-gradient(to top, var(--c-pink) 50%, #ececec 50%);
-  background-size: ${props => "50% " + (props.liverpoint + 80) + "%"};
+  background-size: ${(props) => "50% " + (props.liverpoint + 80) + "%"};
   /* background-size: 50% 150%; */
   animation: fillAnimation 5s forwards;
   @keyframes fillAnimation {
@@ -157,13 +159,13 @@ const LiverDiv = styled.div<{ liverpoint: number }>`
   align-items: center;
   justify-content: center;
 `;
-const BottleDiv = styled.div<{}>`
+const BottleDiv = styled.div<{ drinkcount: number }>`
   /* position: relative; */
   /* height: 100%; */
   overflow: hidden;
   background-image: linear-gradient(to top, #d5a002 50%, #ececec 50%);
-  background-size: 20% 80%;
-  animation: fillAnimation 5s forwards;
+  background-size: ${(props) => "50% " + (props.drinkcount * 8 + 80) + "%"};
+  animation: fillAnimation 0.2s forwards;
   @keyframes fillAnimation {
     0% {
       background-position: 0 0;
@@ -178,18 +180,19 @@ const BottleDiv = styled.div<{}>`
   align-items: center;
   justify-content: center;
 `;
+
 const WhiteModal = {
   content: {
+    position: "relative",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "80%",
-    height: "80%",
     padding: "0.5rem 1rem",
     borderRadius: "15px",
     background: "white",
     textAlign: "center",
-    fontFamily: "SeoulNamsan",
+    fontFamily: "NanumSquareNeo",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",
@@ -203,6 +206,32 @@ const FlexDiv = styled.div`
   flex-direction: column;
   margin: 1rem auto;
 `;
+
+const ImageInputBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 10px;
+  background-color: var(--c-yellow);
+  padding: 0.5rem;
+  margin-left: 0.5rem;
+`;
+
+const TitleLabel = styled.label`
+  font-family: "JejuGothic";
+  font-size: 18px;
+  text-align: left;
+  margin-bottom: 0.5rem;
+`;
+
+const BtnDiv = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin: 1.5rem 0;
+`;
+
 const MyPage = () => {
   const [userData, setUserData] = useState<User>({
     birth: "2003-01-01",
@@ -220,7 +249,9 @@ const MyPage = () => {
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const [following, setFollowing] = useState(0); // 팔로잉,팔로워 목록
   const { userid } = useParams();
-  const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
+  const MeetingIcon = meetingicon(
+    chooseChat === 0 ? "var(--c-black)" : "#AAAAAA"
+  );
   const Brewery = brewery(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
   const [deleteModalOn, setDeleteModalOn] = useState(false);
   const [nickname, setNickname] = useState("");
@@ -232,20 +263,20 @@ const MyPage = () => {
   // 팔로우 하기
   const followHandler = async () => {
     const api = await callApi("post", `api/follow/${userid}`)
-      .then(res => {
+      .then((res) => {
         followers();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
   // 팔로워, 팔로잉 인원 수 세기 (팔로우 버튼 색깔 변경)
   const followers = async () => {
-    callApi("get", `api/follow/follower/${userid}`).then(res => {
+    callApi("get", `api/follow/follower/${userid}`).then((res) => {
       if (res.data.length == 0) {
-        setUserData(userData => ({ ...userData, follower: res.data.length }));
+        setUserData((userData) => ({ ...userData, follower: res.data.length }));
         setFollowing(0);
         return;
       }
-      setUserData(userData => ({ ...userData, follower: res.data.length }));
+      setUserData((userData) => ({ ...userData, follower: res.data.length }));
       res.data.map((item, i) => {
         if (item.follower.userId == parseInt(localStorage.getItem("myId"))) {
           setFollowing(1);
@@ -255,13 +286,13 @@ const MyPage = () => {
         }
       });
     });
-    callApi("get", `api/follow/following/${userid}`).then(res => {
-      setUserData(userData => ({ ...userData, following: res.data.length }));
+    callApi("get", `api/follow/following/${userid}`).then((res) => {
+      setUserData((userData) => ({ ...userData, following: res.data.length }));
     });
   };
   const myDrinks = () => {
-    callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
-      setUserData(userData => ({ ...userData, drinkcount: res.data.length }));
+    callApi("get", `api/drink/user/${userid}/review-drink`).then((res) => {
+      setUserData((userData) => ({ ...userData, drinkcount: res.data.length }));
     });
   };
   const goFollowerPage = () => {
@@ -272,7 +303,7 @@ const MyPage = () => {
   };
   const userInfo = () => {
     callApi("get", `api/user/${userid}`)
-      .then(res => {
+      .then((res) => {
         setUserData(res.data);
       })
       .then(() => {
@@ -282,13 +313,13 @@ const MyPage = () => {
         myDrinks();
         followers();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
   const refresh = () => {
     if (localStorage.getItem("token") != null) {
       callApi("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
-      }).then(res => {
+      }).then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
       });
@@ -361,7 +392,7 @@ const MyPage = () => {
             UserID: localStorage.getItem("myId"),
           },
         })
-        .then(res => {
+        .then((res) => {
           userInfo();
         })
         .then(() => {
@@ -370,7 +401,7 @@ const MyPage = () => {
         .then(() => {
           myDrinks();
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     }
     if (profile == null) {
       const formData = new FormData();
@@ -383,7 +414,7 @@ const MyPage = () => {
             UserID: localStorage.getItem("myId"),
           },
         })
-        .then(res => {
+        .then((res) => {
           userInfo();
         })
         .then(() => {
@@ -392,7 +423,7 @@ const MyPage = () => {
         .then(() => {
           myDrinks();
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     }
     if (userData.nickname != nickname && nickname.length > 20) {
       alert("닉네임은 20자 까지만 가능합니다.");
@@ -413,14 +444,19 @@ const MyPage = () => {
       alert("빈 값이 존재합니다.");
       return;
     }
-    if (userData.nickname == nickname && userData.intro == intro && userData.birth == birth) return;
+    if (
+      userData.nickname == nickname &&
+      userData.intro == intro &&
+      userData.birth == birth
+    )
+      return;
 
     callApi("put", `api/user/${localStorage.getItem("myId")}`, {
       nickname: nickname,
       intro: intro,
       birth: birth,
     })
-      .then(res => {
+      .then((res) => {
         userInfo();
       })
       .then(() => {
@@ -429,7 +465,7 @@ const MyPage = () => {
       .then(() => {
         myDrinks();
       })
-      .catch(err => {
+      .catch((err) => {
         if (err.response.data == "중복") {
           alert("중복된 닉네임입니다. 다시 입력해주세요.");
         }
@@ -451,7 +487,7 @@ const MyPage = () => {
   const changeUserProfiletoDefault = () => {
     setProfile(null);
     setImgFile(null);
-    setUserData(prev => {
+    setUserData((prev) => {
       return { ...prev, profile: "no image" };
     });
   };
@@ -470,23 +506,83 @@ const MyPage = () => {
         <UserDiv>
           <FlexDivRow>
             <ImgDiv>
-              <Img src={userData.profile == "no image" ? defaultImg : userData.profile}></Img>
+              <Img
+                src={
+                  userData.profile == "no image" ? defaultImg : userData.profile
+                }
+              ></Img>
             </ImgDiv>
             <InfoDiv>
-              <UserImgDiv>
-                <p style={{ marginBottom: "0.5rem" }}>{userData!.liverPoint} IU/L</p>
+              <UserImgDiv data-tooltip-id="liver-tooltip">
+                <p style={{ marginBottom: "0.5rem" }}>
+                  {userData!.liverPoint} IU/L
+                </p>
                 <LiverDiv liverpoint={userData!.liverPoint ?? 40}>
                   <Img src={liver} alt="" />
                 </LiverDiv>
                 <p style={{ marginTop: "0.2rem" }}>간수치</p>
               </UserImgDiv>
-              <UserImgDiv>
-                <p style={{ marginBottom: "0.5rem" }}>{userData.drinkcount}병</p>
-                <BottleDiv>
+              <Tooltip
+                id="liver-tooltip"
+                style={{
+                  backgroundColor: "var(--c-pink)",
+                  color: "black",
+                  fontSize: "12px",
+                  width: "10rem",
+                  textAlign: "justify",
+                  wordBreak: "break-all",
+                }}
+              >
+                <div
+                  style={{
+                    fontWeight: "700",
+                    marginTop: "0.3rem",
+                    textAlign: "center",
+                  }}
+                >
+                  간수치?
+                </div>
+                <div style={{ marginTop: "0.3rem" }}>
+                  네이브루 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을
+                  종합해서 만든 매너 지표입니다.
+                </div>
+                <div style={{ margin: "0.3rem 0" }}>
+                  간수치는 40 IU/L에서 시작해서 0~100 IU/L 사이의 값을 가집니다.
+                </div>
+              </Tooltip>
+              <UserImgDiv data-tooltip-id="drink-tooltip">
+                <p style={{ marginBottom: "0.5rem" }}>
+                  {userData.drinkcount}병
+                </p>
+                <BottleDiv drinkcount={userData.drinkcount ?? 2}>
                   <Img src={bottle} alt="" />
                 </BottleDiv>
                 <p style={{ marginTop: "0.2rem" }}>술병</p>
               </UserImgDiv>
+              <Tooltip
+                id="drink-tooltip"
+                style={{
+                  backgroundColor: "var(--c-yellow)",
+                  color: "black",
+                  fontSize: "12px",
+                  width: "8rem",
+                  textAlign: "justify",
+                  wordBreak: "break-all",
+                }}
+              >
+                <div
+                  style={{
+                    fontWeight: "700",
+                    marginTop: "0.3rem",
+                    textAlign: "center",
+                  }}
+                >
+                  술병?
+                </div>
+                <div style={{ margin: "0.3rem 0" }}>
+                  사용자가 술을 마시고 남긴 후기 수를 의미합니다.
+                </div>
+              </Tooltip>
             </InfoDiv>
           </FlexDivRow>
         </UserDiv>
@@ -494,7 +590,7 @@ const MyPage = () => {
           style={{
             textAlign: "left",
             padding: "0 1rem",
-            fontFamily: "SeoulNamsan",
+            fontFamily: "NanumSquareNeo",
             fontWeight: "800",
             fontSize: "1.3rem",
           }}
@@ -510,7 +606,9 @@ const MyPage = () => {
             marginTop: "0.5rem",
           }}
         >
-          <span onClick={goFollowPage}>팔로잉 {userData.following} &nbsp;&nbsp; </span>{" "}
+          <span onClick={goFollowPage}>
+            팔로잉 {userData.following} &nbsp;&nbsp;{" "}
+          </span>{" "}
           <span onClick={goFollowerPage}>팔로워 {userData.follower}</span>
         </div>
         <div
@@ -529,7 +627,8 @@ const MyPage = () => {
           <FollowDiv>
             <button
               style={{
-                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+                backgroundColor:
+                  following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
                 border: "none",
                 borderRadius: "8px",
                 fontFamily: "JejuGothic",
@@ -583,7 +682,8 @@ const MyPage = () => {
             setChooseChat(0);
           }}
           style={{
-            borderBottom: chooseChat === 0 ? "2px solid var(--c-black)" : "none",
+            borderBottom:
+              chooseChat === 0 ? "2px solid var(--c-black)" : "none",
           }}
         >
           {MeetingIcon}
@@ -594,7 +694,8 @@ const MyPage = () => {
             setChooseChat(1);
           }}
           style={{
-            borderBottom: chooseChat === 0 ? "none" : "2px solid var(--c-black)",
+            borderBottom:
+              chooseChat === 0 ? "none" : "2px solid var(--c-black)",
           }}
         >
           {Brewery}
@@ -609,94 +710,129 @@ const MyPage = () => {
       {/* Footer에 의해 가려지는게 없게 하기위해 존재하는 div */}
       <div style={{ height: "3rem" }}></div>
       <Modal
+        closeTimeoutMS={1000}
         isOpen={deleteModalOn}
         onRequestClose={() => setDeleteModalOn(false)}
         style={WhiteModal}
         ariaHideApp={false}
       >
-        <FlexDiv>
-          <label htmlFor="nickname">닉네임</label>
-          <input type="text" id="nickname" value={nickname} onInput={nicknameHandler} />
-        </FlexDiv>
-        <FlexDiv>
-          <label htmlFor="intro">한줄 설명</label>
-          <input type="text" id="intro" value={intro} onInput={introHandler} />
-        </FlexDiv>
-        <FlexDiv>
-          <label htmlFor="date">생년월일</label>
-          <input type="date" id="date" value={birth} onInput={birthHandler} max="2005-01-01" />
-        </FlexDiv>
-        <QuestionDiv style={{ textAlign: "left", marginBottom: "2rem" }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Title style={{ margin: "0" }}>프로필 이미지</Title>
-            <ImgInput>
-              <label htmlFor="img_file">
-                <img src="/src/assets/imageButton.svg" style={{ margin: "0 0.5rem" }} />
-              </label>
-              <input
-                type="file"
-                id="img_file"
-                accept="image/jpg, image/png, image/jpeg"
-                onChange={saveImgFile}
-                ref={imgRef}
-              />
-            </ImgInput>
+        <div>
+          <QuestionDiv style={{ textAlign: "left", marginBottom: "2rem" }}>
+            <Title>프로필 이미지</Title>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              {imgFile == null ? (
+                userData.profile == "no image" ? (
+                  <ImageArea src={defaultImg}></ImageArea>
+                ) : (
+                  <ImageArea src={userData.profile}></ImageArea>
+                )
+              ) : (
+                <ImageArea src={imgFile}></ImageArea>
+              )}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "1rem",
+              }}
+            >
+              <ImgInput>
+                <label htmlFor="img_file">
+                  <ImageInputBtn>
+                    <img src="/src/assets/imagePlusIcon.svg" width="90%" />
+                  </ImageInputBtn>
+                </label>
+                <input
+                  type="file"
+                  id="img_file"
+                  accept="image/jpg, image/png, image/jpeg"
+                  onChange={saveImgFile}
+                  ref={imgRef}
+                />
+              </ImgInput>
+              <Button
+                onClick={() => {
+                  changeUserProfiletoDefault();
+                }}
+                style={{
+                  backgroundColor: "var(--c-lightgray)",
+                  borderRadius: "0.5rem",
+                  width: "40%",
+                  marginLeft: "1rem",
+                }}
+              >
+                기본 이미지로 변경
+              </Button>
+            </div>
+          </QuestionDiv>
+          <FlexDiv>
+            <TitleLabel htmlFor="nickname">닉네임</TitleLabel>
+            <InputText
+              type="text"
+              id="nickname"
+              value={nickname}
+              onInput={nicknameHandler}
+            />
+          </FlexDiv>
+          <FlexDiv>
+            <TitleLabel htmlFor="intro">한줄 설명</TitleLabel>
+            <InputText
+              type="text"
+              id="intro"
+              value={intro}
+              onInput={introHandler}
+              placeholder="한줄 설명을 입력해주세요"
+            />
+          </FlexDiv>
+          <FlexDiv
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <TitleLabel htmlFor="date">생년월일</TitleLabel>
+            <DateInput
+              type="date"
+              id="date"
+              value={birth}
+              onInput={birthHandler}
+              max="2005-01-01"
+              style={{ width: "70%", marginRight: "1rem" }}
+            />
+          </FlexDiv>
+          <BtnDiv>
             <Button
               onClick={() => {
-                changeUserProfiletoDefault();
+                changeUserInfo();
+                setDeleteModalOn(false);
+              }}
+              style={{
+                backgroundColor: "var(--c-yellow)",
+                color: "var(--c-black)",
+                borderRadius: "8px",
+                marginBottom: "1rem",
+              }}
+            >
+              유저 정보 변경
+            </Button>
+            <Button
+              onClick={() => {
+                setDeleteModalOn(false);
+                localStorage.removeItem("token");
+                localStorage.removeItem("myId");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("chooseMenu");
+                navigate("/");
               }}
               style={{
                 backgroundColor: "var(--c-lightgray)",
-                borderRadius: "0.5rem",
-                width: "40%",
-                marginLeft: "1rem",
+                color: "var(--c-black)",
+                borderRadius: "8px",
               }}
             >
-              기본 이미지로 변경
+              로그아웃
             </Button>
-          </div>
-          {imgFile == null ? (
-            userData.profile == "no image" ? (
-              <ImageArea src={defaultImg}></ImageArea>
-            ) : (
-              <ImageArea src={userData.profile}></ImageArea>
-            )
-          ) : (
-            <ImageArea src={imgFile}></ImageArea>
-          )}
-        </QuestionDiv>
-        <Button
-          onClick={() => {
-            changeUserInfo();
-            setDeleteModalOn(false);
-          }}
-          style={{
-            backgroundColor: "var(--c-yellow)",
-            color: "var(--c-black)",
-            borderRadius: "8px",
-            marginBottom: "1rem",
-          }}
-        >
-          유저 정보 변경
-        </Button>
-        <br />
-        <Button
-          onClick={() => {
-            setDeleteModalOn(false);
-            localStorage.removeItem("token");
-            localStorage.removeItem("myId");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("chooseMenu");
-            navigate("/");
-          }}
-          style={{
-            backgroundColor: "var(--c-lightgray)",
-            color: "var(--c-black)",
-            borderRadius: "8px",
-          }}
-        >
-          로그아웃
-        </Button>
+          </BtnDiv>
+        </div>
       </Modal>
       <Footer />
     </nav>

@@ -1,13 +1,9 @@
 package com.ssafy.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -23,22 +19,22 @@ public class ChatDmRoom {
     private String chatDmRoomName;
 
     @OneToOne
-    @JoinColumn(name="user1_id")
+    @JoinColumn(name = "user1_id")
     private User user1;
 
     @OneToOne
-    @JoinColumn(name="user2_id")
+    @JoinColumn(name = "user2_id")
     private User user2;
 
-    @Column(nullable = true, columnDefinition = "TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP")
     @Setter
     private LocalDateTime user1AttendTime;
 
-    @Column(nullable = true, columnDefinition = "TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP")
     @Setter
     private LocalDateTime user2AttendTime;
 
-    @Column(nullable = true, columnDefinition = "TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP")
     @Setter
     private LocalDateTime lastMessageTime;
 

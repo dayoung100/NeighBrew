@@ -464,14 +464,20 @@ export const commentIcon = () => {
 
 export const sendIcon = () => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
+    <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 -960 960 960" width="28">
       <path d="M114.5-154.261v-651.478L887.174-480 114.5-154.261ZM180-255.63 717.304-480 180-707.37v162.74L424.63-480 180-417.37v161.74Zm0 0v-451.74 451.74Z" />
     </svg>
   );
 };
 export const deleteIcon = () => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 -960 960 960" width="28">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="32"
+      fill="#eb0505"
+      viewBox="0 -960 960 960"
+      width="32"
+    >
       <path d="M261-120q-24.75 0-42.375-17.625T201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" />
     </svg>
   );
@@ -487,6 +493,28 @@ export const backIcon = () => {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+    </svg>
+  );
+};
+
+export const editIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="32"
+      fill="#ffffff"
+      viewBox="0 -960 960 960"
+      width="32"
+    >
+      <path d="M180-180h44l443-443-44-44-443 443v44Zm614-486L666-794l42-42q17-17 42-17t42 17l44 44q17 17 17 42t-17 42l-42 42Zm-42 42L248-120H120v-128l504-504 128 128Zm-107-21-22-22 44 44-22-22Z" />
+    </svg>
+  );
+};
+
+export const moreIcon = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 -960 960 960" width="28">
+      <path d="M207.858-432Q188-432 174-446.142q-14-14.141-14-34Q160-500 174.142-514q14.141-14 34-14Q228-528 242-513.858q14 14.141 14 34Q256-460 241.858-446q-14.141 14-34 14Zm272 0Q460-432 446-446.142q-14-14.141-14-34Q432-500 446.142-514q14.141-14 34-14Q500-528 514-513.858q14 14.141 14 34Q528-460 513.858-446q-14.141 14-34 14Zm272 0Q732-432 718-446.142q-14-14.141-14-34Q704-500 718.142-514q14.141-14 34-14Q772-528 786-513.858q14 14.141 14 34Q800-460 785.858-446q-14.141 14-34 14Z" />
     </svg>
   );
 };

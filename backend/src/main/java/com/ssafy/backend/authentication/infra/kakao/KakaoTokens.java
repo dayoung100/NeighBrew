@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class KakaoTokens {
     //인증 API 응답 accessToken 만 활용
-
     @JsonProperty("access_token")
     private String accessToken;
 

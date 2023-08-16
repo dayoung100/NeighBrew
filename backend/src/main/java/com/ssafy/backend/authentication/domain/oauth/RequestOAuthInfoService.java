@@ -2,6 +2,7 @@ package com.ssafy.backend.authentication.domain.oauth;
 
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -26,7 +27,7 @@ public class RequestOAuthInfoService {
         );
     }
 
-    public OAuthInfoResponse request(OAuthLoginParams params) {
+    public OAuthInfoResponse request(OAuthLoginParams params) throws UnsupportedEncodingException {
         // 어떤 클라이언트인지 확인
         OAuthApiClient client = clients.get(params.oAuthProvider());
 
@@ -35,7 +36,6 @@ public class RequestOAuthInfoService {
 
         return client.requestOauthInfo(accessToken);
     }
-
 
     public String authApiUrl(OAuthLoginParams params) {
         OAuthApiClient client = clients.get(params.oAuthProvider());

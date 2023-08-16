@@ -1,15 +1,11 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.dto.EvaluationDto;
+import com.ssafy.backend.dto.evaluation.EvaluationRequestDto;
 import com.ssafy.backend.service.EvaluationService;
+import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,15 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 public class EvaluationController {
     private final EvaluationService evaluationService;
 
-    // A모임에서 유저 1 이 유저 2를 평가하는 로직
-    // 보내는 측이 유저 1이니까 사실상 유저 2만 있으면 되는거 아님?
-
-    //
     @PostMapping("/")
-    public ResponseEntity<?> goodEvaluation(@RequestBody EvaluationDto evaluationDto,  HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        return ResponseEntity.ok(evaluationService.calculateScoreByMeetId(evaluationDto, Long.valueOf(userId)));
+    public ResponseEntity<?> goodEvaluation(@RequestBody EvaluationRequestDto evaluationRequestDto, @RequestHeader("Authorization") String token) {
+        Long userId = JwtUtil.parseUserIdFromToken(token);
+        return ResponseEntity.ok(evaluationService.calculateScoreByMeetId(evaluationRequestDto, userId));
     }
-
-
 }

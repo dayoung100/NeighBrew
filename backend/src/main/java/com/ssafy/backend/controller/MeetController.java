@@ -1,10 +1,11 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.dto.meet.MeetDto;
+import com.ssafy.backend.dto.meet.MeetRequestDto;
+import com.ssafy.backend.dto.meet.MeetResponseDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.service.MeetService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,12 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
 //모임 생성, 수정, 삭제를 관장하는 컨트롤러
-@Slf4j
 @RestController
 @RequestMapping("/api/meet")
 @RequiredArgsConstructor
@@ -26,41 +25,31 @@ public class MeetController {
 
     //태그별로 데이터 조회
     @GetMapping()
-    public ResponseEntity<?> getTagMeet(@RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId,
-                                        Pageable pageable) {
-        if (tagId > 7L || tagId < 0L) return ResponseEntity.badRequest().body("태그ID가 존재하지 않습니다.");
-
-        if (tagId == 0L) return ResponseEntity.ok(meetService.findAll(pageable));
-        return ResponseEntity.ok(meetService.findByTagId(tagId, pageable));
+    public ResponseEntity<Page<MeetResponseDto>> getTagMeet(@RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId, Pageable pageable) {
+        return ResponseEntity.ok(meetService.findMeetsByTagId(tagId, pageable));
     }
 
     // meetId에 해당하는 모임 상세 정보 조회
     @GetMapping("/{meetId}")
-    public ResponseEntity<?> getMeetById(@PathVariable Long meetId) throws NoSuchFieldException {
+    public ResponseEntity<?> getMeetById(@PathVariable Long meetId) {
         return ResponseEntity.ok(meetService.findMeetdetailByMeetId(meetId));
-
     }
 
     //유저와 관련된 모임 모두 출력
     @GetMapping("/mymeet/{userId}")
     public ResponseEntity<?> getMyMeetsById(@PathVariable Long userId) {
-        return ResponseEntity.ok(meetService.findByUserId(userId));
+        return ResponseEntity.ok(meetService.findUserMeetByUserId(userId));
     }
 
     //모임 생성
     @PostMapping("/create")
     public ResponseEntity<?> saveMeet(Long userId,
-                                      MeetDto meetDto,
+                                      MeetRequestDto meetRequestDto,
                                       Long drinkId,
                                       @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException, IOException {
-        Meet createdMeet;
-        if (multipartFile.isPresent()) {
-            if (multipartFile.get().getSize() > 1024 * 1024 * 20)
-                return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
 
-            createdMeet = meetService.saveMeet(meetDto, userId, drinkId, multipartFile.get());
-        } else createdMeet = meetService.saveMeet(meetDto, userId, drinkId, null);
-
+        checkCapacityFile(multipartFile);
+        Meet createdMeet = meetService.saveMeet(meetRequestDto, userId, drinkId, multipartFile.orElse(null));
         return ResponseEntity.ok(createdMeet);
     }
 
@@ -68,18 +57,20 @@ public class MeetController {
     @PutMapping("/modify/{userId}/{meetId}")
     public ResponseEntity<?> updateMeet(@PathVariable("userId") Long userId,
                                         @PathVariable("meetId") Long meetId,
-                                        MeetDto meetDto,
+                                        MeetRequestDto meetRequestDto,
                                         Long drinkId,
-                                        @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IOException, NoSuchFieldException {
+                                        @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IOException {
+        checkCapacityFile(multipartFile);
+
+        meetService.updateMeet(meetRequestDto, userId, meetId, drinkId, multipartFile.orElse(null));
+        return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
+    }
+
+    private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
         if (multipartFile.isPresent()) {
             if (multipartFile.get().getSize() > 1024 * 1024 * 20)
-                return ResponseEntity.badRequest().body("파일 업로드 크기는 20MB로 제한되어 있습니다.");
-            meetService.updateMeet(meetDto, userId, meetId, drinkId, multipartFile.get());
-        } else { //FormData에 ("image", "?") 없을 때
-            meetService.updateMeet(meetDto, userId, meetId, drinkId, null);
+                throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
         }
-
-        return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
     }
 
     //모임 삭제하기
@@ -88,6 +79,7 @@ public class MeetController {
                                         @RequestBody Map<String, Long> requestBody) {
         Long hostId = requestBody.get("userId");
         meetService.deleteMeet(hostId, meetId);
+
         return ResponseEntity.ok(meetId + " 모임이 삭제 되었습니다.");
     }
 
@@ -99,7 +91,6 @@ public class MeetController {
 
         meetService.applyMeet(userId, meetId);
         return ResponseEntity.ok(meetId + "모임에 신청 완료");
-
     }
 
     // 유저 : 모임 신청 취소
@@ -119,6 +110,7 @@ public class MeetController {
         Long meetId = requestBody.get("meetId");
 
         meetService.exitMeet(userId, meetId);
+
         return ResponseEntity.ok("모임(" + meetId + ")에서 정상적으로 나가졌습니다.");
     }
 
@@ -138,4 +130,3 @@ public class MeetController {
         meetService.checkMeetStatus();
     }
 }
-
