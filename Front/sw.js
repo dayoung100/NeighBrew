@@ -30,19 +30,19 @@ self.addEventListener("notificationclick", function (event) {
           })
           .then(function (clientList) {
             // console.log(clientList);
-            for (var i = 0; i < clientList.length; i++) {
-              var client = clientList[i];
+            // for (var i = 0; i < clientList.length; i++) {
+            //   var client = clientList[i];
 
-              if (client.url === "/" && "focus" in client) {
-                return client.focus();
-              }
-            }
+            //   if (client.url === "/" && "focus" in client) {
+            //     return client.focus();
+            //   }
+            // }
 
-            if (clients.openWindow) {
-              //같은 주소가 아닌 경우 새창으로
-
-              return client.navigate(event.notification.data);
-            }
+            // if (clients.openWindow) {
+            //같은 주소가 아닌 경우 새창으로
+            var client = clientList[0];
+            return client.navigate(event.notification.data);
+            // }
           })
       );
       break;
