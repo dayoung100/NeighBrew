@@ -62,9 +62,9 @@ function App() {
         // console.log("[sse] open", { e });
       };
       es.current.onmessage = event => {
+        console.log(event.data);
         try {
           const data = JSON.parse(event.data);
-          // console.log(data);
           noti(data.content, data.url);
         } catch {}
         if (event.data === "finished") {
@@ -132,7 +132,7 @@ function App() {
         data: url,
         actions: [
           {
-            title: "aa",
+            title: "이동",
             action: "goTab",
           },
           {

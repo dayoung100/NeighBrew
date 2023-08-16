@@ -84,13 +84,17 @@ const Chat = (props: {
     nickname: "닉네임",
     drinkcount: 0,
   });
+  const [lastMessageTime, setlastMessageTime] = useState<string>("");
+  useEffect(() => {
+    setlastMessageTime(
+      props.lastMessageTime &&
+        props.lastMessageTime.substring(6, 10) + " " + props.lastMessageTime.substring(11, 16)
+    );
+  }, [props.lastMessageTime]);
   useEffect(() => {
     setUsers1(props.user1);
     setUsers2(props.user2);
   }, [props.user1, props.user2]);
-
-  const timeFilter =
-    props.lastMessageTime.substring(6, 10) + " " + props.lastMessageTime.substring(11, 16);
 
   return (
     <ChatDiv onClick={() => props.chatRoomDetail(user1.userId, user2.userId)}>
@@ -131,7 +135,7 @@ const Chat = (props: {
         </div>
 
         <div style={{ textAlign: "right", color: "var(--c-gray)", fontSize: "14px" }}>
-          {timeFilter}
+          {lastMessageTime}
         </div>
         {/*<div style={{ textAlign:"right"}}>{props.lastMessageTime}</div>*/}
       </DmInfoDiv>
