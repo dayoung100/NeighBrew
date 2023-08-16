@@ -127,7 +127,7 @@ const MeetingInfoManage = () => {
   const navigate = useNavigate();
   //모임 수정 후 모임 상세로 이동
   const GoMeetDetailHandler = () => {
-    navigate(-2);
+    navigate(-1);
   };
   //호스트가 아닌데 편집하려고 할 시 모임 메인으로 이동
   const GoMeetMainHandler = () => {
