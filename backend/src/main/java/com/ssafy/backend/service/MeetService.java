@@ -431,7 +431,7 @@ public class MeetService {
             //채팅방에 참여 시킨다
             settingChatRoomUser(ChatRoomUser.builder()
                     .user(manageUser)
-                    .chatRoom(managementMeet.getChatRoom()), managementMeet.getChatRoom(), null, manageUser.getNickname() + "님이 모임에 참여하셨습니다.");
+                    .chatRoom(managementMeet.getChatRoom()), managementMeet.getChatRoom(), host, manageUser.getNickname() + "님이 모임에 참여하셨습니다.");
 
             pushService.send(host, manageUser, PushType.MEETACCESS, "회원님께서 모임(" + managementMeet.getMeetName() + ")참여 되셨습니다.\n 즐거운 시간 되세요.", "meet/" + managementMeet.getMeetId());
 
