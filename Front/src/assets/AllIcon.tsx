@@ -21,8 +21,8 @@ export const meetingicon = (color: string) => {
         strokeLinejoin="round"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M42.2914 20.1481C42.2901 22.4374 40.4334 24.2923 38.1441 24.2914C35.8548 24.2905 33.9996 22.4342 34 20.1449C34.0004 17.8556 35.8564 16 38.1457 16C39.2456 16 40.3004 16.4371 41.078 17.2151C41.8555 17.9931 42.292 19.0482 42.2914 20.1481V20.1481Z"
         stroke={color}
         strokeWidth="2"
