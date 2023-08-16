@@ -63,7 +63,6 @@ const ChatList = () => {
   const classListHandler = () => {
     callApi("GET", `api/chatroom/${userId}/getChatRoom`)
       .then(res => {
-        console.log(res.data);
         setChatList(res.data);
       })
       .catch(e => {
@@ -73,8 +72,6 @@ const ChatList = () => {
   const dmListHandler = () => {
     callApi("GET", `api/dm/list/${userId}`)
       .then(res => {
-        console.log(res.data);
-        //console.log(typeof res.data[0].lastMessageTime);
         setChatList(res.data);
       })
       .catch(e => {
