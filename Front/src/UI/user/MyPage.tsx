@@ -311,7 +311,7 @@ const MyPage = () => {
       })
       .then(() => {
         myDrinks();
-        followers();
+        folgitlowers();
       })
       .catch((err) => console.log(err));
   };
