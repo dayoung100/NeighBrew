@@ -404,6 +404,8 @@ public class MeetService {
         //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.GUEST);
 
+        //채팅-유저테이블에서 해당 정보 삭제
+
         //chat_room_user도 사라진다.
         Meet nowMeet = getMeet(meetId);
 
@@ -414,6 +416,7 @@ public class MeetService {
         chatRoomService.deleteExistUser(nowMeet.getChatRoom(), userId);
 
         //모임 나가면 채팅방에 나갔다고 메세지 남기기
+
     }
 
     public String manageMeet(Long userId, Long meetId, boolean applyResult) {
