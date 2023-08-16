@@ -52,7 +52,6 @@ public class ChatController {
     }
 
     //dm떠나기
-    @Transactional
     @MessageMapping("/dm/{user1Id}/{user2Id}/leave")
     public void leaveDm(@DestinationVariable("user1Id") Long user1Id,
                         @DestinationVariable("user2Id") Long user2Id,

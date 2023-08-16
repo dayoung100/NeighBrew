@@ -42,12 +42,12 @@ public class ChatDmService {
                 .collect(Collectors.toList());
     }
 
-    public Map<String, Object> findDmMessagesByRoomId(Long requestUser, Long user1Id, Long user2Id) {
+    public Map<String, Object> findDmMessagesByRoomId(Long user1Id, Long user2Id) {
         Map<String, Object> result = new HashMap<>();
 
         chatDmRoomRepository.findByUser1_UserIdAndUser2_UserId(user1Id, user2Id).ifPresent(dmRoom -> {
             LocalDateTime currentTime = LocalDateTime.now();
-            List<ChatDmMessage> messages = (requestUser.equals(user1Id))
+            List<ChatDmMessage> messages = (user2Id.equals(user1Id))
                     ? chatDmMessageRepository.findByChatDmRoom_ChatDmRoomIdAndCreatedAtBetween(dmRoom.getChatDmRoomId(), dmRoom.getUser1AttendTime(), currentTime)
                     : chatDmMessageRepository.findByChatDmRoom_ChatDmRoomIdAndCreatedAtBetween(dmRoom.getChatDmRoomId(), dmRoom.getUser2AttendTime(), currentTime);
             result.put("messages", messages);
@@ -93,7 +93,6 @@ public class ChatDmService {
     public String leaveDm(Long user1Id, Long user2Id, String payload) throws JsonProcessingException {
         JsonNode jsonNode = mapper.readTree(payload);
         Long leaveUserId = jsonNode.get("leaveUserId").asLong();
-        User leaveUser = getUserOrThrow(leaveUserId, "존재하지 않는 유저 입니다.");
 
         ChatDmRoom findDmRoom = chatDmRoomRepository.findByUser1_UserIdAndUser2_UserId(user1Id, user2Id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방 입니다."));
@@ -115,12 +114,6 @@ public class ChatDmService {
         chatDmRoomRepository.save(findDmRoom);
 
         String leaveMessage = getUserOrThrow(leaveUserId, "존재하지 않는 유저 입니다.").getNickname() + "님이 채팅방을 나갔습니다.";
-        chatDmMessageRepository.save(ChatDmMessage.builder()
-                .chatDmRoom(findDmRoom)
-                .user(leaveUser)
-                .message(leaveUser.getNickname() + "님이 채팅방을 나갔습니다.")
-                .createdAt(LocalDateTime.now())
-                .build());
 
         Map<String, Object> result = new HashMap<>();
         result.put("message", leaveMessage);
