@@ -83,18 +83,14 @@ public class ChatRoomService {
         return mapper.writeValueAsString(map);
     }
 
-//    @Transactional
+    @Transactional
     public String leaveChatRoom(Long roomId, String data) throws JsonProcessingException {
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
         Long userId = Long.valueOf(new ObjectMapper().readTree(data).get("userId").asText());
-        log.info("userId: " + userId + " roomId: " + roomId + " data: " + data);
 
-        deleteExistUser(room, userId);
+        ChatMessageMongo chatMessageMongo = deleteExistUser(room, userId);
 
-//        if (room.getUsers().isEmpty()) chatRoomRepository.delete(room);
-
-
-        return mapper.writeValueAsString(deleteExistUser(room, userId));
+        return mapper.writeValueAsString(chatMessageMongo);
     }
 
     public List<User> getUsersInChatRoom(Long chatRoomId) {
@@ -109,10 +105,8 @@ public class ChatRoomService {
     }
 
     public ChatMessageMongo deleteExistUser(ChatRoom chatRoom, Long userId) {
-        log.info("chatRoom: " + chatRoom + " userId: " + userId + " chatRoomId: " + chatRoom.getChatRoomId() + " chatRoomName: " + chatRoom.getChatRoomName() + " createdAt: " + String.valueOf(LocalDateTime.now()) + " message: " + "채팅방을 나갔습니다.");
         User findUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, chatRoom.getChatRoomId());
-        if (chatRoom.getUsers().isEmpty()) chatRoomRepository.delete(chatRoom);
         return mongoTemplate.insert(ChatMessageMongo.builder()
                 .userId(userId)
                 .userNickname(findUser.getNickname())
