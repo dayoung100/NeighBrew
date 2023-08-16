@@ -104,9 +104,16 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public ChatMessageMongo deleteExistUser(ChatRoom chatRoom, Long userId) {
         User findUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        log.info("삭제 시도? ");
         chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, chatRoom.getChatRoomId());
+<<<<<<< Updated upstream
+=======
+        log.info("삭제 성공 ");
+        if (chatRoom.getUsers().isEmpty()) chatRoomRepository.delete(chatRoom);
+>>>>>>> Stashed changes
         return mongoTemplate.insert(ChatMessageMongo.builder()
                 .userId(userId)
                 .userNickname(findUser.getNickname())

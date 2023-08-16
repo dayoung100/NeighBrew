@@ -47,6 +47,7 @@ public class MeetService {
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomUserService chatRoomUserService;
+    private final ChatRoomUserRepository chatRoomUserRepository;
     private final ModelMapper modelMapper;
 
     public Page<MeetResponseDto> findMeetsByTagId(Long tagId, Pageable pageable) {
@@ -413,7 +414,15 @@ public class MeetService {
         nowMeet.setNowParticipants(nowMeet.getNowParticipants() - 1);
         meetRepository.save(nowMeet);
 
+<<<<<<< Updated upstream
         chatRoomService.deleteExistUser(nowMeet.getChatRoom(), userId);
+=======
+        chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, nowMeet.getChatRoom().getChatRoomId());
+
+        //chatRoomService.deleteExistUser(nowMeet.getChatRoom(), userId);
+        //모임 나가면 채팅방에 나갔다고 메세지 남기기
+
+>>>>>>> Stashed changes
     }
 
     public String manageMeet(Long userId, Long meetId, boolean applyResult) {
