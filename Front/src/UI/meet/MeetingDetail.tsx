@@ -158,17 +158,16 @@ const ModalBtn = styled.div`
 
 const ManageModal = {
   content: {
-    top: "88%",
+    top: "90%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "90%",
-    height: "22%",
+    height: "16%",
     borderRadius: "24px 24px 0px 0px",
     backgroundColor: "#ffffff",
     fontFamily: "NanumSquareNeo",
     fontSize: "16px",
     color: "black",
-    transition: "top 2s ease-in-out",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",
@@ -673,24 +672,29 @@ const MeetingDetail = () => {
             style={{
               fontSize: "1rem",
               color: "var(--c-gray)",
-              marginBottom: "0.5rem",
             }}
           >
             모임 관리
           </div>
           <div
             onClick={() => GotoMeetInfoManage(parseInt(meetId))}
-            style={{ display: "flex", alignItems: "center", height: "30%" }}
+            style={{ display: "flex", alignItems: "center", height: "40%" }}
           >
             <ModalIcon>{EditIcon}</ModalIcon>
-            <div style={{ color: "black" }}>모임 정보 관리</div>
+            <div
+              style={{
+                color: "black",
+              }}
+            >
+              모임 정보 관리
+            </div>
           </div>
           <div
             onClick={() => {
               setManageModalOn(false);
               setDeleteModalOn(true);
             }}
-            style={{ display: "flex", alignItems: "center", height: "30%" }}
+            style={{ display: "flex", alignItems: "center", height: "40%" }}
           >
             <ModalIcon>{DeleteIcon}</ModalIcon>
             <div style={{ color: "#eb0505" }}>삭제하기</div>

@@ -1,19 +1,25 @@
-import {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
 import styled from "styled-components";
-import {Drink, Review, SubReview} from "../../Type/types";
+import { Drink, Review, SubReview } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 import fancyDrinkImage from "../../assets/fancydrinkImage.jpg";
-import {callApi} from "../../utils/api";
+import { callApi } from "../../utils/api";
 import NavbarSimple from "../navbar/NavbarSimple";
-import {commentIcon, likeIcon, deleteIcon, editIcon, moreIcon} from "./../../assets/AllIcon";
+import {
+  commentIcon,
+  likeIcon,
+  deleteIcon,
+  editIcon,
+  moreIcon,
+} from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
 import Modal from "react-modal";
-import {WhiteModal} from "../../style/common";
+import { WhiteModal } from "../../style/common";
 
-import {autoAnimate} from "@formkit/auto-animate";
+import { autoAnimate } from "@formkit/auto-animate";
 
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
@@ -137,23 +143,22 @@ const InfoBox = styled.div`
 `;
 
 const ThreeDotModal = {
-    content: {
-        top: "90%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "90%",
-        height: "16%",
-        borderRadius: "24px 24px 0px 0px",
-        backgroundColor: "#ffffff",
-        fontFamily: "SeoulNamsan",
-        fontSize: "1.5rem",
-        color: "black",
-        transition: "top 2s ease-in-out",
-    },
-    overlay: {
-        background: "rgba(0, 0, 0, 0.5)",
-        zIndex: "1001",
-    },
+  content: {
+    top: "90%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "90%",
+    height: "16%",
+    borderRadius: "24px 24px 0px 0px",
+    backgroundColor: "#ffffff",
+    fontFamily: "NanumSquareNeo",
+    fontSize: "1.5rem",
+    color: "black",
+  },
+  overlay: {
+    background: "rgba(0, 0, 0, 0.5)",
+    zIndex: "1001",
+  },
 };
 
 const ModalBtnDiv = styled.div`
@@ -183,180 +188,189 @@ const ModalIcon = styled.div`
 `;
 
 const DrinkpostReviewDetail = () => {
-    const MoreIcon = moreIcon();
-    const EditIcon = editIcon();
-    const DeleteIcon = deleteIcon();
-    const LikeIcon = likeIcon();
-    const CommentIcon = commentIcon();
-    const {drinkId, reviewId} = useParams();
-    const [followRejection, setFollowRejection] = useState(false);
-    const [deleteModalOn, setDeleteModalOn] = useState(false);
-    const [threeDotOn, setThreeDotOn] = useState(false);
-    const [review, setReview] = useState<Review>();
-    const [drink, setDrink] = useState<Drink>();
-    const [following, setFollowing] = useState(0);
-    const [subReviewList, setSubReviewList] = useState<SubReview[]>([]);
-    const [comment, setComment] = useState("");
-    const navigate = useNavigate();
-    const [like, setLike] = useState(false);
-    const [likeCount, setLikeCount] = useState(0);
+  const MoreIcon = moreIcon();
+  const EditIcon = editIcon();
+  const DeleteIcon = deleteIcon();
+  const LikeIcon = likeIcon();
+  const CommentIcon = commentIcon();
+  const { drinkId, reviewId } = useParams();
+  const [followRejection, setFollowRejection] = useState(false);
+  const [deleteModalOn, setDeleteModalOn] = useState(false);
+  const [threeDotOn, setThreeDotOn] = useState(false);
+  const [review, setReview] = useState<Review>();
+  const [drink, setDrink] = useState<Drink>();
+  const [following, setFollowing] = useState(0);
+  const [subReviewList, setSubReviewList] = useState<SubReview[]>([]);
+  const [comment, setComment] = useState("");
+  const navigate = useNavigate();
+  const [like, setLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
-    useEffect(() => {
-        callApi("get", `api/drink/${drinkId}`).then(res => {
-            setDrink(res.data);
-        });
+  useEffect(() => {
+    callApi("get", `api/drink/${drinkId}`).then((res) => {
+      setDrink(res.data);
+    });
 
-        callApi("get", `api/subreview/list/${reviewId}`).then(res => {
-            setSubReviewList(res.data);
-        });
+    callApi("get", `api/subreview/list/${reviewId}`).then((res) => {
+      setSubReviewList(res.data);
+    });
 
-        async function summonReview() {
-            // 술 상세 후기 조회 요청
-            const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
-            setReview(response1.data);
-            setLikeCount(response1.data.likeCount);
-            const userId = response1.data.user.userId;
-            // 후기 쓴 사람에 대한 follow 요청
-            // 술 상세 후기 조회 이후에 이루어져야 함.
-            const response2 = await callApi("get", `api/follow/follower/${userId}`);
-            if (response2.data.length == 0) {
-                setFollowing(0);
-                return;
-            }
-            response2.data.map((item, i) => {
-                if (item.follower.userId == parseInt(localStorage.getItem("myId"))) {
-                    setFollowing(1);
-                    return;
-                } else if (i == response2.data.length - 1) {
-                    setFollowing(0);
-                }
-            });
+    async function summonReview() {
+      // 술 상세 후기 조회 요청
+      const response1 = await callApi(
+        "get",
+        `api/drinkreview/review/${reviewId}`
+      );
+      setReview(response1.data);
+      setLikeCount(response1.data.likeCount);
+      const userId = response1.data.user.userId;
+      // 후기 쓴 사람에 대한 follow 요청
+      // 술 상세 후기 조회 이후에 이루어져야 함.
+      const response2 = await callApi("get", `api/follow/follower/${userId}`);
+      if (response2.data.length == 0) {
+        setFollowing(0);
+        return;
+      }
+      response2.data.map((item, i) => {
+        if (item.follower.userId == parseInt(localStorage.getItem("myId"))) {
+          setFollowing(1);
+          return;
+        } else if (i == response2.data.length - 1) {
+          setFollowing(0);
         }
+      });
+    }
 
-        summonReview();
-    }, []);
+    summonReview();
+  }, []);
 
-    useEffect(() => {
-        callApi("GET", `api/like/${reviewId}`, {
-            headers: {
-                Authorization: "Bearer " + localStorage.getItem("token"),
-            },
-        }).then(res => {
-            setLike(res.data);
-        });
-    }, [localStorage.getItem("token")]);
+  useEffect(() => {
+    callApi("GET", `api/like/${reviewId}`, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    }).then((res) => {
+      setLike(res.data);
+    });
+  }, [localStorage.getItem("token")]);
 
-    const likeHandler = () => {
-        callApi("POST", `api/like/${reviewId}`, {
-            headers: {
-                Authorization: "Bearer " + localStorage.getItem("token"),
-            },
-        }).then(() => {
-            if (!like) {
-                setLikeCount(prev => prev + 1);
-            } else {
-                setLikeCount(prev => prev - 1);
-            }
-        });
-        setLike(!like);
-    };
+  const likeHandler = () => {
+    callApi("POST", `api/like/${reviewId}`, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    }).then(() => {
+      if (!like) {
+        setLikeCount((prev) => prev + 1);
+      } else {
+        setLikeCount((prev) => prev - 1);
+      }
+    });
+    setLike(!like);
+  };
 
-    const followHandler = () => {
-        if (review?.user.userId.toString() === localStorage.getItem("myId")) {
-            setFollowRejection(true);
-            setTimeout(() => setFollowRejection(false), 1000);
-            return;
+  const followHandler = () => {
+    if (review?.user.userId.toString() === localStorage.getItem("myId")) {
+      setFollowRejection(true);
+      setTimeout(() => setFollowRejection(false), 1000);
+      return;
+    }
+    callApi("post", `api/follow/${review?.user.userId}`)
+      .then(() => {
+        followers();
+      })
+      .catch(() => {});
+  };
+
+  const followers = async () => {
+    callApi("get", `api/follow/follower/${review?.user.userId}`).then((res) => {
+      if (res.data.length == 0) {
+        setFollowing(0);
+        return;
+      }
+
+      res.data.map((item, i) => {
+        if (item.follower.userId == parseInt(localStorage.getItem("myId"))) {
+          setFollowing(1);
+          return;
+        } else if (i == res.data.length - 1) {
+          setFollowing(0);
         }
-        callApi("post", `api/follow/${review?.user.userId}`)
-            .then(() => {
-                followers();
-            })
-            .catch(() => {
-            });
-    };
+      });
+    });
+  };
 
-    const followers = async () => {
-        callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
-            if (res.data.length == 0) {
-                setFollowing(0);
-                return;
-            }
+  const toProfileHandler = () => {
+    navigate(`/myPage/${review?.user.userId}`);
+  };
 
-            res.data.map((item, i) => {
-                if (item.follower.userId == parseInt(localStorage.getItem("myId"))) {
-                    setFollowing(1);
-                    return;
-                } else if (i == res.data.length - 1) {
-                    setFollowing(0);
+  useEffect(() => {}, [comment]);
+
+  // 술 후기에 대한 댓글 제출하는 함수.
+  const submitHandler = async () => {
+    const fun = await callApi("post", "api/subreview/write", {
+      content: comment.trim(),
+      drinkReviewId: reviewId,
+    });
+
+    setComment("");
+    setSubReviewList((prev) => [fun.data, ...prev]);
+  };
+
+  const modalHandler = () => {
+    setThreeDotOn(true);
+    // setDeleteModalOn(true);
+  };
+
+  const toDeleteQuestionHandler = () => {
+    setDeleteModalOn(true);
+    setThreeDotOn(false);
+  };
+
+  const toUpdateHandler = () => {
+    navigate("update/");
+  };
+
+  const deleteHandler = () => {
+    callApi("delete", `api/drinkreview/${review?.drinkReviewId}`).then(() => {
+      // navigate(`/drinkpost/${drinkId}`, { replace: true });
+      navigate(-1);
+    });
+  };
+  return (
+    <>
+      <NavbarSimple title={drink?.name}></NavbarSimple>
+      <WholeDiv>
+        <Usercard>
+          <div
+            onClick={toProfileHandler}
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            <div>
+              <UserImg
+                src={
+                  review?.user.profile !== "no image"
+                    ? review?.user.profile
+                    : defaultImg
                 }
-            });
-        });
-    };
-
-    const toProfileHandler = () => {
-        navigate(`/myPage/${review?.user.userId}`);
-    };
-
-    useEffect(() => {
-    }, [comment]);
-
-    // 술 후기에 대한 댓글 제출하는 함수.
-    const submitHandler = async () => {
-        const fun = await callApi("post", "api/subreview/write", {
-            content: comment.trim(),
-            drinkReviewId: reviewId,
-        });
-
-        setComment("");
-        setSubReviewList(prev => [fun.data, ...prev]);
-    };
-
-    const modalHandler = () => {
-        setThreeDotOn(true);
-        // setDeleteModalOn(true);
-    };
-
-    const toDeleteQuestionHandler = () => {
-        setDeleteModalOn(true);
-        setThreeDotOn(false);
-    };
-
-    const toUpdateHandler = () => {
-        navigate("update/");
-    };
-
-    const deleteHandler = () => {
-        callApi("delete", `api/drinkreview/${review?.drinkReviewId}`).then(() => {
-            // navigate(`/drinkpost/${drinkId}`, { replace: true });
-            navigate(-1);
-        });
-    };
-    return (
-        <>
-            <NavbarSimple title={drink?.name}></NavbarSimple>
-            <WholeDiv>
-                <Usercard>
-                    <div onClick={toProfileHandler} style={{display: "flex", alignItems: "center"}}>
-                        <div>
-                            <UserImg
-                                src={review?.user.profile !== "no image" ? review?.user.profile : defaultImg}
-                            ></UserImg>
-                        </div>
-                        <div>
-                            <b>{review?.user.nickname}</b>
-                        </div>
-                    </div>
-                    {review?.user.userId.toString() !== localStorage.getItem("myId") ? (
-                        <FollowDiv
-                            style={{
-                                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
-                            }}
-                            onClick={followHandler}
-                        >
-                            {following === 0 ? "팔로우" : "언팔로우"}
-                        </FollowDiv>
-                    ) : null}
-                    {/* <FollowDiv
+              ></UserImg>
+            </div>
+            <div>
+              <b>{review?.user.nickname}</b>
+            </div>
+          </div>
+          {review?.user.userId.toString() !== localStorage.getItem("myId") ? (
+            <FollowDiv
+              style={{
+                backgroundColor:
+                  following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+              }}
+              onClick={followHandler}
+            >
+              {following === 0 ? "팔로우" : "언팔로우"}
+            </FollowDiv>
+          ) : null}
+          {/* <FollowDiv
             style={{
               backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
             }}
@@ -364,148 +378,186 @@ const DrinkpostReviewDetail = () => {
           >
             {following === 0 ? "팔로우" : "언팔로우"}
           </FollowDiv> */}
-                </Usercard>
-                <ImageDiv
-                    // style={{
-                    //   backgroundImage: `url(${review?.img !== "no image" ? review?.img : fancyDrinkImage})`,
-                    // }}
-                >
-                    <img
-                        src={review?.img !== "no image" ? review?.img : fancyDrinkImage}
-                        style={{width: "100%"}}
-                    />
-                </ImageDiv>
-                <InfoBox>
-                    <LikeAndComment>
-                        <LikeAndCommentDiv>
-                            <div onClick={likeHandler}
-                            style ={{display : "flex", alignItems:"center", margin : "0.5rem"}}>{LikeIcon}</div>
-                            <div style={{display : "flex", alignItems:"center"}}>{likeCount}</div>
-                        </LikeAndCommentDiv>
-                        <LikeAndCommentDiv>
-                            <div style ={{display : "flex", alignItems:"center", margin : "0.5rem"}}>{CommentIcon}</div>
-                          <div style={{display : "flex", alignItems:"center"}}>{subReviewList.length}</div>
-
-
-                        </LikeAndCommentDiv>
-                    </LikeAndComment>
-                    {review?.user.userId.toString() === localStorage.getItem("myId") ? (
-                        <div
-                            style={{
-                                cursor: "pointer",
-                                margin: "0.5rem",
-                                borderRadius: "8px",
-                            }}
-                            onClick={modalHandler}
-                        >
-                            {MoreIcon}
-                        </div>
-                    ) : null}
-                </InfoBox>
-                <Description>{review?.content}</Description>
-
-                <CommentBox>
-                    <StyleAutoTextArea
-                        style={{fontFamily: "NanumSquareNeo", resize: "none"}}
-                        placeholder="댓글을 작성해주세요..."
-                        value={comment}
-                        onChange={e => {
-                            setComment(e.target.value);
-                        }}
-                        minRows={1}
-                        maxRows={4}
-                    />
-                    <CommentButton
-                        onClick={() => {
-                            submitHandler();
-                        }}
-                    >
-                        <SendImg src={sendImage} alt=""/>
-                    </CommentButton>
-                </CommentBox>
-                <SubReviewList>
-                    {subReviewList.map((subReview, i) => {
-                        return <CommentItem key={i} subReview={subReview}></CommentItem>;
-                    })}
-                </SubReviewList>
-            </WholeDiv>
-            <Modal
-                isOpen={threeDotOn}
-                onRequestClose={() => setThreeDotOn(false)}
-                style={ThreeDotModal}
-                ariaHideApp={false}
+        </Usercard>
+        <ImageDiv
+        // style={{
+        //   backgroundImage: `url(${review?.img !== "no image" ? review?.img : fancyDrinkImage})`,
+        // }}
+        >
+          <img
+            src={review?.img !== "no image" ? review?.img : fancyDrinkImage}
+            style={{ width: "100%" }}
+          />
+        </ImageDiv>
+        <InfoBox>
+          <LikeAndComment>
+            <LikeAndCommentDiv>
+              <div
+                onClick={likeHandler}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  margin: "0.5rem",
+                }}
+              >
+                {LikeIcon}
+              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {likeCount}
+              </div>
+            </LikeAndCommentDiv>
+            <LikeAndCommentDiv>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  margin: "0.5rem",
+                }}
+              >
+                {CommentIcon}
+              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {subReviewList.length}
+              </div>
+            </LikeAndCommentDiv>
+          </LikeAndComment>
+          {review?.user.userId.toString() === localStorage.getItem("myId") ? (
+            <div
+              style={{
+                cursor: "pointer",
+                margin: "0.5rem",
+                borderRadius: "8px",
+              }}
+              onClick={modalHandler}
             >
-                <div style={{fontSize: "1rem", color: "var(--c-gray)", fontFamily:"NanumSquareNeo"}}>후기</div>
-                <div
-                    onClick={toUpdateHandler}
-                    style={{display: "flex", alignItems: "center", height: "40%"}}
-                >
-                    <ModalIcon>{EditIcon}</ModalIcon>
-                    <div style={{color: "black", fontSize: "16px", fontFamily:"NanumSquareNeo"}}>수정하기</div>
-                </div>
+              {MoreIcon}
+            </div>
+          ) : null}
+        </InfoBox>
+        <Description>{review?.content}</Description>
 
-                <div
-                    onClick={toDeleteQuestionHandler}
-                    style={{display: "flex", alignItems: "center", height: "40%"}}
-                >
-                    <ModalIcon>{DeleteIcon}</ModalIcon>
-                    <div style={{color: "#eb0505", fontSize: "16px", fontFamily:"NanumSquareNeo"}}>삭제하기</div>
-                </div>
-            </Modal>
-            <Modal
-                isOpen={deleteModalOn}
-                onRequestClose={() => setDeleteModalOn(false)}
-                style={WhiteModal}
-                ariaHideApp={true}
-            >
-                <div>
-                    <div style={{padding: "1rem 0 4rem 0"}}>
-                        정말 이 후기를 삭제하시겠습니까?
-                    </div>
-                    <ModalBtnDiv>
-                        <ModalBtn onClick={deleteHandler}>
-                            예
-                        </ModalBtn>
-                        <ModalBtn onClick={() => setDeleteModalOn(false)}>
-                            아니요
-                        </ModalBtn>
-                    </ModalBtnDiv>
-                </div>
-                {/*<div*/}
-                {/*  style={{*/}
-                {/*    display: "flex",*/}
-                {/*    justifyContent: "space-around",*/}
-                {/*    height: "50%",*/}
-                {/*    fontSize: "1.4rem",*/}
-                {/*  }}*/}
-                {/*>*/}
-                {/*  <div*/}
-                {/*    onClick={deleteHandler}*/}
-                {/*    style={{*/}
-                {/*      cursor: "pointer",*/}
-                {/*      width: "40%",*/}
-                {/*      display: "flex",*/}
-                {/*      alignItems: "center",*/}
-                {/*      justifyContent: "center",*/}
-                {/*    }}*/}
-                {/*  >*/}
-                {/*    예*/}
-                {/*  </div>*/}
-                {/*  <div*/}
-                {/*    onClick={() => setDeleteModalOn(false)}*/}
-                {/*    style={{*/}
-                {/*      cursor: "pointer",*/}
-                {/*      width: "40%",*/}
-                {/*      display: "flex",*/}
-                {/*      alignItems: "center",*/}
-                {/*      justifyContent: "center",*/}
-                {/*    }}*/}
-                {/*  >*/}
-                {/*    아니오*/}
-                {/*  </div>*/}
-                {/*</div>*/}
-            </Modal>
-        </>
-    );
+        <CommentBox>
+          <StyleAutoTextArea
+            style={{ fontFamily: "NanumSquareNeo", resize: "none" }}
+            placeholder="댓글을 작성해주세요..."
+            value={comment}
+            onChange={(e) => {
+              setComment(e.target.value);
+            }}
+            minRows={1}
+            maxRows={4}
+          />
+          <CommentButton
+            onClick={() => {
+              submitHandler();
+            }}
+          >
+            <SendImg src={sendImage} alt="" />
+          </CommentButton>
+        </CommentBox>
+        <SubReviewList>
+          {subReviewList.map((subReview, i) => {
+            return <CommentItem key={i} subReview={subReview}></CommentItem>;
+          })}
+        </SubReviewList>
+      </WholeDiv>
+      <Modal
+        isOpen={threeDotOn}
+        onRequestClose={() => setThreeDotOn(false)}
+        style={ThreeDotModal}
+        ariaHideApp={false}
+      >
+        <div
+          style={{
+            fontSize: "1rem",
+            color: "var(--c-gray)",
+            fontFamily: "NanumSquareNeo",
+          }}
+        >
+          후기
+        </div>
+        <div
+          onClick={toUpdateHandler}
+          style={{ display: "flex", alignItems: "center", height: "40%" }}
+        >
+          <ModalIcon>{EditIcon}</ModalIcon>
+          <div
+            style={{
+              color: "black",
+              fontSize: "16px",
+              fontFamily: "NanumSquareNeo",
+            }}
+          >
+            수정하기
+          </div>
+        </div>
+
+        <div
+          onClick={toDeleteQuestionHandler}
+          style={{ display: "flex", alignItems: "center", height: "40%" }}
+        >
+          <ModalIcon>{DeleteIcon}</ModalIcon>
+          <div
+            style={{
+              color: "#eb0505",
+              fontSize: "16px",
+              fontFamily: "NanumSquareNeo",
+            }}
+          >
+            삭제하기
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={deleteModalOn}
+        onRequestClose={() => setDeleteModalOn(false)}
+        style={WhiteModal}
+        ariaHideApp={true}
+      >
+        <div>
+          <div style={{ padding: "1rem 0 4rem 0" }}>
+            정말 이 후기를 삭제하시겠습니까?
+          </div>
+          <ModalBtnDiv>
+            <ModalBtn onClick={deleteHandler}>예</ModalBtn>
+            <ModalBtn onClick={() => setDeleteModalOn(false)}>아니요</ModalBtn>
+          </ModalBtnDiv>
+        </div>
+        {/*<div*/}
+        {/*  style={{*/}
+        {/*    display: "flex",*/}
+        {/*    justifyContent: "space-around",*/}
+        {/*    height: "50%",*/}
+        {/*    fontSize: "1.4rem",*/}
+        {/*  }}*/}
+        {/*>*/}
+        {/*  <div*/}
+        {/*    onClick={deleteHandler}*/}
+        {/*    style={{*/}
+        {/*      cursor: "pointer",*/}
+        {/*      width: "40%",*/}
+        {/*      display: "flex",*/}
+        {/*      alignItems: "center",*/}
+        {/*      justifyContent: "center",*/}
+        {/*    }}*/}
+        {/*  >*/}
+        {/*    예*/}
+        {/*  </div>*/}
+        {/*  <div*/}
+        {/*    onClick={() => setDeleteModalOn(false)}*/}
+        {/*    style={{*/}
+        {/*      cursor: "pointer",*/}
+        {/*      width: "40%",*/}
+        {/*      display: "flex",*/}
+        {/*      alignItems: "center",*/}
+        {/*      justifyContent: "center",*/}
+        {/*    }}*/}
+        {/*  >*/}
+        {/*    아니오*/}
+        {/*  </div>*/}
+        {/*</div>*/}
+      </Modal>
+    </>
+  );
 };
 export default DrinkpostReviewDetail;
