@@ -41,6 +41,9 @@ function App() {
   const [userid, setUserid] = useState(null);
   const [isConnect, setIsConnect] = useState(false);
   const es = useRef<EventSource | undefined>();
+  const connectHandler = () => {
+    setIsConnect(true);
+  };
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       // Register a service worker hosted at the root of the
@@ -48,13 +51,13 @@ function App() {
       navigator.serviceWorker
         .register("sw.js")
         .then(registration => {
-          console.log("Service worker registration succeeded:", registration);
+          // console.log("Service worker registration succeeded:", registration);
         })
         .catch(err => {
-          console.log("Service worker registration failed:", err);
+          // console.log("Service worker registration failed:", err);
         });
     } else {
-      console.log("Service workers are not supported.");
+      // console.log("Service workers are not supported.");
     }
   }, []);
   useEffect(() => {
@@ -63,40 +66,46 @@ function App() {
       console.log(isLoading);
     }, 1000);
   }, []);
+  const esconnect = () => {
+    es.current = new EventSource(`https://i9b310.p.ssafy.io/api/auth/connect/${userid}`, {
+      withCredentials: true,
+    });
+
+    // console.log({ es });
+    // console.log(es.current);
+    es.current.onopen = e => {
+      // console.log("[sse] open", { e });
+    };
+    es.current.onmessage = event => {
+      // console.log(event.data);
+      try {
+        const data = JSON.parse(event.data);
+        noti(data.content, data.url);
+      } catch {}
+      if (event.data === "finished") {
+        es.current?.close();
+        return;
+      }
+    };
+    es.current.onerror = err => {
+      console.log("[sse] error", { err });
+    };
+  };
   useEffect(() => {
     if (userid == null) {
-      setIsConnect(!isConnect);
       setUserid(localStorage.getItem("myId"));
+      if (localStorage.getItem("myId") != null) {
+        setUserid(localStorage.getItem("myId"));
+        esconnect();
+      }
     } else {
-      es.current = new EventSource(`https://i9b310.p.ssafy.io/api/auth/connect/${userid}`, {
-        withCredentials: true,
-      });
-
-      // console.log({ es });
-      // console.log(es.current);
-      es.current.onopen = e => {
-        // console.log("[sse] open", { e });
-      };
-      es.current.onmessage = event => {
-        console.log(event.data);
-        try {
-          const data = JSON.parse(event.data);
-          noti(data.content, data.url);
-        } catch {}
-        if (event.data === "finished") {
-          es.current?.close();
-          return;
-        }
-      };
-      es.current.onerror = err => {
-        console.log("[sse] error", { err });
-      };
+      esconnect();
     }
 
     return () => {
       unsubscribe();
     };
-  }, [isConnect]);
+  }, [isConnect, userid]);
   const unsubscribe = async () => {
     es.current?.close();
   };
@@ -176,7 +185,10 @@ function App() {
         {/* <Route path="/home" element={<Main />} /> */}
         {/* TODO: isLoading을 키면 여기 Main으로 바꿔야 */}
         <Route path="/home" element={<Main />} />
-        <Route path="/drinkpost" element={<DrinkpostMain></DrinkpostMain>} />
+        <Route
+          path="/drinkpost"
+          element={<DrinkpostMain connectHandler={connectHandler}></DrinkpostMain>}
+        />
         <Route path="/meet" element={<MeetingMain />}></Route>
         <Route path="/meet/:meetId" element={<MeetingDetail />}></Route>
         <Route path="/meet/create" element={<MeetingCreate />}></Route>
