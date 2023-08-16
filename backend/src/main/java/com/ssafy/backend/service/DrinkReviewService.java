@@ -74,9 +74,14 @@ public class DrinkReviewService {
     public void deleteDrinkReview(Long drinkReviewId, Long userId) {
         DrinkReview drinkReview = drinkReviewRepository.findById(drinkReviewId)
                 .orElseThrow(() -> new IllegalArgumentException("음료 리뷰가 존재하지 않아 삭제할 수 없습니다."));
+
         if (!Objects.equals(drinkReview.getUser().getUserId(), userId)) {
             throw new IllegalArgumentException("해당 리뷰의 작성자가 아닙니다.");
         }
+
+        //이미지 삭제 하는 로직
+        if(isdefalutImg(drinkReview.getImg()))s3Service.deleteImg(drinkReview.getImg());
+
         drinkReviewRepository.deleteById(drinkReviewId);
     }
 
@@ -94,7 +99,7 @@ public class DrinkReviewService {
         //업로드 이미지가 존재
         if (multipartFile != null) {
             //모임 이미지가 기본 이미지가 아니면 S3에서 삭제
-            if (!drinkReview.getImg().equals("no image")) s3Service.deleteImg(drinkReview.getImg());
+            if (isdefalutImg(drinkReview.getImg())) s3Service.deleteImg(drinkReview.getImg());
 
             //새로운 이미지로 업로드
             request.setImgSrc(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
@@ -118,6 +123,11 @@ public class DrinkReviewService {
     public DrinkReviewResponseDto getReviewByDrinkReviewId(Long drinkReviewId) {
         DrinkReview drinkReview = drinkReviewRepository.findByDrinkReviewId(drinkReviewId).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
         return DrinkReviewResponseDto.fromEntity(drinkReview);
+
+    }
+
+    private boolean isdefalutImg(String imgSrc){
+        return !imgSrc.equals("no image");
 
     }
 }
