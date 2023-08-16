@@ -15,7 +15,7 @@ const NaverLogin = () => {
         authorizationCode: code,
         state: state,
       })
-      .then((res) => {
+      .then(res => {
         localStorage.setItem("token", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
         localStorage.setItem("myId", JSON.stringify(res.data.userId));
