@@ -43,6 +43,7 @@ public class MeetService {
     private final UserRepository userRepository;
 
     private final ChatRoomService chatRoomService;
+    private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserService chatRoomUserService;
     private final ChatMessageService chatMessageService;
     private final ModelMapper modelMapper;
@@ -318,22 +319,33 @@ public class MeetService {
             throw new IllegalArgumentException("방장이 아니면 방을 삭제할 수 없습니다.");
 
         List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(() -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
+        log.info("meetUser 사이즈 : {}", meetUsers.size());
 
         //MeetUser 정보를 삭제한다.
         meetUserService.deleteMeetUser(deleteMeet);
 
         //meet 이미지를 지운다
-        s3Service.deleteImg(deleteMeet.getImgSrc());
+        if(!deleteMeet.getImgSrc().equals("no image")) s3Service.deleteImg(deleteMeet.getImgSrc());
 
         //마지막에 모임 정보를 제거한다.
         meetRepository.findById(meetId).ifPresent(meetRepository::delete);
+
+        //모임 참여자가 1명이고
+        if(meetUsers.size() == 1){
+            if(meetUsers.get(0).getStatus().equals(Status.HOST)){//그 유저가 방장일 때 채팅방도 같이 제거되도록 변경
+                if(deleteMeet.getHost().getUserId().equals(meetUsers.get(0).getUser().getUserId())){
+                    log.info("meetId의 채팅방 아이디 {},채팅방은? {} ", meetId, deleteMeet.getChatRoom().getChatRoomId());
+                    chatRoomRepository.deleteById(deleteMeet.getChatRoom().getChatRoomId());
+                }
+            }
+
+        }
 
         //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
         //방장에게는 알림을 전송하지 않는다.
         meetUsers.stream()
                 .filter(user -> !user.getUser().getUserId().equals(hostId))
                 .forEach(user -> pushService.send(deleteMeet.getHost(), user.getUser(), PushType.MEETDELETED, deleteMeet.getHost().getNickname() + "님 께서 생성한 모임" + "(" + deleteMeet.getMeetName() + ")이 삭제되었습니다.", "meet"));
-
     }
 
     public void applyMeet(Long userId, Long meetId) {

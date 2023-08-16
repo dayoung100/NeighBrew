@@ -20,6 +20,7 @@ import defaultImg from "../../assets/defaultImg.png";
 import { getTagName } from "../common";
 import { WhiteModal, ModalInner } from "../../style/common";
 import { formateDate, formateTime } from "./DateTimeCommon";
+import { deleteIcon, editIcon, personIcon } from "./../../assets/AllIcon";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -154,8 +155,39 @@ const ModalBtn = styled.div`
   background: var(--c-yellow);
 `;
 
+const ManageModal = {
+  content: {
+    top: "87%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "90%",
+    height: "22%",
+    borderRadius: "24px 24px 0px 0px",
+    backgroundColor: "#ffffff",
+    fontFamily: "NanumSquareNeo",
+    fontSize: "1.5rem",
+    color: "black",
+    transition: "top 2s ease-in-out",
+  },
+  overlay: {
+    background: "rgba(0, 0, 0, 0.5)",
+    zIndex: "1001",
+  },
+};
+
+const ModalIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2rem;
+  margin-right: 1rem;
+`;
+
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
+  const DeleteIcon = deleteIcon();
+  const EditIcon = editIcon();
+  const PersonIcon = personIcon("black", 32);
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
   const [meetDetailData, setMeetDetailData] =
     useState<MeetDetail>(initialMeetDetail); //모임 데이터
@@ -164,7 +196,9 @@ const MeetingDetail = () => {
   const [userData, setUserData] = useState(initialUser);
   const [userStatus, setUserStatus] = useState("");
   const [exitModalOn, setExitModalOn] = useState(false); //나가기 모달이 열려있는가?
+  const [deleteModalOn, setDeleteModalOn] = useState(false); //나가기 모달이 열려있는가?
   const [simpleModalOn, setSimpleModalOn] = useState(false); //오류 모달이 열려있는가?
+  const [manageModalOn, setManageModalOn] = useState(false); //오류 모달이 열려있는가?
   const [errMsg, setErrMsg] = useState(""); //모달에 표시할 오류메시지
   const bgImg =
     meetDetailData.meet.imgSrc == "no image"
@@ -172,17 +206,25 @@ const MeetingDetail = () => {
       : meetDetailData.meet.imgSrc;
 
   const navigate = useNavigate();
-  //뒤로가기
+  //뒤로가기(버튼 클릭 또는 모임 삭제 후)
   const GoBackHandler = () => {
     navigate(-1);
   };
   //모임 관리 페이지로 이동
-  const GotoMeetManageHandler = (meetId: number) => {
-    navigate(`/meet/${meetId}/manage`);
-  };
+  // const GotoMeetManageHandler = (meetId: number) => {
+  //   navigate(`/meet/${meetId}/manage`);
+  // };
   //특정 술로 이동
   const GotoDrinkPostHandler = (drinkId: number) => {
     navigate(`/drinkpost/${drinkId}`);
+  };
+  //모임 편집 페이지로 이동
+  const GotoMeetInfoManage = (meetId: number) => {
+    navigate(`/meet/${meetId}/manage/info`);
+  };
+  //모임 참여자 관리페이지로 이동
+  const GotoMemberManage = (meetId: number) => {
+    navigate(`/meet/${meetId}/manage/member`);
   };
   //없는 모임일 경우 뒤로가기(모임 메인으로 이동?)
   const GotoMainHandler = () => {
@@ -317,6 +359,21 @@ const MeetingDetail = () => {
       })
       .then(() => fetchMeetData());
   }
+
+  //모임 삭제 요청
+  const DeleteMeeting = async () => {
+    const promise = callApi("delete", `api/meet/delete/${meetId}`, {
+      userId: parseInt(localStorage.getItem("myId")),
+    });
+    promise
+      .then((res) => {
+        GoBackHandler(); //모임 삭제 후 뒤로가기
+      })
+      .catch((e) => {
+        setErrMsg(e.response.data);
+        setSimpleModalOn(true);
+      });
+  };
 
   function hasAgeLimit() {
     if (meetDetailData === undefined) return false;
@@ -474,7 +531,6 @@ const MeetingDetail = () => {
               <ModalBtn
                 onClick={() => {
                   exitMeet();
-                  console.log("삭제 완료");
                   setExitModalOn(false);
                 }}
               >
@@ -482,8 +538,69 @@ const MeetingDetail = () => {
               </ModalBtn>
               <ModalBtn
                 onClick={() => {
-                  console.log("삭제 취소");
                   setExitModalOn(false);
+                }}
+              >
+                아니오
+              </ModalBtn>
+            </ModalBtnDiv>
+          </div>
+        </Modal>
+        <Modal
+          isOpen={manageModalOn}
+          onRequestClose={() => setManageModalOn(false)}
+          style={ManageModal}
+          ariaHideApp={false}
+        >
+          <div style={{ fontSize: "1rem", color: "var(--c-gray)" }}>
+            모임 관리
+          </div>
+          <div
+            onClick={() => GotoMeetInfoManage(parseInt(meetId))}
+            style={{ display: "flex", alignItems: "center", height: "30%" }}
+          >
+            <ModalIcon>{EditIcon}</ModalIcon>
+            <div style={{ color: "black" }}>모임 정보 관리</div>
+          </div>
+          <div
+            onClick={() => GotoMemberManage(parseInt(meetId))}
+            style={{ display: "flex", alignItems: "center", height: "30%" }}
+          >
+            <ModalIcon>{PersonIcon}</ModalIcon>
+            <div style={{ color: "black" }}>참여자 관리</div>
+          </div>
+          <div
+            onClick={() => {
+              setManageModalOn(false);
+              setDeleteModalOn(true);
+            }}
+            style={{ display: "flex", alignItems: "center", height: "30%" }}
+          >
+            <ModalIcon>{DeleteIcon}</ModalIcon>
+            <div style={{ color: "#eb0505" }}>삭제하기</div>
+          </div>
+        </Modal>
+        <Modal
+          isOpen={deleteModalOn}
+          onRequestClose={() => setDeleteModalOn(false)}
+          style={WhiteModal}
+        >
+          <div>
+            <div style={{ padding: "1rem 0 4rem 0" }}>
+              이 모임을 정말 삭제하시겠습니까?
+            </div>
+            <ModalBtnDiv>
+              <ModalBtn
+                onClick={() => {
+                  DeleteMeeting();
+                  setDeleteModalOn(false);
+                }}
+              >
+                예
+              </ModalBtn>
+              <ModalBtn
+                onClick={() => {
+                  setDeleteModalOn(false);
                 }}
               >
                 아니오
@@ -503,7 +620,8 @@ const MeetingDetail = () => {
         //user 상태에 따라 버튼 변경
         <FooterBigBtn
           content="모임 관리"
-          reqFunc={() => GotoMeetManageHandler(parseInt(meetId))}
+          // reqFunc={() => GotoMeetManageHandler(parseInt(meetId))}
+          reqFunc={() => setManageModalOn(true)}
           color="var(--c-yellow)"
           bgColor="var(--c-lightgray)"
         />

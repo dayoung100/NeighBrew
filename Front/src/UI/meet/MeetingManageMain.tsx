@@ -2,6 +2,7 @@
 [MeetingManageMain.tsx]
 모임 관리 메인 페이지
 모임 정보 관리, 참여자 관리 버튼이 있음
+!!!모달로 변경하면서 현재 사용하지 않음!!!
 */
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
