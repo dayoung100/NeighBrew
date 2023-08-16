@@ -7,6 +7,7 @@ import { moreIcon, deleteIcon, editIcon } from "../../assets/AllIcon";
 import { DeleteModal, ThreeDotModal, ShortThreeDotModal, WhiteModal } from "../../style/common";
 import Modal from "react-modal";
 import Siren from "../../assets/siren.png";
+import { callApi } from "../../utils/api";
 
 const WholeDiv = styled.div`
   display: flex;
@@ -84,7 +85,7 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
     setDeleteModalOn(true);
   };
   const deleteHandler = () => {
-    console.log("댓삭");
+    callApi("delete", `api/subreview/delete/${subReview.subReviewId}`);
   };
 
   const toUpdateHandler = () => {

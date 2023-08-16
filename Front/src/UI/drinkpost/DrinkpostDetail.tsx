@@ -308,9 +308,9 @@ const DrinkpostDetail = () => {
             })}
           </div>
         </div>
-        <RoundBtn onClick={() => navigate(`/drinkpost/${drinkId}/review/create`)}>
+        {/* <RoundBtn onClick={() => navigate(`/drinkpost/${drinkId}/review/create`)}>
           <img src={plusButton} width="25rem" />
-        </RoundBtn>
+        </RoundBtn> */}
       </WholeDiv>
       {/* <Footer></Footer> */}
     </>
