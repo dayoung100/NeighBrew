@@ -299,7 +299,7 @@ const DirectChat = () => {
       user1 = receiverId;
       user2 = senderId;
     }
-    callApi("get", `/api/dm/message/${localStorage.getItem("myId")}/${user1}/${user2}`)
+    callApi("get", `/api/dm/message/${user1}/${user2}`)
       .then(res => {
         setUsers([res.data.user1, res.data.user2]);
         setChatRoomName(
