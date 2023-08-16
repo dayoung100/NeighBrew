@@ -373,7 +373,7 @@ public class MeetService {
         meetUserService.saveMeetUser(attendMeet, attendUser, Status.APPLY);
 
         //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
-        pushService.send(attendUser, host, PushType.MEETACCESS, attendUser.getNickname() + "님께서 " + meetUserDto.getMeetRequestDto().getMeetName() + "모임에 참여하고 싶어 합니다.", "meet/" + attendMeet.getMeetId() + "/manage");
+        pushService.send(attendUser, host, PushType.MEETACCESS, attendUser.getNickname() + "님께서 " + meetUserDto.getMeetRequestDto().getMeetName() + "모임에 참여하고 싶어 합니다.", "https://i9b310.p.ssafy.io/meet/" + attendMeet.getMeetId());
     }
 
     @Transactional
@@ -456,9 +456,19 @@ public class MeetService {
         List<Meet> meetByMeetDateBefore = meetRepository.findMeetByMeetDateBefore();
         List<Meet> updateMeetList = new ArrayList<>();
         for (Meet meet : meetByMeetDateBefore) {
+            if(meet.getMeetStatus() != MeetStatus.END){
+                List<MeetUser> findUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meet.getMeetId()).orElseThrow(
+                        () -> new IllegalArgumentException("모임에 해당하는 유저를 찾을 수 없습니다.")
+                );
+                findUsers.stream().forEach(users ->
+                        pushService.send(meet.getHost(), users.getUser(), PushType.MEETEVALUATION, "모임(" + meet.getMeetName() + ")이 종료 되었습니다. 평가를 진행해 주세요.", "https://i9b310.p.ssafy.io/rating/" + meet.getMeetId()));
+            }
             meet.setMeetStatus(MeetStatus.END);
+
             updateMeetList.add(meet);
         }
+
+
 
         if (!updateMeetList.isEmpty()) meetRepository.saveAll(updateMeetList);
     }

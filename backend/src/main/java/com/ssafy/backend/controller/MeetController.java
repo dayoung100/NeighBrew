@@ -128,7 +128,8 @@ public class MeetController {
     }
 
     // 1시간마다
-    @Scheduled(cron = "0 0 * * * *")
+    //@Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void checkMeetStatus() {
         meetService.checkMeetStatus();
     }
