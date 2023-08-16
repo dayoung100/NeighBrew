@@ -80,7 +80,7 @@ public class DrinkReviewService {
         }
 
         //이미지 삭제 하는 로직
-        if(isdefalutImg(drinkReview.getImg()))s3Service.deleteImg(drinkReview.getImg());
+        if (isdefalutImg(drinkReview.getImg())) s3Service.deleteImg(drinkReview.getImg());
 
         drinkReviewRepository.deleteById(drinkReviewId);
     }
@@ -126,7 +126,7 @@ public class DrinkReviewService {
 
     }
 
-    private boolean isdefalutImg(String imgSrc){
+    private boolean isdefalutImg(String imgSrc) {
         return !imgSrc.equals("no image");
 
     }
