@@ -43,6 +43,7 @@ public class MeetService {
     private final UserRepository userRepository;
 
     private final ChatRoomService chatRoomService;
+    private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserService chatRoomUserService;
     private final ChatMessageService chatMessageService;
     private final ModelMapper modelMapper;
@@ -328,6 +329,17 @@ public class MeetService {
 
         //마지막에 모임 정보를 제거한다.
         meetRepository.findById(meetId).ifPresent(meetRepository::delete);
+
+        //모임 참여자가 1명이고
+        if(meetUsers.size() == 1){
+            if(meetUsers.get(0).getStatus().equals(Status.HOST)){//그 유저가 방장일 때 채팅방도 같이 제거되도록 변경
+                if(deleteMeet.getHost().getUserId().equals(meetUsers.get(0).getUser().getUserId())){
+                    log.info("meetId의 채팅방 아이디 {},채팅방은? {} ", meetId, deleteMeet.getChatRoom().getChatRoomId());
+                    chatRoomRepository.deleteById(deleteMeet.getChatRoom().getChatRoomId());
+                }
+            }
+
+        }
 
         //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
         //방장에게는 알림을 전송하지 않는다.
