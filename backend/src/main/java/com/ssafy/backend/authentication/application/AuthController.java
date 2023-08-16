@@ -68,14 +68,14 @@ public class AuthController {
         return pushService.connect(userId, lastEventId);
     }
 
-//        @GetMapping("/access-token/{userId}")
-//    public ResponseEntity<Map<String, String>> jwtMaker(@PathVariable Long userId) {
-//        String accessToken = JwtUtil.generateToken(String.valueOf(userId));
-//        String refreshToken = JwtUtil.generateRefreshToken(String.valueOf(userId));
-//        Map<String, String> tokens = new HashMap<>();
-//        tokens.put("accessToken", accessToken);
-//        tokens.put("refreshToken", refreshToken);
-//        return ResponseEntity.ok(tokens);
-//    }
+        @GetMapping("/access-token/{userId}")
+    public ResponseEntity<Map<String, String>> jwtMaker(@PathVariable Long userId) {
+        String accessToken = JwtUtil.generateToken(String.valueOf(userId));
+        String refreshToken = JwtUtil.generateRefreshToken(String.valueOf(userId));
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        return ResponseEntity.ok(tokens);
+    }
 
 }
