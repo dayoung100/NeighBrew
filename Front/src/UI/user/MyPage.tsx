@@ -311,7 +311,7 @@ const MyPage = () => {
       })
       .then(() => {
         myDrinks();
-        folgitlowers();
+        followers();
       })
       .catch((err) => console.log(err));
   };
@@ -606,10 +606,11 @@ const MyPage = () => {
             marginTop: "0.5rem",
           }}
         >
+          <span onClick={goFollowerPage}>팔로워 {userData.follower}</span>
+
           <span onClick={goFollowPage}>
             팔로잉 {userData.following} &nbsp;&nbsp;{" "}
           </span>{" "}
-          <span onClick={goFollowerPage}>팔로워 {userData.follower}</span>
         </div>
         <div
           style={{
