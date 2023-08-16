@@ -47,7 +47,7 @@ self.addEventListener("notificationclick", function (event) {
       );
       break;
     default:
-      console.log(`Unknown action clicked: '${event.action}'`);
+      // console.log(`Unknown action clicked: '${event.action}'`);
       break;
   }
 });
