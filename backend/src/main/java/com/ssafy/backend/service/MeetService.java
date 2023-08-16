@@ -140,8 +140,7 @@ public class MeetService {
     public Map<String, List<MeetResponseDto>> findUserMeetByUserId(Long userId) {
         Map<String, List<MeetResponseDto>> userMeets = Arrays.stream(Status.values()).filter(status -> status != Status.FINISH).collect(Collectors.toMap(Enum::name, status -> new ArrayList<>(), (a, b) -> b));
 
-        List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByStatus(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저ID 값이 올바르지 않습니다."));
+        List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByMeet_CreatedAtDesc(userId);
 
         for (MeetUser meetUser : meetUsers) {
             if (meetUser.getStatus() != Status.FINISH) {
@@ -335,9 +334,9 @@ public class MeetService {
         meetRepository.findById(meetId).ifPresent(meetRepository::delete);
 
         //모임 참여자가 1명이고
-        if(meetUsers.size() == 1){
-            if(meetUsers.get(0).getStatus().equals(Status.HOST)){//그 유저가 방장일 때 채팅방도 같이 제거되도록 변경
-                if(deleteMeet.getHost().getUserId().equals(meetUsers.get(0).getUser().getUserId())){
+        if (meetUsers.size() == 1) {
+            if (meetUsers.get(0).getStatus().equals(Status.HOST)) {//그 유저가 방장일 때 채팅방도 같이 제거되도록 변경
+                if (deleteMeet.getHost().getUserId().equals(meetUsers.get(0).getUser().getUserId())) {
                     log.info("meetId의 채팅방 아이디 {},채팅방은? {} ", meetId, deleteMeet.getChatRoom().getChatRoomId());
                     chatRoomRepository.deleteById(deleteMeet.getChatRoom().getChatRoomId());
                 }
