@@ -47,7 +47,7 @@ public class SubReviewService {
                 .user(user)
                 .build();
 
-        pushService.send(user, drinkReview.getUser(), PushType.SUBREVIEW, user.getName() + "님이 회원님의 후기에 댓글을 남겼습니다.", "drinkpost/" + drinkReview.getDrink().getDrinkId() + "/" + drinkReview.getDrinkReviewId());
+        pushService.send(user, drinkReview.getUser(), PushType.SUBREVIEW, user.getName() + "님이 회원님의 후기에 댓글을 남겼습니다.", "https://i9b310.p.ssafy.io/drinkpost/" + drinkReview.getDrink().getDrinkId() + "/" + drinkReview.getDrinkReviewId());
         return SubReviewResponseDto.fromEntity(subReviewRepository.save(subReview));
     }
 
