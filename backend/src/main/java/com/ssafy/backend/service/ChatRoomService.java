@@ -90,21 +90,16 @@ public class ChatRoomService {
 
         if (room.getUsers().isEmpty()) chatRoomRepository.delete(room);
 
-        mongoTemplate.insert(ChatMessageMongo.builder()
+
+        return mapper.writeValueAsString(mongoTemplate.insert(ChatMessageMongo.builder()
                 .userId(userId)
                 .userNickname(user.getNickname())
                 .message(user.getNickname() + "님이 채팅방을 나갔습니다.")
-                .chatRoomId(room.getChatRoomId())
+                .chatRoomId(roomId)
                 .chatRoomName(room.getChatRoomName())
                 .createdAt(String.valueOf(LocalDateTime.now()))
-                .build());
-
-        return mapper.writeValueAsString(chatMessageRepository.save(ChatMessage
-                .builder()
-                .message(user.getNickname() + "님이 채팅방을 나갔습니다.")
-                .createdAt(LocalDateTime.now())
-                .user(user)
-                .build()));
+                .build()
+        ));
     }
 
     public List<User> getUsersInChatRoom(Long chatRoomId) {
@@ -118,18 +113,18 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
-    public ChatRoom save(ChatRoom chatRoom) {
-        return chatRoomRepository.save(chatRoom);
-    }
-
     public void deleteExistUser(ChatRoom chatRoom, Long userId) {
         chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, chatRoom.getChatRoomId());
         User findUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         if (chatRoom.getUsers().isEmpty()) chatRoomRepository.delete(chatRoom);
-        chatMessageRepository.save(ChatMessage.builder()
+        mongoTemplate.insert(ChatMessageMongo.builder()
+                .userId(userId)
+                .userNickname(findUser.getNickname())
                 .message(findUser.getNickname() + "님이 채팅방을 나갔습니다.")
-                .createdAt(LocalDateTime.now())
-                .user(findUser)
-                .build());
+                .chatRoomId(chatRoom.getChatRoomId())
+                .chatRoomName(chatRoom.getChatRoomName())
+                .createdAt(String.valueOf(LocalDateTime.now()))
+                .build()
+        );
     }
 }

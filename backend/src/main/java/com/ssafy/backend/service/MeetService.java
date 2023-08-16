@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,15 +38,16 @@ public class MeetService {
     private final PushService pushService;
     private final FollowRepository followRepository;
     private final TagRepository tagRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final SidoRepository sidoRepository;
     private final GugunRepository gugunRepository;
     private final DrinkRepository drinkRepository;
     private final UserRepository userRepository;
+    private final MongoTemplate mongoTemplate;
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserService chatRoomUserService;
-    private final ChatMessageService chatMessageService;
     private final ModelMapper modelMapper;
 
     public Page<MeetResponseDto> findMeetsByTagId(Long tagId, Pageable pageable) {
@@ -204,8 +206,9 @@ public class MeetService {
         }
     }
 
+
     private ChatRoom createChatRoom(String meetName) {
-        return chatRoomService.save(ChatRoom.builder().chatRoomName(meetName + "모임의 채팅방").build());
+        return chatRoomRepository.save(ChatRoom.builder().chatRoomName(meetName + "모임의 채팅방").build());
     }
 
     private Meet saveMeetEntity(MeetRequestDto meetRequestDto, Long drinkId, ChatRoom createdChatRoom) {
@@ -253,12 +256,14 @@ public class MeetService {
         chatRoomUserService.save(createChatRoom
                 .build());
 
-        chatMessageService.save(ChatMessage.builder()
-                .chatRoom(createChatRoom1)
-                .user(hostUser)
+        mongoTemplate.insert(ChatMessageMongo.builder()
+                .chatRoomId(createChatRoom1.getChatRoomId())
+                .chatRoomName(createChatRoom1.getChatRoomName())
                 .message(message)
-                .createdAt(LocalDateTime.now())
-                .build());
+                .createdAt(String.valueOf(LocalDateTime.now()))
+                .userNickname(hostUser.getNickname())
+                .userId(hostUser.getUserId())
+                .build(), "chat");
     }
 
     public void updateMeet(MeetRequestDto meetRequestDto,
@@ -325,7 +330,7 @@ public class MeetService {
         meetUserService.deleteMeetUser(deleteMeet);
 
         //meet 이미지를 지운다
-        if(!deleteMeet.getImgSrc().equals("no image")) s3Service.deleteImg(deleteMeet.getImgSrc());
+        if (!deleteMeet.getImgSrc().equals("no image")) s3Service.deleteImg(deleteMeet.getImgSrc());
 
         //마지막에 모임 정보를 제거한다.
         meetRepository.findById(meetId).ifPresent(meetRepository::delete);
