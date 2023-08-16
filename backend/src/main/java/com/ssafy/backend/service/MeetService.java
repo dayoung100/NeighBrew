@@ -414,9 +414,6 @@ public class MeetService {
         meetRepository.save(nowMeet);
 
         chatRoomService.deleteExistUser(nowMeet.getChatRoom(), userId);
-
-        //모임 나가면 채팅방에 나갔다고 메세지 남기기
-
     }
 
     public String manageMeet(Long userId, Long meetId, boolean applyResult) {

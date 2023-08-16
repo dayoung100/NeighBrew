@@ -74,7 +74,7 @@ const DescriptionP = styled.p`
   // 늘리기
   &.show {
     display: block;
-    max-height: 800px;
+    max-height: 1000px;
     overflow: auto;
     -webkit-line-clamp: unset;
   }
