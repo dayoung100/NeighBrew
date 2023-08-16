@@ -13,6 +13,7 @@ import sendImage from "../../assets/send.png";
 import TextareaAutosize from "react-textarea-autosize";
 
 const OtherChat = styled.div`
+  white-space: pre-wrap;
   position: relative;
   display: inline-block;
   background-color: white;
