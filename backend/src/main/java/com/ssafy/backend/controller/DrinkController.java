@@ -55,7 +55,7 @@ public class DrinkController {
     @PostMapping()
     public ResponseEntity<DrinkResponseDto> save(
             @ModelAttribute DrinkRequestDto drinkRequestDto,
-            @RequestPart(value = "upload", required = false) MultipartFile multipartFile) throws IOException {
+            @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws IOException {
         return ResponseEntity.ok(drinkService.save(drinkRequestDto, multipartFile));
     }
 

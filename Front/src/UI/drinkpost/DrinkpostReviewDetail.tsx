@@ -13,6 +13,7 @@ import {
   deleteIcon,
   editIcon,
   moreIcon,
+  likeIcon2,
 } from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
@@ -214,7 +215,9 @@ const DrinkpostReviewDetail = () => {
     callApi("get", `api/subreview/list/${reviewId}`).then((res) => {
       setSubReviewList(res.data);
     });
+  }, [subReviewList]);
 
+  useEffect(() => {
     async function summonReview() {
       // 술 상세 후기 조회 요청
       const response1 = await callApi(
@@ -370,20 +373,8 @@ const DrinkpostReviewDetail = () => {
               {following === 0 ? "팔로우" : "언팔로우"}
             </FollowDiv>
           ) : null}
-          {/* <FollowDiv
-            style={{
-              backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
-            }}
-            onClick={followHandler}
-          >
-            {following === 0 ? "팔로우" : "언팔로우"}
-          </FollowDiv> */}
         </Usercard>
-        <ImageDiv
-        // style={{
-        //   backgroundImage: `url(${review?.img !== "no image" ? review?.img : fancyDrinkImage})`,
-        // }}
-        >
+        <ImageDiv>
           <img
             src={review?.img !== "no image" ? review?.img : fancyDrinkImage}
             style={{ width: "100%" }}
@@ -400,7 +391,7 @@ const DrinkpostReviewDetail = () => {
                   margin: "0.5rem",
                 }}
               >
-                {LikeIcon}
+                {like ? likeIcon2("var(--c-pink)") : likeIcon2("none")}
               </div>
               <div style={{ display: "flex", alignItems: "center" }}>
                 {likeCount}
