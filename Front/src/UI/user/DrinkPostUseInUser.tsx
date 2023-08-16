@@ -45,13 +45,11 @@ const DrinkPostUseInUser = () => {
     navigate("/drinkpost/search");
   };
   const myDrinkHandler = () => {
-    console.log(userid);
     callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
       setDrinkList(res.data);
     });
   };
   useEffect(() => {
-    console.log(userid);
     myDrinkHandler();
   }, []);
   return (
