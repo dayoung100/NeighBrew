@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import likeIcon from "../../assets/likeIcon.svg";
+import { likeIcon2 } from "../../assets/AllIcon";
 import { useState, useEffect } from "react";
 import { Review } from "../../Type/types";
 import { callApi } from "../../utils/api";
@@ -188,7 +189,20 @@ const ReviewItem = ({ review }: { review: Review }) => {
             </div>
 
             <LikeDiv>
-              <LikeButton onClick={likeHandler} />
+              <div
+                style={{
+                  width: "0.7rem",
+                  height: "0.7rem",
+                  backgroundColor: "white",
+                  border: "none",
+                  marginRight: "0.8rem",
+                  marginBottom: "1vh",
+                }}
+                onClick={likeHandler}
+              >
+                {like ? likeIcon2("var(--c-pink)") : likeIcon2("none")}
+              </div>
+              {/* <LikeButton onClick={likeHandler} /> */}
               <LikeCount>{likeCount}</LikeCount>
             </LikeDiv>
           </UserCard>
