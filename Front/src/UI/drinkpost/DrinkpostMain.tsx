@@ -88,7 +88,7 @@ const ReviewImg = styled.img`
   object-fit: cover;
 `;
 
-const drinkpostMain = () => {
+const drinkpostMain = (props: { connectHandler: () => void }) => {
   const toForward = forwardIcon();
   const [reviewList, setReviewList] = useState<Review[]>([]);
   const navigate = useNavigate();
@@ -108,6 +108,7 @@ const drinkpostMain = () => {
     callApi("get", "api/drink/mdPick").then(res => {
       setThreePick([...res.data]);
     });
+    props.connectHandler();
   }, []);
 
   return (
