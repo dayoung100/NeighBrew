@@ -5,6 +5,8 @@ services:
     build:
       context: ./Front
       dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
     environment:
       - TZ=Asia/Seoul
 
@@ -12,8 +14,6 @@ services:
     container_name: database
     image: mysql:latest
     restart: always
-    ports:
-      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=neighbrewbe-10
       - TZ=Asia/Seoul
