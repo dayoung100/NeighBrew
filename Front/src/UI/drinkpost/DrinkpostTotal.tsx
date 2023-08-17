@@ -53,12 +53,12 @@ const drinkpostTotal = () => {
       if (page < 10) {
         setTimeout(() => {
           callApi("get", `api/drink?page=${page}&size=12`)
-            .then((res) => {
-              setDrinkList((prev) => [...prev, ...res.data.content]);
-              setPage((prev) => prev + 1);
+            .then(res => {
+              setDrinkList(prev => [...prev, ...res.data.content]);
+              setPage(prev => prev + 1);
             })
-            .catch((err) => {
-              console.log(err);
+            .catch(err => {
+              console.error(err);
             });
           // console.log(page);
         }, 100);
@@ -85,7 +85,7 @@ const drinkpostTotal = () => {
             marginLeft: "1px",
           }}
         >
-          {drinkList.map((drink) => {
+          {drinkList.map(drink => {
             return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
           })}
         </div>

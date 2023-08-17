@@ -102,7 +102,6 @@ const drinkpostMain = (props: { connectHandler: () => void }) => {
 
   useEffect(() => {
     callApi("get", "api/drinkreview/likes").then(res => {
-      console.log(res.data);
       setReviewList(res.data.content);
     });
     callApi("get", "api/drink/mdPick").then(res => {
