@@ -39,7 +39,7 @@ const ActionContent = styled.div`
 const deletePush = (id: number) => {
   callApi("delete", `api/push/${id}`)
     .then(res => {
-      console.log(res);
+      // console.log(res);
     })
     .catch(err => console.error(err));
 };
@@ -90,6 +90,7 @@ const alarmPage = () => {
                   onClick={() => {
                     goPageHandler(alarm.url, alarm.pushId);
                   }}
+                  maxSwipe={1}
                 >
                   <AlarmItem key={i} alarm={alarm}></AlarmItem>
                 </SwipeableListItem>
