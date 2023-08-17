@@ -49,7 +49,6 @@ public class ChatRoomService {
 
         chatMessageMongoRepository.save(ChatMessageMongo.builder()
                 .chatRoomId(room.getChatRoomId())
-                .chatRoomName(room.getChatRoomName())
                 .message("채팅방이 생성되었습니다.")
                 .createdAt(String.valueOf(LocalDateTime.now()))
                 .build());
@@ -71,10 +70,8 @@ public class ChatRoomService {
 
         ChatMessageMongo chatMessageMongo = ChatMessageMongo.builder()
                 .chatRoomId(chatRoom.getChatRoomId())
-                .chatRoomName(chatRoom.getChatRoomName())
                 .message(jsonNode.get("message").asText())
                 .userId(user.getUserId())
-                .userNickname(user.getNickname())
                 .createdAt(String.valueOf(LocalDateTime.now()))
                 .build();
         mongoTemplate.insert(chatMessageMongo);
@@ -85,7 +82,8 @@ public class ChatRoomService {
 
     @Transactional
     public String leaveChatRoom(Long roomId, String data) throws JsonProcessingException {
-        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
         Long userId = Long.valueOf(new ObjectMapper().readTree(data).get("userId").asText());
 
         ChatMessageMongo chatMessageMongo = deleteExistUser(room, userId);
@@ -109,12 +107,15 @@ public class ChatRoomService {
         chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, chatRoom.getChatRoomId());
         return mongoTemplate.insert(ChatMessageMongo.builder()
                 .userId(userId)
-                .userNickname(findUser.getNickname())
                 .message(findUser.getNickname() + "님이 채팅방을 나갔습니다.")
                 .chatRoomId(chatRoom.getChatRoomId())
-                .chatRoomName(chatRoom.getChatRoomName())
                 .createdAt(String.valueOf(LocalDateTime.now()))
                 .build()
+        );
+    }
+    public ChatRoom getChatRoomDetail(Long chatRoomId) {
+        return chatRoomRepository.findByChatRoomId(chatRoomId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 채팅방입니다.")
         );
     }
 }

@@ -15,12 +15,6 @@ import java.util.List;
 public class FollowController {
     private final FollowService followService;
 
-    @GetMapping("/followers")
-    public ResponseEntity<List<FollowResponseDto>> getFollowers(@RequestHeader("Authorization") String token) {
-        Long userId = JwtUtil.parseUserIdFromToken(token);
-        return ResponseEntity.ok(followService.getFollowers(userId));
-    }
-
     @GetMapping("/follower/{userId}")
     public ResponseEntity<List<FollowResponseDto>> getFollowers(@PathVariable Long userId) {
         return ResponseEntity.ok(followService.getFollowers(userId));
@@ -37,5 +31,4 @@ public class FollowController {
         Long userId = JwtUtil.parseUserIdFromToken(token);
         return ResponseEntity.ok(followService.toggleFollow(userId, followingId));
     }
-
 }
