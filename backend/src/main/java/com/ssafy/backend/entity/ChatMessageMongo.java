@@ -14,19 +14,15 @@ public class ChatMessageMongo {
     @Id
     private String id;
     private Long chatRoomId;
-    private String chatRoomName;
     private Long userId;
-    private String userNickname;
     private String message;
     private String createdAt;
 
     @Builder
-    public ChatMessageMongo(String id, Long chatRoomId, String chatRoomName, Long userId, String userNickname, String message, String createdAt) {
+    public ChatMessageMongo(String id, Long chatRoomId, Long userId, String message, String createdAt) {
         this.id = id;
         this.chatRoomId = chatRoomId;
-        this.chatRoomName = chatRoomName;
         this.userId = userId;
-        this.userNickname = userNickname;
         this.message = message;
         this.createdAt = createdAt;
     }

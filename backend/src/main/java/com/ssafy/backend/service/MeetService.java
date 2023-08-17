@@ -186,6 +186,7 @@ public class MeetService {
 
         ChatRoom createdChatRoom = createChatRoom(meetRequestDto.getMeetName());
         Meet createdMeet = saveMeetEntity(meetRequestDto, drinkId, createdChatRoom);
+        log.info("createdMeet : {}", createdMeet.getMeetName());
 
         User hostUser = findUserById(userId);
         saveMeetUser(createdMeet, hostUser);
@@ -197,13 +198,8 @@ public class MeetService {
 
     private void setHostAndImage(MeetRequestDto meetRequestDto, Long userId, MultipartFile multipartFile) throws IOException {
         meetRequestDto.setHostId(userId);
-        if (multipartFile != null) {
-            meetRequestDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
-        } else {
-            meetRequestDto.setImgSrc("no image");
-        }
+        meetRequestDto.setImgSrc(multipartFile != null ? s3Service.upload(UploadType.MEET, multipartFile) : "no image");
     }
-
 
     private ChatRoom createChatRoom(String meetName) {
         return chatRoomRepository.save(ChatRoom.builder().chatRoomName(meetName + "모임의 채팅방").build());
@@ -220,15 +216,18 @@ public class MeetService {
     }
 
     private User findUserById(Long userId) {
-        return userRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다."));
+        return userRepository.findByUserId(userId).orElseThrow(
+                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다."));
     }
 
     private Tag findTagById(Long tagId) {
-        return tagRepository.findById(tagId).orElseThrow(() -> new IllegalArgumentException("올바른 태그 정보가 입력되지 않았습니다."));
+        return tagRepository.findById(tagId).orElseThrow(
+                () -> new IllegalArgumentException("올바른 태그 정보가 입력되지 않았습니다."));
     }
 
     private Drink findDrinkById(Long drinkId) {
-        return drinkRepository.findById(drinkId).orElseThrow(() -> new IllegalArgumentException("올바른 술 정보가 입력되지 않았습니다."));
+        return drinkRepository.findById(drinkId).orElseThrow(
+                () -> new IllegalArgumentException("올바른 술 정보가 입력되지 않았습니다."));
     }
 
     private void saveMeetUser(Meet meet, User hostUser) {
@@ -236,30 +235,28 @@ public class MeetService {
     }
 
     private void setupChatRoomUser(ChatRoom chatRoom, User hostUser) {
-        settingChatRoomUser(ChatRoomUser.builder().chatRoom(chatRoom).user(hostUser), chatRoom, hostUser, "채팅방이 생성되었습니다.");
+        settingChatRoomUser(ChatRoomUser.builder()
+                .chatRoom(chatRoom)
+                .user(hostUser), chatRoom, hostUser, "채팅방이 생성되었습니다.");
     }
 
     private void notifyFollowersAboutMeetCreation(User hostUser, Meet createdMeet) {
         List<Follow> followers = findFollowersByUserId(hostUser.getUserId());
-        for (Follow follower : followers) {
-            pushService.send(hostUser, follower.getFollower(), PushType.MEETCREATED, hostUser.getNickname() + "님께서 모임(" + createdMeet.getMeetName() + ")을 생성했습니다.", "https://i9b310.p.ssafy.io/meet/" + createdMeet.getMeetId());
-        }
+        followers.forEach(follower -> pushService.send(hostUser, follower.getFollower(), PushType.MEETCREATED, hostUser.getNickname() + "님께서 모임(" + createdMeet.getMeetName() + ")을 생성했습니다.", "https://i9b310.p.ssafy.io/meet/" + createdMeet.getMeetId()));
     }
 
     private List<Follow> findFollowersByUserId(Long userId) {
-        return followRepository.findByFollowing_UserId(userId).orElseThrow(() -> new IllegalArgumentException("팔로잉 정보를 찾을 수 없습니다."));
+        return followRepository.findByFollowing_UserId(userId).orElseThrow(
+                () -> new IllegalArgumentException("팔로잉 정보를 찾을 수 없습니다."));
     }
 
     private void settingChatRoomUser(ChatRoomUser.ChatRoomUserBuilder createChatRoom, ChatRoom createChatRoom1, User hostUser, String message) {
-        chatRoomUserService.save(createChatRoom
-                .build());
+        chatRoomUserService.save(createChatRoom.build());
 
         mongoTemplate.insert(ChatMessageMongo.builder()
                 .chatRoomId(createChatRoom1.getChatRoomId())
-                .chatRoomName(createChatRoom1.getChatRoomName())
                 .message(message)
                 .createdAt(String.valueOf(LocalDateTime.now()))
-                .userNickname(hostUser.getNickname())
                 .userId(hostUser.getUserId())
                 .build(), "chat");
     }
@@ -287,7 +284,8 @@ public class MeetService {
 
         meetRepository.save(updateMeet);
 
-        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(() -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
+        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(
+                () -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
 
         //방장에게는 알림을 전송하지 않는다.
         meetUsers.stream()
@@ -297,7 +295,8 @@ public class MeetService {
     }
 
     private Meet getMeet(Long meetId) {
-        return meetRepository.findById(meetId).orElseThrow(() -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
+        return meetRepository.findById(meetId).orElseThrow(
+                () -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
     }
 
     private void updateImage(MeetRequestDto meetRequestDto, MultipartFile multipartFile, String prevMeetImgSrc) throws IOException {
@@ -321,8 +320,8 @@ public class MeetService {
         if (!deleteMeet.getHost().getUserId().equals(hostId))
             throw new IllegalArgumentException("방장이 아니면 방을 삭제할 수 없습니다.");
 
-        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(() -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
-        log.info("meetUser 사이즈 : {}", meetUsers.size());
+        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(
+                () -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
 
         //MeetUser 정보를 삭제한다.
         meetUserService.deleteMeetUser(deleteMeet);
@@ -337,7 +336,6 @@ public class MeetService {
         if (meetUsers.size() == 1) {
             if (meetUsers.get(0).getStatus().equals(Status.HOST)) {//그 유저가 방장일 때 채팅방도 같이 제거되도록 변경
                 if (deleteMeet.getHost().getUserId().equals(meetUsers.get(0).getUser().getUserId())) {
-                    log.info("meetId의 채팅방 아이디 {},채팅방은? {} ", meetId, deleteMeet.getChatRoom().getChatRoomId());
                     chatRoomRepository.deleteById(deleteMeet.getChatRoom().getChatRoomId());
                 }
             }
@@ -456,19 +454,20 @@ public class MeetService {
         List<Meet> meetByMeetDateBefore = meetRepository.findMeetByMeetDateBefore();
         List<Meet> updateMeetList = new ArrayList<>();
         for (Meet meet : meetByMeetDateBefore) {
-            if(meet.getMeetStatus() != MeetStatus.END){
+            if (meet.getMeetStatus() != MeetStatus.END) {
                 List<MeetUser> findUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meet.getMeetId()).orElseThrow(
                         () -> new IllegalArgumentException("모임에 해당하는 유저를 찾을 수 없습니다.")
                 );
-                findUsers.stream().forEach(users ->
-                        pushService.send(meet.getHost(), users.getUser(), PushType.MEETEVALUATION, "모임(" + meet.getMeetName() + ")이 종료 되었습니다. 평가를 진행해 주세요.", "https://i9b310.p.ssafy.io/rating/" + meet.getMeetId()));
+                findUsers.forEach(users ->
+                        pushService.send(meet.getHost(),
+                                users.getUser(),
+                                PushType.MEETEVALUATION,
+                                "모임(" + meet.getMeetName() + ")이 종료 되었습니다. 평가를 진행해 주세요.", "https://i9b310.p.ssafy.io/rating/" + meet.getMeetId()));
             }
             meet.setMeetStatus(MeetStatus.END);
 
             updateMeetList.add(meet);
         }
-
-
 
         if (!updateMeetList.isEmpty()) meetRepository.saveAll(updateMeetList);
     }
