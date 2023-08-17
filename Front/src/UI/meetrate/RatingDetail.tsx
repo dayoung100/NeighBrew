@@ -11,6 +11,23 @@ const DetailListDiv = styled.div`
   flex-direction: column;
 `;
 
+const LongTextInput = styled.textarea`
+  font-family: "NanumSquareNeo";
+  border: 1px solid var(--c-gray);
+  width: 90%;
+  height: 84%;
+  font-size: 1rem;
+  border-radius: 15px;
+  border: none;
+  resize: none;
+  outline: none;
+  text-align: start;
+  margin-top: 0.5rem;
+  &:focus {
+    border: none;
+  }
+`;
+
 const CloseDiv = styled.div`
   display: flex;
   align-items: center;
@@ -57,13 +74,9 @@ const OffBtn = styled(OnOffBtn)`
   height: 3rem;
 `;
 
-const RatingDetail = (props: {
-  ratingNum: number;
-  getFunc(desc: string): void;
-}) => {
+const RatingDetail = (props: { ratingNum: number; getFunc(desc: string): void }) => {
   const [listOpen, setListOpen] = useState(true); //세부 선택 창이 열렸는가?
   const [selectedDetail, setSelectedDetail] = useState(""); //선택된 세부 의견
-
   useEffect(() => {
     if (props.ratingNum === 0 || props.ratingNum === 2) {
       setListOpen(false);
@@ -111,6 +124,10 @@ const RatingDetail = (props: {
     return [];
   };
 
+  const descriptionHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSelectedDetail(e.target.value);
+  };
+
   return (
     <div>
       {listOpen && (
@@ -122,20 +139,28 @@ const RatingDetail = (props: {
               flexGrow: "1",
             }}
           >
-            {detailList().map((res) => (
-              <div
-                onClick={() => {
-                  setSelectedDetail(res.content);
-                  setListOpen(false);
-                }}
-                key={res.id}
-              >
-                <OneLineListItem
-                  content={res.content}
-                  tag={tagTable[props.ratingNum]}
-                ></OneLineListItem>
-              </div>
-            ))}
+            {detailList() === badList ? (
+              <LongTextInput
+                placeholder="아쉬웠던 점을 말씀해주세요..."
+                onChange={descriptionHandler}
+                value={selectedDetail}
+              ></LongTextInput>
+            ) : (
+              detailList().map(res => (
+                <div
+                  onClick={() => {
+                    setSelectedDetail(res.content);
+                    setListOpen(false);
+                  }}
+                  key={res.id}
+                >
+                  <OneLineListItem
+                    content={res.content}
+                    tag={tagTable[props.ratingNum]}
+                  ></OneLineListItem>
+                </div>
+              ))
+            )}
           </div>
           <OffBtn onClick={() => setListOpen(false)}>▲닫기</OffBtn>
         </DetailListDiv>
@@ -144,21 +169,19 @@ const RatingDetail = (props: {
         <CloseDiv>
           <CloseTitle>세부</CloseTitle>
           <CloseDesc>{selectedDetail}</CloseDesc>
-          {(props.ratingNum === 1 || props.ratingNum === 3) &&
-            !selectedDetail && (
-              <OnBtn onClick={() => setListOpen(true)}>▼열기</OnBtn>
-            )}
-          {(props.ratingNum === 1 || props.ratingNum === 3) &&
-            selectedDetail && (
-              <OnBtn
-                onClick={() => {
-                  setSelectedDetail("");
-                  setListOpen(true);
-                }}
-              >
-                ❌취소
-              </OnBtn>
-            )}
+          {(props.ratingNum === 1 || props.ratingNum === 3) && !selectedDetail && (
+            <OnBtn onClick={() => setListOpen(true)}>▼열기</OnBtn>
+          )}
+          {(props.ratingNum === 1 || props.ratingNum === 3) && selectedDetail && (
+            <OnBtn
+              onClick={() => {
+                setSelectedDetail("");
+                setListOpen(true);
+              }}
+            >
+              ❌취소
+            </OnBtn>
+          )}
         </CloseDiv>
       )}
     </div>
