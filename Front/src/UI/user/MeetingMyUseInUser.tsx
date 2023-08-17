@@ -9,6 +9,7 @@ import styled from "styled-components";
 import MeetingListItem from "./../meet/MeetingListItem";
 import EmptyMsg from "./../components/EmptyMsg";
 import { callApi } from "../../utils/api";
+import { Meeting } from "../../Type/types";
 
 const MeetingDiv = styled.div`
   margin-bottom: 2rem;
@@ -33,16 +34,26 @@ const meetingMy = (props: { userId: number }) => {
   const [hostMeet, setHostMeet] = useState([]); //userId가 만든 모임
   const [applyMeet, setApplyMeet] = useState([]); //userId가 지원한 모임
   const [guestMeet, setGuestMeet] = useState([]); //userId가 참여한 모임
+  const [endHostMeet, setEndHostMeet] = useState([]); //userId가 개설했는데 끝난 모임
+  const [endGuestMeet, setEndGuestMeet] = useState([]); //userId가 참여했는데 끝난 모임
 
   useEffect(() => {
     setUserId(props.userId);
   });
 
+  //모임 배열과 waiting, end 중 하나를 넣으면 해당하는 모임만 반환
+  const filterByStatus = (array: Meeting[], status: string) => {
+    const result = array.filter((meet) => {
+      return meet.meetStatus === status;
+    });
+    return result;
+  };
+
   //api 호출
   useEffect(() => {
     if (userId !== 0) {
       const promise = callApi("get", `api/meet/mymeet/${userId}`);
-      promise.then(res => {
+      promise.then((res) => {
         setMeetData(res.data); //받아온 데이터로 meetData 세팅
       });
     }
@@ -50,32 +61,35 @@ const meetingMy = (props: { userId: number }) => {
 
   //create, apply, attend 모임 갱신
   useEffect(() => {
-    setHostMeet(meetData.HOST);
-    setApplyMeet(meetData.APPLY);
-    setGuestMeet(meetData.GUEST);
+    setHostMeet(filterByStatus(meetData.HOST, "WAITING")); //HOST 중에서 끝나지 않은 모임
+    setApplyMeet(filterByStatus(meetData.APPLY, "WAITING")); //APPLY 중에서 끝나지 않은 모임
+    setGuestMeet(filterByStatus(meetData.GUEST, "WAITING")); //GUEST 중에서 끝나지 않은 모임
+    //HOST, GUEST 중에서 end인 애들만
+    setEndHostMeet(filterByStatus(meetData.HOST, "END"));
+    setEndGuestMeet(filterByStatus(meetData.GUEST, "END"));
   }, [meetData]);
 
   return (
     // <div style={{ background: "var(--c-lightgray)", padding: "1rem", minHeight: "400px" }}>
-      <div style={{padding: "1rem", minHeight: "400px" }}>
+    <div style={{ padding: "1rem", minHeight: "400px" }}>
       <MeetingDiv>
         <MeetTitle>개설</MeetTitle>
         {hostMeet.length > 0 && <MeetingListItem data={hostMeet} />}
         {hostMeet.length === 0 && (
-            <EmptyMsg
-                title="개설한 모임이 없습니다"
-                contents={`모임을 만들어보세요!\n개설한 모임은 여기에 표시됩니다`}
-            />
+          <EmptyMsg
+            title="개설한 모임이 없습니다"
+            contents={`모임을 만들어보세요!\n개설한 모임은 여기에 표시됩니다`}
+          />
         )}
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>참여</MeetTitle>
         {guestMeet.length > 0 && <MeetingListItem data={guestMeet} />}
         {guestMeet.length === 0 && (
-            <EmptyMsg
-                title="참여 중인 모임이 없습니다"
-                contents={`마음에 드는 모임을 찾아 신청해보세요!\n참여 확정된 모임은 여기에 표시됩니다`}
-            />
+          <EmptyMsg
+            title="참여 중인 모임이 없습니다"
+            contents={`마음에 드는 모임을 찾아 신청해보세요!\n참여 확정된 모임은 여기에 표시됩니다`}
+          />
         )}
       </MeetingDiv>
     </div>
