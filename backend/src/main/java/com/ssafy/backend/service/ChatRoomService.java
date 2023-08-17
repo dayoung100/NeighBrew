@@ -3,8 +3,10 @@ package com.ssafy.backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.Enum.PushType;
-import com.ssafy.backend.entity.*;
+import com.ssafy.backend.entity.ChatMessageMongo;
+import com.ssafy.backend.entity.ChatRoom;
+import com.ssafy.backend.entity.ChatRoomUser;
+import com.ssafy.backend.entity.User;
 import com.ssafy.backend.repository.ChatMessageMongoRepository;
 import com.ssafy.backend.repository.ChatRoomRepository;
 import com.ssafy.backend.repository.ChatRoomUserRepository;
@@ -80,9 +82,9 @@ public class ChatRoomService {
         mongoTemplate.insert(chatMessageMongo);
 
         //채팅방 유저한테 메세지 전송
-        for(ChatRoomUser cru : chatRoom.getUsers()){
-            pushService.send(user, cru.getUser(), PushType.CHAT, "모임(" + chatRoom.getMeet().getMeetName()  + ")의" + user.getNickname() +  "님께서 메세지를 보냈습니다.", neighbrewUrl + "/chatList" + roomId);
-        }
+//        for(ChatRoomUser cru : chatRoom.getUsers()){
+//            pushService.send(user, cru.getUser(), PushType.CHAT, "모임(" + chatRoom.getMeet().getMeetName()  + ")의" + user.getNickname() +  "님께서 메세지를 보냈습니다.", neighbrewUrl + "/chatList" + roomId);
+//        }
 
         Map<String, Object> map = mapper.convertValue(jsonNode, Map.class);
         map.put("userNickname", user.getNickname());
