@@ -145,10 +145,10 @@ public class MeetService {
         List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByMeet_CreatedAtDesc(userId);
 
         for (MeetUser meetUser : meetUsers) {
-            if (meetUser.getStatus() != Status.FINISH) {
-                MeetResponseDto responseDto = toMeetResponseDto(meetUser);
-                userMeets.get(meetUser.getStatus().name()).add(responseDto);
-            }
+            MeetResponseDto responseDto = toMeetResponseDto(meetUser);
+            if (responseDto.getMeetStatus().equals(MeetStatus.END))
+                continue;
+            userMeets.get(meetUser.getStatus().name()).add(responseDto);
         }
 
         return userMeets;
