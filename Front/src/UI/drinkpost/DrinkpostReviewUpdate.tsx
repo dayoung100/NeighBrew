@@ -73,7 +73,7 @@ const Title = styled.div`
   margin-bottom: 0.5rem;
 `;
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 15px;
   position: relative;
@@ -143,21 +143,21 @@ const DrinkpostReviewCreate = () => {
 
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`)
-      .then(res => {
+      .then((res) => {
         setDrink(res.data);
       })
-      .catch(err => console.error(err));
-    callApi("get", `api/drinkreview/review/${reviewId}`).then(res => {
+      .catch((err) => console.error(err));
+    callApi("get", `api/drinkreview/review/${reviewId}`).then((res) => {
       setReview(res.data.content);
       setNewImgSrc(res.data.img);
     });
   }, []);
   useEffect(() => {
     callApi("get", `api/user/myinfo`)
-      .then(res => {
+      .then((res) => {
         setMyInfo(res.data);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, []);
 
   // useEffect(() => {
@@ -192,13 +192,14 @@ const DrinkpostReviewCreate = () => {
 
     if (file === null && newImgSrc === "no image") {
       formData.append("imgSrc", "no image");
+      updateApi(formData);
     }
     if (file !== null) {
       setLoadingModalOn(true);
       //압축하면 blob 타입-> file 타입으로 변환
       const uploadFile = imageCompression(file, options);
       uploadFile
-        .then(res => {
+        .then((res) => {
           const resizingFile = new File([res], file.name, {
             type: file.type,
           });
@@ -207,7 +208,7 @@ const DrinkpostReviewCreate = () => {
         .then(() => {
           updateApi(formData);
         })
-        .catch(e => {
+        .catch((e) => {
           setLoadingModalOn(false);
           setIsClick(false);
         });
@@ -225,10 +226,10 @@ const DrinkpostReviewCreate = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then(res => {
+      .then((res) => {
         navigate(`/drinkpost/${drinkId}`);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         setIsClick(false);
       });
@@ -307,13 +308,19 @@ const DrinkpostReviewCreate = () => {
           />
         </div>
       </CreateBody>
-      <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />
+      <FooterBigBtn
+        content="등록하기"
+        color="var(--c-yellow)"
+        reqFunc={reviewSubmit}
+      />
       <Modal
         isOpen={loadingModalOn}
         onRequestClose={() => {}} //닫히지 않아야함
         style={WhiteModal}
       >
-        <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>
+        <div
+          style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}
+        >
           <div style={{ paddingBottom: "0.5rem" }}>
             이미지 압축중입니다. <br /> 잠시만 기다려주세요.
           </div>

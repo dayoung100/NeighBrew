@@ -119,12 +119,12 @@ const TooltipBtn = styled.div`
 `;
 
 const MeetingInfoManage = () => {
-  const titleRef = useRef(null);
-  const sidoRef = useRef(null);
-  const dateRef = useRef(null);
-  const maxPRef = useRef(null);
-  const liverRef = useRef(null);
-  const minAgeRef = useRef(null);
+  // const titleRef = useRef(null);
+  // const sidoRef = useRef(null);
+  // const dateRef = useRef(null);
+  // const maxPRef = useRef(null);
+  // const liverRef = useRef(null);
+  // const minAgeRef = useRef(null);
 
   const navigate = useNavigate();
   //모임 수정 후 모임 상세로 이동
@@ -255,24 +255,24 @@ const MeetingInfoManage = () => {
     if (!isValid) {
       if (!titleCheck(meetTitle)) {
         setErrorMsg("제목 입력을 확인해주세요");
-        titleRef.current.focus();
+        // titleRef.current.focus();
       } else if (!drinkCheck(selectedDrink)) {
         setErrorMsg("주류를 선택해주세요.");
       } else if (!positionCheck(sido.sidoCode, gugun.gugunCode)) {
         setErrorMsg("지역 입력을 확인해주세요.");
-        sidoRef.current.focus();
+        // sidoRef.current.focus();
       } else if (!timeCheck(date, time)) {
         setErrorMsg("시간 입력을 확인해주세요.");
-        dateRef.current.focus();
+        // dateRef.current.focus();
       } else if (!participantsCheck(maxParticipants)) {
         setErrorMsg("최대 인원을 확인해주세요.");
-        maxPRef.current.focus();
+        // maxPRef.current.focus();
       } else if (!liverLimitCheck(liverLimit)) {
         setErrorMsg("간수치 입력을 확인해주세요.");
-        liverRef.current.focus();
+        // liverRef.current.focus();
       } else if (!ageCheck(minAge, maxAge)) {
         setErrorMsg("나이 입력을 확인해주세요.");
-        minAgeRef.current.focus();
+        // minAgeRef.current.focus();
       } else if (!imgcheck(file)) {
         setErrorMsg("첨부한 이미지를 확인해주세요.");
       }
@@ -313,6 +313,7 @@ const MeetingInfoManage = () => {
   //수정 완료 버튼 클릭 api
   const updateMeeting = async () => {
     if (isClick) return; //throttle역할
+    console.log("들어왔니??");
     setBtnClicked(true);
     //api 요청 전에 확인
     //호스트가 맞는가?
@@ -354,9 +355,11 @@ const MeetingInfoManage = () => {
 
     //이미지 수정을 위한 분기
     if (file === null && newImgSrc === "no image") {
+      console.log("이미지 없앴음");
       f.append("imgSrc", "no image");
-    }
-    if (file !== null) {
+      updateApi(f);
+    } else if (file !== null) {
+      console.log("이미지 새로넣었음");
       setLoadingModalOn(true);
       //압축하면 blob 타입-> file 타입으로 변환
       const uploadFile = imageCompression(file, options);
@@ -376,10 +379,14 @@ const MeetingInfoManage = () => {
           setIsModalOn(true);
           setIsClick(false);
         });
+    } else {
+      console.log("이미지 안만짐");
+      updateApi(f);
     }
   };
 
   const updateApi = (f: FormData) => {
+    console.log("들어왔니");
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
     promise
       .then((res) => {
@@ -404,7 +411,7 @@ const MeetingInfoManage = () => {
             <SubText>* 표시: 필수입력</SubText>
           </div>
           <InputText
-            ref={titleRef}
+            // ref={titleRef}
             placeholder="모임의 이름을 입력해주세요"
             value={meetTitle}
             onChange={(e) => setMeetTitle(e.target.value)}
@@ -444,7 +451,7 @@ const MeetingInfoManage = () => {
                 setSido(selectedSido);
               }}
               value={sido.sidoName}
-              ref={sidoRef}
+              // ref={sidoRef}
             >
               {sidoList.map((siItem) => {
                 return (
@@ -483,7 +490,7 @@ const MeetingInfoManage = () => {
           <Title>시간</Title>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <DateInput
-              ref={dateRef}
+              // ref={dateRef}
               value={date}
               onChange={(e) => setDate(e.target.value)}
               min={localDate().toString()}
@@ -514,7 +521,7 @@ const MeetingInfoManage = () => {
           >
             <SubTitle>최대 인원*</SubTitle>
             <InputShort
-              ref={maxPRef}
+              // ref={maxPRef}
               value={maxParticipants}
               onChange={(e) =>
                 setMaxParticipants(
@@ -538,7 +545,7 @@ const MeetingInfoManage = () => {
           >
             <SubTitle>간수치</SubTitle>
             <InputShort
-              ref={liverRef}
+              // ref={liverRef}
               placeholder="40"
               value={liverLimit > 0 ? liverLimit : ""}
               onChange={(e) => setLiverLimit(parseInt(e.target.value))}
@@ -580,7 +587,7 @@ const MeetingInfoManage = () => {
           >
             <SubTitle>나이</SubTitle>
             <InputShort
-              ref={minAgeRef}
+              // ref={minAgeRef}
               placeholder="20"
               value={minAge > 0 ? minAge : ""}
               onChange={(e) => setMinAge(parseInt(e.target.value))}
