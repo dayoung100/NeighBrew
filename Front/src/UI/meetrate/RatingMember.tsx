@@ -1,8 +1,8 @@
 import { styled } from "styled-components";
 import { MeetDetail } from "../../Type/types";
 import { useEffect, useState } from "react";
-import { callApi } from "../../utils/api";
 import RatingDetail from "./RatingDetail";
+import defaultImg from "../../assets/defaultImg.png";
 
 const MemberProfile = styled.div`
   display: flex;
@@ -83,7 +83,9 @@ const RatingMember = ({ _user, onSelectButton }) => {
       }}
     >
       <MemberProfile>
-        <MemberImg src={_user.profile} />
+        <MemberImg
+          src={_user.profile === "no image" ? defaultImg : _user.profile}
+        />
         <MemberText>
           <MemberName>{_user.nickname}</MemberName>
           <MemberDescription>{_user.intro}</MemberDescription>

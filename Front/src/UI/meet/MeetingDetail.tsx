@@ -686,7 +686,7 @@ const MeetingDetail = () => {
                 color: "black",
               }}
             >
-              모임 정보 관리
+              모임 정보 수정
             </div>
           </div>
           <div

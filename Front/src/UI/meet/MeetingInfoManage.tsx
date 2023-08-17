@@ -160,7 +160,7 @@ const MeetingInfoManage = () => {
   const [maxAge, setMaxAge] = useState(0); //최대나이
   const [meetDesc, setMeetDesc] = useState(""); //모임 소개
   const [imgSrc, setImgSrc] = useState<string>(""); //이미지 경로
-  const [file, setFile] = useState<File>(); //파일 타입
+  const [file, setFile] = useState(null); //파일 타입
 
   //이미지 수정용
   const [newImgSrc, setNewImgSrc] = useState("");
@@ -311,7 +311,7 @@ const MeetingInfoManage = () => {
   };
 
   //수정 완료 버튼 클릭 api
-  const updateMeeting = async () => {
+  const updateMeeting = () => {
     if (isClick) return; //throttle역할
     console.log("들어왔니??");
     setBtnClicked(true);
