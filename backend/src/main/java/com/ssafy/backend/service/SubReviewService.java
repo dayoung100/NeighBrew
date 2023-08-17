@@ -10,6 +10,7 @@ import com.ssafy.backend.repository.DrinkReviewRepository;
 import com.ssafy.backend.repository.SubReviewRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,6 +24,9 @@ public class SubReviewService {
     private final UserRepository userRepository;
     private final DrinkReviewRepository drinkReviewRepository;
     private final PushService pushService;
+
+    @Value("${neighbrew.full.url}")
+    private String neighbrewUrl;
 
     // 리뷰의 댓글을 조회하는 API
     public List<SubReviewResponseDto> findByDrinkReviewId(Long drinkReviewId) {
@@ -47,7 +51,7 @@ public class SubReviewService {
                 .user(user)
                 .build();
 
-        pushService.send(user, drinkReview.getUser(), PushType.SUBREVIEW, user.getNickname() + "님이 회원님의 후기에 댓글을 남겼습니다.", "https://i9b310.p.ssafy.io/drinkpost/" + drinkReview.getDrink().getDrinkId() + "/" + drinkReview.getDrinkReviewId());
+        pushService.send(user, drinkReview.getUser(), PushType.SUBREVIEW, user.getNickname() + "님이 회원님의 후기에 댓글을 남겼습니다.", neighbrewUrl + "/drinkpost/" + drinkReview.getDrink().getDrinkId() + "/" + drinkReview.getDrinkReviewId());
         return SubReviewResponseDto.fromEntity(subReviewRepository.save(subReview));
     }
 
