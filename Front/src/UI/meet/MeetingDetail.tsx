@@ -215,6 +215,7 @@ const MeetingDetail = () => {
   const [userId, setUserId] = useState(0); //현재 유저의 userId
   const [userData, setUserData] = useState(initialUser);
   const [userStatus, setUserStatus] = useState("");
+
   const [exitModalOn, setExitModalOn] = useState(false); //나가기 모달이 열려있는가?
   const [deleteModalOn, setDeleteModalOn] = useState(false); //나가기 모달이 열려있는가?
   const [simpleModalOn, setSimpleModalOn] = useState(false); //오류 모달이 열려있는가?
@@ -240,6 +241,10 @@ const MeetingDetail = () => {
   //모임 편집 페이지로 이동
   const GotoMeetInfoManage = (meetId: number) => {
     navigate(`/meet/${meetId}/manage/info`);
+  };
+  //모임 평가 페이지로 이동
+  const GotoRatingHandler = () => {
+    navigate(`/rating/${meetId}`);
   };
   //없는 모임일 경우 뒤로가기(모임 메인으로 이동?)
   const GotoMainHandler = () => {
@@ -709,7 +714,15 @@ const MeetingDetail = () => {
           <ModalInner>{errMsg}</ModalInner>
         </Modal>
       </MeetDetailDiv>
-      {userStatus === "HOST" && (
+      {meetDetailData.meet.meetStatus === "END" && (
+        <FooterBigBtn
+          content="모임 후기 남기기"
+          reqFunc={GotoRatingHandler}
+          color="var(--c-yellow)"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
+      {userStatus === "HOST" && meetDetailData.meet.meetStatus !== "END" && (
         //user 상태에 따라 버튼 변경
         <FooterBigBtn
           content="모임 관리"
@@ -718,7 +731,7 @@ const MeetingDetail = () => {
           bgColor="var(--c-lightgray)"
         />
       )}
-      {userStatus === "GUEST" && (
+      {userStatus === "GUEST" && meetDetailData.meet.meetStatus !== "END" && (
         <FooterBigBtn
           content="모임 나가기"
           reqFunc={() => setExitModalOn(true)} //모임 나가기
@@ -726,7 +739,7 @@ const MeetingDetail = () => {
           bgColor="var(--c-lightgray)"
         />
       )}
-      {userStatus === "APPLY" && (
+      {userStatus === "APPLY" && meetDetailData.meet.meetStatus !== "END" && (
         <FooterBigBtn
           content="승인 대기 중"
           reqFunc={() => cancelApply()} //참여신청 취소하기
@@ -734,7 +747,7 @@ const MeetingDetail = () => {
           bgColor="var(--c-lightgray)"
         />
       )}
-      {userStatus === "NONE" && (
+      {userStatus === "NONE" && meetDetailData.meet.meetStatus !== "END" && (
         <FooterBigBtn
           content="참여 신청하기"
           reqFunc={() => applyMeet()} //참여신청하기
