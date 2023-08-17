@@ -351,7 +351,7 @@ const DrinkpostReviewDetail = () => {
               <div
                 style={{
                   background: `url(${
-                    review.user.profile !== "no image" ? review.user.profile : defaultImg
+                    review?.user.profile !== "no image" ? review?.user.profile : defaultImg
                   }) no-repeat center`,
                   backgroundSize: "cover",
                   width: "2.4rem",
