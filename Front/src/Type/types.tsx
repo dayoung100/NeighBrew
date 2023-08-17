@@ -62,6 +62,7 @@ export interface Meeting {
   drink?: Drink;
   imgSrc: string;
   meetStatus?: string;
+  chatRoomId?: number;
 }
 
 //미팅 상세 정보 type

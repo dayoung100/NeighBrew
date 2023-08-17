@@ -3,6 +3,7 @@ import { MeetDetail } from "../../Type/types";
 import { useEffect, useState } from "react";
 import RatingDetail from "./RatingDetail";
 import defaultImg from "../../assets/defaultImg.png";
+import UserInfoItem from "../components/UserInfoItem";
 
 const MemberProfile = styled.div`
   display: flex;
@@ -14,10 +15,12 @@ const MemberProfile = styled.div`
 `;
 
 // 동그란 프로필 사진
-const MemberImg = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+const MemberImg = styled.div<{ src: string }>`
+  background: url(${(props) => props.src}) no-repeat center;
+  background-size: cover;
+  width: 3rem;
+  padding-bottom: 3rem;
+  border-radius: 100px;
 `;
 
 const MemberText = styled.div`
@@ -37,6 +40,9 @@ const MemberName = styled.div`
 const MemberDescription = styled.div`
   font-size: 14px;
   color: #828282;
+  text-align: justify;
+  word-break: break-all;
+  font-family: "NanumSquareNeo";
 `;
 
 // 라디오 버튼 컨테이너
@@ -45,7 +51,7 @@ const RadioContainer = styled.div`
   flex-direction: row;
   justify-content: space-around;
   width: 100%;
-  /* margin-top: 20px; */
+  margin-top: 1rem;
   margin-bottom: 10px;
 `;
 
@@ -59,7 +65,7 @@ const RadioButton = styled.button<{ selected: boolean }>`
   font-weight: 700;
   /* border: 1px solid black; */
   /* isSelect에 따라 border 제거 */
-  border: ${({ selected }) => (selected ? "none" : ".5008px solid black")};
+  border: ${({ selected }) => (selected ? "none" : "1px solid var(--c-gray)")};
   background-color: ${({ selected }) =>
     selected ? "var(--c-yellow)" : "white"};
   color: ${({ selected }) => (selected ? "white" : "black")};
@@ -80,9 +86,10 @@ const RatingMember = ({ _user, onSelectButton }) => {
       style={{
         width: "100%",
         margin: "0 auto 1rem auto",
+        fontFamily: "NanumSquareNeoBold",
       }}
     >
-      <MemberProfile>
+      {/* <MemberProfile>
         <MemberImg
           src={_user.profile === "no image" ? defaultImg : _user.profile}
         />
@@ -90,7 +97,13 @@ const RatingMember = ({ _user, onSelectButton }) => {
           <MemberName>{_user.nickname}</MemberName>
           <MemberDescription>{_user.intro}</MemberDescription>
         </MemberText>
-      </MemberProfile>
+      </MemberProfile> */}
+      <UserInfoItem
+        key={_user.userId}
+        user={_user}
+        isMaster={false}
+        width={15}
+      />
 
       <RadioContainer>
         <RadioButton
