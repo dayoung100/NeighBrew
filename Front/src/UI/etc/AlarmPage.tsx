@@ -6,13 +6,49 @@ import AlarmItem from "../components/AlarmItem";
 import Footer from "../footer/Footer";
 import { useNavigate } from "react-router-dom";
 import { AlarmLog } from "../../Type/types";
+import EmptyMsg from "../components/EmptyMsg.tsx";
+import {
+  LeadingActions,
+  SwipeableList,
+  SwipeableListItem,
+  SwipeAction,
+  TrailingActions,
+} from "react-swipeable-list";
+import "react-swipeable-list/dist/styles.css";
 
 const NavbarDiv = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
+const ActionContent = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  box-sizing: border-box;
+  background-color: #e17070;
+  color: #1d1818;
+  overflow: hidden;
+`;
 
+const deletePush = (id: number) => {
+  callApi("delete", `api/push/${id}`)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => console.error(err));
+};
+const trailingActions = (id: number) => (
+  <TrailingActions>
+    <SwipeAction destructive={true} onClick={() => deletePush(id)}>
+      <ActionContent>알림삭제</ActionContent>
+    </SwipeAction>
+  </TrailingActions>
+);
 const alarmPage = () => {
   const BackIcon = backIcon();
   const navigate = useNavigate();
@@ -28,8 +64,9 @@ const alarmPage = () => {
       })
       .catch(err => console.error(err));
   }, []);
-  const goPageHandler = (url: string) => {
-    navigate(url);
+  const goPageHandler = async (url: string, id: number) => {
+    await deletePush(id);
+    await navigate(url.split("io")[1]);
   };
   const toBackHandler = () => {
     navigate(-1);
@@ -49,9 +86,24 @@ const alarmPage = () => {
 
       {/* 모든 알림을 리스트로 가정을 하고 map으로 풀어냅니다. 정의될때까지 주석처리. */}
       <div style={{ margin: "0px 10px 0px 10px" }}>
-        {alarmList.map((alarm, i) => {
-          return <AlarmItem key={i} alarm={alarm}></AlarmItem>;
-        })}
+        {alarmList.length === 0 ? (
+          <EmptyMsg title="알림이 없습니다." contents="" />
+        ) : (
+          alarmList.map((alarm, i) => {
+            return (
+              <SwipeableList>
+                <SwipeableListItem
+                  trailingActions={trailingActions(alarm.pushId)}
+                  onClick={() => {
+                    goPageHandler(alarm.url, alarm.pushId);
+                  }}
+                >
+                  <AlarmItem key={i} alarm={alarm}></AlarmItem>
+                </SwipeableListItem>
+              </SwipeableList>
+            );
+          })
+        )}
       </div>
       <Footer></Footer>
     </>
