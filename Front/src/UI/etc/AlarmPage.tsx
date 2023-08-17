@@ -51,16 +51,12 @@ const trailingActions = (id: number) => (
   </TrailingActions>
 );
 const alarmPage = () => {
-  const parent = useRef(null);
   const BackIcon = backIcon();
   const navigate = useNavigate();
   const myId = localStorage.getItem("myId");
   // 현재 더미 텍스트로 이루어져 있습니다. api가 있으면 비어두면 될 것 같습니다.
   const [alarmList, setAlarmList] = useState<AlarmLog[]>([]);
 
-  useEffect(() => {
-    parent.current && autoAnimate(parent.current);
-  }, [parent]);
   // 비동기 통신으로 알림을 불러옵니다. api가 있을 때 까지 주석처리.
   useEffect(() => {
     callApi("get", `api/push/${myId}`)
@@ -90,7 +86,7 @@ const alarmPage = () => {
       </NavbarDiv>
 
       {/* 모든 알림을 리스트로 가정을 하고 map으로 풀어냅니다. 정의될때까지 주석처리. */}
-      <div style={{ margin: "0px 10px 0px 10px" }} ref={parent}>
+      <div style={{ margin: "0px 10px 0px 10px" }}>
         {alarmList.length === 0 ? (
           <EmptyMsg title="알림이 없습니다." contents="" />
         ) : (
