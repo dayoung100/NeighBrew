@@ -44,7 +44,7 @@ public class MeetController {
     }
 
     //모임 생성
-    @PostMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<?> saveMeet(Long userId,
                                       MeetRequestDto meetRequestDto,
                                       Long drinkId,
@@ -56,7 +56,7 @@ public class MeetController {
     }
 
     //모임 수정
-    @PutMapping("/modify/{userId}/{meetId}")
+    @PutMapping("/{userId}/{meetId}")
     public ResponseEntity<?> updateMeet(@PathVariable("userId") Long userId,
                                         @PathVariable("meetId") Long meetId,
                                         MeetRequestDto meetRequestDto,
