@@ -88,9 +88,23 @@ const ReviewImg = styled.img`
   object-fit: cover;
 `;
 
+const SortButton = styled.div`
+  width: 5rem;
+  height: 2rem;
+  border-radius: 16px;
+  background-color: var(--c-yellow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "NanumSquareNeo";
+  color: white;
+`;
+
 const drinkpostMain = (props: { connectHandler: () => void }) => {
   const toForward = forwardIcon();
   const [reviewList, setReviewList] = useState<Review[]>([]);
+  const [reviewListLike, setReviewListLike] = useState<Review[]>([]);
+  const [reviewButton, setReviewButton] = useState(true);
   const navigate = useNavigate();
   const clickTotalDrink = () => {
     navigate("/drinkpost/total");
@@ -100,10 +114,16 @@ const drinkpostMain = (props: { connectHandler: () => void }) => {
   };
   const [threePick, setThreePick] = useState<Drink[]>([]);
 
+  const reviewButtonHandler = () => {
+    setReviewButton(!reviewButton);
+  };
+
   useEffect(() => {
+    // 놀랍지만 생성순
     callApi("get", "api/drinkreview/likes").then(res => {
       setReviewList(res.data.content);
     });
+    callApi("get", "api/drinkreview/makes").then(res => setReviewListLike(res.data.content));
     callApi("get", "api/drink/mdPick").then(res => {
       setThreePick([...res.data]);
     });
@@ -131,15 +151,45 @@ const drinkpostMain = (props: { connectHandler: () => void }) => {
           </Total>
         </div>
         <div style={{ margin: "0px 3vw" }}>
-          <div style={{ textAlign: "start" }}>
-            <h3>🔥인기 있는 후기🔥</h3>
+          <div style={{ textAlign: "start", display: "flex", alignItems: "center" }}>
+            {reviewButton ? <h3>🔥인기 있는 후기🔥</h3> : <h3>날짜순 정렬</h3>}
+            {reviewButton ? (
+              <SortButton onClick={reviewButtonHandler}>
+                <b>생성순</b>
+              </SortButton>
+            ) : (
+              <SortButton onClick={reviewButtonHandler}>
+                <b>인기순</b>
+              </SortButton>
+            )}
           </div>
-          <ReviewList>
+          {reviewButton ? (
+            <ReviewList>
+              {Array.isArray(reviewList) &&
+                reviewList.map(review => {
+                  return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
+                })}
+            </ReviewList>
+          ) : (
+            <ReviewList>
+              {Array.isArray(reviewListLike) &&
+                reviewListLike.map(review => {
+                  return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
+                })}
+            </ReviewList>
+          )}
+          {/* <ReviewList>
             {Array.isArray(reviewList) &&
               reviewList.map(review => {
                 return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
               })}
           </ReviewList>
+          <ReviewList>
+            {Array.isArray(reviewListLike) &&
+              reviewListLike.map(review => {
+                return <ReviewItem key={review.drinkReviewId} review={review}></ReviewItem>;
+              })}
+          </ReviewList> */}
         </div>
         <footer>
           <Footer />
