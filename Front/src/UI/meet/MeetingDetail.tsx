@@ -4,10 +4,12 @@
 모임 리스트에서 하나를 클릭하면 이 페이지로 이동함
 모임 위치, 시간, 주최자, 간수치제한, 인원 제한 정보를 담고 있음
 */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
+import { CompatClient, Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 import PeopleNumInfo from "./PeopleNumInfo";
 import ListInfoItem from "../components/ListInfoItem";
 import UserInfoItem from "../components/UserInfoItem";
@@ -224,6 +226,7 @@ const MeetingDetail = () => {
   const [userId, setUserId] = useState(0); //현재 유저의 userId
   const [userData, setUserData] = useState(initialUser);
   const [userStatus, setUserStatus] = useState("");
+  const client = useRef<CompatClient>();
 
   const [exitModalOn, setExitModalOn] = useState(false); //나가기 모달이 열려있는가?
   const [deleteModalOn, setDeleteModalOn] = useState(false); //나가기 모달이 열려있는가?
@@ -260,8 +263,16 @@ const MeetingDetail = () => {
     navigate(-1);
   };
   //특정 채팅방으로 이동
-  const GotoChatHandler = (chatId: number) => {
-    navigate(`/rating/${chatId}`);
+  const GotoChatHandler = () => {
+    navigate(`/chatList/${meetDetailData.meet.chatRoomId}`);
+  };
+
+  // 웹소켓 연결 및 이벤트 핸들러 설정
+  const connectToWebSocket = () => {
+    client.current = Stomp.over(() => {
+      const ws = new SockJS("/ws");
+      return ws;
+    });
   };
 
   //api호출
@@ -433,10 +444,13 @@ const MeetingDetail = () => {
 
   //채팅방 참여하기
   const gotoChat = () => {
-    callApi("post", `/api/meet/join/${userId}/${meetId}`).then((res) => {
-      console.dir(res.data);
-      GotoChatHandler(res.data);
-    });
+    connectToWebSocket();
+    client.current.send(
+      `/sub/join/${meetDetailData.meet.chatRoomId}`,
+      {},
+      JSON.stringify({ userId })
+    );
+    GotoChatHandler();
   };
 
   function hasAgeLimit() {
@@ -448,10 +462,6 @@ const MeetingDetail = () => {
         : false;
     return res;
   }
-
-  useEffect(() => {
-    console.log("나가기:" + exitModalOn);
-  }, [exitModalOn]);
 
   return (
     <div style={{ color: "var(--c-black)" }}>
@@ -635,7 +645,6 @@ const MeetingDetail = () => {
                     </div>
                   </div>
                 );
-                exitModalOn;
               })}
             </div>
           </div>
