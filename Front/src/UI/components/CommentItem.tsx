@@ -113,6 +113,7 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
               })`,
               backgroundSize: "cover",
               backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
             }}
           ></ProfileDiv2>
         </ProfileDiv>
