@@ -63,5 +63,4 @@ public class ChatController {
                 : chatDmService.leaveDm(user2Id, user1Id, payload);
         messagingTemplate.convertAndSend("/pub/dm/" + user1Id + "/" + user2Id, sendData);
     }
-
 }
