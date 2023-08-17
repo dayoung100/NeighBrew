@@ -244,7 +244,7 @@ const MeetingInfoManage = () => {
   const checkRequiredValue = () => {
     //빨간글씨가 하나라도 있으면 모달 오픈
     let isValid =
-      titleCheck(meetTitle) &&
+      titleCheck(meetTitle.trim()) &&
       drinkCheck(selectedDrink) &&
       positionCheck(sido.sidoCode, gugun.gugunCode) &&
       timeCheck(date, time) &&
@@ -253,7 +253,7 @@ const MeetingInfoManage = () => {
       ageCheck(minAge, maxAge) &&
       imgcheck(file);
     if (!isValid) {
-      if (!titleCheck(meetTitle)) {
+      if (!titleCheck(meetTitle.trim())) {
         setErrorMsg("제목 입력을 확인해주세요");
         // titleRef.current.focus();
       } else if (!drinkCheck(selectedDrink)) {
@@ -330,7 +330,7 @@ const MeetingInfoManage = () => {
 
     let f = new FormData();
     //필수 입력o
-    f.append("meetName", meetTitle);
+    f.append("meetName", meetTitle.trim());
     f.append("maxParticipants", maxParticipants.toString());
     f.append("meetDate", `${date}T${time}:00`);
     f.append("tagId", selectedCategory.toString());

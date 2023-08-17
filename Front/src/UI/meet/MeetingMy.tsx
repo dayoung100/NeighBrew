@@ -8,6 +8,7 @@ import styled from "styled-components";
 import MeetingListItem from "./MeetingListItem";
 import EmptyMsg from "./../components/EmptyMsg";
 import { callApi } from "../../utils/api";
+import { Meeting } from "../../Type/types";
 
 const MeetingDiv = styled.div`
   margin-bottom: 2rem;
@@ -34,6 +35,10 @@ const meetingMy = () => {
   const [hostMeet, setHostMeet] = useState([]); //userId가 만든 모임
   const [applyMeet, setApplyMeet] = useState([]); //userId가 지원한 모임
   const [guestMeet, setGuestMeet] = useState([]); //userId가 참여한 모임
+  const [endMeet, setEndMeet] = useState([]); //userId가 개설, 참여했는데 끝난 모임
+
+  //모임 배열과 waiting, end 중 하나를 넣으면 해당하는 모임만 반환
+  const filterByStatus = (array: Meeting[], status: string) => {};
 
   useEffect(() => {
     //로컬 스토리지에서 userId 가져오기
@@ -54,9 +59,12 @@ const meetingMy = () => {
 
   //create, apply, attend 모임 갱신
   useEffect(() => {
+    //host:host 중에서 waiting인 애들만
     setHostMeet(meetData.HOST);
     setApplyMeet(meetData.APPLY);
     setGuestMeet(meetData.GUEST);
+    //host, guest 중에서 end인 애들만
+    // setEndMeet();
   }, [meetData]);
 
   return (

@@ -61,7 +61,7 @@ const UserInfoItem = (props: UserInfoItemProps) => {
         </div>
         <div
           style={{
-            fontFamily: "Noto Sans KR",
+            fontFamily: "NanumSquareNeo",
             fontSize: "15px",
             color: "var(--c-gray)",
             width: `${width}rem`,

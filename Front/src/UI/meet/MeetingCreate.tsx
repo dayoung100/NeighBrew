@@ -208,7 +208,7 @@ const MeetingCreate = () => {
   const checkRequiredValue = () => {
     //빨간글씨가 하나라도 있으면 모달 오픈
     let isValid =
-      titleCheck(meetTitle) &&
+      titleCheck(meetTitle.trim()) &&
       drinkCheck(selectedDrink) &&
       positionCheck(sido.sidoCode, gugun.gugunCode) &&
       timeCheck(date, time) &&
@@ -217,7 +217,7 @@ const MeetingCreate = () => {
       ageCheck(minAge, maxAge) &&
       imgcheck(file);
     if (!isValid) {
-      if (!titleCheck(meetTitle)) {
+      if (!titleCheck(meetTitle.trim())) {
         setErrorMsg("제목 입력을 확인해주세요");
         titleRef.current.focus();
       } else if (!drinkCheck(selectedDrink)) {
@@ -285,7 +285,7 @@ const MeetingCreate = () => {
     let f = new FormData();
     //필수 입력o
     f.append("userId", userId.toString());
-    f.append("meetName", meetTitle);
+    f.append("meetName", meetTitle.trim());
     f.append("maxParticipants", maxParticipants.toString());
     f.append("meetDate", `${date}T${time}:00`);
     f.append("tagId", selectedCategory.toString());
@@ -363,7 +363,7 @@ const MeetingCreate = () => {
             value={meetTitle}
             onChange={(e) => setMeetTitle(e.target.value)}
           />
-          {!titleCheck(meetTitle) && btnClicked && (
+          {!titleCheck(meetTitle.trim()) && btnClicked && (
             <ErrorDiv>📌모임 이름은 필수로 입력해야합니다.(30자 이내)</ErrorDiv>
           )}
         </QuestionDiv>

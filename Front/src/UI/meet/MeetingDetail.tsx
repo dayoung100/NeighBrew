@@ -4,10 +4,12 @@
 모임 리스트에서 하나를 클릭하면 이 페이지로 이동함
 모임 위치, 시간, 주최자, 간수치제한, 인원 제한 정보를 담고 있음
 */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
+import { CompatClient, Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 import PeopleNumInfo from "./PeopleNumInfo";
 import ListInfoItem from "../components/ListInfoItem";
 import UserInfoItem from "../components/UserInfoItem";
@@ -35,7 +37,7 @@ const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
 const DetailHeader = styled.div`
   display: flex;
   align-items: center;
-  text-align: left;
+  justify-content: space-between;
   padding: 1rem;
 `;
 
@@ -63,6 +65,15 @@ const Tag = styled.div`
     justify-content: center;
     min-width: 30px;
   }
+`;
+
+const ChatBtn = styled.div`
+  padding: 0.5rem 1rem;
+  background-color: var(--c-yellow);
+  color: black;
+  font-family: "NanumSquareNeo";
+  font-size: 12px;
+  border-radius: 5px;
 `;
 
 const Title = styled.div`
@@ -215,6 +226,7 @@ const MeetingDetail = () => {
   const [userId, setUserId] = useState(0); //현재 유저의 userId
   const [userData, setUserData] = useState(initialUser);
   const [userStatus, setUserStatus] = useState("");
+  const client = useRef<CompatClient>();
 
   const [exitModalOn, setExitModalOn] = useState(false); //나가기 모달이 열려있는가?
   const [deleteModalOn, setDeleteModalOn] = useState(false); //나가기 모달이 열려있는가?
@@ -249,6 +261,18 @@ const MeetingDetail = () => {
   //없는 모임일 경우 뒤로가기(모임 메인으로 이동?)
   const GotoMainHandler = () => {
     navigate(-1);
+  };
+  //특정 채팅방으로 이동
+  const GotoChatHandler = () => {
+    navigate(`/chatList/${meetDetailData.meet.chatRoomId}`);
+  };
+
+  // 웹소켓 연결 및 이벤트 핸들러 설정
+  const connectToWebSocket = () => {
+    client.current = Stomp.over(() => {
+      const ws = new SockJS("/ws");
+      return ws;
+    });
   };
 
   //api호출
@@ -418,6 +442,17 @@ const MeetingDetail = () => {
       });
   };
 
+  //채팅방 참여하기
+  const gotoChat = () => {
+    connectToWebSocket();
+    client.current.send(
+      `/sub/join/${meetDetailData.meet.chatRoomId}`,
+      {},
+      JSON.stringify({ userId })
+    );
+    GotoChatHandler();
+  };
+
   function hasAgeLimit() {
     if (meetDetailData === undefined) return false;
     const res =
@@ -428,21 +463,22 @@ const MeetingDetail = () => {
     return res;
   }
 
-  useEffect(() => {
-    console.log("나가기:" + exitModalOn);
-  }, [exitModalOn]);
-
   return (
     <div style={{ color: "var(--c-black)" }}>
       <MeetThumbnail $bgImgSrc={bgImg}>
         <DetailHeader>
-          <div
-            style={{ cursor: "pointer", marginRight: "1rem" }}
-            onClick={GoBackHandler}
-          >
-            {ArrowLeftIcon}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div
+              style={{ cursor: "pointer", marginRight: "1rem" }}
+              onClick={GoBackHandler}
+            >
+              {ArrowLeftIcon}
+            </div>
+            <Tag>{getTagName(meetDetailData.meet.tagId)}</Tag>
           </div>
-          <Tag>{getTagName(meetDetailData.meet.tagId)}</Tag>
+          {userStatus !== "APPLY" && userStatus !== "NONE" && (
+            <ChatBtn onClick={gotoChat}>채팅 참여하기</ChatBtn>
+          )}
         </DetailHeader>
         <div style={{ textAlign: "center", padding: "2rem 0 7rem 0" }}>
           <Title>{meetDetailData.meet.meetName}</Title>
@@ -609,7 +645,6 @@ const MeetingDetail = () => {
                     </div>
                   </div>
                 );
-                exitModalOn;
               })}
             </div>
           </div>
@@ -722,31 +757,34 @@ const MeetingDetail = () => {
           bgColor="var(--c-lightgray)"
         />
       )}
-      {userStatus === "HOST" && meetDetailData.meet.meetStatus !== "END" && (
-        //user 상태에 따라 버튼 변경
-        <FooterBigBtn
-          content="모임 관리"
-          reqFunc={() => setManageModalOn(true)}
-          color="var(--c-yellow)"
-          bgColor="var(--c-lightgray)"
-        />
-      )}
-      {userStatus === "GUEST" && meetDetailData.meet.meetStatus !== "END" && (
-        <FooterBigBtn
-          content="모임 나가기"
-          reqFunc={() => setExitModalOn(true)} //모임 나가기
-          color="#F28F79"
-          bgColor="var(--c-lightgray)"
-        />
-      )}
-      {userStatus === "APPLY" && meetDetailData.meet.meetStatus !== "END" && (
-        <FooterBigBtn
-          content="승인 대기 중"
-          reqFunc={() => cancelApply()} //참여신청 취소하기
-          color="var(--c-gray)"
-          bgColor="var(--c-lightgray)"
-        />
-      )}
+      {userStatus === "HOST" &&
+        meetDetailData.meet.meetStatus === "WAITING" && (
+          //user 상태에 따라 버튼 변경
+          <FooterBigBtn
+            content="모임 관리"
+            reqFunc={() => setManageModalOn(true)}
+            color="var(--c-yellow)"
+            bgColor="var(--c-lightgray)"
+          />
+        )}
+      {userStatus === "GUEST" &&
+        meetDetailData.meet.meetStatus === "WAITING" && (
+          <FooterBigBtn
+            content="모임 나가기"
+            reqFunc={() => setExitModalOn(true)} //모임 나가기
+            color="#F28F79"
+            bgColor="var(--c-lightgray)"
+          />
+        )}
+      {userStatus === "APPLY" &&
+        meetDetailData.meet.meetStatus === "WAITING" && (
+          <FooterBigBtn
+            content="승인 대기 중"
+            reqFunc={() => cancelApply()} //참여신청 취소하기
+            color="var(--c-gray)"
+            bgColor="var(--c-lightgray)"
+          />
+        )}
       {userStatus === "NONE" && meetDetailData.meet.meetStatus !== "END" && (
         <FooterBigBtn
           content="참여 신청하기"
