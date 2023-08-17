@@ -42,6 +42,7 @@ public class ChatController {
     @MessageMapping("/join/{roomId}")
     public void join(@DestinationVariable Long roomId,
                      @Payload String data) throws JsonProcessingException {
+        log.info("채팅방 재 입장");
         String res = chatRoomService.joinChatRoom(roomId, data);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, res);
     }
