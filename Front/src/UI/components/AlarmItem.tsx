@@ -15,6 +15,7 @@ const ProfileDiv = styled.div`
   border-radius: 30px;
   background-size: cover;
   background-repeat: no-repeat;
+  background-position: center;
 `;
 
 const AlarmContent = styled.div`
