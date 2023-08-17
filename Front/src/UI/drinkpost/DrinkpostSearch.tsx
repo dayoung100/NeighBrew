@@ -52,22 +52,10 @@ const DrinkpostSearch = () => {
   };
   const [inputText, setInputText] = useState("");
 
-  // const search = (drink: string) => {
-  //   callApi(
-  //     "GET",
-  //     `api/drink/search?tagId=${selectedCategory}&name=${drink}`
-  //   ).then((res) => {
-  //     setSearchResult(res.data.content);
-  //   });
-  // };
-
   //inputText로 술장 검색 api
   useEffect(() => {
-    const promise = callApi(
-      "get",
-      `api/drink/search?tagId=${selectedCategory}&name=${inputText}`
-    );
-    promise.then((res) => {
+    const promise = callApi("get", `api/drink/search?tagId=${selectedCategory}&name=${inputText}`);
+    promise.then(res => {
       setSearchResult(res.data.content);
     });
   }, [inputText, selectedCategory]);
@@ -118,7 +106,7 @@ const DrinkpostSearch = () => {
               paddingBottom: "60px",
             }}
           >
-            {searchResult.map((drink) => {
+            {searchResult.map(drink => {
               return <DrinkCard key={drink.drinkId} drink={drink}></DrinkCard>;
             })}
           </div>

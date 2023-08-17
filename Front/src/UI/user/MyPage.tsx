@@ -260,11 +260,9 @@ const MyPage = () => {
 
   // 팔로우 하기
   const followHandler = async () => {
-    const api = await callApi("post", `api/follow/${userid}`)
-      .then(res => {
-        followers();
-      })
-      .catch(err => console.log(err));
+    const api = await callApi("post", `api/follow/${userid}`).then(res => {
+      followers();
+    });
   };
   // 팔로워, 팔로잉 인원 수 세기 (팔로우 버튼 색깔 변경)
   const followers = async () => {
@@ -310,8 +308,7 @@ const MyPage = () => {
       .then(() => {
         myDrinks();
         followers();
-      })
-      .catch(err => console.log(err));
+      });
   };
   const refresh = () => {
     if (localStorage.getItem("token") != null) {
@@ -326,7 +323,6 @@ const MyPage = () => {
 
   useEffect(() => {
     setNickname(userData.nickname);
-    // setProfile(userData.profile);
     setIntro(userData.intro);
     setBirth(userData.birth !== null ? userData.birth : birth);
   }, [userData]);
@@ -398,8 +394,7 @@ const MyPage = () => {
         })
         .then(() => {
           myDrinks();
-        })
-        .catch(err => console.log(err));
+        });
     }
     if (profile == null) {
       const formData = new FormData();
@@ -420,8 +415,7 @@ const MyPage = () => {
         })
         .then(() => {
           myDrinks();
-        })
-        .catch(err => console.log(err));
+        });
     }
     if (userData.nickname != nickname && nickname.length > 20) {
       alert("닉네임은 20자 까지만 가능합니다.");

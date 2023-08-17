@@ -34,8 +34,6 @@ const Tag = styled.div`
   width: 3rem;
 `;
 
-//TODO: 어차피 리스트의 객체를 갖고 돌릴꺼니까 getFunc없어도 될듯
-//TODO: 인자로 받는 것도 content, tag말고 객체 자체를 받아도 될듯
 type OneLineListItemProps = {
   content: string; //항목의 이름
   tag: string; //항목이 해당하는 태그(주종, 좋아요/보통/아쉬워요 등)

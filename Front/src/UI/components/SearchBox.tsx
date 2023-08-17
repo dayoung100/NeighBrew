@@ -15,14 +15,14 @@ const SearchDiv = styled.div<{ width: number }>`
   background: var(--c-lightgray);
   border-radius: 20px;
   padding: 0.5rem 1rem;
-  width: ${(props) => props.width}%;
+  width: ${props => props.width}%;
   max-width: 100%;
 `;
 
 const SearchDivInput = styled.input.attrs({ type: "text" })`
   background: var(--c-lightgray);
   color: var(--c-black);
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   width: 80%;
   border: none;
   text-align: left;
@@ -62,7 +62,7 @@ const searchBox = (props: InputProps) => {
         type="text"
         placeholder={props.placeholder}
         value={props.value}
-        onChange={(e) => setSearchValue(e.target.value)}
+        onChange={e => setSearchValue(e.target.value)}
       />
       <SearchBtn>{searchButton}</SearchBtn>
     </SearchDiv>

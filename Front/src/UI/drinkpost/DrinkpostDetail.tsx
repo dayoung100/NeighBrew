@@ -8,7 +8,6 @@ import { callApi } from "../../utils/api";
 import { useState, useEffect, useRef } from "react";
 import { Drink, Review } from "../../Type/types";
 import backgroundImg from "../../assets/mdsimg.png";
-import plusButton from "../../assets/plusButton.svg";
 
 const WholeDiv = styled.div`
   border-radius: 30px 30px 0px 0px;
@@ -142,28 +141,20 @@ const DrinkpostDetail = () => {
   const toReviewCreate = () => {
     navigate(`/drinkpost/${detail.drinkId}/review/create`);
   };
-  // const drinkUrl = `http://34.64.126.58:5173/drink/${drinkId}`;
-  // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-    callApi("get", `api/drink/${drinkId}`)
-      .then(res => {
-        setDetail(res.data);
-      })
-      .catch(err => console.log(err));
-    // callApi("get", reviewUrl)
-    // .then(res=> )
+    callApi("get", `api/drink/${drinkId}`).then(res => {
+      setDetail(res.data);
+    });
   }, []);
 
   useEffect(() => {
-    callApi("get", `api/drinkreview/${drinkId}`)
-      .then(res => {
-        setReviewList(prev => [...prev, ...res.data.content]);
-      })
-      .catch(err => console.error(err));
+    callApi("get", `api/drinkreview/${drinkId}`).then(res => {
+      setReviewList(prev => [...prev, ...res.data.content]);
+    });
   }, []);
 
   const transImage = (img: string) => {
@@ -305,11 +296,7 @@ const DrinkpostDetail = () => {
             })}
           </div>
         </div>
-        {/* <RoundBtn onClick={() => navigate(`/drinkpost/${drinkId}/review/create`)}>
-          <img src={plusButton} width="25rem" />
-        </RoundBtn> */}
       </WholeDiv>
-      {/* <Footer></Footer> */}
     </>
   );
 };

@@ -11,22 +11,10 @@ import FooterBigBtn from "../footer/FooterBigBtn";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
 import { MeetDetail } from "../../Type/types";
-import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
-import {
-  initialMeetDetail,
-  initialDrink,
-  initialSido,
-  initialGugun,
-} from "../common";
-import {
-  WhiteModal,
-  ModalInner,
-  InputText,
-  DateInput,
-  TimeInput,
-} from "../../style/common";
+import { initialMeetDetail, initialDrink, initialSido, initialGugun } from "../common";
+import { WhiteModal, ModalInner, InputText, DateInput, TimeInput } from "../../style/common";
 import { localDate, formateDate, formateTime } from "./DateTimeCommon";
 import {
   titleCheck,
@@ -52,7 +40,7 @@ const Title = styled.div`
 `;
 
 const SubTitle = styled.div`
-  font-family: SeoulNamsan;
+  font-family: NanumSquareNeo;
   font-size: 14px;
   text-align: left;
 `;
@@ -74,7 +62,7 @@ const DropdownInput = styled.select`
   padding: 1% 3%;
   border: none;
   border-bottom: 1px solid var(--c-gray);
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   outline: none;
   -webkit-appearance: none; /* 화살표 없애기 for chrome*/
   -moz-appearance: none; /* 화살표 없애기 for firefox*/
@@ -89,7 +77,7 @@ const InfoTextArea = styled.textarea`
   border: 1px solid var(--c-gray);
   border-radius: 15px;
   outline: none;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   font-size: 14px;
   resize: none;
 `;
@@ -97,7 +85,7 @@ const InfoTextArea = styled.textarea`
 const ErrorDiv = styled.div`
   color: red;
   text-align: left;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   font-size: 15px;
   padding: 0.5rem;
 `;
@@ -119,12 +107,12 @@ const TooltipBtn = styled.div`
 `;
 
 const MeetingInfoManage = () => {
-  // const titleRef = useRef(null);
-  // const sidoRef = useRef(null);
-  // const dateRef = useRef(null);
-  // const maxPRef = useRef(null);
-  // const liverRef = useRef(null);
-  // const minAgeRef = useRef(null);
+  const titleRef = useRef(null);
+  const sidoRef = useRef(null);
+  const dateRef = useRef(null);
+  const maxPRef = useRef(null);
+  const liverRef = useRef(null);
+  const minAgeRef = useRef(null);
 
   const navigate = useNavigate();
   //모임 수정 후 모임 상세로 이동
@@ -180,7 +168,7 @@ const MeetingInfoManage = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    callApi("get", "api/sido").then((res) => {
+    callApi("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
@@ -188,7 +176,7 @@ const MeetingInfoManage = () => {
   //api 호출, 기존 모임의 정보 저장
   useEffect(() => {
     const promise = callApi("get", `api/meet/${meetId}`);
-    promise.then((res) => {
+    promise.then(res => {
       setMeetData(res.data);
     });
     //로컬 스토리지에서 userId 가져오기
@@ -223,7 +211,7 @@ const MeetingInfoManage = () => {
     if (gugun.sidoCode !== sido.sidoCode) {
       setGugun(initialGugun); //초기화
     }
-    callApi("get", `api/gugun/${sido.sidoCode}`).then((res) => {
+    callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);
@@ -255,24 +243,24 @@ const MeetingInfoManage = () => {
     if (!isValid) {
       if (!titleCheck(meetTitle.trim())) {
         setErrorMsg("제목 입력을 확인해주세요");
-        // titleRef.current.focus();
+        titleRef.current.focus();
       } else if (!drinkCheck(selectedDrink)) {
         setErrorMsg("주류를 선택해주세요.");
       } else if (!positionCheck(sido.sidoCode, gugun.gugunCode)) {
         setErrorMsg("지역 입력을 확인해주세요.");
-        // sidoRef.current.focus();
+        sidoRef.current.focus();
       } else if (!timeCheck(date, time)) {
         setErrorMsg("시간 입력을 확인해주세요.");
-        // dateRef.current.focus();
+        dateRef.current.focus();
       } else if (!participantsCheck(maxParticipants)) {
         setErrorMsg("최대 인원을 확인해주세요.");
-        // maxPRef.current.focus();
+        maxPRef.current.focus();
       } else if (!liverLimitCheck(liverLimit)) {
         setErrorMsg("간수치 입력을 확인해주세요.");
-        // liverRef.current.focus();
+        liverRef.current.focus();
       } else if (!ageCheck(minAge, maxAge)) {
         setErrorMsg("나이 입력을 확인해주세요.");
-        // minAgeRef.current.focus();
+        minAgeRef.current.focus();
       } else if (!imgcheck(file)) {
         setErrorMsg("첨부한 이미지를 확인해주세요.");
       }
@@ -336,10 +324,7 @@ const MeetingInfoManage = () => {
     f.append("tagId", selectedCategory.toString());
     f.append("sidoCode", sido.sidoCode.toString());
     f.append("gugunCode", gugun.gugunCode.toString());
-    f.append(
-      "drinkId",
-      selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
-    );
+    f.append("drinkId", selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : "");
     //필수 입력x
     if (checkNonRequiredValue(liverLimit)) {
       f.append("minLiverPoint", liverLimit.toString());
@@ -361,7 +346,7 @@ const MeetingInfoManage = () => {
       //압축하면 blob 타입-> file 타입으로 변환
       const uploadFile = imageCompression(file, options);
       uploadFile
-        .then((res) => {
+        .then(res => {
           const resizingFile = new File([res], file.name, {
             type: file.type,
           });
@@ -370,7 +355,7 @@ const MeetingInfoManage = () => {
         .then(() => {
           updateApi(f);
         })
-        .catch((e) => {
+        .catch(e => {
           setErrorMsg(e);
           setLoadingModalOn(false);
           setIsModalOn(true);
@@ -384,10 +369,10 @@ const MeetingInfoManage = () => {
   const updateApi = (f: FormData) => {
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
     promise
-      .then((res) => {
+      .then(res => {
         GoMeetDetailHandler(); //모임 상세 페이지로 이동
       })
-      .catch((error) => {
+      .catch(error => {
         setErrorMsg(error);
         setIsModalOn(true);
         setIsClick(false);
@@ -406,12 +391,12 @@ const MeetingInfoManage = () => {
             <SubText>* 표시: 필수입력</SubText>
           </div>
           <InputText
-            // ref={titleRef}
+            ref={titleRef}
             placeholder="모임의 이름을 입력해주세요"
             value={meetTitle}
-            onChange={(e) => setMeetTitle(e.target.value)}
+            onChange={e => setMeetTitle(e.target.value)}
           />
-          {!titleCheck(meetTitle) && btnClicked && (
+          {!titleCheck(meetTitle.trim()) && btnClicked && (
             <ErrorDiv>📌모임 이름은 필수로 입력해야합니다.(30자 이내)</ErrorDiv>
           )}
         </QuestionDiv>
@@ -438,17 +423,15 @@ const MeetingInfoManage = () => {
           >
             <Title>위치</Title>
             <DropdownInput
-              onChange={(e) => {
+              onChange={e => {
                 const selectedValue = e.target.value;
-                const selectedSido = sidoList.find(
-                  (item) => item.sidoName === selectedValue
-                );
+                const selectedSido = sidoList.find(item => item.sidoName === selectedValue);
                 setSido(selectedSido);
               }}
               value={sido.sidoName}
-              // ref={sidoRef}
+              ref={sidoRef}
             >
-              {sidoList.map((siItem) => {
+              {sidoList.map(siItem => {
                 return (
                   <option value={siItem.sidoName} key={siItem.sidoCode}>
                     {siItem.sidoName}
@@ -458,16 +441,14 @@ const MeetingInfoManage = () => {
             </DropdownInput>
             시/도
             <DropdownInput
-              onChange={(e) => {
+              onChange={e => {
                 const selectedValue = e.target.value;
-                const selectedGugun = gugunList.find(
-                  (item) => item.gugunName === selectedValue
-                );
+                const selectedGugun = gugunList.find(item => item.gugunName === selectedValue);
                 setGugun(selectedGugun);
               }}
               value={gugun.gugunName}
             >
-              {gugunList.map((guItem) => {
+              {gugunList.map(guItem => {
                 return (
                   <option value={guItem.gugunName} key={guItem.gugunCode}>
                     {guItem.gugunName}
@@ -485,18 +466,13 @@ const MeetingInfoManage = () => {
           <Title>시간</Title>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <DateInput
-              // ref={dateRef}
+              ref={dateRef}
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={e => setDate(e.target.value)}
               min={localDate().toString()}
               required
             />
-            <TimeInput
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              required
-            />
+            <TimeInput type="time" value={time} onChange={e => setTime(e.target.value)} required />
           </div>
           {!timeCheck(date, time) && btnClicked && (
             <ErrorDiv>
@@ -516,13 +492,11 @@ const MeetingInfoManage = () => {
           >
             <SubTitle>최대 인원*</SubTitle>
             <InputShort
-              // ref={maxPRef}
+              ref={maxPRef}
               value={maxParticipants}
-              onChange={(e) =>
+              onChange={e =>
                 setMaxParticipants(
-                  !Number.isNaN(parseInt(e.target.value))
-                    ? parseInt(e.target.value)
-                    : 0
+                  !Number.isNaN(parseInt(e.target.value)) ? parseInt(e.target.value) : 0
                 )
               }
             />
@@ -540,16 +514,14 @@ const MeetingInfoManage = () => {
           >
             <SubTitle>간수치</SubTitle>
             <InputShort
-              // ref={liverRef}
+              ref={liverRef}
               placeholder="40"
               value={liverLimit > 0 ? liverLimit : ""}
-              onChange={(e) => setLiverLimit(parseInt(e.target.value))}
+              onChange={e => setLiverLimit(parseInt(e.target.value))}
             />
             IU/L이상
             <TooltipBtn data-tooltip-id="liver-tooltip">❓</TooltipBtn>
-            {!liverLimitCheck(liverLimit) && btnClicked && (
-              <ErrorDiv>📌100 IU/L 이하</ErrorDiv>
-            )}
+            {!liverLimitCheck(liverLimit) && btnClicked && <ErrorDiv>📌100 IU/L 이하</ErrorDiv>}
             <Tooltip
               id="liver-tooltip"
               style={{
@@ -561,12 +533,10 @@ const MeetingInfoManage = () => {
                 wordBreak: "break-word",
               }}
             >
-              <div style={{ fontWeight: "700", marginTop: "0.3rem" }}>
-                간수치?
-              </div>
+              <div style={{ fontWeight: "700", marginTop: "0.3rem" }}>간수치?</div>
               <div style={{ marginTop: "0.3rem" }}>
-                네이브루 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을 종합해서
-                만든 매너 지표입니다.
+                네이브루 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을 종합해서 만든 매너
+                지표입니다.
               </div>
               <div style={{ margin: "0.3rem 0" }}>
                 간수치는 40 IU/L에서 시작해서 0~100 IU/L 사이의 값을 가집니다.
@@ -582,29 +552,27 @@ const MeetingInfoManage = () => {
           >
             <SubTitle>나이</SubTitle>
             <InputShort
-              // ref={minAgeRef}
+              ref={minAgeRef}
               placeholder="20"
               value={minAge > 0 ? minAge : ""}
-              onChange={(e) => setMinAge(parseInt(e.target.value))}
+              onChange={e => setMinAge(parseInt(e.target.value))}
             />
             세 이상
             <InputShort
               placeholder="200"
               value={maxAge > 0 ? maxAge : ""}
-              onChange={(e) => setMaxAge(parseInt(e.target.value))}
+              onChange={e => setMaxAge(parseInt(e.target.value))}
             />
             세 미만
           </div>
-          {!ageCheck(minAge, maxAge) && btnClicked && (
-            <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>
-          )}
+          {!ageCheck(minAge, maxAge) && btnClicked && <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>}
         </QuestionDiv>
         <QuestionDiv>
           <Title>설명</Title>
           <InfoTextArea
             placeholder="모임에 대한 소개글을 작성해주세요"
             value={meetDesc}
-            onChange={(e) => setMeetDesc(e.target.value)}
+            onChange={e => setMeetDesc(e.target.value)}
           ></InfoTextArea>
         </QuestionDiv>
         <div>
@@ -627,11 +595,7 @@ const MeetingInfoManage = () => {
           updateMeeting();
         }}
       />
-      <Modal
-        isOpen={isModalOn}
-        onRequestClose={() => setIsModalOn(false)}
-        style={WhiteModal}
-      >
+      <Modal isOpen={isModalOn} onRequestClose={() => setIsModalOn(false)} style={WhiteModal}>
         <ModalInner>{errorMsg}</ModalInner>
       </Modal>
       <Modal
@@ -649,9 +613,7 @@ const MeetingInfoManage = () => {
         onRequestClose={() => {}} //닫히지 않아야함
         style={WhiteModal}
       >
-        <div
-          style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}
-        >
+        <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>
           <div style={{ paddingBottom: "0.5rem" }}>
             이미지 압축중입니다. <br /> 잠시만 기다려주세요.
           </div>

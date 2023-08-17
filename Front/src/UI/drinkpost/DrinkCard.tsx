@@ -84,26 +84,6 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
     return tag[tagId].tagName;
   }
 
-  const getTagNameMk2 = (tagId: number) => {
-    if (tagId === 0) {
-      return "전체";
-    } else if (tagId === 1) {
-      return "양주";
-    } else if (tagId === 2) {
-      return "전통주";
-    } else if (tagId === 3) {
-      return "칵테일";
-    } else if (tagId === 4) {
-      return "사케";
-    } else if (tagId === 5) {
-      return "와인";
-    } else if (tagId === 6) {
-      return "수제맥주";
-    } else if (tagId === 7) {
-      return "소주/맥주";
-    }
-  };
-
   const transImage = (img: string) => {
     if (img === "no image") {
       return whiskeyImage;

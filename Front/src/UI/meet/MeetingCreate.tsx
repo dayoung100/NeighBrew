@@ -12,24 +12,9 @@ import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
-import {
-  initialMeetDetail,
-  initialDrink,
-  initialSido,
-  initialGugun,
-} from "../common";
-import {
-  WhiteModal,
-  DateInput,
-  TimeInput,
-  InputText,
-} from "../../style/common";
-import {
-  localDate,
-  localTime,
-  formateDate,
-  formateTime,
-} from "./DateTimeCommon";
+import { initialMeetDetail, initialDrink, initialSido, initialGugun } from "../common";
+import { WhiteModal, DateInput, TimeInput, InputText } from "../../style/common";
+import { localDate, localTime, formateDate, formateTime } from "./DateTimeCommon";
 import {
   titleCheck,
   drinkCheck,
@@ -191,7 +176,7 @@ const MeetingCreate = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    callApi("get", "api/sido").then((res) => {
+    callApi("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
@@ -199,7 +184,7 @@ const MeetingCreate = () => {
   //선택한 시도에 따라 구군 fetch
   useEffect(() => {
     setGugun(initialGugun); //초기화
-    callApi("get", `api/gugun/${sido.sidoCode}`).then((res) => {
+    callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);
@@ -291,10 +276,7 @@ const MeetingCreate = () => {
     f.append("tagId", selectedCategory.toString());
     f.append("sidoCode", sido.sidoCode.toString());
     f.append("gugunCode", gugun.gugunCode.toString());
-    f.append(
-      "drinkId",
-      selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : ""
-    );
+    f.append("drinkId", selectedDrink.drinkId !== 0 ? selectedDrink.drinkId.toString() : "");
     //필수 입력x
     if (checkNonRequiredValue(liverLimit)) {
       f.append("minLiverPoint", liverLimit.toString());
@@ -315,7 +297,7 @@ const MeetingCreate = () => {
       //압축하면 blob 타입-> file 타입으로 변환
       const uploadFile = imageCompression(file, options);
       uploadFile
-        .then((res) => {
+        .then(res => {
           const resizingFile = new File([res], file.name, {
             type: file.type,
           });
@@ -324,7 +306,7 @@ const MeetingCreate = () => {
         .then(() => {
           createApi(f);
         })
-        .catch((e) => {
+        .catch(e => {
           setErrorMsg(e.response.data);
           setLoadingModalOn(false);
           setIsModalOn(true);
@@ -336,10 +318,10 @@ const MeetingCreate = () => {
   const createApi = (f: FormData) => {
     const promise = callApi("post", `/api/meet/create`, f);
     promise
-      .then((res) => {
+      .then(res => {
         GoMeetDetailHandler(res.data.meetId); //모임 상세 페이지로 이동
       })
-      .catch((error) => {
+      .catch(error => {
         setErrorMsg(error);
         setIsModalOn(true);
         setIsClick(false);
@@ -361,7 +343,7 @@ const MeetingCreate = () => {
             ref={titleRef}
             placeholder="모임의 이름을 입력해주세요"
             value={meetTitle}
-            onChange={(e) => setMeetTitle(e.target.value)}
+            onChange={e => setMeetTitle(e.target.value)}
           />
           {!titleCheck(meetTitle.trim()) && btnClicked && (
             <ErrorDiv>📌모임 이름은 필수로 입력해야합니다.(30자 이내)</ErrorDiv>
@@ -387,17 +369,15 @@ const MeetingCreate = () => {
           >
             <Title>위치*</Title>
             <DropdownInput
-              onChange={(e) => {
+              onChange={e => {
                 const selectedValue = e.target.value;
-                const selectedSido = sidoList.find(
-                  (item) => item.sidoName === selectedValue
-                );
+                const selectedSido = sidoList.find(item => item.sidoName === selectedValue);
                 setSido(selectedSido);
               }}
               value={sido.sidoName}
               ref={sidoRef}
             >
-              {sidoList.map((siItem) => {
+              {sidoList.map(siItem => {
                 return (
                   <option value={siItem.sidoName} key={siItem.sidoCode}>
                     {siItem.sidoName}
@@ -407,16 +387,14 @@ const MeetingCreate = () => {
             </DropdownInput>
             시/도
             <DropdownInput
-              onChange={(e) => {
+              onChange={e => {
                 const selectedValue = e.target.value;
-                const selectedGugun = gugunList.find(
-                  (item) => item.gugunName === selectedValue
-                );
+                const selectedGugun = gugunList.find(item => item.gugunName === selectedValue);
                 setGugun(selectedGugun);
               }}
               value={gugun.gugunName}
             >
-              {gugunList.map((guItem) => {
+              {gugunList.map(guItem => {
                 return (
                   <option value={guItem.gugunName} key={guItem.gugunCode}>
                     {guItem.gugunName}
@@ -436,16 +414,11 @@ const MeetingCreate = () => {
             <DateInput
               ref={dateRef}
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={e => setDate(e.target.value)}
               min={localDate().toString()}
               required
             />
-            <TimeInput
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              required
-            />
+            <TimeInput type="time" value={time} onChange={e => setTime(e.target.value)} required />
           </div>
           {!timeCheck(date, time) && btnClicked && (
             <ErrorDiv>
@@ -462,11 +435,9 @@ const MeetingCreate = () => {
               <InputShort
                 ref={maxPRef}
                 value={maxParticipants}
-                onChange={(e) =>
+                onChange={e =>
                   setMaxParticipants(
-                    !Number.isNaN(parseInt(e.target.value))
-                      ? parseInt(e.target.value)
-                      : 0
+                    !Number.isNaN(parseInt(e.target.value)) ? parseInt(e.target.value) : 0
                   )
                 }
               />
@@ -484,14 +455,12 @@ const MeetingCreate = () => {
                 type="number"
                 placeholder="40"
                 value={liverLimit > 0 ? liverLimit : ""}
-                onChange={(e) => setLiverLimit(parseInt(e.target.value))}
+                onChange={e => setLiverLimit(parseInt(e.target.value))}
               />
               IU/L이상
               <TooltipBtn data-tooltip-id="liver-tooltip">❓</TooltipBtn>
             </LimitDiv>
-            {!liverLimitCheck(liverLimit) && btnClicked && (
-              <ErrorDiv>📌100IU/L이하</ErrorDiv>
-            )}
+            {!liverLimitCheck(liverLimit) && btnClicked && <ErrorDiv>📌100IU/L이하</ErrorDiv>}
             <Tooltip
               id="liver-tooltip"
               style={{
@@ -503,12 +472,10 @@ const MeetingCreate = () => {
                 wordBreak: "break-word",
               }}
             >
-              <div style={{ fontWeight: "700", marginTop: "0.3rem" }}>
-                간수치?
-              </div>
+              <div style={{ fontWeight: "700", marginTop: "0.3rem" }}>간수치?</div>
               <div style={{ marginTop: "0.3rem" }}>
-                네이브루 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을 종합해서
-                만든 매너 지표입니다.
+                네이브루 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을 종합해서 만든 매너
+                지표입니다.
               </div>
               <div style={{ margin: "0.3rem 0" }}>
                 간수치는 40 IU/L에서 시작해서 0~100 IU/L 사이의 값을 가집니다.
@@ -522,19 +489,17 @@ const MeetingCreate = () => {
                 ref={minAgeRef}
                 placeholder="20"
                 value={minAge > 0 ? minAge : ""}
-                onChange={(e) => setMinAge(parseInt(e.target.value))}
+                onChange={e => setMinAge(parseInt(e.target.value))}
               />
               세 이상
               <InputShort
                 placeholder="200"
                 value={maxAge > 0 ? maxAge : ""}
-                onChange={(e) => setMaxAge(parseInt(e.target.value))}
+                onChange={e => setMaxAge(parseInt(e.target.value))}
               />
               세 미만
             </LimitDiv>
-            {!ageCheck(minAge, maxAge) && btnClicked && (
-              <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>
-            )}
+            {!ageCheck(minAge, maxAge) && btnClicked && <ErrorDiv>📌20세 ~ 200세 사이</ErrorDiv>}
           </div>
         </QuestionDiv>
         <QuestionDiv>
@@ -542,7 +507,7 @@ const MeetingCreate = () => {
           <InfoTextArea
             placeholder="모임에 대한 소개글을 작성해주세요"
             value={meetDesc}
-            onChange={(e) => setMeetDesc(e.target.value)}
+            onChange={e => setMeetDesc(e.target.value)}
           ></InfoTextArea>
         </QuestionDiv>
         <div>
@@ -560,23 +525,15 @@ const MeetingCreate = () => {
           createMeeting();
         }}
       />
-      <Modal
-        isOpen={isModalOn}
-        onRequestClose={() => setIsModalOn(false)}
-        style={WhiteModal}
-      >
-        <div style={{ whiteSpace: "pre-line", overflow: "auto" }}>
-          {errorMsg}
-        </div>
+      <Modal isOpen={isModalOn} onRequestClose={() => setIsModalOn(false)} style={WhiteModal}>
+        <div style={{ whiteSpace: "pre-line", overflow: "auto" }}>{errorMsg}</div>
       </Modal>
       <Modal
         isOpen={loadingModalOn}
         onRequestClose={() => {}} //닫히지 않아야함
         style={WhiteModal}
       >
-        <div
-          style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}
-        >
+        <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>
           <div style={{ paddingBottom: "0.5rem" }}>
             이미지 압축중입니다. <br /> 잠시만 기다려주세요.
           </div>

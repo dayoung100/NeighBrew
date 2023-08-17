@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Drink } from "../../Type/types";
 
 const CardDiv = styled.div`
   background-color: white;

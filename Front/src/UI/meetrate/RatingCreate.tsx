@@ -68,36 +68,28 @@ const RatingCreate = () => {
     3: "BAD",
   };
 
-  const PostHandler = (rateValue) => {
+  const PostHandler = rateValue => {
     callApi("POST", "/api/evaluation", {
       ratedUser: myId,
       reviewer: rateValue.userId,
       meetId: meetId,
       evaluationType: evaluationType[rateValue.evaluationType],
       description: rateValue.description,
-    })
-      .then((res) => {
-        GoMainHandler();
-      })
-      .catch((e) => console.log(e));
+    }).then(res => {
+      GoMainHandler();
+    });
   };
 
-  const handleSelectedButton = (
-    userId: number,
-    buttonNumber: number,
-    desc: string
-  ) => {
+  const handleSelectedButton = (userId: number, buttonNumber: number, desc: string) => {
     const newEvaluation = {
       userId: userId,
       evaluationType: buttonNumber,
       description: desc,
     };
-    const existingIndex = selectedValues.findIndex(
-      (item) => item.userId === userId
-    );
+    const existingIndex = selectedValues.findIndex(item => item.userId === userId);
     //이전에 평가하지 않은 유저를 평가했을 때
     if (existingIndex === -1) {
-      setSelectedValues((prevValues) => [...prevValues, newEvaluation]);
+      setSelectedValues(prevValues => [...prevValues, newEvaluation]);
     } else {
       // 같은 userId가 이미 존재하면 해당 객체 업데이트
       const updatedValues = [...selectedValues];
@@ -108,17 +100,15 @@ const RatingCreate = () => {
 
   useEffect(() => {
     callApi("GET", `/api/meet/${meetId}`)
-      .then((res) => {
+      .then(res => {
         setMeetTitle(res.data.meet.meetName);
         return res.data.users.filter(
-          (user: User, index) =>
-            user.userId !== myId && res.data.statuses[index] !== "APPLY"
+          (user: User, index) => user.userId !== myId && res.data.statuses[index] !== "APPLY"
         );
       })
-      .then((users) => {
+      .then(users => {
         setUsers(users);
-      })
-      .catch(() => {});
+      });
   }, []);
 
   return (
@@ -146,7 +136,7 @@ const RatingCreate = () => {
         </MemberContainer>
         <RatingButton
           onClick={() => {
-            selectedValues.map((rateValue) => {
+            selectedValues.map(rateValue => {
               PostHandler(rateValue);
             });
           }}

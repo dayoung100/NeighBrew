@@ -5,46 +5,6 @@ import RatingDetail from "./RatingDetail";
 import defaultImg from "../../assets/defaultImg.png";
 import UserInfoItem from "../components/UserInfoItem";
 
-const MemberProfile = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  margin-top: 20px;
-  margin-bottom: 15px;
-`;
-
-// 동그란 프로필 사진
-const MemberImg = styled.div<{ src: string }>`
-  background: url(${(props) => props.src}) no-repeat center;
-  background-size: cover;
-  width: 3rem;
-  padding-bottom: 3rem;
-  border-radius: 100px;
-`;
-
-const MemberText = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-left: 10px;
-  align-items: flex-start;
-`;
-
-const MemberName = styled.div`
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 2px;
-`;
-
-// 흐린 글씨
-const MemberDescription = styled.div`
-  font-size: 14px;
-  color: #828282;
-  text-align: justify;
-  word-break: break-all;
-  font-family: "NanumSquareNeo";
-`;
-
 // 라디오 버튼 컨테이너
 const RadioContainer = styled.div`
   display: flex;
@@ -66,13 +26,11 @@ const RadioButton = styled.button<{ selected: boolean }>`
   /* border: 1px solid black; */
   /* isSelect에 따라 border 제거 */
   border: ${({ selected }) => (selected ? "none" : "1px solid var(--c-gray)")};
-  background-color: ${({ selected }) =>
-    selected ? "var(--c-yellow)" : "white"};
+  background-color: ${({ selected }) => (selected ? "var(--c-yellow)" : "white")};
   color: ${({ selected }) => (selected ? "white" : "black")};
 `;
 
 const RatingMember = ({ _user, onSelectButton }) => {
-  const [meetingDetail, setMeetingDetail] = useState<MeetDetail>();
   const [selectedButton, setSelectButton] = useState(0);
   const [selectedDesc, setSelectedDesc] = useState("");
 
@@ -89,47 +47,21 @@ const RatingMember = ({ _user, onSelectButton }) => {
         fontFamily: "NanumSquareNeoBold",
       }}
     >
-      {/* <MemberProfile>
-        <MemberImg
-          src={_user.profile === "no image" ? defaultImg : _user.profile}
-        />
-        <MemberText>
-          <MemberName>{_user.nickname}</MemberName>
-          <MemberDescription>{_user.intro}</MemberDescription>
-        </MemberText>
-      </MemberProfile> */}
-      <UserInfoItem
-        key={_user.userId}
-        user={_user}
-        isMaster={false}
-        width={15}
-      />
+      <UserInfoItem key={_user.userId} user={_user} isMaster={false} width={15} />
 
       <RadioContainer>
-        <RadioButton
-          selected={selectedButton === 1}
-          onClick={() => setSelectButton(1)}
-        >
+        <RadioButton selected={selectedButton === 1} onClick={() => setSelectButton(1)}>
           좋아요
         </RadioButton>
-        <RadioButton
-          selected={selectedButton === 2}
-          onClick={() => setSelectButton(2)}
-        >
+        <RadioButton selected={selectedButton === 2} onClick={() => setSelectButton(2)}>
           보통이에요
         </RadioButton>
 
-        <RadioButton
-          selected={selectedButton === 3}
-          onClick={() => setSelectButton(3)}
-        >
+        <RadioButton selected={selectedButton === 3} onClick={() => setSelectButton(3)}>
           아쉬워요
         </RadioButton>
       </RadioContainer>
-      <RatingDetail
-        ratingNum={selectedButton}
-        getFunc={(desc) => setSelectedDesc(desc)}
-      />
+      <RatingDetail ratingNum={selectedButton} getFunc={desc => setSelectedDesc(desc)} />
     </div>
   );
 };

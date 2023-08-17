@@ -8,7 +8,6 @@ const isDateTimeBeforeNow = (date, time) => {
     const currentDateTime = new Date();
     return targetDateTime < currentDateTime;
   } catch (error) {
-    console.error("Error:", error);
     return false;
   }
 };
@@ -50,8 +49,5 @@ export const ageCheck = (minAge: number, maxAge: number) => {
 
 //이미지: 이미지타입/이미지크기(5MB)
 export const imgcheck = (file: File) => {
-  return !(
-    file &&
-    (file.size > 1024 * 1024 * 10 || !file.type.startsWith("image/"))
-  );
+  return !(file && (file.size > 1024 * 1024 * 10 || !file.type.startsWith("image/")));
 };

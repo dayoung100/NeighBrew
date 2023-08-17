@@ -34,7 +34,6 @@ const Logo = styled.div`
 
 const Navbar = () => {
   const alertButton = alertNavIcon();
-  const resetIcon = resetUserInfo();
   const searchButton = searchNavIcon();
   const navigate = useNavigate();
   const UserSearchHandler = () => {

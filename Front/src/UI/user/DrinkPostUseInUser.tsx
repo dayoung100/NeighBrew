@@ -14,33 +14,10 @@ const ShowcaseBody = styled.div`
   margin-left: 1vw;
 `;
 
-const RoundBtn = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  bottom: 10%;
-
-  background: var(--c-yellow);
-  width: 4rem;
-  height: 4rem;
-  border-radius: 100px;
-  z-index: 10;
-
-  @media (max-width: 430px) {
-    right: 5%;
-  }
-  @media (min-width: 431px) {
-    left: 350px;
-  }
-`;
-
 const DrinkPostUseInUser = () => {
   const { userid } = useParams();
   const [drinkList, setDrinkList] = useState<Drink[]>([]);
   const navigate = useNavigate();
-  // const navigate = useNavigate();
-  // const userid = localStorage.getItem("myId");
   const toDrinkSearch = () => {
     navigate("/drinkpost/search");
   };

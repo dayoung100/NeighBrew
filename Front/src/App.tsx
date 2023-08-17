@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import "./App.css";
 import { useNavigate, Route, Routes } from "react-router-dom";
-import FirstLoading from "./UI/etc/FirstLoading";
 import Loading from "./UI/etc/Loading";
 import Login from "./UI/user/Login";
 import Main from "./UI/home/Main";
@@ -48,22 +47,12 @@ function App() {
     if ("serviceWorker" in navigator) {
       // Register a service worker hosted at the root of the
       // site using the default scope.
-      navigator.serviceWorker
-        .register("sw.js")
-        .then(registration => {
-          // console.log("Service worker registration succeeded:", registration);
-        })
-        .catch(err => {
-          // console.log("Service worker registration failed:", err);
-        });
-    } else {
-      // console.log("Service workers are not supported.");
+      navigator.serviceWorker.register("sw.js");
     }
   }, []);
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(true);
-      // console.log(isLoading);
     }, 1000);
   }, []);
   const esconnect = () => {
@@ -71,10 +60,7 @@ function App() {
       withCredentials: true,
     });
 
-    // console.log(es.current);
-    es.current.onopen = e => {
-      // console.log("[sse] open", { e });
-    };
+    es.current.onopen = e => {};
     es.current.onmessage = event => {
       try {
         const data = JSON.parse(event.data);
@@ -85,9 +71,7 @@ function App() {
         return;
       }
     };
-    es.current.onerror = err => {
-      console.log("[sse] error", { err });
-    };
+    es.current.onerror = err => {};
   };
   useEffect(() => {
     if (userid == null) {
@@ -136,16 +120,6 @@ function App() {
       });
     }
   };
-  // const noti = (message: string, url: string) => {
-  //   const notifi = new Notification("NeighBrew", {
-  //     icon: logo,
-  //     body: message,
-  //     badge: logo,
-  //   });
-  //   notifi.onclick = () => {
-  //     navigate(url);
-  //   };
-  // };
 
   const noti = (message: string, url: string) => {
     navigator.serviceWorker.ready.then(registration => {
@@ -179,9 +153,6 @@ function App() {
             </>
           }
         />
-        {/* <Route path="/" element={<MeetingMain></MeetingMain>}></Route> */}
-        {/* <Route path="/home" element={<Main />} /> */}
-        {/* TODO: isLoading을 키면 여기 Main으로 바꿔야 */}
         <Route path="/home" element={<Main />} />
         <Route
           path="/drinkpost"

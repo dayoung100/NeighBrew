@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
-import SearchBox from "../components/SearchBox";
 import { useState, useEffect, useRef } from "react";
 import Footer from "../footer/Footer";
 import autoAnimate from "@formkit/auto-animate";
@@ -15,7 +14,6 @@ const Follow = () => {
     navigate(-1);
   };
   const ArrowLeftIcon = arrowLeftIcon("var(--c-black)");
-  // const [users, setUsers] = useState<User[]>([]);
   const [users, setUsers] = useState<userType[]>([]);
   const parent = useRef(null);
   const { userid } = useParams();
@@ -53,9 +51,6 @@ const Follow = () => {
           {/* 이 div는 중앙 정렬을 위한 임의의 div임 */}
         </ChatNav>
       </header>
-      {/* <div style={{ width: "90%", margin: "0 auto" }}>
-        <SearchBox placeholder="유저 닉네임 검색" />
-      </div> */}
       <div ref={parent}>
         {users.map((user, idx) => {
           return (
@@ -73,7 +68,7 @@ const Follow = () => {
                 <p style={{ fontFamily: "JejuGothic", fontSize: "16px", marginBottom: "0.5rem" }}>
                   {user.nickname}
                 </p>
-                <p style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>{user.intro}</p>
+                <p style={{ fontFamily: "NanumSquareNeo", fontSize: "14px" }}>{user.intro}</p>
               </div>
             </User>
           );

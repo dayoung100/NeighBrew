@@ -26,7 +26,7 @@ const OtherChat = styled.div`
   margin-right: 0.5rem;
   font-size: 13px;
   text-align: left;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
 `;
 
 const MyChat = styled.div`
@@ -44,7 +44,7 @@ const MyChat = styled.div`
   margin-left: 0.5rem;
   font-size: 13px;
   text-align: left;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
 `;
 
 const ChatOtherBox = styled.div`
@@ -277,17 +277,13 @@ const ChatRoom = () => {
           setChatRoomName(res.data.chatRoomName);
         });
       })
-      .catch(e => {
-        console.error(e);
-      });
+      .catch(e => {});
 
     callApi("GET", `/api/chatroom/${id}/${localStorage.getItem("myId")}/users`)
       .then(res => {
         setUsers(res.data);
       })
-      .catch(e => {
-        console.error(e);
-      });
+      .catch(e => {});
   }, []);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
