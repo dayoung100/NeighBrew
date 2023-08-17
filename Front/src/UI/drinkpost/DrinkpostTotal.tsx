@@ -56,6 +56,7 @@ const drinkpostTotal = () => {
             .then(res => {
               setDrinkList(prev => [...prev, ...res.data.content]);
               setPage(prev => prev + 1);
+              console.log(res.data.content);
             })
             .catch(err => {
               console.error(err);
