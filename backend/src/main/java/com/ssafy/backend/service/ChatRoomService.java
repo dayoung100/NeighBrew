@@ -3,10 +3,7 @@ package com.ssafy.backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.entity.ChatMessageMongo;
-import com.ssafy.backend.entity.ChatRoom;
-import com.ssafy.backend.entity.ChatRoomUser;
-import com.ssafy.backend.entity.User;
+import com.ssafy.backend.entity.*;
 import com.ssafy.backend.repository.ChatMessageMongoRepository;
 import com.ssafy.backend.repository.ChatRoomRepository;
 import com.ssafy.backend.repository.ChatRoomUserRepository;
@@ -117,5 +114,37 @@ public class ChatRoomService {
         return chatRoomRepository.findByChatRoomId(chatRoomId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 채팅방입니다.")
         );
+    }
+
+    @Transactional
+    public String joinChatRoom(Long roomId, String data) throws JsonProcessingException {
+        JsonNode jsonNode = mapper.readTree(data);
+        Long userId = jsonNode.get("userId").asLong();
+        User joinUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+        ChatRoom findChatRoom = chatRoomRepository.findById(roomId).orElseThrow( () -> new IllegalArgumentException("모임 채팅방을 찾을 수 없습니다."));
+
+        for(ChatRoomUser cru :findChatRoom.getUsers()){
+            //유저 존재하면 방번호 바로 반환
+            if(cru.getUser().getUserId().equals(userId)) {
+                return "";
+            }
+        }
+
+        //존재하지 않으면 유저를 추가하고 방 번호를 반환한다.
+        findChatRoom.getUsers().add(ChatRoomUser.builder()
+                .chatRoom(findChatRoom)
+                .user(joinUser)
+                .build());
+
+        //채팅에 다시 참여했다는 메세지를 전달한다.
+        ChatMessageMongo chatMessageMongo = chatMessageMongoRepository.save(
+                ChatMessageMongo.builder()
+                        .chatRoomId(roomId)
+                        .message(joinUser.getNickname() + "님께서 다시 채팅방에 참여하셨습니다.")
+                        .createdAt(LocalDateTime.now().toString())
+                        .build()
+        );
+
+        return mapper.writeValueAsString(chatMessageMongo);
     }
 }
