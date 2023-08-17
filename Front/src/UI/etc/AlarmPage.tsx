@@ -75,7 +75,7 @@ const alarmPage = () => {
   return (
     <>
       {/* 알림창의 내브바 */}
-      <NavbarSimple title="네이브루의 술장" />
+      <NavbarSimple title="알림 페이지" />
 
       {/* 모든 알림을 리스트로 가정을 하고 map으로 풀어냅니다. 정의될때까지 주석처리. */}
       <div style={{ margin: "0px 10px 0px 10px" }}>

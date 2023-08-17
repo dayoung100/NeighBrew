@@ -44,7 +44,7 @@ const SimpleInfo = styled.div`
 
 const ImageInfo = styled.div`
   height: 200%;
-  width: 40%;
+  width: 56%;
   position: absolute;
   left: 70%;
   transform: translateX(-50%);

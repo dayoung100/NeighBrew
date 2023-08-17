@@ -14,6 +14,32 @@ const WholeDiv = styled.div`
   margin-top: 1.5rem;
 `;
 
+const ModalIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  margin-right: 1rem;
+`;
+
+const ModalBtnDiv = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 10%;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+`;
+
+const ModalBtn = styled.div`
+  width: 5rem;
+  padding: 0.5rem;
+  margin: 0 0.5rem;
+  border-radius: 5px;
+  background: var(--c-yellow);
+`;
+
 const ProfileDiv = styled.div`
   width: 12%;
   word-break: break-all;
@@ -86,6 +112,7 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
   };
   const deleteHandler = () => {
     callApi("delete", `api/subreview/delete/${subReview.subReviewId}`);
+    setDeleteModalOn(false);
   };
 
   const toUpdateHandler = () => {
@@ -131,13 +158,27 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
           <MoreBtn onClick={moreHandlerForOther}>{MoreIcon}</MoreBtn>
         )}
         {/* <MoreBtn onClick={moreHandler}>{MoreIcon}</MoreBtn> */}
+
+        {/* 자기 댓글 more */}
         <Modal
           isOpen={threeDotOn}
           onRequestClose={() => setThreeDotOn(false)}
-          style={ThreeDotModal}
+          style={ShortThreeDotModal}
           ariaHideApp={false}
         >
-          <div style={{ fontSize: "1rem", color: "var(--c-gray)" }}>댓글</div>
+          <div style={{ fontSize: "1rem", color: "var(--c-gray)", fontFamily: "NanumSquareNeo" }}>
+            댓글
+          </div>
+          <div
+            onClick={toDeleteQuestionHandler}
+            style={{ display: "flex", alignItems: "center", height: "80%" }}
+          >
+            <ModalIcon>{DeleteIcon}</ModalIcon>
+            <div style={{ color: "#eb0505", fontSize: "16px", fontFamily: "NanumSquareNeo" }}>
+              삭제하기
+            </div>
+          </div>
+          {/* <div style={{ fontSize: "1rem", color: "var(--c-gray)" }}>댓글</div>
           <div
             onClick={toUpdateHandler}
             style={{ display: "flex", alignItems: "center", height: "40%", marginTop: "1rem" }}
@@ -152,115 +193,74 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
           >
             <div style={{ marginRight: "0.5rem" }}>{DeleteIcon}</div>
             <div style={{ color: "#eb0505" }}>삭제하기</div>
-          </div>
+          </div> */}
         </Modal>
+
+        {/* 댓글 삭제 확인 모달 */}
         <Modal
           isOpen={deleteModalOn}
           onRequestClose={() => setDeleteModalOn(false)}
-          style={DeleteModal}
+          style={WhiteModal}
           ariaHideApp={false}
         >
           <div>
-            <p style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>댓글을 삭제하시겠습니까?</p>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-around",
-              height: "50%",
-              fontSize: "1.4rem",
-            }}
-          >
-            <div
-              onClick={deleteHandler}
-              style={{
-                cursor: "pointer",
-                width: "40%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              예
-            </div>
-            <div
-              onClick={() => setDeleteModalOn(false)}
-              style={{
-                cursor: "pointer",
-                width: "40%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              아니오
-            </div>
+            <div style={{ padding: "1rem 0 4rem 0" }}>정말 이 댓글을 삭제하시겠습니까?</div>
+            <ModalBtnDiv>
+              <ModalBtn onClick={deleteHandler}>예</ModalBtn>
+              <ModalBtn onClick={() => setDeleteModalOn(false)}>아니요</ModalBtn>
+            </ModalBtnDiv>
           </div>
         </Modal>
+
+        {/* 타인 댓글 more */}
         <Modal
           isOpen={ThreeDotOnForOther}
           onRequestClose={() => setThreeDotOnForOther(false)}
           style={ShortThreeDotModal}
           ariaHideApp={false}
         >
-          <div style={{ fontSize: "1rem", color: "var(--c-gray)" }}>댓글</div>
-          <div onClick={reportQuestionHandler} style={{ display: "flex", marginTop: "1rem" }}>
-            <div style={{ width: "10%", marginRight: "0.5rem" }}>
+          <div style={{ fontSize: "1rem", color: "var(--c-gray)", fontFamily: "NanumSquareNeo" }}>
+            댓글
+          </div>
+          <div
+            onClick={reportQuestionHandler}
+            style={{ display: "flex", alignItems: "center", height: "80%" }}
+          >
+            <ModalIcon>
               <img src={Siren} alt="" style={{ width: "100%", height: "100%" }} />
+            </ModalIcon>
+            <div style={{ color: "#eb0505", fontSize: "16px", fontFamily: "NanumSquareNeo" }}>
+              신고하기
             </div>
-            <div style={{ display: "flex", alignItems: "end" }}>신고하기</div>
           </div>
         </Modal>
+
+        {/* 타인 신고 확인 */}
         <Modal
           isOpen={report}
           onRequestClose={() => setReport(false)}
-          style={DeleteModal}
+          style={WhiteModal}
           ariaHideApp={false}
         >
           <div>
-            <p style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>이 유저를 신고하시겠습니까?</p>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-around",
-              height: "50%",
-              fontSize: "1.4rem",
-            }}
-          >
-            <div
-              onClick={reportHandler}
-              style={{
-                cursor: "pointer",
-                width: "40%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              예
-            </div>
-            <div
-              onClick={() => setDeleteModalOn(false)}
-              style={{
-                cursor: "pointer",
-                width: "40%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              아니오
-            </div>
+            <div style={{ padding: "1rem 0 4rem 0" }}>정말 이 유저를 신고하시겠습니까?</div>
+            <ModalBtnDiv>
+              <ModalBtn onClick={reportHandler}>예</ModalBtn>
+              <ModalBtn onClick={() => setReport(false)}>아니요</ModalBtn>
+            </ModalBtnDiv>
           </div>
         </Modal>
+
+        {/* 타인 신고 완료 */}
         <Modal
           isOpen={reportModalOn}
           onRequestClose={() => setReportModalOn(false)}
           style={WhiteModal}
           ariaHideApp={false}
         >
-          <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>신고 완료되었습니다.</div>
+          <div style={{ padding: "1rem 0rem", fontSize: "16px", fontFamily: "NanumSquareNeo" }}>
+            신고 완료되었습니다.
+          </div>
         </Modal>
       </WholeDiv>
     </>
