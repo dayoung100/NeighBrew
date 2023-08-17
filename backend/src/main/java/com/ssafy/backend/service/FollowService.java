@@ -8,6 +8,7 @@ import com.ssafy.backend.repository.FollowRepository;
 import com.ssafy.backend.repository.PushRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -22,6 +23,8 @@ public class FollowService {
     private final PushService pushService;
     private final PushRepository pushRepository;
 
+    @Value("${neighbrew.full.url}")
+    private String neighbrewUrl;
     public List<FollowResponseDto> getFollowers(Long userId) {
         if (!userRepository.existsById(userId)) throw new AssertionError("잘못된 userId입니다:" + userId);
 
@@ -60,7 +63,7 @@ public class FollowService {
     private void followUser(User follower, User following) {
         Follow follow = Follow.builder().follower(follower).following(following).build();
         followRepository.save(follow);
-        pushService.send(follower, following, PushType.FOLLOW, follower.getNickname() + "님이 회원님을 팔로우하기 시작했습니다.", "https://i9b310.p.ssafy.io/mypage/" + follower.getUserId());
+        pushService.send(follower, following, PushType.FOLLOW, follower.getNickname() + "님이 회원님을 팔로우하기 시작했습니다.", neighbrewUrl + "/mypage/" + follower.getUserId());
     }
 
     public List<FollowResponseDto> getFollowing(Long userId) {

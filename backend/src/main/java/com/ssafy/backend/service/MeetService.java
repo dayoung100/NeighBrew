@@ -14,6 +14,7 @@ import com.ssafy.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -48,6 +49,9 @@ public class MeetService {
     private final ChatRoomService chatRoomService;
     private final ChatRoomUserService chatRoomUserService;
     private final ModelMapper modelMapper;
+
+    @Value("${neighbrew.full.url}")
+    private String neighbrewUrl;
 
     public Page<MeetResponseDto> findMeetsByTagId(Long tagId, Pageable pageable) {
         validateTagId(tagId);
@@ -244,7 +248,7 @@ public class MeetService {
 
     private void notifyFollowersAboutMeetCreation(User hostUser, Meet createdMeet) {
         List<Follow> followers = findFollowersByUserId(hostUser.getUserId());
-        followers.forEach(follower -> pushService.send(hostUser, follower.getFollower(), PushType.MEETCREATED, hostUser.getNickname() + "님께서 모임(" + createdMeet.getMeetName() + ")을 생성했습니다.", "https://i9b310.p.ssafy.io/meet/" + createdMeet.getMeetId()));
+        followers.forEach(follower -> pushService.send(hostUser, follower.getFollower(), PushType.MEETCREATED, hostUser.getNickname() + "님께서 모임(" + createdMeet.getMeetName() + ")을 생성했습니다.", neighbrewUrl + "/meet/" + createdMeet.getMeetId()));
     }
 
     private List<Follow> findFollowersByUserId(Long userId) {
@@ -292,7 +296,7 @@ public class MeetService {
         //방장에게는 알림을 전송하지 않는다.
         meetUsers.stream()
                 .filter(user -> !user.getUser().getUserId().equals(meetRequestDto.getHostId()))
-                .forEach(user -> pushService.send(host, user.getUser(), PushType.MEETMODIFIDE, "모임( " + meetRequestDto.getMeetName() + ")의 내용이 수정되었습니다. 확인해 주세요.", "https://i9b310.p.ssafy.io/meet/" + updateMeet.getMeetId()));
+                .forEach(user -> pushService.send(host, user.getUser(), PushType.MEETMODIFIDE, "모임( " + meetRequestDto.getMeetName() + ")의 내용이 수정되었습니다. 확인해 주세요.", neighbrewUrl + "/meet/" + updateMeet.getMeetId()));
 
     }
 
@@ -348,7 +352,7 @@ public class MeetService {
         //방장에게는 알림을 전송하지 않는다.
         meetUsers.stream()
                 .filter(user -> !user.getUser().getUserId().equals(hostId))
-                .forEach(user -> pushService.send(deleteMeet.getHost(), user.getUser(), PushType.MEETDELETED, deleteMeet.getHost().getNickname() + "님 께서 생성한 모임" + "(" + deleteMeet.getMeetName() + ")이 삭제되었습니다.", "https://i9b310.p.ssafy.io/meet"));
+                .forEach(user -> pushService.send(deleteMeet.getHost(), user.getUser(), PushType.MEETDELETED, deleteMeet.getHost().getNickname() + "님 께서 생성한 모임" + "(" + deleteMeet.getMeetName() + ")이 삭제되었습니다.", neighbrewUrl + "/meet"));
     }
 
     public void applyMeet(Long userId, Long meetId) {
@@ -373,7 +377,7 @@ public class MeetService {
         meetUserService.saveMeetUser(attendMeet, attendUser, Status.APPLY);
 
         //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
-        pushService.send(attendUser, host, PushType.MEETACCESS, attendUser.getNickname() + "님께서 " + meetUserDto.getMeetRequestDto().getMeetName() + "모임에 참여하고 싶어 합니다.", "https://i9b310.p.ssafy.io/meet/" + attendMeet.getMeetId());
+        pushService.send(attendUser, host, PushType.MEETACCESS, attendUser.getNickname() + "님께서 " + meetUserDto.getMeetRequestDto().getMeetName() + "모임에 참여하고 싶어 합니다.", neighbrewUrl + "/meet/" + attendMeet.getMeetId());
     }
 
     @Transactional
@@ -464,7 +468,7 @@ public class MeetService {
                         pushService.send(meet.getHost(),
                                 users.getUser(),
                                 PushType.MEETEVALUATION,
-                                "모임(" + meet.getMeetName() + ")이 종료 되었습니다. 평가를 진행해 주세요.", "https://i9b310.p.ssafy.io/rating/" + meet.getMeetId()));
+                                "모임(" + meet.getMeetName() + ")이 종료 되었습니다. 평가를 진행해 주세요.", neighbrewUrl + "/rating/" + meet.getMeetId()));
             }
             meet.setMeetStatus(MeetStatus.END);
 
