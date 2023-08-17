@@ -80,9 +80,9 @@ public class ChatRoomService {
         mongoTemplate.insert(chatMessageMongo);
 
         //채팅방 유저한테 메세지 전송
-        for(ChatRoomUser cru : chatRoom.getUsers()){
-            pushService.send(user, cru.getUser(), PushType.CHAT, "모임(" + chatRoom.getMeet().getMeetName()  + ")의" + user.getNickname() +  "님께서 메세지를 보냈습니다.", neighbrewUrl + "/chatList" + roomId);
-        }
+//        for(ChatRoomUser cru : chatRoom.getUsers()){
+//            pushService.send(user, cru.getUser(), PushType.CHAT, "모임(" + chatRoom.getMeet().getMeetName()  + ")의" + user.getNickname() +  "님께서 메세지를 보냈습니다.", neighbrewUrl + "/chatList" + roomId);
+//        }
 
         Map<String, Object> map = mapper.convertValue(jsonNode, Map.class);
         map.put("userNickname", user.getNickname());
