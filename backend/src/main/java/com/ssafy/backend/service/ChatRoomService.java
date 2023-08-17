@@ -83,6 +83,7 @@ public class ChatRoomService {
                 .chatRoomId(chatRoom.getChatRoomId())
                 .message(jsonNode.get("message").asText())
                 .userId(user.getUserId())
+                .userNickname(user.getNickname())
                 .createdAt(String.valueOf(LocalDateTime.now()))
                 .build();
         mongoTemplate.insert(chatMessageMongo);
