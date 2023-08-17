@@ -77,7 +77,6 @@ const RatingCreate = () => {
       description: rateValue.description,
     })
       .then((res) => {
-        console.log(res);
         GoMainHandler();
       })
       .catch((e) => console.log(e));

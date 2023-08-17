@@ -131,7 +131,7 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
+  background: url(${(props) => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 15px;
   position: relative;
@@ -174,6 +174,9 @@ const DrinkpostCreate = () => {
   const [drinkAlcohol, setDrinkAlcohol] = useState<number>();
   const [inputCheck, setInputCheck] = useState(false);
 
+  const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중 모달
+  const [isClick, setIsClick] = useState(false); //throttle 역할, 폼 중복 제출 막아주기
+
   const navigate = useNavigate();
 
   const drinkNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,7 +193,9 @@ const DrinkpostCreate = () => {
     }
     setDrinkAlcohol(parseInt(e.target.value));
   };
-  const drinkDescriptionHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const drinkDescriptionHandler = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setDrinkDescription(e.target.value);
   };
 
@@ -209,7 +214,14 @@ const DrinkpostCreate = () => {
   //   };
   // };
 
+  //이미지 압축에 사용하는 옵션
+  const options = {
+    maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
+  };
+
   const drinkSubmitHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isClick) return; //클릭했다면(api 중복호출방지)
+
     const file = imgFile;
     const formData = new FormData();
 
@@ -239,11 +251,11 @@ const DrinkpostCreate = () => {
     formData.append("tagId", selectedCategory.toString());
 
     callApi("post", "api/drink", formData)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
     // axios
     //   .post("/api/drink", formData, {
     //     headers: {
@@ -262,6 +274,17 @@ const DrinkpostCreate = () => {
     //     console.log(res.data);
     //   })
     //   .catch(err => console.error(err));
+  };
+
+  const createApi = (f: FormData) => {
+    callApi("post", "api/drink", f)
+      .then((res) => {
+        navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsClick(false);
+      });
   };
 
   // const uploadImageToServer = async imgFile => {
@@ -326,7 +349,8 @@ const DrinkpostCreate = () => {
           {/* 등록 버튼을 누르기전에는 숨겨져있음 */}
           <ErrorMessage
             style={{
-              display: drinkName.trim().length === 0 && inputCheck ? "block" : "none",
+              display:
+                drinkName.trim().length === 0 && inputCheck ? "block" : "none",
             }}
           >
             이름을 입력해주세요.
@@ -352,7 +376,10 @@ const DrinkpostCreate = () => {
           ></TextAreaDiv>
           <ErrorMessage
             style={{
-              display: drinkDescription.trim().length === 0 && inputCheck ? "block" : "none",
+              display:
+                drinkDescription.trim().length === 0 && inputCheck
+                  ? "block"
+                  : "none",
             }}
           >
             설명을 입력해주세요.
@@ -403,7 +430,11 @@ const DrinkpostCreate = () => {
           </span>
         </div> */}
       </div>
-      <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={drinkSubmitHandler} />
+      <FooterBigBtn
+        content="등록하기"
+        color="var(--c-yellow)"
+        reqFunc={drinkSubmitHandler}
+      />
       <Modal
         isOpen={overHundred}
         onRequestClose={() => setOverHundred(false)}
@@ -430,7 +461,9 @@ const DrinkpostCreate = () => {
         style={WhiteModal}
         ariaHideApp={false}
       >
-        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>술의 이름을 입력해주세요.</div>
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
+          술의 이름을 입력해주세요.
+        </div>
       </Modal>
       <Modal
         isOpen={isEmptyDesc}
@@ -438,7 +471,9 @@ const DrinkpostCreate = () => {
         style={WhiteModal}
         ariaHideApp={false}
       >
-        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>술의 설명을 입력해주세요.</div>
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
+          술의 설명을 입력해주세요.
+        </div>
       </Modal>
     </div>
   );
