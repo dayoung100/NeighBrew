@@ -28,7 +28,7 @@ public class FollowService {
     public List<FollowResponseDto> getFollowers(Long userId) {
         if (!userRepository.existsById(userId)) throw new AssertionError("잘못된 userId입니다:" + userId);
 
-        return followRepository.findByFollowing_UserId(userId)
+        return followRepository.findByFollowingUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."))
                 .stream()
                 .map(FollowResponseDto::fromEntity)
@@ -57,7 +57,7 @@ public class FollowService {
 
     private void unfollow(Follow existingFollow, Long userId, Long followingId) {
         followRepository.delete(existingFollow);
-        pushRepository.deleteByPushTypeAndSender_UserIdAndReceiver_UserId(PushType.FOLLOW, userId, followingId);
+        pushRepository.deleteByPushTypeAndSenderUserIdAndReceiverUserId(PushType.FOLLOW, userId, followingId);
     }
 
     private void followUser(User follower, User following) {
@@ -71,7 +71,7 @@ public class FollowService {
             throw new IllegalArgumentException("잘못된 userId입니다:" + userId);
         }
 
-        return followRepository.findByFollower_UserId(userId)
+        return followRepository.findByFollowerUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("팔로잉 정보를 찾을 수 없습니다."))
                 .stream()
                 .map(FollowResponseDto::fromEntity)

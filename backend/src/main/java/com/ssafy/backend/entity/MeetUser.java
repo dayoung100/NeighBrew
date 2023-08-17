@@ -1,6 +1,5 @@
 package com.ssafy.backend.entity;
 
-import com.ssafy.backend.Enum.MeetStatus;
 import com.ssafy.backend.Enum.Status;
 import lombok.Builder;
 import lombok.Getter;

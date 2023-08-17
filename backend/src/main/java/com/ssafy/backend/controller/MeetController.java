@@ -4,7 +4,6 @@ import com.ssafy.backend.dto.meet.MeetRequestDto;
 import com.ssafy.backend.dto.meet.MeetResponseDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.service.MeetService;
-import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -81,7 +80,6 @@ public class MeetController {
     public ResponseEntity<?> deleteMeet(@PathVariable Long meetId,
                                         @RequestBody Map<String, Long> requestBody) {
         Long hostId = requestBody.get("userId");
-        log.info("meetId : {}, hostId : {}", meetId, hostId);
         meetService.deleteMeet(hostId, meetId);
 
         return ResponseEntity.ok(meetId + " 모임이 삭제 되었습니다.");
@@ -129,8 +127,8 @@ public class MeetController {
     }
 
     // 1시간마다
-    //@Scheduled(cron = "0 0 * * * *")
-    @Scheduled(cron = "0 */5 * * * *") //5분마다
+    @Scheduled(cron = "0 0 * * * *")
+//    @Scheduled(cron = "0 */5 * * * *")
     public void checkMeetStatus() {
         meetService.checkMeetStatus();
     }

@@ -56,7 +56,6 @@ public class DrinkReviewService {
     public Page<DrinkReviewResponseDto> getReviewsByDrinkId(Long drinkId, Pageable pageable) {
         Drink drink = getDrink(drinkId);
         Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findByDrink(drink, pageable);
-
         return drinkReviewPage.map(DrinkReviewResponseDto::fromEntity);
     }
 
@@ -64,6 +63,7 @@ public class DrinkReviewService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
+
         Drink drink = getDrink(drinkId);
 
         List<DrinkReview> drinkReviewList = drinkReviewRepository.findAllByUserAndDrink(user, drink);
@@ -101,7 +101,6 @@ public class DrinkReviewService {
             //모임 이미지가 기본 이미지가 아니면 S3에서 삭제
             if (isdefalutImg(drinkReview.getImg())) s3Service.deleteImg(drinkReview.getImg());
 
-            //새로운 이미지로 업로드
             request.setImgSrc(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
         } else {//업로드 이미지 없음
             //기본 이미지로 설정하는 것이 아니면 기존 이미지 유지
@@ -128,6 +127,5 @@ public class DrinkReviewService {
 
     private boolean isdefalutImg(String imgSrc) {
         return !imgSrc.equals("no image");
-
     }
 }

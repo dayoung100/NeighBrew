@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 public class MeetUserService {
@@ -19,10 +18,6 @@ public class MeetUserService {
     @Autowired
     public MeetUserService(MeetUserRepository meetUserRepository) {
         this.meetUserRepository = meetUserRepository;
-    }
-
-    public List<MeetUser> findAll() {
-        return meetUserRepository.findAll();
     }
 
     public void saveMeetUser(Meet newMeet, User host, Status status) {
@@ -36,12 +31,12 @@ public class MeetUserService {
 
     @Transactional
     public void deleteMeetUser(Meet deleteMeet) {
-        meetUserRepository.deleteByMeet_MeetId(deleteMeet.getMeetId());
+        meetUserRepository.deleteByMeetMeetId(deleteMeet.getMeetId());
     }
 
     public void updateMeetStatus(Long userId, Long meetId, Status status) {
         //meetUser 정보를 가져온다.
-        MeetUser findMeetUser = meetUserRepository.findByUser_UserIdAndMeet_MeetId(userId, meetId).orElseThrow(() -> new IllegalArgumentException("유저 정보 및 미팅 정보가 올바르지 않습니다."));
+        MeetUser findMeetUser = meetUserRepository.findByUserUserIdAndMeetMeetId(userId, meetId).orElseThrow(() -> new IllegalArgumentException("유저 정보 및 미팅 정보가 올바르지 않습니다."));
 
         //상태를 변경한다.
         findMeetUser.setStatus(status);
@@ -50,7 +45,7 @@ public class MeetUserService {
 
     @Transactional
     public void deleteExitUser(Long userId, Long meetId, Status status) {
-        meetUserRepository.deleteByUser_UserIdAndMeet_MeetIdAndStatus(userId, meetId, status);
+        meetUserRepository.deleteByUserUserIdAndMeetMeetIdAndStatus(userId, meetId, status);
     }
 
     public Status findUserStatus(Long userId, Long meetId) {

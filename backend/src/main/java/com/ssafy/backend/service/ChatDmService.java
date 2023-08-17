@@ -34,8 +34,9 @@ public class ChatDmService {
 
     //DM 목록 조회
     public List<ChatDmRoom> findMyDmList(Long userId) {
-        return chatDmRoomRepository.findChatDmRoomByIdOrderByLastMessageTimeDesc(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저 정보가 올바르지 않습니다."))
+        return chatDmRoomRepository.findChatDmRoomByIdOrderByLastMessageTimeDesc(userId).orElseThrow(
+                        () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
+                )
                 .stream()
                 .filter(cdr -> (cdr.getUser1().getUserId().equals(userId) && cdr.getUser1AttendTime() != null)
                         || (cdr.getUser2().getUserId().equals(userId) && cdr.getUser2AttendTime() != null))
@@ -45,11 +46,11 @@ public class ChatDmService {
     public Map<String, Object> findDmMessagesByRoomId(Long user1Id, Long user2Id) {
         Map<String, Object> result = new HashMap<>();
 
-        chatDmRoomRepository.findByUser1_UserIdAndUser2_UserId(user1Id, user2Id).ifPresent(dmRoom -> {
+        chatDmRoomRepository.findByUser1UserIdAndUser2UserId(user1Id, user2Id).ifPresent(dmRoom -> {
             LocalDateTime currentTime = LocalDateTime.now();
             List<ChatDmMessage> messages = (user2Id.equals(user1Id))
-                    ? chatDmMessageRepository.findByChatDmRoom_ChatDmRoomIdAndCreatedAtBetween(dmRoom.getChatDmRoomId(), dmRoom.getUser1AttendTime(), currentTime)
-                    : chatDmMessageRepository.findByChatDmRoom_ChatDmRoomIdAndCreatedAtBetween(dmRoom.getChatDmRoomId(), dmRoom.getUser2AttendTime(), currentTime);
+                    ? chatDmMessageRepository.findByChatDmRoomChatDmRoomIdAndCreatedAtBetween(dmRoom.getChatDmRoomId(), dmRoom.getUser1AttendTime(), currentTime)
+                    : chatDmMessageRepository.findByChatDmRoomChatDmRoomIdAndCreatedAtBetween(dmRoom.getChatDmRoomId(), dmRoom.getUser2AttendTime(), currentTime);
             result.put("messages", messages);
         });
 
@@ -94,13 +95,13 @@ public class ChatDmService {
         JsonNode jsonNode = mapper.readTree(payload);
         Long leaveUserId = jsonNode.get("leaveUserId").asLong();
 
-        ChatDmRoom findDmRoom = chatDmRoomRepository.findByUser1_UserIdAndUser2_UserId(user1Id, user2Id)
+        ChatDmRoom findDmRoom = chatDmRoomRepository.findByUser1UserIdAndUser2UserId(user1Id, user2Id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방 입니다."));
 
         if ((user1Id.equals(leaveUserId) && findDmRoom.getUser2AttendTime() == null)
                 || (user2Id.equals(leaveUserId) && findDmRoom.getUser1AttendTime() == null)) {
 
-            chatDmMessageRepository.deleteByChatDmRoom_ChatDmRoomId(findDmRoom.getChatDmRoomId());
+            chatDmMessageRepository.deleteByChatDmRoomChatDmRoomId(findDmRoom.getChatDmRoomId());
             chatDmRoomRepository.deleteById(findDmRoom.getChatDmRoomId());
             return mapper.writeValueAsString(Collections.singletonMap("message", "모든 유저가 채팅방을 떠났습니다. 채팅을 종료합니다."));
         }

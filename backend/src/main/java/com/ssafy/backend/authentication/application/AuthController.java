@@ -5,7 +5,6 @@ import com.ssafy.backend.authentication.infra.google.GoogleLoginParams;
 import com.ssafy.backend.authentication.infra.kakao.KakaoLoginParams;
 import com.ssafy.backend.authentication.infra.naver.NaverLoginParams;
 import com.ssafy.backend.service.PushService;
-import com.ssafy.backend.util.JwtUtil;
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -67,14 +66,4 @@ public class AuthController {
                               @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) throws IOException {
         return pushService.connect(userId, lastEventId);
     }
-
-//        @GetMapping("/access-token/{userId}")
-//    public ResponseEntity<Map<String, String>> jwtMaker(@PathVariable Long userId) {
-//        String accessToken = JwtUtil.generateToken(String.valueOf(userId));
-//        String refreshToken = JwtUtil.generateRefreshToken(String.valueOf(userId));
-//        Map<String, String> tokens = new HashMap<>();
-//        tokens.put("accessToken", accessToken);
-//        tokens.put("refreshToken", refreshToken);
-//        return ResponseEntity.ok(tokens);
-//    }
 }
