@@ -17,11 +17,7 @@ import {
 } from "react-swipeable-list";
 import "react-swipeable-list/dist/styles.css";
 import NavbarSimple from "../navbar/NavbarSimple.tsx";
-const NavbarDiv = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
+
 const ActionContent = styled.div`
   height: 100%;
   display: flex;
@@ -37,11 +33,7 @@ const ActionContent = styled.div`
 `;
 
 const deletePush = (id: number) => {
-  callApi("delete", `api/push/${id}`)
-    .then(res => {
-      // console.log(res);
-    })
-    .catch(err => console.error(err));
+  callApi("delete", `api/push/${id}`);
 };
 const trailingActions = (id: number) => (
   <TrailingActions>
@@ -54,30 +46,23 @@ const alarmPage = () => {
   const BackIcon = backIcon();
   const navigate = useNavigate();
   const myId = localStorage.getItem("myId");
-  // 현재 더미 텍스트로 이루어져 있습니다. api가 있으면 비어두면 될 것 같습니다.
   const [alarmList, setAlarmList] = useState<AlarmLog[]>([]);
 
-  // 비동기 통신으로 알림을 불러옵니다. api가 있을 때 까지 주석처리.
+  // 비동기 통신으로 알림을 불러옵니다.
   useEffect(() => {
-    callApi("get", `api/push/${myId}`)
-      .then(res => {
-        setAlarmList(res.data);
-      })
-      .catch(err => console.error(err));
+    callApi("get", `api/push/${myId}`).then(res => {
+      setAlarmList(res.data);
+    });
   }, []);
   const goPageHandler = async (url: string, id: number) => {
     await deletePush(id);
     await navigate(url.split("io")[1]);
-  };
-  const toBackHandler = () => {
-    navigate(-1);
   };
   return (
     <>
       {/* 알림창의 내브바 */}
       <NavbarSimple title="알림 페이지" />
 
-      {/* 모든 알림을 리스트로 가정을 하고 map으로 풀어냅니다. 정의될때까지 주석처리. */}
       <div style={{ margin: "0px 10px 0px 10px" }}>
         {alarmList.length === 0 ? (
           <EmptyMsg title="알림이 없습니다." contents="" />

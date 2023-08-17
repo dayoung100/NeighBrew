@@ -23,7 +23,7 @@ const SearchUser = () => {
   }, [parent]);
 
   const search = (name: string) => {
-    callApi("get", `api/user/search/${name}`).then((res) => {
+    callApi("get", `api/user/search/${name}`).then(res => {
       setUsers(res.data);
     });
   };
@@ -55,11 +55,7 @@ const SearchUser = () => {
         </ChatNav>
       </header>
       <div style={{ width: "90%", margin: "0 auto" }}>
-        <SearchBox
-          placeholder="유저 닉네임 검색"
-          changeFunc={search}
-          width={90}
-        />
+        <SearchBox placeholder="유저 닉네임 검색" changeFunc={search} width={90} />
       </div>
       <div ref={parent}>
         {users.map((user, idx) => {
@@ -84,9 +80,7 @@ const SearchUser = () => {
                 >
                   {user.nickname}
                 </p>
-                <p style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>
-                  {user.intro}
-                </p>
+                <p style={{ fontFamily: "NanumSquareNeo", fontSize: "14px" }}>{user.intro}</p>
               </div>
             </User>
           );

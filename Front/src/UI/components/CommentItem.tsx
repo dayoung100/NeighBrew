@@ -4,7 +4,7 @@ import { SubReview } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 import { useNavigate } from "react-router-dom";
 import { moreIcon, deleteIcon, editIcon } from "../../assets/AllIcon";
-import { DeleteModal, ThreeDotModal, ShortThreeDotModal, WhiteModal } from "../../style/common";
+import { ShortThreeDotModal, WhiteModal } from "../../style/common";
 import Modal from "react-modal";
 import Siren from "../../assets/siren.png";
 import { callApi } from "../../utils/api";
@@ -65,14 +65,6 @@ const MoreBtn = styled.div`
   width: 10%;
 `;
 
-const SirenArea = styled.div`
-  background: url("/src/assets/siren.png") no-repeat center;
-  //background-size : cover;
-  background-size: contain;
-  overflow: hidden;
-  flex-basis: 10%; // flex-grow, flex-shrink, flex-basis
-`;
-
 type CommentItemProps = {
   subReview: SubReview;
 };
@@ -115,10 +107,6 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
     setDeleteModalOn(false);
   };
 
-  const toUpdateHandler = () => {
-    console.log("수정");
-  };
-
   const reportQuestionHandler = () => {
     setThreeDotOnForOther(false);
     setReport(true);
@@ -157,7 +145,6 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
         ) : (
           <MoreBtn onClick={moreHandlerForOther}>{MoreIcon}</MoreBtn>
         )}
-        {/* <MoreBtn onClick={moreHandler}>{MoreIcon}</MoreBtn> */}
 
         {/* 자기 댓글 more */}
         <Modal
@@ -178,22 +165,6 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
               삭제하기
             </div>
           </div>
-          {/* <div style={{ fontSize: "1rem", color: "var(--c-gray)" }}>댓글</div>
-          <div
-            onClick={toUpdateHandler}
-            style={{ display: "flex", alignItems: "center", height: "40%", marginTop: "1rem" }}
-          >
-            <div style={{ marginRight: "0.5rem" }}>{EditIcon}</div>
-            <div style={{ color: "black" }}>수정하기</div>
-          </div>
-
-          <div
-            onClick={toDeleteQuestionHandler}
-            style={{ display: "flex", alignItems: "center", height: "40%" }}
-          >
-            <div style={{ marginRight: "0.5rem" }}>{DeleteIcon}</div>
-            <div style={{ color: "#eb0505" }}>삭제하기</div>
-          </div> */}
         </Modal>
 
         {/* 댓글 삭제 확인 모달 */}

@@ -50,7 +50,7 @@ const ReselectBtn = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${(props) => props.src}) no-repeat center;
+  background: url(${props => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 15px;
   position: relative;
@@ -96,8 +96,6 @@ const ImageInput = (props: ImageInputProps) => {
     imgRef.current.value = null;
     setImgFile(null); // 미리보기 초기화
     saveImgFile(); //부모 객체로 전달
-    // props.getFunc(null);
-    // props.getImgSrc("no image");
   };
 
   return (

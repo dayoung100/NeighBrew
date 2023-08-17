@@ -40,7 +40,7 @@ const meetingMy = () => {
 
   //모임 배열과 waiting, end 중 하나를 넣으면 해당하는 모임만 반환
   const filterByStatus = (array: Meeting[], status: string) => {
-    const result = array.filter((meet) => {
+    const result = array.filter(meet => {
       return meet.meetStatus === status;
     });
     return result;
@@ -58,7 +58,7 @@ const meetingMy = () => {
   //api 호출
   useEffect(() => {
     const promise = callApi("get", `api/meet/mymeet/${userId}`);
-    promise.then((res) => {
+    promise.then(res => {
       setMeetData(res.data); //받아온 데이터로 meetData 세팅
     });
   }, [userId]);
@@ -72,10 +72,6 @@ const meetingMy = () => {
     setEndHostMeet(filterByStatus(meetData.HOST, "END"));
     setEndGuestMeet(filterByStatus(meetData.GUEST, "END"));
   }, [meetData]);
-
-  // useEffect(() => {
-  //   console.dir(endHostMeet);
-  // }, [endHostMeet]);
 
   return (
     <div>
@@ -101,9 +97,7 @@ const meetingMy = () => {
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>대기</MeetTitle>
-        {applyMeet.length > 0 && (
-          <MeetingListItem data={applyMeet} isWaiting={true} />
-        )}
+        {applyMeet.length > 0 && <MeetingListItem data={applyMeet} isWaiting={true} />}
         {applyMeet.length === 0 && (
           <EmptyMsg
             title="대기 중인 모임이 없습니다"
@@ -113,12 +107,8 @@ const meetingMy = () => {
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>종료</MeetTitle>
-        {endHostMeet.length > 0 && (
-          <MeetingListItem data={endHostMeet} isWaiting={false} />
-        )}
-        {endGuestMeet.length > 0 && (
-          <MeetingListItem data={endGuestMeet} isWaiting={false} />
-        )}
+        {endHostMeet.length > 0 && <MeetingListItem data={endHostMeet} isWaiting={false} />}
+        {endGuestMeet.length > 0 && <MeetingListItem data={endGuestMeet} isWaiting={false} />}
         {endHostMeet.length === 0 && endGuestMeet.length === 0 && (
           <EmptyMsg
             title="완료된 모임이 없습니다."

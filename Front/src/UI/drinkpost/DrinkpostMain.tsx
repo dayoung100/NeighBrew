@@ -119,29 +119,6 @@ const drinkpostMain = (props: { connectHandler: () => void }) => {
         <div style={{ display: "flex", justifyContent: "center" }}>
           <SlideComponent></SlideComponent>
         </div>
-        {/* <MdsDiv>
-          <h3
-            style={{
-              margin: "0px 0px 0px 10px",
-              padding: "10px",
-              color: "white",
-            }}
-          >
-            MD's Pick
-          </h3>
-          <div
-            className=" mdspick"
-            style={{
-              display: "flex",
-              justifyContent: "space-around",
-              padding: "0px 100px 0px 100px",
-            }}
-          >
-            {threePick.map((pick, i) => {
-              return <MdsItem key={i} pick={pick}></MdsItem>;
-            })}
-          </div>
-        </MdsDiv> */}
 
         <div style={{ margin: "4rem 10px" }} onClick={clickTotalDrink}>
           <Total>

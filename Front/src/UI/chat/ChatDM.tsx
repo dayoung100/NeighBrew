@@ -137,7 +137,6 @@ const Chat = (props: {
         <div style={{ textAlign: "right", color: "var(--c-gray)", fontSize: "14px" }}>
           {lastMessageTime}
         </div>
-        {/*<div style={{ textAlign:"right"}}>{props.lastMessageTime}</div>*/}
       </DmInfoDiv>
     </ChatDiv>
   );
