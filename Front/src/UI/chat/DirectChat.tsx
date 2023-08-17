@@ -417,7 +417,7 @@ const DirectChat = () => {
                   <Img src={user.profile == "no image" ? defaultImg : user.profile}></Img>
                 </ImgDiv>
                 <UserNameP>
-                  {user.nickname.includes("@") ? user.nickname.split("@")[0] : user.nickname}
+                  {user.nickname?.includes("@") ? user.nickname?.split("@")[0] : user.nickname}
                 </UserNameP>
               </UserDiv>
             );

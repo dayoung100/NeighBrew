@@ -54,17 +54,6 @@ public class UserController {
         return ResponseEntity.ok(tokens);
     }
 
-    // Test용 일반 아이디 => 유저 아이디 넣으면 JWT 반환하는 코드 작성
-    @GetMapping("/access-token/{userId}")
-    public ResponseEntity<Map<String, String>> jwtMaker(@PathVariable Long userId) {
-        String accessToken = JwtUtil.generateToken(String.valueOf(userId));
-        String refreshToken = JwtUtil.generateRefreshToken(String.valueOf(userId));
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-        return ResponseEntity.ok(tokens);
-    }
-
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponseDto> updateUserInfo(@RequestBody UserUpdateDto userUpdateDto,
                                                           @PathVariable Long userId) {

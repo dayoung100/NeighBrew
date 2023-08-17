@@ -30,15 +30,11 @@ public class MeetUser {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Enumerated(EnumType.STRING)
-    private MeetStatus meetStatus;
-
     @Builder
-    public MeetUser(User user, Meet meet, Status status, MeetStatus meetStatus) {
+    public MeetUser(User user, Meet meet, Status status) {
         this.user = user;
         this.meet = meet;
         this.status = status;
-        this.meetStatus = meetStatus;
     }
 }
 

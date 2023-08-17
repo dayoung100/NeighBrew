@@ -75,7 +75,7 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
       { tagId: 0, tagName: "전체" },
       { tagId: 1, tagName: "양주" },
       { tagId: 2, tagName: "전통주" },
-      { tagId: 3, tagName: "전체" },
+      { tagId: 3, tagName: "칵테일" },
       { tagId: 4, tagName: "사케" },
       { tagId: 5, tagName: "와인" },
       { tagId: 6, tagName: "수제맥주" },

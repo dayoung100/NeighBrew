@@ -163,6 +163,7 @@ public class Meet {
                 .drink(DrinkResponseDto.fromEntity(drink))
                 .imgSrc(imgSrc)
                 .chatRoomId(chatRoom.getChatRoomId())
+                .meetStatus(meetStatus)
                 .build();
     }
 
@@ -170,5 +171,6 @@ public class Meet {
     public void prePersist() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        meetStatus = MeetStatus.WAITING;
     }
 }
