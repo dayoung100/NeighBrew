@@ -16,7 +16,6 @@ self.addEventListener("fetch", e => {
 
 self.addEventListener("notificationclick", function (event) {
   //알림 팝업의 버튼 액션
-  // console.log(event);
   switch (event.action) {
     case "goTab":
       event.notification.close(); // Notification을 닫습니다.
