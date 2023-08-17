@@ -46,7 +46,7 @@ public class DrinkReviewController {
         return ResponseEntity.ok(drinkReviewService.findDrinkReviewByOrderByLikeCountDesc(pageable));
     }
 
-    @GetMapping("/make")
+    @GetMapping("/makes")
     public ResponseEntity<Page<DrinkReviewResponseDto>> findDrinkReviewByOrderByLikeCountDesc(Pageable pageable) {
         return ResponseEntity.ok(drinkReviewService.findAllByOrderByCreatedAtDesc(pageable));
     }
