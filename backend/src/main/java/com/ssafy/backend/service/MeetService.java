@@ -12,7 +12,6 @@ import com.ssafy.backend.dto.meet.MeetUserDto;
 import com.ssafy.backend.entity.*;
 import com.ssafy.backend.repository.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +26,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class MeetService {
     private final MeetRepository meetRepository;
@@ -55,11 +53,11 @@ public class MeetService {
     }
 
     private Page<MeetResponseDto> findAll(Pageable pageable) {
-        return getMeetSearchDtos(meetRepository.findAllByOrderByCreatedAtDesc(pageable));
+        return getMeetSearchDtos(meetRepository.findByMeetStatusNotOrderByCreatedAtDesc(MeetStatus.END, pageable));
     }
 
     private Page<MeetResponseDto> findByTagId(Long tagId, Pageable pageable) {
-        return getMeetSearchDtos(meetRepository.findByTag_TagIdOrderByCreatedAtDesc(tagId, pageable));
+        return getMeetSearchDtos(meetRepository.findByTagTagIdAndMeetStatusNotOrderByCreatedAtDesc(tagId, MeetStatus.END, pageable));
     }
 
     private void validateTagId(Long tagId) {
@@ -138,9 +136,7 @@ public class MeetService {
     }
 
     public Map<String, List<MeetResponseDto>> findUserMeetByUserId(Long userId) {
-        Map<String, List<MeetResponseDto>> userMeets = Arrays.stream(Status.values())
-                .filter(status -> status != Status.FINISH)
-                .collect(Collectors.toMap(Enum::name, status -> new ArrayList<>(), (a, b) -> b));
+        Map<String, List<MeetResponseDto>> userMeets = Arrays.stream(Status.values()).collect(Collectors.toMap(Enum::name, status -> new ArrayList<>(), (a, b) -> b));
 
         List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByMeet_CreatedAtDesc(userId);
 
@@ -188,7 +184,6 @@ public class MeetService {
 
         ChatRoom createdChatRoom = createChatRoom(meetRequestDto.getMeetName());
         Meet createdMeet = saveMeetEntity(meetRequestDto, drinkId, createdChatRoom);
-        log.info("createdMeet : {}", createdMeet.getMeetName());
 
         User hostUser = findUserById(userId);
         saveMeetUser(createdMeet, hostUser);
