@@ -130,4 +130,9 @@ public class PushService {
     public List<Push> getUserPushLog(Long userId) {
         return pushRepository.findByReceiver_UserIdOrderByCreatedAtDesc(userId);
     }
+
+    @Transactional
+    public void deletePushById(Long pushId) {
+        pushRepository.deleteById(pushId);
+    }
 }

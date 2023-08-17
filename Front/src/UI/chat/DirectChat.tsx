@@ -45,6 +45,7 @@ const SendImg = styled.img`
 
 const OtherChat = styled.div`
   position: relative;
+  white-space: pre-wrap;
   display: inline-block;
   background-color: white;
   border-radius: 12px;
@@ -60,6 +61,7 @@ const OtherChat = styled.div`
 `;
 
 const MyChat = styled.div`
+  white-space: pre-wrap;
   position: relative;
   display: inline-block;
   flex-direction: row;

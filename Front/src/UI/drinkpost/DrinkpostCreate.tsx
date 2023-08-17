@@ -11,8 +11,6 @@ import axios from "axios";
 import TextareaAutosize from "react-textarea-autosize";
 import NavbarSimple from "../navbar/NavbarSimple";
 import FooterBigBtn from "../footer/FooterBigBtn";
-import imageCompression from "browser-image-compression";
-import LoadingDot from "../etc/LoadingDot";
 import Modal from "react-modal";
 import { WhiteModal } from "../../style/common";
 
@@ -166,9 +164,14 @@ const DrinkpostCreate = () => {
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
   };
+  const [stringDegree, setStringDegree] = useState(false);
+  const [fileSizeTwenty, setFileSizeTwenty] = useState(false);
+  const [overHundred, setOverHundred] = useState(false);
+  const [isEmptyDesc, setIsEmptyDesc] = useState(false);
+  const [iseEmptyName, setIsEmptyName] = useState(false);
   const [drinkName, setDrinkName] = useState("");
   const [drinkDescription, setDrinkDescription] = useState("");
-  const [drinkAlcohol, setDrinkAlcohol] = useState<any>();
+  const [drinkAlcohol, setDrinkAlcohol] = useState<number>();
   const [inputCheck, setInputCheck] = useState(false);
 
   const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중 모달
@@ -180,7 +183,15 @@ const DrinkpostCreate = () => {
     setDrinkName(e.target.value);
   };
   const drinkAlcoholHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDrinkAlcohol(e.target.value);
+    if (parseInt(e.target.value) > 100) {
+      setOverHundred(true);
+      return;
+    }
+    if (parseInt(e.target.value) <= 0) {
+      setOverHundred(true);
+      return;
+    }
+    setDrinkAlcohol(parseInt(e.target.value));
   };
   const drinkDescriptionHandler = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -216,44 +227,35 @@ const DrinkpostCreate = () => {
 
     if (file) {
       if (file.size > 1024 * 1024 * 20) {
-        alert("10MB보다 작은 이미지만 올릴 수 있습니다.");
+        setFileSizeTwenty(true);
         return;
       }
     }
-
-    setIsClick(true); //클릭했음(api 중복호출방지)
-
-    formData.append("name", drinkName.trim());
-    formData.append("description", drinkDescription.trim());
-    formData.append("degree", drinkAlcohol);
-    formData.append("tagId", selectedCategory.toString());
-
-    if (file === null) {
-      formData.append("image", file);
-      createApi(formData);
-    } else {
-      setLoadingModalOn(true);
-      //압축하면 blob 타입-> file 타입으로 변환
-      const uploadFile = imageCompression(file, options);
-      uploadFile
-        .then((res) => {
-          const resizingFile = new File([res], file.name, {
-            type: file.type,
-          });
-          formData.append("image", resizingFile);
-        })
-        .then(() => {
-          createApi(formData);
-        })
-        .catch((e) => {
-          console.dir(e);
-          setLoadingModalOn(false);
-          setIsClick(false);
-        });
+    if (drinkAlcohol > 100) {
+      setOverHundred(true);
+      return;
     }
 
-    // formData.append("upload", file);
+    if (drinkName.trim() === "") {
+      setIsEmptyName(true);
+      return;
+    }
+    if (drinkDescription.trim() === "") {
+      setIsEmptyDesc(true);
+      return;
+    }
+    formData.append("name", drinkName.trim());
+    formData.append("image", file);
+    formData.append("description", drinkDescription.trim());
+    formData.append("degree", drinkAlcohol.toString());
+    formData.append("tagId", selectedCategory.toString());
 
+    callApi("post", "api/drink", formData)
+      .then((res) => {
+        console.log(res.data);
+        navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
+      })
+      .catch((err) => console.error(err));
     // axios
     //   .post("/api/drink", formData, {
     //     headers: {
@@ -389,6 +391,7 @@ const DrinkpostCreate = () => {
             defaultValue={0}
             value={drinkAlcohol}
             onChange={drinkAlcoholHandler}
+            type="number"
           ></InputAlcohol>
           <p>%</p>
         </InputDivAlcohol>
@@ -433,17 +436,43 @@ const DrinkpostCreate = () => {
         reqFunc={drinkSubmitHandler}
       />
       <Modal
-        isOpen={loadingModalOn}
-        onRequestClose={() => {}} //닫히지 않아야함
+        isOpen={overHundred}
+        onRequestClose={() => setOverHundred(false)}
         style={WhiteModal}
+        ariaHideApp={false}
       >
-        <div
-          style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}
-        >
-          <div style={{ paddingBottom: "0.5rem" }}>
-            이미지 압축중입니다. <br /> 잠시만 기다려주세요.
-          </div>
-          <LoadingDot color="var(--c-yellow)" />
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
+          도수는 0도 초과, 100도 이하입니다.
+        </div>
+      </Modal>
+      <Modal
+        isOpen={fileSizeTwenty}
+        onRequestClose={() => setFileSizeTwenty(false)}
+        style={WhiteModal}
+        ariaHideApp={false}
+      >
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
+          20MB 이상의 파일을 업로드할 수 없습니다.
+        </div>
+      </Modal>
+      <Modal
+        isOpen={iseEmptyName}
+        onRequestClose={() => setIsEmptyName(false)}
+        style={WhiteModal}
+        ariaHideApp={false}
+      >
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
+          술의 이름을 입력해주세요.
+        </div>
+      </Modal>
+      <Modal
+        isOpen={isEmptyDesc}
+        onRequestClose={() => setIsEmptyDesc(false)}
+        style={WhiteModal}
+        ariaHideApp={false}
+      >
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
+          술의 설명을 입력해주세요.
         </div>
       </Modal>
     </div>

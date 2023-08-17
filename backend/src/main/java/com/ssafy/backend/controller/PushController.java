@@ -27,6 +27,18 @@ public class PushController {
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public List<Push> getUserPushLog(@PathVariable Long userId) {
+
         return pushService.getUserPushLog(userId);
+    }
+
+    @DeleteMapping("/{pushId}")
+    @ResponseStatus(HttpStatus.OK)
+    public String deletePushLog(@PathVariable Long pushId){
+        try{
+            pushService.deletePushById(pushId);
+            return "알림이 삭제되었습니다.";
+        }catch(Exception e){
+            return "알림 삭제 중 에러가 발생했습니다.";
+        }
     }
 }
