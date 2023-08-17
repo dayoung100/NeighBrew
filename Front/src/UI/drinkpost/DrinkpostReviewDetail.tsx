@@ -95,13 +95,6 @@ const FollowDiv = styled.div`
   align-items: center;
 `;
 
-const UserImg = styled.img`
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  margin-right: 1rem;
-`;
-
 const CommentBox = styled.div`
   position: fixed;
   bottom: 0;
@@ -344,22 +337,23 @@ const DrinkpostReviewDetail = () => {
       <WholeDiv>
         <Usercard>
           <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
-            <div>
+            <div
+              style={{
+                backgroundImage: `url(${
+                  review?.user.profile !== "no image" ? review?.user.profile : defaultImg
+                })`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+                width: "2.4rem",
+                height: "2.4rem",
+                borderRadius: "100px",
+                marginRight: "0.5rem",
+              }}
+            >
               {/* <UserImg
                 src={review?.user.profile !== "no image" ? review?.user.profile : defaultImg}
               ></UserImg> */}
-              <div
-                style={{
-                  background: `url(${
-                    review?.user.profile !== "no image" ? review?.user.profile : defaultImg
-                  }) no-repeat center`,
-                  backgroundSize: "cover",
-                  width: "2.4rem",
-                  height: "2.4rem",
-                  borderRadius: "50%",
-                  marginRight: "0.5rem",
-                }}
-              ></div>
             </div>
             <div>
               <b>{review?.user.nickname}</b>
