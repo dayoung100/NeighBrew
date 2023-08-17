@@ -42,7 +42,7 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     public Map<String, SseEmitter> findAllEmitterStartWithByUserId(String userId) {
         return emitters.entrySet().stream()
                 //sseEmitte의 key들은 userId_currentTime 형태여서 suffix가 userId인것만 찾게 한다.
-                .filter(entry -> entry.getKey().startsWith(userId))
+                .filter(entry -> entry.getKey().split("_")[0].equals(userId))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -51,7 +51,7 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     public Map<String, Object> findAllEventCacheStartWithByUserId(String userId) {
         return eventCache.entrySet().stream()
                 //sseEmitte의 key들은 userId_currentTime 형태여서 suffix가 userId인것만 찾게 한다.
-                .filter(entry -> entry.getKey().startsWith(userId))
+                .filter(entry -> entry.getKey().split("_")[0].equals(userId))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -67,7 +67,7 @@ public class EmitterRepositoryImpl implements EmitterRepository {
         emitters.forEach(
                 (key, emitter) -> {
                     //sseEmitte의 key들은 userId_currentTime 형태여서 suffix가 userId인것만 찾아 삭제한다.
-                    if (key.startsWith(userId)) {
+                    if (key.split("_")[0].equals((userId))) {
                         emitters.remove(key);
                     }
                 }
@@ -81,7 +81,7 @@ public class EmitterRepositoryImpl implements EmitterRepository {
         eventCache.forEach(
                 (key, emitter) -> {
                     //sseEmitte의 key들은 userId_currentTime 형태여서 suffix가 userId인것만 찾아 삭제한다.
-                    if (key.startsWith(userId)) {
+                    if (key.split("_")[0].equals(userId)) {
                         eventCache.remove(key);
                     }
                 }
