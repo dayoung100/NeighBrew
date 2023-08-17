@@ -146,8 +146,6 @@ public class MeetService {
 
         for (MeetUser meetUser : meetUsers) {
             MeetResponseDto responseDto = toMeetResponseDto(meetUser);
-            if (responseDto.getMeetStatus().equals(MeetStatus.END))
-                continue;
             userMeets.get(meetUser.getStatus().name()).add(responseDto);
         }
 
