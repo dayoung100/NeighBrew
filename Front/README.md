@@ -12,11 +12,6 @@
 - ngrok // 테스트용, 추후 삭제 예정
 - @stomp/stompjs
 - sockjs-client
-- react-toastify
-
-### alert library
-
-https://github.com/fkhadra/react-toastify
 
 ### ngrok 사용법
 
@@ -24,7 +19,6 @@ https://github.com/fkhadra/react-toastify
 - ngrok http 5173 -> 아이디 만들기 -> 만들고 밑에 token 받기
 - token 사이트에서 2. Connect your account 탭에서 명령어 복사, 터미널에서 입력
 - 이제 ngrok에서 orwarding에 있는 주소로 접속 가능
--
 
 ### PWA 설치 테스트 하는법
 
