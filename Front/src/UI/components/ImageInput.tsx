@@ -93,7 +93,6 @@ const ImageInput = (props: ImageInputProps) => {
 
   //입력한 이미지 파일 제거
   const resetImgFile = () => {
-    console.log("취소버튼 눌렀어요");
     imgRef.current.value = null;
     setImgFile(null); // 미리보기 초기화
     saveImgFile(); //부모 객체로 전달

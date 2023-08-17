@@ -139,7 +139,6 @@ const MeetingManageMain = () => {
             <ModalBtn
               onClick={() => {
                 DeleteMeeting();
-                console.log("삭제 완료");
                 setDeleteModalOn(false);
               }}
             >
@@ -147,7 +146,6 @@ const MeetingManageMain = () => {
             </ModalBtn>
             <ModalBtn
               onClick={() => {
-                console.log("삭제 취소");
                 setDeleteModalOn(false);
               }}
             >
