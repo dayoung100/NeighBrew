@@ -152,7 +152,11 @@ const drinkpostMain = (props: { connectHandler: () => void }) => {
         </div>
         <div style={{ margin: "0px 3vw" }}>
           <div style={{ textAlign: "start", display: "flex", alignItems: "center" }}>
-            {reviewButton ? <h3>🔥인기 있는 후기🔥</h3> : <h3>날짜순 정렬</h3>}
+            {reviewButton ? (
+              <h3 style={{ width: "50%" }}>🔥인기 있는 후기🔥</h3>
+            ) : (
+              <h3 style={{ width: "50%" }}>날짜순 정렬</h3>
+            )}
             {reviewButton ? (
               <SortButton onClick={reviewButtonHandler}>
                 <b>생성순</b>
