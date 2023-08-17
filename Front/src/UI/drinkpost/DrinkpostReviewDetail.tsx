@@ -7,7 +7,14 @@ import defaultImg from "../../assets/defaultImg.png";
 import fancyDrinkImage from "../../assets/fancydrinkImage.jpg";
 import { callApi } from "../../utils/api";
 import NavbarSimple from "../navbar/NavbarSimple";
-import { commentIcon, likeIcon, deleteIcon, editIcon, moreIcon } from "./../../assets/AllIcon";
+import {
+  commentIcon,
+  likeIcon,
+  deleteIcon,
+  editIcon,
+  moreIcon,
+  likeIcon2,
+} from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
 import Modal from "react-modal";
@@ -35,10 +42,10 @@ const StyleAutoTextArea = styled(TextareaAutosize)`
   }
 `;
 const LikeAndComment = styled.div`
-  margin: 0.5rem;
+  margin: 0.5rem 0.5rem 0 0.5rem;
   display: flex;
   justify-content: left;
-  width: 36%;
+  width: 40%;
   margin-top: 1.5vh;
   font-size: 20px;
 `;
@@ -52,6 +59,7 @@ const Description = styled.div`
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+
   &.show {
     display: block;
     max-height: none;
@@ -135,26 +143,6 @@ const InfoBox = styled.div`
   justify-content: space-between;
 `;
 
-const DeleteModal = {
-  content: {
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "80%",
-    height: "16%",
-    padding: "0.5rem 1rem",
-    borderRadius: "15px",
-    background: "#ffffff",
-    textAlign: "center",
-    fontFamily: "SeoulNamsan",
-    color: "#000000",
-  },
-  overlay: {
-    background: "rgba(0, 0, 0, 0.5)",
-    zIndex: "11",
-  },
-};
-
 const ThreeDotModal = {
   content: {
     top: "90%",
@@ -164,16 +152,41 @@ const ThreeDotModal = {
     height: "16%",
     borderRadius: "24px 24px 0px 0px",
     backgroundColor: "#ffffff",
-    fontFamily: "SeoulNamsan",
+    fontFamily: "NanumSquareNeo",
     fontSize: "1.5rem",
     color: "black",
-    transition: "top 2s ease-in-out",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",
     zIndex: "1001",
   },
 };
+
+const ModalBtnDiv = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 10%;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+`;
+
+const ModalBtn = styled.div`
+  width: 5rem;
+  padding: 0.5rem;
+  margin: 0 0.5rem;
+  border-radius: 5px;
+  background: var(--c-yellow);
+`;
+
+const ModalIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  margin-right: 1rem;
+`;
 
 const DrinkpostReviewDetail = () => {
   const MoreIcon = moreIcon();
@@ -195,17 +208,22 @@ const DrinkpostReviewDetail = () => {
   const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    callApi("get", `api/drink/${drinkId}`).then((res) => {
       setDrink(res.data);
     });
 
-    callApi("get", `api/subreview/list/${reviewId}`).then(res => {
+    callApi("get", `api/subreview/list/${reviewId}`).then((res) => {
       setSubReviewList(res.data);
     });
+  }, [subReviewList]);
 
+  useEffect(() => {
     async function summonReview() {
       // 술 상세 후기 조회 요청
-      const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
+      const response1 = await callApi(
+        "get",
+        `api/drinkreview/review/${reviewId}`
+      );
       setReview(response1.data);
       setLikeCount(response1.data.likeCount);
       const userId = response1.data.user.userId;
@@ -225,6 +243,7 @@ const DrinkpostReviewDetail = () => {
         }
       });
     }
+
     summonReview();
   }, []);
 
@@ -233,7 +252,7 @@ const DrinkpostReviewDetail = () => {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-    }).then(res => {
+    }).then((res) => {
       setLike(res.data);
     });
   }, [localStorage.getItem("token")]);
@@ -245,9 +264,9 @@ const DrinkpostReviewDetail = () => {
       },
     }).then(() => {
       if (!like) {
-        setLikeCount(prev => prev + 1);
+        setLikeCount((prev) => prev + 1);
       } else {
-        setLikeCount(prev => prev - 1);
+        setLikeCount((prev) => prev - 1);
       }
     });
     setLike(!like);
@@ -267,7 +286,7 @@ const DrinkpostReviewDetail = () => {
   };
 
   const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
+    callApi("get", `api/follow/follower/${review?.user.userId}`).then((res) => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -298,7 +317,7 @@ const DrinkpostReviewDetail = () => {
     });
 
     setComment("");
-    setSubReviewList(prev => [fun.data, ...prev]);
+    setSubReviewList((prev) => [fun.data, ...prev]);
   };
 
   const modalHandler = () => {
@@ -326,10 +345,17 @@ const DrinkpostReviewDetail = () => {
       <NavbarSimple title={drink?.name}></NavbarSimple>
       <WholeDiv>
         <Usercard>
-          <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
+          <div
+            onClick={toProfileHandler}
+            style={{ display: "flex", alignItems: "center" }}
+          >
             <div>
               <UserImg
-                src={review?.user.profile !== "no image" ? review?.user.profile : defaultImg}
+                src={
+                  review?.user.profile !== "no image"
+                    ? review?.user.profile
+                    : defaultImg
+                }
               ></UserImg>
             </div>
             <div>
@@ -339,27 +365,16 @@ const DrinkpostReviewDetail = () => {
           {review?.user.userId.toString() !== localStorage.getItem("myId") ? (
             <FollowDiv
               style={{
-                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+                backgroundColor:
+                  following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
               }}
               onClick={followHandler}
             >
               {following === 0 ? "팔로우" : "언팔로우"}
             </FollowDiv>
           ) : null}
-          {/* <FollowDiv
-            style={{
-              backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
-            }}
-            onClick={followHandler}
-          >
-            {following === 0 ? "팔로우" : "언팔로우"}
-          </FollowDiv> */}
         </Usercard>
-        <ImageDiv
-        // style={{
-        //   backgroundImage: `url(${review?.img !== "no image" ? review?.img : fancyDrinkImage})`,
-        // }}
-        >
+        <ImageDiv>
           <img
             src={review?.img !== "no image" ? review?.img : fancyDrinkImage}
             style={{ width: "100%" }}
@@ -368,12 +383,33 @@ const DrinkpostReviewDetail = () => {
         <InfoBox>
           <LikeAndComment>
             <LikeAndCommentDiv>
-              <div onClick={likeHandler}>{LikeIcon}</div>
-              <div>{likeCount}</div>
+              <div
+                onClick={likeHandler}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  margin: "0.5rem",
+                }}
+              >
+                {like ? likeIcon2("var(--c-pink)") : likeIcon2("none")}
+              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {likeCount}
+              </div>
             </LikeAndCommentDiv>
             <LikeAndCommentDiv>
-              <div>{CommentIcon}</div>
-              <div>{subReviewList.length}</div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  margin: "0.5rem",
+                }}
+              >
+                {CommentIcon}
+              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {subReviewList.length}
+              </div>
             </LikeAndCommentDiv>
           </LikeAndComment>
           {review?.user.userId.toString() === localStorage.getItem("myId") ? (
@@ -396,7 +432,7 @@ const DrinkpostReviewDetail = () => {
             style={{ fontFamily: "NanumSquareNeo", resize: "none" }}
             placeholder="댓글을 작성해주세요..."
             value={comment}
-            onChange={e => {
+            onChange={(e) => {
               setComment(e.target.value);
             }}
             minRows={1}
@@ -422,65 +458,95 @@ const DrinkpostReviewDetail = () => {
         style={ThreeDotModal}
         ariaHideApp={false}
       >
-        <div style={{ fontSize: "1rem", color: "var(--c-gray)" }}>후기</div>
+        <div
+          style={{
+            fontSize: "1rem",
+            color: "var(--c-gray)",
+            fontFamily: "NanumSquareNeo",
+          }}
+        >
+          후기
+        </div>
         <div
           onClick={toUpdateHandler}
           style={{ display: "flex", alignItems: "center", height: "40%" }}
         >
-          <div style={{ marginRight: "0.5rem" }}>{EditIcon}</div>
-          <div style={{color : "black"}}>수정하기</div>
+          <ModalIcon>{EditIcon}</ModalIcon>
+          <div
+            style={{
+              color: "black",
+              fontSize: "16px",
+              fontFamily: "NanumSquareNeo",
+            }}
+          >
+            수정하기
+          </div>
         </div>
 
         <div
           onClick={toDeleteQuestionHandler}
           style={{ display: "flex", alignItems: "center", height: "40%" }}
         >
-          <div style={{ marginRight: "0.5rem" }}>{DeleteIcon}</div>
-          <div style={{ color: "#eb0505" }}>삭제하기</div>
+          <ModalIcon>{DeleteIcon}</ModalIcon>
+          <div
+            style={{
+              color: "#eb0505",
+              fontSize: "16px",
+              fontFamily: "NanumSquareNeo",
+            }}
+          >
+            삭제하기
+          </div>
         </div>
       </Modal>
       <Modal
         isOpen={deleteModalOn}
         onRequestClose={() => setDeleteModalOn(false)}
-        style={DeleteModal}
+        style={WhiteModal}
         ariaHideApp={true}
       >
         <div>
-          <p style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>후기를 삭제하시겠습니까?</p>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            height: "50%",
-            fontSize: "1.4rem",
-          }}
-        >
-          <div
-            onClick={deleteHandler}
-            style={{
-              cursor: "pointer",
-              width: "40%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            예
+          <div style={{ padding: "1rem 0 4rem 0" }}>
+            정말 이 후기를 삭제하시겠습니까?
           </div>
-          <div
-            onClick={() => setDeleteModalOn(false)}
-            style={{
-              cursor: "pointer",
-              width: "40%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            아니오
-          </div>
+          <ModalBtnDiv>
+            <ModalBtn onClick={deleteHandler}>예</ModalBtn>
+            <ModalBtn onClick={() => setDeleteModalOn(false)}>아니요</ModalBtn>
+          </ModalBtnDiv>
         </div>
+        {/*<div*/}
+        {/*  style={{*/}
+        {/*    display: "flex",*/}
+        {/*    justifyContent: "space-around",*/}
+        {/*    height: "50%",*/}
+        {/*    fontSize: "1.4rem",*/}
+        {/*  }}*/}
+        {/*>*/}
+        {/*  <div*/}
+        {/*    onClick={deleteHandler}*/}
+        {/*    style={{*/}
+        {/*      cursor: "pointer",*/}
+        {/*      width: "40%",*/}
+        {/*      display: "flex",*/}
+        {/*      alignItems: "center",*/}
+        {/*      justifyContent: "center",*/}
+        {/*    }}*/}
+        {/*  >*/}
+        {/*    예*/}
+        {/*  </div>*/}
+        {/*  <div*/}
+        {/*    onClick={() => setDeleteModalOn(false)}*/}
+        {/*    style={{*/}
+        {/*      cursor: "pointer",*/}
+        {/*      width: "40%",*/}
+        {/*      display: "flex",*/}
+        {/*      alignItems: "center",*/}
+        {/*      justifyContent: "center",*/}
+        {/*    }}*/}
+        {/*  >*/}
+        {/*    아니오*/}
+        {/*  </div>*/}
+        {/*</div>*/}
       </Modal>
     </>
   );

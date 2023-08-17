@@ -25,7 +25,7 @@ const ChatDiv = styled.div`
   }
 `;
 const ImgDiv = styled.div`
-  width: 20%;
+  //width: 20%;
   height: 100%;
   overflow: hidden;
   /* inline-size: 25ch; */
@@ -37,6 +37,7 @@ const ImgDiv = styled.div`
   min-height: 50px;
   max-width: 50px;
   max-height: 50px;
+  flex-basis: 20%;
 `;
 
 const Img = styled.img`
@@ -45,10 +46,18 @@ const Img = styled.img`
   object-fit: cover;
 `;
 
+const DmInfoDiv = styled.div`
+  flex-basis: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
 const Chat = (props: {
   user1: User;
   user2: User;
   chatRoomDetail(user1: number, user2: number): void;
+  lastMessageTime: string;
 }) => {
   const navigate = useNavigate();
   const [user1, setUsers1] = useState<User>({
@@ -75,6 +84,13 @@ const Chat = (props: {
     nickname: "닉네임",
     drinkcount: 0,
   });
+  const [lastMessageTime, setlastMessageTime] = useState<string>("");
+  useEffect(() => {
+    setlastMessageTime(
+      props.lastMessageTime &&
+        props.lastMessageTime.substring(6, 10) + " " + props.lastMessageTime.substring(11, 16)
+    );
+  }, [props.lastMessageTime]);
   useEffect(() => {
     setUsers1(props.user1);
     setUsers2(props.user2);
@@ -99,7 +115,7 @@ const Chat = (props: {
           ></Img>
         )}
       </ImgDiv>
-      <div style={{}}>
+      <DmInfoDiv>
         <div style={{ textAlign: "left" }}>
           <span
             style={{
@@ -116,9 +132,13 @@ const Chat = (props: {
             님과의 채팅
           </span>
           <span style={{ color: "var(--c-gray", fontSize: "12px", marginLeft: "0.5rem" }}>2</span>{" "}
-          <span></span>
         </div>
-      </div>
+
+        <div style={{ textAlign: "right", color: "var(--c-gray)", fontSize: "14px" }}>
+          {lastMessageTime}
+        </div>
+        {/*<div style={{ textAlign:"right"}}>{props.lastMessageTime}</div>*/}
+      </DmInfoDiv>
     </ChatDiv>
   );
 };

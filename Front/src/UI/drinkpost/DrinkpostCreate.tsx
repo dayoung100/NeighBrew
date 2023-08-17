@@ -11,6 +11,8 @@ import axios from "axios";
 import TextareaAutosize from "react-textarea-autosize";
 import NavbarSimple from "../navbar/NavbarSimple";
 import FooterBigBtn from "../footer/FooterBigBtn";
+import Modal from "react-modal";
+import { WhiteModal } from "../../style/common";
 
 // 여기부터 지정한 부분까지 style 부분입니다.
 // GuideText는 h3 tag가 상하 margin을 너무 많이 잡아서 새로 만든 겁니다.
@@ -129,7 +131,7 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${(props) => props.src}) no-repeat center;
+  background: url(${props => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 15px;
   position: relative;
@@ -162,10 +164,18 @@ const DrinkpostCreate = () => {
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
   };
+  const [stringDegree, setStringDegree] = useState(false);
+  const [fileSizeTwenty, setFileSizeTwenty] = useState(false);
+  const [overHundred, setOverHundred] = useState(false);
+  const [isEmptyDesc, setIsEmptyDesc] = useState(false);
+  const [iseEmptyName, setIsEmptyName] = useState(false);
   const [drinkName, setDrinkName] = useState("");
   const [drinkDescription, setDrinkDescription] = useState("");
-  const [drinkAlcohol, setDrinkAlcohol] = useState<any>();
+  const [drinkAlcohol, setDrinkAlcohol] = useState<number>();
   const [inputCheck, setInputCheck] = useState(false);
+
+  const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중 모달
+  const [isClick, setIsClick] = useState(false); //throttle 역할, 폼 중복 제출 막아주기
 
   const navigate = useNavigate();
 
@@ -173,11 +183,17 @@ const DrinkpostCreate = () => {
     setDrinkName(e.target.value);
   };
   const drinkAlcoholHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDrinkAlcohol(e.target.value);
+    if (parseInt(e.target.value) > 100) {
+      setOverHundred(true);
+      return;
+    }
+    if (parseInt(e.target.value) <= 0) {
+      setOverHundred(true);
+      return;
+    }
+    setDrinkAlcohol(parseInt(e.target.value));
   };
-  const drinkDescriptionHandler = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const drinkDescriptionHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDrinkDescription(e.target.value);
   };
 
@@ -196,28 +212,47 @@ const DrinkpostCreate = () => {
   //   };
   // };
 
+  //이미지 압축에 사용하는 옵션
+  const options = {
+    maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
+  };
+
   const drinkSubmitHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isClick) return; //클릭했다면(api 중복호출방지)
+
     const file = imgFile;
     const formData = new FormData();
 
     if (file) {
       if (file.size > 1024 * 1024 * 20) {
-        alert("10MB보다 작은 이미지만 올릴 수 있습니다.");
+        setFileSizeTwenty(true);
         return;
       }
     }
+    if (drinkAlcohol > 100) {
+      setOverHundred(true);
+      return;
+    }
+
+    if (drinkName.trim() === "") {
+      setIsEmptyName(true);
+      return;
+    }
+    if (drinkDescription.trim() === "") {
+      setIsEmptyDesc(true);
+      return;
+    }
     formData.append("name", drinkName.trim());
-    formData.append("upload", file);
+    formData.append("image", file);
     formData.append("description", drinkDescription.trim());
-    formData.append("degree", drinkAlcohol);
+    formData.append("degree", drinkAlcohol.toString());
     formData.append("tagId", selectedCategory.toString());
 
     callApi("post", "api/drink", formData)
-      .then((res) => {
-        console.log(res.data);
+      .then(res => {
         navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
     // axios
     //   .post("/api/drink", formData, {
     //     headers: {
@@ -236,6 +271,17 @@ const DrinkpostCreate = () => {
     //     console.log(res.data);
     //   })
     //   .catch(err => console.error(err));
+  };
+
+  const createApi = (f: FormData) => {
+    callApi("post", "api/drink", f)
+      .then(res => {
+        navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
+      })
+      .catch(err => {
+        console.error(err);
+        setIsClick(false);
+      });
   };
 
   // const uploadImageToServer = async imgFile => {
@@ -300,8 +346,7 @@ const DrinkpostCreate = () => {
           {/* 등록 버튼을 누르기전에는 숨겨져있음 */}
           <ErrorMessage
             style={{
-              display:
-                drinkName.trim().length === 0 && inputCheck ? "block" : "none",
+              display: drinkName.trim().length === 0 && inputCheck ? "block" : "none",
             }}
           >
             이름을 입력해주세요.
@@ -327,10 +372,7 @@ const DrinkpostCreate = () => {
           ></TextAreaDiv>
           <ErrorMessage
             style={{
-              display:
-                drinkDescription.trim().length === 0 && inputCheck
-                  ? "block"
-                  : "none",
+              display: drinkDescription.trim().length === 0 && inputCheck ? "block" : "none",
             }}
           >
             설명을 입력해주세요.
@@ -342,6 +384,7 @@ const DrinkpostCreate = () => {
             defaultValue={0}
             value={drinkAlcohol}
             onChange={drinkAlcoholHandler}
+            type="number"
           ></InputAlcohol>
           <p>%</p>
         </InputDivAlcohol>
@@ -380,11 +423,43 @@ const DrinkpostCreate = () => {
           </span>
         </div> */}
       </div>
-      <FooterBigBtn
-        content="등록하기"
-        color="var(--c-yellow)"
-        reqFunc={drinkSubmitHandler}
-      />
+      <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={drinkSubmitHandler} />
+      <Modal
+        isOpen={overHundred}
+        onRequestClose={() => setOverHundred(false)}
+        style={WhiteModal}
+        ariaHideApp={false}
+      >
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
+          도수는 0도 초과, 100도 이하입니다.
+        </div>
+      </Modal>
+      <Modal
+        isOpen={fileSizeTwenty}
+        onRequestClose={() => setFileSizeTwenty(false)}
+        style={WhiteModal}
+        ariaHideApp={false}
+      >
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
+          20MB 이상의 파일을 업로드할 수 없습니다.
+        </div>
+      </Modal>
+      <Modal
+        isOpen={iseEmptyName}
+        onRequestClose={() => setIsEmptyName(false)}
+        style={WhiteModal}
+        ariaHideApp={false}
+      >
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>술의 이름을 입력해주세요.</div>
+      </Modal>
+      <Modal
+        isOpen={isEmptyDesc}
+        onRequestClose={() => setIsEmptyDesc(false)}
+        style={WhiteModal}
+        ariaHideApp={false}
+      >
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>술의 설명을 입력해주세요.</div>
+      </Modal>
     </div>
   );
 };

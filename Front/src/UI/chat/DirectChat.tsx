@@ -45,6 +45,7 @@ const SendImg = styled.img`
 
 const OtherChat = styled.div`
   position: relative;
+  white-space: pre-wrap;
   display: inline-block;
   background-color: white;
   border-radius: 12px;
@@ -60,6 +61,7 @@ const OtherChat = styled.div`
 `;
 
 const MyChat = styled.div`
+  white-space: pre-wrap;
   position: relative;
   display: inline-block;
   flex-direction: row;
@@ -175,7 +177,7 @@ const Img = styled.img`
 const UserDiv = styled.div`
   display: flex;
   margin-bottom: 1rem;
-  font-size: 18px;
+  font-size: 16px;
   @font-face {
     font-family: "SUITE-Regular";
     src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2")
@@ -183,7 +185,6 @@ const UserDiv = styled.div`
     font-style: normal;
   }
   font-family: "SUITE-Regular";
-  width: 75%;
   align-items: center;
 `;
 
@@ -300,7 +301,7 @@ const DirectChat = () => {
       user1 = receiverId;
       user2 = senderId;
     }
-    callApi("get", `/api/dm/message/${localStorage.getItem("myId")}/${user1}/${user2}`)
+    callApi("get", `/api/dm/message/${user1}/${user2}`)
       .then(res => {
         setUsers([res.data.user1, res.data.user2]);
         setChatRoomName(
@@ -308,7 +309,7 @@ const DirectChat = () => {
             ? res.data.user2.nickname
             : res.data.user1.nickname
         );
-        setMessages(res.data.messages);
+        setMessages(res.data.messages ?? []);
       })
       .catch(e => {
         console.error(e);

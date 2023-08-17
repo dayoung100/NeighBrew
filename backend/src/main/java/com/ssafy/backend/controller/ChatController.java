@@ -32,7 +32,6 @@ public class ChatController {
     }
 
     // 채팅방 퇴장
-    @Transactional
     @MessageMapping("/room/{roomId}/leave")
     public void leaveChatRoom(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
         String res = chatRoomService.leaveChatRoom(roomId, data);
@@ -53,7 +52,6 @@ public class ChatController {
     }
 
     //dm떠나기
-    @Transactional
     @MessageMapping("/dm/{user1Id}/{user2Id}/leave")
     public void leaveDm(@DestinationVariable("user1Id") Long user1Id,
                         @DestinationVariable("user2Id") Long user2Id,

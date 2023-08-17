@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,14 +38,15 @@ public class MeetService {
     private final PushService pushService;
     private final FollowRepository followRepository;
     private final TagRepository tagRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final SidoRepository sidoRepository;
     private final GugunRepository gugunRepository;
     private final DrinkRepository drinkRepository;
     private final UserRepository userRepository;
+    private final MongoTemplate mongoTemplate;
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomUserService chatRoomUserService;
-    private final ChatMessageService chatMessageService;
     private final ModelMapper modelMapper;
 
     public Page<MeetResponseDto> findMeetsByTagId(Long tagId, Pageable pageable) {
@@ -138,8 +140,7 @@ public class MeetService {
     public Map<String, List<MeetResponseDto>> findUserMeetByUserId(Long userId) {
         Map<String, List<MeetResponseDto>> userMeets = Arrays.stream(Status.values()).filter(status -> status != Status.FINISH).collect(Collectors.toMap(Enum::name, status -> new ArrayList<>(), (a, b) -> b));
 
-        List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByStatus(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저ID 값이 올바르지 않습니다."));
+        List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByMeet_CreatedAtDesc(userId);
 
         for (MeetUser meetUser : meetUsers) {
             if (meetUser.getStatus() != Status.FINISH) {
@@ -203,8 +204,9 @@ public class MeetService {
         }
     }
 
+
     private ChatRoom createChatRoom(String meetName) {
-        return chatRoomService.save(ChatRoom.builder().chatRoomName(meetName + "모임의 채팅방").build());
+        return chatRoomRepository.save(ChatRoom.builder().chatRoomName(meetName + "모임의 채팅방").build());
     }
 
     private Meet saveMeetEntity(MeetRequestDto meetRequestDto, Long drinkId, ChatRoom createdChatRoom) {
@@ -240,7 +242,7 @@ public class MeetService {
     private void notifyFollowersAboutMeetCreation(User hostUser, Meet createdMeet) {
         List<Follow> followers = findFollowersByUserId(hostUser.getUserId());
         for (Follow follower : followers) {
-            pushService.send(hostUser, follower.getFollower(), PushType.MEETCREATED, hostUser.getNickname() + "님께서 회원님께서 모임(" + createdMeet.getMeetName() + ")을 생성했습니다.", "meet/" + createdMeet.getMeetId());
+            pushService.send(hostUser, follower.getFollower(), PushType.MEETCREATED, hostUser.getNickname() + "님께서 모임(" + createdMeet.getMeetName() + ")을 생성했습니다.", "https://i9b310.p.ssafy.io/meet/" + createdMeet.getMeetId());
         }
     }
 
@@ -252,12 +254,14 @@ public class MeetService {
         chatRoomUserService.save(createChatRoom
                 .build());
 
-        chatMessageService.save(ChatMessage.builder()
-                .chatRoom(createChatRoom1)
-                .user(hostUser)
+        mongoTemplate.insert(ChatMessageMongo.builder()
+                .chatRoomId(createChatRoom1.getChatRoomId())
+                .chatRoomName(createChatRoom1.getChatRoomName())
                 .message(message)
-                .createdAt(LocalDateTime.now())
-                .build());
+                .createdAt(String.valueOf(LocalDateTime.now()))
+                .userNickname(hostUser.getNickname())
+                .userId(hostUser.getUserId())
+                .build(), "chat");
     }
 
     public void updateMeet(MeetRequestDto meetRequestDto,
@@ -288,7 +292,7 @@ public class MeetService {
         //방장에게는 알림을 전송하지 않는다.
         meetUsers.stream()
                 .filter(user -> !user.getUser().getUserId().equals(meetRequestDto.getHostId()))
-                .forEach(user -> pushService.send(host, user.getUser(), PushType.MEETMODIFIDE, "모임( " + meetRequestDto.getMeetName() + ")의 내용이 수정되었습니다. 확인해 주세요.", "meet/" + updateMeet.getMeetId()));
+                .forEach(user -> pushService.send(host, user.getUser(), PushType.MEETMODIFIDE, "모임( " + meetRequestDto.getMeetName() + ")의 내용이 수정되었습니다. 확인해 주세요.", "https://i9b310.p.ssafy.io/meet/" + updateMeet.getMeetId()));
 
     }
 
@@ -324,16 +328,27 @@ public class MeetService {
         meetUserService.deleteMeetUser(deleteMeet);
 
         //meet 이미지를 지운다
-        if(!deleteMeet.getImgSrc().equals("no image")) s3Service.deleteImg(deleteMeet.getImgSrc());
+        if (!deleteMeet.getImgSrc().equals("no image")) s3Service.deleteImg(deleteMeet.getImgSrc());
 
         //마지막에 모임 정보를 제거한다.
         meetRepository.findById(meetId).ifPresent(meetRepository::delete);
+
+        //모임 참여자가 1명이고
+        if (meetUsers.size() == 1) {
+            if (meetUsers.get(0).getStatus().equals(Status.HOST)) {//그 유저가 방장일 때 채팅방도 같이 제거되도록 변경
+                if (deleteMeet.getHost().getUserId().equals(meetUsers.get(0).getUser().getUserId())) {
+                    log.info("meetId의 채팅방 아이디 {},채팅방은? {} ", meetId, deleteMeet.getChatRoom().getChatRoomId());
+                    chatRoomRepository.deleteById(deleteMeet.getChatRoom().getChatRoomId());
+                }
+            }
+
+        }
 
         //해당 미팅에 참여한 사람들에게 Push 알림을 보낸다.
         //방장에게는 알림을 전송하지 않는다.
         meetUsers.stream()
                 .filter(user -> !user.getUser().getUserId().equals(hostId))
-                .forEach(user -> pushService.send(deleteMeet.getHost(), user.getUser(), PushType.MEETDELETED, deleteMeet.getHost().getNickname() + "님 께서 생성한 모임" + "(" + deleteMeet.getMeetName() + ")이 삭제되었습니다.", "meet"));
+                .forEach(user -> pushService.send(deleteMeet.getHost(), user.getUser(), PushType.MEETDELETED, deleteMeet.getHost().getNickname() + "님 께서 생성한 모임" + "(" + deleteMeet.getMeetName() + ")이 삭제되었습니다.", "https://i9b310.p.ssafy.io/meet"));
     }
 
     public void applyMeet(Long userId, Long meetId) {
@@ -358,7 +373,7 @@ public class MeetService {
         meetUserService.saveMeetUser(attendMeet, attendUser, Status.APPLY);
 
         //호스트에게 알림 제공 - meet의 hostId를 얻어와야한다.
-        pushService.send(attendUser, host, PushType.MEETACCESS, attendUser.getNickname() + "님께서 " + meetUserDto.getMeetRequestDto().getMeetName() + "모임에 참여하고 싶어 합니다.", "meet/" + attendMeet.getMeetId() + "/manage");
+        pushService.send(attendUser, host, PushType.MEETACCESS, attendUser.getNickname() + "님께서 " + meetUserDto.getMeetRequestDto().getMeetName() + "모임에 참여하고 싶어 합니다.", "https://i9b310.p.ssafy.io/meet/" + attendMeet.getMeetId());
     }
 
     @Transactional
@@ -389,6 +404,8 @@ public class MeetService {
         //모임-유저테이블에서 해당 정보 삭제
         meetUserService.deleteExitUser(userId, meetId, Status.GUEST);
 
+        //채팅-유저테이블에서 해당 정보 삭제
+
         //chat_room_user도 사라진다.
         Meet nowMeet = getMeet(meetId);
 
@@ -397,8 +414,6 @@ public class MeetService {
         meetRepository.save(nowMeet);
 
         chatRoomService.deleteExistUser(nowMeet.getChatRoom(), userId);
-
-        //모임 나가면 채팅방에 나갔다고 메세지 남기기
     }
 
     public String manageMeet(Long userId, Long meetId, boolean applyResult) {
@@ -416,7 +431,7 @@ public class MeetService {
             //채팅방에 참여 시킨다
             settingChatRoomUser(ChatRoomUser.builder()
                     .user(manageUser)
-                    .chatRoom(managementMeet.getChatRoom()), managementMeet.getChatRoom(), null, manageUser.getNickname() + "님이 모임에 참여하셨습니다.");
+                    .chatRoom(managementMeet.getChatRoom()), managementMeet.getChatRoom(), host, manageUser.getNickname() + "님이 모임에 참여하셨습니다.");
 
             pushService.send(host, manageUser, PushType.MEETACCESS, "회원님께서 모임(" + managementMeet.getMeetName() + ")참여 되셨습니다.\n 즐거운 시간 되세요.", "meet/" + managementMeet.getMeetId());
 
@@ -441,9 +456,19 @@ public class MeetService {
         List<Meet> meetByMeetDateBefore = meetRepository.findMeetByMeetDateBefore();
         List<Meet> updateMeetList = new ArrayList<>();
         for (Meet meet : meetByMeetDateBefore) {
+            if(meet.getMeetStatus() != MeetStatus.END){
+                List<MeetUser> findUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meet.getMeetId()).orElseThrow(
+                        () -> new IllegalArgumentException("모임에 해당하는 유저를 찾을 수 없습니다.")
+                );
+                findUsers.stream().forEach(users ->
+                        pushService.send(meet.getHost(), users.getUser(), PushType.MEETEVALUATION, "모임(" + meet.getMeetName() + ")이 종료 되었습니다. 평가를 진행해 주세요.", "https://i9b310.p.ssafy.io/rating/" + meet.getMeetId()));
+            }
             meet.setMeetStatus(MeetStatus.END);
+
             updateMeetList.add(meet);
         }
+
+
 
         if (!updateMeetList.isEmpty()) meetRepository.saveAll(updateMeetList);
     }

@@ -38,14 +38,14 @@ public class DrinkService {
     public DrinkResponseDto save(DrinkRequestDto drinkRequestDto, MultipartFile multipartFile) throws IOException {
         if (drinkRequestDto.getName().isEmpty()) throw new IllegalArgumentException("술 이름이 없습니다.");
 
-        String image = "no image";
+        String imgSrc = "no image";
         if (multipartFile != null && !multipartFile.isEmpty()) {
-            image = s3Service.upload(UploadType.DRINKREVIEW, multipartFile);
+            imgSrc = s3Service.upload(UploadType.DRINKREVIEW, multipartFile);
         }
 
         DrinkRequestDto updatedRequestDto = DrinkRequestDto.builder()
                 .name(drinkRequestDto.getName())
-                .image(image)
+                .imgSrc(imgSrc)
                 .degree(drinkRequestDto.getDegree())
                 .description(drinkRequestDto.getDescription())
                 .tagId(drinkRequestDto.getTagId())

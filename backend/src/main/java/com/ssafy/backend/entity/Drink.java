@@ -17,7 +17,7 @@ public class Drink {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long drinkId;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, length = 20)
     private String name;
 
     @Column(nullable = false, columnDefinition = "varchar(255) default 'no image'")

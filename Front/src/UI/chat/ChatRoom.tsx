@@ -13,6 +13,7 @@ import sendImage from "../../assets/send.png";
 import TextareaAutosize from "react-textarea-autosize";
 
 const OtherChat = styled.div`
+  white-space: pre-wrap;
   position: relative;
   display: inline-block;
   background-color: white;
@@ -228,6 +229,7 @@ const ChatRoom = () => {
           {
             message: receivedMessage.message,
             userId: receivedMessage.userId,
+            userNickname: receivedMessage.userNickname,
             user: {
               userId: receivedMessage.userId,
               nickname: receivedMessage.userNickname,
@@ -266,9 +268,8 @@ const ChatRoom = () => {
   useEffect(() => {
     callApi("GET", `api/chatMessage/${id}/${localStorage.getItem("myId")}/messages`)
       .then(res => {
-        // console.log(res.data);
-        setChatRoomName(res.data[0].chatRoom.chatRoomName);
-        setChatRoomId(res.data[0].chatRoom.chatRoomId);
+        setChatRoomName(res.data[0].chatRoomName);
+        setChatRoomId(res.data[0].chatRoomId);
         setMessages(res.data);
       })
       .catch(e => {
@@ -343,7 +344,7 @@ const ChatRoom = () => {
             }}
           >
             <>
-              {chatRoomName}
+              {chatRoomName ?? null}
               <span style={{ fontSize: "14px", color: "var(--c-gray)" }}>
                 &nbsp;&nbsp;&nbsp;&nbsp;{users.length}
               </span>
@@ -407,12 +408,12 @@ const ChatRoom = () => {
             <div
               style={{
                 display: "flex",
-                alignItems: message.user?.userId == userId ? "flex-end" : "flex-start",
+                alignItems: message.userId == userId ? "flex-end" : "flex-start",
                 flexDirection: "column",
               }}
               key={i}
             >
-              {message.user?.userId === userId ? (
+              {message.userId === userId ? (
                 <ChatMyBox>
                   <ChatUserName>나</ChatUserName>
                   <ChatMyMsg>
@@ -427,9 +428,9 @@ const ChatRoom = () => {
               ) : (
                 <ChatOtherBox>
                   <ChatUserName>
-                    {message.user?.nickname.includes("@")
-                      ? message.user?.nickname.split("@")[0]
-                      : message.user?.nickname}
+                    {message.userNickname.includes("@")
+                      ? message.userNickname.split("@")[0]
+                      : message.userNickname}
                   </ChatUserName>
                   <ChatOtherMsg>
                     <OtherChat>{message.message}</OtherChat>

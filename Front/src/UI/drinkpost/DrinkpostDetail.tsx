@@ -43,7 +43,7 @@ const SimpleInfo = styled.div`
 `;
 
 const ImageInfo = styled.div`
-  height: 180%;
+  height: 200%;
   width: 40%;
   position: absolute;
   left: 70%;
@@ -74,7 +74,7 @@ const DescriptionP = styled.p`
   // 늘리기
   &.show {
     display: block;
-    max-height: 800px;
+    max-height: 1000px;
     overflow: auto;
     -webkit-line-clamp: unset;
   }
@@ -145,9 +145,12 @@ const DrinkpostDetail = () => {
   // const drinkUrl = `http://34.64.126.58:5173/drink/${drinkId}`;
   // const reviewUrl = `http://34.64.126.58:5173/drinkreview/${drinkId}`;
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
     callApi("get", `api/drink/${drinkId}`)
       .then(res => {
-        console.log(res.data);
         setDetail(res.data);
       })
       .catch(err => console.log(err));
@@ -158,7 +161,6 @@ const DrinkpostDetail = () => {
   useEffect(() => {
     callApi("get", `api/drinkreview/${drinkId}`)
       .then(res => {
-        console.log(res.data);
         setReviewList(prev => [...prev, ...res.data.content]);
       })
       .catch(err => console.error(err));
@@ -198,7 +200,6 @@ const DrinkpostDetail = () => {
       <DrinkThumbnail>
         <NavbarBackIcon
           onClick={() => {
-            console.log("뒤로갑시다");
             navigate(-1);
           }}
         >
@@ -254,7 +255,7 @@ const DrinkpostDetail = () => {
             </div>
           </SimpleInfo>
           <ImageInfo>
-            <img src={transImage(detail?.image)} alt="" style={{ width: "100%", height: "100%" }} />
+            <img src={transImage(detail?.image)} alt="" style={{ width: "auto", height: "100%" }} />
           </ImageInfo>
         </InfoDiv>
 
@@ -304,9 +305,9 @@ const DrinkpostDetail = () => {
             })}
           </div>
         </div>
-        <RoundBtn onClick={() => navigate(`/drinkpost/${drinkId}/review/create`)}>
+        {/* <RoundBtn onClick={() => navigate(`/drinkpost/${drinkId}/review/create`)}>
           <img src={plusButton} width="25rem" />
-        </RoundBtn>
+        </RoundBtn> */}
       </WholeDiv>
       {/* <Footer></Footer> */}
     </>

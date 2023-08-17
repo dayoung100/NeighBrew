@@ -43,7 +43,7 @@ public class UserCommentLikeService {
             userCommentLikeRepository.save(UserCommentLike.builder().user(user).drinkReview(drinkReview).build());
             drinkReview.increaseLikeCount();
             drinkReviewRepository.save(drinkReview);
-            pushService.send(user, drinkReview.getUser(), PushType.REVIEWLIKE, user.getName() + "님이 회원님의 후기를 좋아합니다. ", "drinkpost/" + drinkReview.getDrink().getDrinkId() + "/" + reviewId);
+            pushService.send(user, drinkReview.getUser(), PushType.REVIEWLIKE, user.getNickname() + "님이 회원님의 후기를 좋아합니다. ", "https://i9b310.p.ssafy.io/drinkpost/" + drinkReview.getDrink().getDrinkId() + "/" + reviewId);
             return true;
         }
     }

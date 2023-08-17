@@ -15,13 +15,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EvaluationRequestDto {
     private Long reviewer;
+    private Long ratedUser;
     private Long meetId;
     private String evaluationType;
     private String description;
 
-    public Evaluation toEntity(User reviewer, Meet meet) {
+    public Evaluation toEntity(User reviewer, User ratedUser, Meet meet) {
         return Evaluation.builder()
                 .reviewer(reviewer)
+                .ratedUser(ratedUser)
                 .meet(meet)
                 .evaluationType(EvaluationType.valueOf(this.evaluationType))
                 .description(this.description)

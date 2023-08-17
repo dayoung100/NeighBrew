@@ -37,7 +37,7 @@ const Loading = () => {
   return (
     <LoadingDiv>
       <LoadingText>로딩중...</LoadingText>
-      <LoadingDot />
+      <LoadingDot color="white" />
       <CircleDiv>
         <img src={CocktailGlass} />
       </CircleDiv>

@@ -55,7 +55,7 @@ public class EvaluationService {
         updateReviewerScore(reviewer, evaluationRequestDto.getEvaluationType(), totalUsers);
 
         userRepository.save(reviewer);
-        evaluationRepositroy.save(evaluationRequestDto.toEntity(ratedUser, meet));
+        evaluationRepositroy.save(evaluationRequestDto.toEntity(reviewer, ratedUser, meet));
 
         return "성공적으로 반영되었습니다.";
     }

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import React from "react";
 
 const ItemDiv = styled.div<{ $outline: boolean }>`
   position: relative;
@@ -155,4 +156,4 @@ const ListInfoItem = (props: ListInfoItemProps) => {
     </div>
   );
 };
-export default ListInfoItem;
+export default React.memo(ListInfoItem);

@@ -43,7 +43,7 @@ public class PushService {
 
         //클라이언트가 미수신한 Event목록이 있을 경우 전송해 event 유실을 예방한다.
         if (!lastEventId.isEmpty()) {
-            log.info("미수신 목록");
+//            log.info("미수신 목록");
             // 미수신 목록들 DB에 저장 -> 상태 고려하여 작성해야함
             sendLostData(lastEventId, userId, sseEmitterId, sseEmitter);
             // 미수신 목록들 전송했으므로 이벤트 캐시 삭제
@@ -96,7 +96,7 @@ public class PushService {
             Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(String.valueOf(receiverId));
             sseEmitters.forEach(
                     (key, emitter) -> {
-                        log.info("전송 key {} ", key);
+//                        log.info("전송 key {} ", key);
                         emitterRepository.saveEventCache(key, push.toDto());//데이터 캐시를 저장한다(유실된 데이터가 발생할 경우 처리하기 위함
                         sendEventToClient(emitter, eventId, key, pushType.name(), push.toDto());//데이터를 receiver에게 전송
                     }
@@ -129,5 +129,10 @@ public class PushService {
 
     public List<Push> getUserPushLog(Long userId) {
         return pushRepository.findByReceiver_UserIdOrderByCreatedAtDesc(userId);
+    }
+
+    @Transactional
+    public void deletePushById(Long pushId) {
+        pushRepository.deleteById(pushId);
     }
 }

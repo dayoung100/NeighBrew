@@ -12,6 +12,10 @@ import FooterBigBtn from "../footer/FooterBigBtn";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import NavbarSimple from "../navbar/NavbarSimple";
+import imageCompression from "browser-image-compression";
+import LoadingDot from "../etc/LoadingDot";
+import Modal from "react-modal";
+import { WhiteModal } from "../../style/common";
 
 const Navdiv = styled.div`
   font-family: "JejuGothic";
@@ -131,16 +135,18 @@ const DrinkpostReviewCreate = () => {
     setReview(e.target.value);
   };
   const myId = localStorage.getItem("myId");
+  const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중 모달
+  const [isClick, setIsClick] = useState(false);
+
   const [file, setFile] = useState(null);
   const imgRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    console.log(myId);
     callApi("get", `api/drink/${drinkId}`)
       .then(res => {
         setDrink(res.data);
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
     callApi("get", `api/drinkreview/review/${reviewId}`).then(res => {
       setReview(res.data.content);
       setNewImgSrc(res.data.img);
@@ -151,15 +157,23 @@ const DrinkpostReviewCreate = () => {
       .then(res => {
         setMyInfo(res.data);
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
   }, []);
 
   // useEffect(() => {
   //   console.dir(file);
   // }, [file]);
 
+  //이미지 압축에 사용하는 옵션
+  const options = {
+    maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
+  };
+
   const reviewSubmit = () => {
     // const file = imgFile;
+    if (isClick) return; //throttle역할
+    setIsClick(true);
+
     const formData = new FormData();
 
     formData.append("drinkReviewId", reviewId);
@@ -176,13 +190,35 @@ const DrinkpostReviewCreate = () => {
       }
     }
 
-    if (file !== null) formData.append("image", file);
     if (file === null && newImgSrc === "no image") {
       formData.append("imgSrc", "no image");
     }
+    if (file !== null) {
+      setLoadingModalOn(true);
+      //압축하면 blob 타입-> file 타입으로 변환
+      const uploadFile = imageCompression(file, options);
+      uploadFile
+        .then(res => {
+          const resizingFile = new File([res], file.name, {
+            type: file.type,
+          });
+          formData.append("image", resizingFile);
+        })
+        .then(() => {
+          updateApi(formData);
+        })
+        .catch(e => {
+          setLoadingModalOn(false);
+          setIsClick(false);
+        });
 
+      formData.append("image", file);
+    }
+  };
+
+  const updateApi = (f: FormData) => {
     axios
-      .put(`/api/drinkreview/${reviewId}/${localStorage.getItem("myId")}`, formData, {
+      .put(`/api/drinkreview/${reviewId}/${localStorage.getItem("myId")}`, f, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
           userId: localStorage.getItem("myId"),
@@ -190,10 +226,12 @@ const DrinkpostReviewCreate = () => {
         },
       })
       .then(res => {
-        console.log(res.data);
         navigate(`/drinkpost/${drinkId}`);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        setIsClick(false);
+      });
   };
 
   const toPreviousPage = () => {
@@ -270,6 +308,18 @@ const DrinkpostReviewCreate = () => {
         </div>
       </CreateBody>
       <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />
+      <Modal
+        isOpen={loadingModalOn}
+        onRequestClose={() => {}} //닫히지 않아야함
+        style={WhiteModal}
+      >
+        <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>
+          <div style={{ paddingBottom: "0.5rem" }}>
+            이미지 압축중입니다. <br /> 잠시만 기다려주세요.
+          </div>
+          <LoadingDot color="var(--c-yellow)" />
+        </div>
+      </Modal>
     </>
   );
 };

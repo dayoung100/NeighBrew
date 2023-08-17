@@ -2,6 +2,7 @@
 [MeetingMemeberManage.tsx]
 모임 관리 - 참여자 관리 페이지
 참여중인 인원, 신청한 인원을 보여주고 승인, 거절이 가능
+!!! 모임 상세로 통합해서 현재 사용하지 않음 !!!
 */
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";

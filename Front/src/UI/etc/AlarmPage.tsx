@@ -23,10 +23,14 @@ const alarmPage = () => {
   // 비동기 통신으로 알림을 불러옵니다. api가 있을 때 까지 주석처리.
   useEffect(() => {
     callApi("get", `api/push/${myId}`)
-      .then(res => setAlarmList(res.data))
+      .then(res => {
+        setAlarmList(res.data);
+      })
       .catch(err => console.error(err));
-  }, [alarmList]);
-
+  }, []);
+  const goPageHandler = (url: string) => {
+    navigate(url);
+  };
   const toBackHandler = () => {
     navigate(-1);
   };

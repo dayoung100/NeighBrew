@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class EvaluationController {
     private final EvaluationService evaluationService;
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> goodEvaluation(@RequestBody EvaluationRequestDto evaluationRequestDto, @RequestHeader("Authorization") String token) {
         Long userId = JwtUtil.parseUserIdFromToken(token);
         return ResponseEntity.ok(evaluationService.calculateScoreByMeetId(evaluationRequestDto, userId));

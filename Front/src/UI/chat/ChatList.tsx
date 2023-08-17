@@ -150,6 +150,7 @@ const ChatList = () => {
                 chatRoomDetail={chatDMRoomDetail}
                 user1={chatRoom.user1}
                 user2={chatRoom.user2}
+                lastMessageTime={chatRoom.lastMessageTime}
               />
             );
           })

@@ -21,6 +21,7 @@ import { getTagName } from "../common";
 import { WhiteModal, ModalInner } from "../../style/common";
 import { formateDate, formateTime } from "./DateTimeCommon";
 import { deleteIcon, editIcon, personIcon } from "./../../assets/AllIcon";
+import YesOrNoModal from "../components/YesOrNoModal";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -157,17 +158,16 @@ const ModalBtn = styled.div`
 
 const ManageModal = {
   content: {
-    top: "87%",
+    top: "90%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "90%",
-    height: "22%",
+    height: "16%",
     borderRadius: "24px 24px 0px 0px",
     backgroundColor: "#ffffff",
     fontFamily: "NanumSquareNeo",
-    fontSize: "1.5rem",
+    fontSize: "16px",
     color: "black",
-    transition: "top 2s ease-in-out",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",
@@ -179,26 +179,49 @@ const ModalIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 2rem;
+  width: 1.5rem;
   margin-right: 1rem;
+`;
+
+const BtnSmall = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  width: 2rem;
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 5px;
+  margin: 0 0.2rem;
+`;
+
+const OKBtn = styled(BtnSmall)`
+  background: var(--c-yellow);
+`;
+
+const NoBtn = styled(BtnSmall)`
+  background: #f28f79;
 `;
 
 const MeetingDetail = () => {
   const ArrowLeftIcon = arrowLeftIcon("white");
   const DeleteIcon = deleteIcon();
   const EditIcon = editIcon();
-  const PersonIcon = personIcon("black", 32);
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
   const [meetDetailData, setMeetDetailData] =
     useState<MeetDetail>(initialMeetDetail); //모임 데이터
   const [memberList, setMemberList] = useState<User[]>([]); //참여자 리스트
+  const [applicantList, setApplicantList] = useState<User[]>([]); //참여자 리스트
   const [userId, setUserId] = useState(0); //현재 유저의 userId
   const [userData, setUserData] = useState(initialUser);
   const [userStatus, setUserStatus] = useState("");
   const [exitModalOn, setExitModalOn] = useState(false); //나가기 모달이 열려있는가?
   const [deleteModalOn, setDeleteModalOn] = useState(false); //나가기 모달이 열려있는가?
   const [simpleModalOn, setSimpleModalOn] = useState(false); //오류 모달이 열려있는가?
-  const [manageModalOn, setManageModalOn] = useState(false); //오류 모달이 열려있는가?
+  const [manageModalOn, setManageModalOn] = useState(false); //관리 모달이 열려있는가?
+  const [acceptModalOn, setAcceptModalOn] = useState(false); //승인거절 모달이 열려있는가?
+  const [targetUser, setTargetUser] = useState<User>(initialUser); //승인/거절할 유저
+  const [targetAction, setTargetAction] = useState(true); //승인:true, 거절:false
   const [errMsg, setErrMsg] = useState(""); //모달에 표시할 오류메시지
   const bgImg =
     meetDetailData.meet.imgSrc == "no image"
@@ -210,10 +233,6 @@ const MeetingDetail = () => {
   const GoBackHandler = () => {
     navigate(-1);
   };
-  //모임 관리 페이지로 이동
-  // const GotoMeetManageHandler = (meetId: number) => {
-  //   navigate(`/meet/${meetId}/manage`);
-  // };
   //특정 술로 이동
   const GotoDrinkPostHandler = (drinkId: number) => {
     navigate(`/drinkpost/${drinkId}`);
@@ -221,10 +240,6 @@ const MeetingDetail = () => {
   //모임 편집 페이지로 이동
   const GotoMeetInfoManage = (meetId: number) => {
     navigate(`/meet/${meetId}/manage/info`);
-  };
-  //모임 참여자 관리페이지로 이동
-  const GotoMemberManage = (meetId: number) => {
-    navigate(`/meet/${meetId}/manage/member`);
   };
   //없는 모임일 경우 뒤로가기(모임 메인으로 이동?)
   const GotoMainHandler = () => {
@@ -272,13 +287,19 @@ const MeetingDetail = () => {
   }, [meetId]);
 
   useEffect(() => {
+    if (meetDetailData === undefined) return;
     if (meetDetailData !== undefined) {
       //users에서 apply인 유저 제외하고 memberList에 넣기
       let members = meetDetailData.users.filter(
         (user, index) => meetDetailData.statuses[index] !== "APPLY"
       );
       setMemberList(members);
-      //유저 상태를 관리(HOST/GUEST/APPLY/NONE)
+      //apply 세팅
+      let applicants = meetDetailData.users.filter(
+        (user, index) => meetDetailData.statuses[index] === "APPLY"
+      );
+      setApplicantList(applicants);
+      //현재 유저의 상태를 관리(HOST/GUEST/APPLY/NONE)
       let index: number | undefined = meetDetailData.users.findIndex(
         (user) => user.userId === userId
       );
@@ -375,6 +396,23 @@ const MeetingDetail = () => {
       });
   };
 
+  //수락/거절하기
+  const memberHandler = (user: User) => {
+    const promise = callApi("post", `api/meet/manage-user`, {
+      userId: user.userId,
+      meetId: parseInt(meetId),
+      applyResult: targetAction,
+    });
+    promise
+      .then(() => {
+        fetchMeetData();
+      })
+      .catch((e) => {
+        setErrMsg(e.response.data);
+        setSimpleModalOn(true);
+      });
+  };
+
   function hasAgeLimit() {
     if (meetDetailData === undefined) return false;
     const res =
@@ -384,6 +422,10 @@ const MeetingDetail = () => {
         : false;
     return res;
   }
+
+  useEffect(() => {
+    console.log("나가기:" + exitModalOn);
+  }, [exitModalOn]);
 
   return (
     <div style={{ color: "var(--c-black)" }}>
@@ -518,96 +560,147 @@ const MeetingDetail = () => {
             );
           })}
         </div>
+        {userStatus === "HOST" && (
+          //신청자 목록
+          <div>
+            <SubTitle style={{ textAlign: "left", marginTop: "2rem" }}>
+              참여 신청
+            </SubTitle>
+            <div style={{ margin: "0 1rem" }}>
+              {applicantList.map((applicant) => {
+                return (
+                  <div
+                    key={applicant.userId}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <UserInfoItem
+                      user={applicant}
+                      isMaster={false}
+                      width={11}
+                    />
+                    <div style={{ display: "flex" }}>
+                      <OKBtn
+                        onClick={() => {
+                          setTargetAction(true);
+                          setTargetUser(applicant);
+                          setAcceptModalOn(true);
+                        }}
+                      >
+                        <img src="/src/assets/checkButtonIcon.svg" />
+                      </OKBtn>
+                      <NoBtn
+                        onClick={() => {
+                          setTargetAction(false);
+                          setTargetUser(applicant);
+                          setAcceptModalOn(true);
+                        }}
+                      >
+                        <img src="/src/assets/XbuttonIcon.svg" />
+                      </NoBtn>
+                    </div>
+                  </div>
+                );
+                exitModalOn;
+              })}
+            </div>
+          </div>
+        )}
+        {/* 나가기모달 */}
         <Modal
           isOpen={exitModalOn}
           onRequestClose={() => setExitModalOn(false)}
           style={WhiteModal}
         >
-          <div>
-            <div style={{ padding: "1rem 0 4rem 0" }}>
-              정말 이 모임에서 나가시겠습니까?
-            </div>
-            <ModalBtnDiv>
-              <ModalBtn
-                onClick={() => {
-                  exitMeet();
-                  setExitModalOn(false);
-                }}
-              >
-                예
-              </ModalBtn>
-              <ModalBtn
-                onClick={() => {
-                  setExitModalOn(false);
-                }}
-              >
-                아니오
-              </ModalBtn>
-            </ModalBtnDiv>
-          </div>
+          <YesOrNoModal
+            msg="정말 이 모임에서 나가시겠습니까?"
+            yesFunc={() => {
+              exitMeet();
+              setExitModalOn(false);
+            }}
+            noFunc={() => {
+              setExitModalOn(false);
+            }}
+          />
         </Modal>
+        {/* 모임 삭제 모달 */}
+        <Modal
+          isOpen={deleteModalOn}
+          onRequestClose={() => setDeleteModalOn(false)}
+          style={WhiteModal}
+        >
+          <YesOrNoModal
+            msg="이 모임을 정말 삭제하시겠습니까?"
+            yesFunc={() => {
+              DeleteMeeting();
+              setDeleteModalOn(false);
+            }}
+            noFunc={() => {
+              setDeleteModalOn(false);
+            }}
+          />
+        </Modal>
+        {/* 승인거절 모달 */}
+        <Modal
+          isOpen={acceptModalOn}
+          onRequestClose={() => setAcceptModalOn(false)}
+          style={WhiteModal}
+        >
+          <YesOrNoModal
+            msg={`유저 ${targetUser.nickname}을/를\n${
+              targetAction ? "승인" : "거절"
+            }하시겠습니까?`}
+            yesFunc={() => {
+              memberHandler(targetUser);
+              setAcceptModalOn(false);
+            }}
+            noFunc={() => {
+              setAcceptModalOn(false);
+            }}
+          />
+        </Modal>
+        {/* 모임 관리 모달 */}
         <Modal
           isOpen={manageModalOn}
           onRequestClose={() => setManageModalOn(false)}
           style={ManageModal}
-          ariaHideApp={false}
         >
-          <div style={{ fontSize: "1rem", color: "var(--c-gray)" }}>
+          <div
+            style={{
+              fontSize: "1rem",
+              color: "var(--c-gray)",
+            }}
+          >
             모임 관리
           </div>
           <div
             onClick={() => GotoMeetInfoManage(parseInt(meetId))}
-            style={{ display: "flex", alignItems: "center", height: "30%" }}
+            style={{ display: "flex", alignItems: "center", height: "40%" }}
           >
             <ModalIcon>{EditIcon}</ModalIcon>
-            <div style={{ color: "black" }}>모임 정보 관리</div>
-          </div>
-          <div
-            onClick={() => GotoMemberManage(parseInt(meetId))}
-            style={{ display: "flex", alignItems: "center", height: "30%" }}
-          >
-            <ModalIcon>{PersonIcon}</ModalIcon>
-            <div style={{ color: "black" }}>참여자 관리</div>
+            <div
+              style={{
+                color: "black",
+              }}
+            >
+              모임 정보 관리
+            </div>
           </div>
           <div
             onClick={() => {
               setManageModalOn(false);
               setDeleteModalOn(true);
             }}
-            style={{ display: "flex", alignItems: "center", height: "30%" }}
+            style={{ display: "flex", alignItems: "center", height: "40%" }}
           >
             <ModalIcon>{DeleteIcon}</ModalIcon>
             <div style={{ color: "#eb0505" }}>삭제하기</div>
           </div>
         </Modal>
-        <Modal
-          isOpen={deleteModalOn}
-          onRequestClose={() => setDeleteModalOn(false)}
-          style={WhiteModal}
-        >
-          <div>
-            <div style={{ padding: "1rem 0 4rem 0" }}>
-              이 모임을 정말 삭제하시겠습니까?
-            </div>
-            <ModalBtnDiv>
-              <ModalBtn
-                onClick={() => {
-                  DeleteMeeting();
-                  setDeleteModalOn(false);
-                }}
-              >
-                예
-              </ModalBtn>
-              <ModalBtn
-                onClick={() => {
-                  setDeleteModalOn(false);
-                }}
-              >
-                아니오
-              </ModalBtn>
-            </ModalBtnDiv>
-          </div>
-        </Modal>
+        {/* 에러 모달 */}
         <Modal
           isOpen={simpleModalOn}
           onRequestClose={() => setSimpleModalOn(false)}
@@ -620,7 +713,6 @@ const MeetingDetail = () => {
         //user 상태에 따라 버튼 변경
         <FooterBigBtn
           content="모임 관리"
-          // reqFunc={() => GotoMeetManageHandler(parseInt(meetId))}
           reqFunc={() => setManageModalOn(true)}
           color="var(--c-yellow)"
           bgColor="var(--c-lightgray)"
