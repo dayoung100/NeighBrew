@@ -42,8 +42,8 @@ public class DrinkReviewController {
 
     // 좋아요 많은 순으로 리뷰 가져오기
     @GetMapping("/likes")
-    public ResponseEntity<Page<DrinkReviewResponseDto>> findAllByOrderByCreatedAtDesc(Pageable pageable) {
-        return ResponseEntity.ok(drinkReviewService.findAllByOrderByCreatedAtDesc(pageable));
+    public ResponseEntity<Page<DrinkReviewResponseDto>> findAllByOrderByLikeCountDesc(Pageable pageable) {
+        return ResponseEntity.ok(drinkReviewService.findAllByOrderByLikeCountDesc(pageable));
     }
 
     @PostMapping("")

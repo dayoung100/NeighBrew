@@ -21,7 +21,7 @@ public interface DrinkReviewRepository extends JpaRepository<DrinkReview, Long> 
     @Query("SELECT DISTINCT dr.drink FROM DrinkReview dr WHERE dr.user.userId = :userId")
     List<Drink> findDrinksByUserId(Long userId);
 
-    Page<DrinkReview> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    Page<DrinkReview> findAllByOrderByLikeCountDesc(Pageable pageable);
 
     Optional<DrinkReview> findByDrinkReviewId(Long drinkReviewId);
 }
