@@ -1,5 +1,6 @@
 package com.ssafy.backend.dto.meet;
 
+import com.ssafy.backend.Enum.MeetStatus;
 import com.ssafy.backend.dto.code.GugunResponseDto;
 import com.ssafy.backend.dto.code.SidoResponseDto;
 import com.ssafy.backend.dto.drink.DrinkResponseDto;
@@ -31,9 +32,10 @@ public class MeetResponseDto {
     private DrinkResponseDto drink;
     private String imgSrc;
     private Long chatRoomId;
+    private MeetStatus meetStatus;
 
     @Builder
-    public MeetResponseDto(Long meetId, String meetName, String description, UserResponseDto host, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, SidoResponseDto sido, GugunResponseDto gugun, Integer minAge, Integer maxAge, Float minLiverPoint, DrinkResponseDto drink, String imgSrc, Long chatRoomId) {
+    public MeetResponseDto(Long meetId, String meetName, String description, UserResponseDto host, Integer nowParticipants, Integer maxParticipants, LocalDateTime meetDate, Long tagId, SidoResponseDto sido, GugunResponseDto gugun, Integer minAge, Integer maxAge, Float minLiverPoint, DrinkResponseDto drink, String imgSrc, Long chatRoomId, MeetStatus meetStatus) {
         this.meetId = meetId;
         this.meetName = meetName;
         this.description = description;
@@ -50,5 +52,6 @@ public class MeetResponseDto {
         this.drink = drink;
         this.imgSrc = imgSrc;
         this.chatRoomId = chatRoomId;
+        this.meetStatus = meetStatus;
     }
 }
