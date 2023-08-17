@@ -7,6 +7,10 @@ import { callApi } from "../../utils/api";
 import ImageInput from "../components/ImageInput";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import NavbarSimple from "../navbar/NavbarSimple";
+import imageCompression from "browser-image-compression";
+import LoadingDot from "../etc/LoadingDot";
+import Modal from "react-modal";
+import { WhiteModal } from "../../style/common";
 
 const CreateBody = styled.div`
   width: 100%;
@@ -38,6 +42,8 @@ const QuestionDiv = styled.div`
 `;
 
 const DrinkpostReviewCreate = () => {
+  const [fileSizeTwenty, setFileSizeTwenty] = useState(false);
+  const [isEmptyContent, setIsEmptyContent] = useState(false);
   const navigate = useNavigate();
   const { drinkId } = useParams();
   const [drink, setDrink] = useState<Drink>();
@@ -48,6 +54,8 @@ const DrinkpostReviewCreate = () => {
   };
   const myId = localStorage.getItem("myId");
   const [imgFile, setImgFile] = useState(null);
+  const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중일 때 모달(이미지 압축중일때)
+  const [isClick, setIsClick] = useState(false);
 
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`).then(res => {
@@ -60,15 +68,22 @@ const DrinkpostReviewCreate = () => {
     });
   }, []);
 
+  //이미지 압축에 사용하는 옵션
+  const options = {
+    // maxSizeMB: 5, // 허용하는 최대 사이즈 지정
+    maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
+    // fileType: "image/webp",
+  };
+
   const reviewSubmit = () => {
+    if (isClick) return; //클릭했음(api 중복호출방지)
+    setIsClick(true); //클릭했음(api 중복호출방지)
+
     const file = imgFile;
     const formData = new FormData();
 
-    formData.append("drinkId", drinkId);
-    formData.append("content", review);
-    formData.append("image", file);
     if (review === "") {
-      alert("내용을 입력해주세요.");
+      setIsEmptyContent(true);
       return;
     }
     if (file) {
@@ -77,9 +92,36 @@ const DrinkpostReviewCreate = () => {
         return;
       }
     }
+    formData.append("drinkId", drinkId);
+    formData.append("content", review);
+    formData.append("image", file);
 
+    if (file === null) {
+      formData.append("image", file);
+      createApi(formData);
+    } else {
+      setLoadingModalOn(true);
+      const uploadFile = imageCompression(file, options);
+      uploadFile
+        .then(res => {
+          const resizingFile = new File([res], file.name, {
+            type: file.type,
+          });
+          formData.append("image", resizingFile);
+        })
+        .then(() => {
+          createApi(formData);
+        })
+        .catch(() => {
+          setLoadingModalOn(false);
+          setIsClick(false);
+        });
+    }
+  };
+
+  const createApi = (f: FormData) => {
     axios
-      .post(`/api/drinkreview`, formData, {
+      .post(`/api/drinkreview`, f, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
           UserID: myId,
@@ -87,7 +129,9 @@ const DrinkpostReviewCreate = () => {
         },
       })
       .then(res => {
-        navigate(`/drinkpost/${drinkId}/${res.data.drinkReviewId}`);
+        navigate(`/drinkpost/${drinkId}/${res.data.drinkReviewId}`, {
+          replace: true,
+        });
       });
   };
 
@@ -120,8 +164,38 @@ const DrinkpostReviewCreate = () => {
             <ImageInput getFunc={setImgFile} />
           </QuestionDiv>
         </div>
+        <Modal
+          isOpen={fileSizeTwenty}
+          onRequestClose={() => setFileSizeTwenty(false)}
+          style={WhiteModal}
+          ariaHideApp={false}
+        >
+          <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
+            20MB 이상의 파일을 업로드할 수 없습니다.
+          </div>
+        </Modal>
+        <Modal
+          isOpen={isEmptyContent}
+          onRequestClose={() => setIsEmptyContent(false)}
+          style={WhiteModal}
+          ariaHideApp={false}
+        >
+          <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>후기 내용을 입력해주세요.</div>
+        </Modal>
       </CreateBody>
       <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />
+      <Modal
+        isOpen={loadingModalOn}
+        onRequestClose={() => {}} //닫히지 않아야함
+        style={WhiteModal}
+      >
+        <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>
+          <div style={{ paddingBottom: "0.5rem" }}>
+            이미지 압축중입니다. <br /> 잠시만 기다려주세요.
+          </div>
+          <LoadingDot color="var(--c-yellow)" />
+        </div>
+      </Modal>
     </>
   );
 };

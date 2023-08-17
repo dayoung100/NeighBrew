@@ -42,6 +42,8 @@ import {
 } from "./CheckValid";
 import Modal from "react-modal";
 import { Tooltip } from "react-tooltip";
+import imageCompression from "browser-image-compression";
+import LoadingDot from "../etc/LoadingDot";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -140,6 +142,7 @@ const MeetingCreate = () => {
   //모달 관련
   const [isModalOn, setIsModalOn] = useState(false);
   const [errorMsg, setErrorMsg] = useState(""); //모달에 띄울 에러메시지
+  const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중일 때 모달(이미지 압축중일때)
 
   //모임 및 유저 정보
   const [userId, setUserId] = useState(0); //현재 유저의 userId
@@ -259,6 +262,13 @@ const MeetingCreate = () => {
     return res;
   };
 
+  //이미지 압축에 사용하는 옵션
+  const options = {
+    // maxSizeMB: 5, // 허용하는 최대 사이즈 지정
+    maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
+    // fileType: "image/webp",
+  };
+
   //수정 완료 버튼 클릭 api
   const createMeeting = () => {
     if (isClick) return; //throttle역할
@@ -296,15 +306,41 @@ const MeetingCreate = () => {
       f.append("maxAge", maxAge.toString());
     }
     f.append("description", meetDesc);
-    f.append("image", file);
 
+    if (file === null) {
+      f.append("image", file);
+      createApi(f);
+    } else {
+      setLoadingModalOn(true);
+      //압축하면 blob 타입-> file 타입으로 변환
+      const uploadFile = imageCompression(file, options);
+      uploadFile
+        .then((res) => {
+          const resizingFile = new File([res], file.name, {
+            type: file.type,
+          });
+          f.append("image", resizingFile);
+        })
+        .then(() => {
+          createApi(f);
+        })
+        .catch((e) => {
+          setErrorMsg(e.response.data);
+          setLoadingModalOn(false);
+          setIsModalOn(true);
+          setIsClick(false);
+        });
+    }
+  };
+
+  const createApi = (f: FormData) => {
     const promise = callApi("post", `/api/meet/create`, f);
     promise
       .then((res) => {
         GoMeetDetailHandler(res.data.meetId); //모임 상세 페이지로 이동
       })
       .catch((error) => {
-        setErrorMsg(error.response.data);
+        setErrorMsg(error);
         setIsModalOn(true);
         setIsClick(false);
       });
@@ -531,6 +567,20 @@ const MeetingCreate = () => {
       >
         <div style={{ whiteSpace: "pre-line", overflow: "auto" }}>
           {errorMsg}
+        </div>
+      </Modal>
+      <Modal
+        isOpen={loadingModalOn}
+        onRequestClose={() => {}} //닫히지 않아야함
+        style={WhiteModal}
+      >
+        <div
+          style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}
+        >
+          <div style={{ paddingBottom: "0.5rem" }}>
+            이미지 압축중입니다. <br /> 잠시만 기다려주세요.
+          </div>
+          <LoadingDot color="var(--c-yellow)" />
         </div>
       </Modal>
     </div>

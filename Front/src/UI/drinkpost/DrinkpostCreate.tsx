@@ -174,6 +174,9 @@ const DrinkpostCreate = () => {
   const [drinkAlcohol, setDrinkAlcohol] = useState<number>();
   const [inputCheck, setInputCheck] = useState(false);
 
+  const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중 모달
+  const [isClick, setIsClick] = useState(false); //throttle 역할, 폼 중복 제출 막아주기
+
   const navigate = useNavigate();
 
   const drinkNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -209,7 +212,14 @@ const DrinkpostCreate = () => {
   //   };
   // };
 
+  //이미지 압축에 사용하는 옵션
+  const options = {
+    maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
+  };
+
   const drinkSubmitHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isClick) return; //클릭했다면(api 중복호출방지)
+
     const file = imgFile;
     const formData = new FormData();
 
@@ -240,7 +250,6 @@ const DrinkpostCreate = () => {
 
     callApi("post", "api/drink", formData)
       .then(res => {
-        console.log(res.data);
         navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
       })
       .catch(err => console.error(err));
@@ -262,6 +271,17 @@ const DrinkpostCreate = () => {
     //     console.log(res.data);
     //   })
     //   .catch(err => console.error(err));
+  };
+
+  const createApi = (f: FormData) => {
+    callApi("post", "api/drink", f)
+      .then(res => {
+        navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
+      })
+      .catch(err => {
+        console.error(err);
+        setIsClick(false);
+      });
   };
 
   // const uploadImageToServer = async imgFile => {
