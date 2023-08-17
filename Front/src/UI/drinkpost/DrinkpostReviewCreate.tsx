@@ -42,6 +42,8 @@ const QuestionDiv = styled.div`
 `;
 
 const DrinkpostReviewCreate = () => {
+  const [fileSizeTwenty, setFileSizeTwenty] = useState(false);
+  const [isEmptyContent, setIsEmptyContent] = useState(false);
   const navigate = useNavigate();
   const { drinkId } = useParams();
   const [drink, setDrink] = useState<Drink>();
@@ -56,12 +58,12 @@ const DrinkpostReviewCreate = () => {
   const [isClick, setIsClick] = useState(false);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then((res) => {
+    callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
   }, []);
   useEffect(() => {
-    callApi("get", `api/user/myinfo`).then((res) => {
+    callApi("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);
     });
   }, []);
@@ -80,10 +82,8 @@ const DrinkpostReviewCreate = () => {
     const file = imgFile;
     const formData = new FormData();
 
-    formData.append("drinkId", drinkId);
-    formData.append("content", review);
     if (review === "") {
-      alert("내용을 입력해주세요.");
+      setIsEmptyContent(true);
       return;
     }
     if (file) {
@@ -92,6 +92,9 @@ const DrinkpostReviewCreate = () => {
         return;
       }
     }
+    formData.append("drinkId", drinkId);
+    formData.append("content", review);
+    formData.append("image", file);
 
     if (file === null) {
       formData.append("image", file);
@@ -100,7 +103,7 @@ const DrinkpostReviewCreate = () => {
       setLoadingModalOn(true);
       const uploadFile = imageCompression(file, options);
       uploadFile
-        .then((res) => {
+        .then(res => {
           const resizingFile = new File([res], file.name, {
             type: file.type,
           });
@@ -125,7 +128,7 @@ const DrinkpostReviewCreate = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then((res) => {
+      .then(res => {
         navigate(`/drinkpost/${drinkId}/${res.data.drinkReviewId}`, {
           replace: true,
         });
@@ -161,20 +164,32 @@ const DrinkpostReviewCreate = () => {
             <ImageInput getFunc={setImgFile} />
           </QuestionDiv>
         </div>
+        <Modal
+          isOpen={fileSizeTwenty}
+          onRequestClose={() => setFileSizeTwenty(false)}
+          style={WhiteModal}
+          ariaHideApp={false}
+        >
+          <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
+            20MB 이상의 파일을 업로드할 수 없습니다.
+          </div>
+        </Modal>
+        <Modal
+          isOpen={isEmptyContent}
+          onRequestClose={() => setIsEmptyContent(false)}
+          style={WhiteModal}
+          ariaHideApp={false}
+        >
+          <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>후기 내용을 입력해주세요.</div>
+        </Modal>
       </CreateBody>
-      <FooterBigBtn
-        content="등록하기"
-        color="var(--c-yellow)"
-        reqFunc={reviewSubmit}
-      />
+      <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />
       <Modal
         isOpen={loadingModalOn}
         onRequestClose={() => {}} //닫히지 않아야함
         style={WhiteModal}
       >
-        <div
-          style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}
-        >
+        <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>
           <div style={{ paddingBottom: "0.5rem" }}>
             이미지 압축중입니다. <br /> 잠시만 기다려주세요.
           </div>
