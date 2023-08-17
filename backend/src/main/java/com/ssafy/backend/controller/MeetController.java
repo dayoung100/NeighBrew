@@ -76,7 +76,7 @@ public class MeetController {
     }
 
     //모임 삭제하기
-    @DeleteMapping("/delete/{meetId}")
+    @DeleteMapping("/{meetId}")
     public ResponseEntity<?> deleteMeet(@PathVariable Long meetId,
                                         @RequestBody Map<String, Long> requestBody) {
         Long hostId = requestBody.get("userId");
