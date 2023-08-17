@@ -53,9 +53,7 @@ const Chat = (props: {
       .then(res => {
         setUsers(res.data);
       })
-      .catch(e => {
-        console.error(e);
-      });
+      .catch(e => {});
   }, []);
   return (
     <ChatDiv onClick={() => props.chatRoomDetail(props.chatRoomId)}>
@@ -84,15 +82,6 @@ const Chat = (props: {
           </span>{" "}
           <span></span>
         </div>
-        {/* <p
-          style={{
-            fontSize: "12px",
-            fontFamily: "SeoulNamsan",
-            marginTop: "6px",
-          }}
-        >
-          10조 채팅방 입니다.
-        </p> */}
       </div>
     </ChatDiv>
   );

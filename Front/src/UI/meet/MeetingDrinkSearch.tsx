@@ -62,7 +62,7 @@ const ReselectBtn = styled.div`
   background: var(--c-lightgray);
   border-radius: 10px;
   width: 3rem;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   font-size: 15px;
   padding: 0.5rem;
   margin: 0.5rem 0 0 auto;
@@ -71,7 +71,7 @@ const ReselectBtn = styled.div`
 const ErrorDiv = styled.div`
   color: red;
   text-align: left;
-  font-family: "SeoulNamsan";
+  font-family: "NanumSquareNeo";
   font-size: 15px;
   padding: 0.5rem;
 `;
@@ -151,7 +151,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
     if (isIntersecting && !throttle) {
       setThrottle(true);
       setTimeout(() => {
-        setPage((prev) => prev + 1);
+        setPage(prev => prev + 1);
         setThrottle(false);
       }, 300);
     }
@@ -166,7 +166,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
         "get",
         `api/drink/search?tagId=${tag}&name=${inputText}&page=${page}&size=10`
       );
-      promise.then((res) => {
+      promise.then(res => {
         setTotalPage(res.data.totalPages);
         setSearchResultList(res.data.content); //받아온 데이터로 리스트 초기화
       });
@@ -183,14 +183,14 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
       `api/drink/search?tagId=${tag}&name=${inputText}&page=${page}&size=10`
     );
     if (page === 0) {
-      promise.then((res) => {
+      promise.then(res => {
         setTotalPage(res.data.totalPages);
         setSearchResultList(res.data.content); //받아온 데이터로 리스트 초기화
       });
     } else {
-      promise.then((res) => {
+      promise.then(res => {
         setTotalPage(res.data.totalPages);
-        setSearchResultList((prev) => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
+        setSearchResultList(prev => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
       });
     }
   }, [page]);
@@ -217,12 +217,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
       <SubTitle>카테고리를 선택해주세요</SubTitle>
       <CateDiv>
         {tag !== 0 && (
-          <DrinkCategory
-            key={tag}
-            getFunc={getDrinkCategory}
-            selectedId={tag}
-            isSearch={false}
-          />
+          <DrinkCategory key={tag} getFunc={getDrinkCategory} selectedId={tag} isSearch={false} />
         )}
       </CateDiv>
       <div ref={parent}>
@@ -260,7 +255,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
                   )}
                   {searchResultList.length > 0 && (
                     <div key={searchResultList[0].drinkId}>
-                      {searchResultList.map((res) => (
+                      {searchResultList.map(res => (
                         <div onClick={() => getDrink(res)} key={res.drinkId}>
                           <OneLineListItem
                             content={res.name}
@@ -279,9 +274,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
                     ></div>
                   )}
                 </div>
-                <CloseDiv onClick={() => setIsSearchFocused(false)}>
-                  ▲닫기
-                </CloseDiv>
+                <CloseDiv onClick={() => setIsSearchFocused(false)}>▲닫기</CloseDiv>
               </SearchResultDiv>
             )}
           </div>
@@ -291,9 +284,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
             <ListInfoItem
               title={drink.name}
               imgSrc={
-                drink.image === "no image"
-                  ? "/src/assets/whiskeyImage.png"
-                  : encodeUrl(drink.image)
+                drink.image === "no image" ? "/src/assets/whiskeyImage.png" : encodeUrl(drink.image)
               }
               tag={getTagName(drink.tagId)}
               content={drink.description}

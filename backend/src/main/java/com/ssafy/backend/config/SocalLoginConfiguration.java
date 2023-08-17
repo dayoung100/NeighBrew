@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class SocalLoginConfiguration {
-
     // RestTemplate을 사용하기 위해 Spring Bean 컴포넌트 등록
     @Bean
     public RestTemplate restTemplate() {
@@ -26,5 +25,4 @@ public class SocalLoginConfiguration {
                 .additionalMessageConverters(new StringHttpMessageConverter(StandardCharsets.UTF_8))
                 .build();
     }
-
 }

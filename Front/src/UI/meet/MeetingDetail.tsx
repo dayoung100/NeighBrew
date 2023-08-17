@@ -27,7 +27,7 @@ import YesOrNoModal from "../components/YesOrNoModal";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(${(props) => props.$bgImgSrc}) no-repeat center;
+    url(${props => props.$bgImgSrc}) no-repeat center;
   background-size: cover;
   width: 100%;
   min-height: 30vh;
@@ -93,7 +93,7 @@ const HostInfo = styled.div`
 `;
 
 const UserProfileImg = styled.div<{ src: string }>`
-  background: url(${(props) => props.src}) no-repeat center;
+  background: url(${props => props.src}) no-repeat center;
   background-size: cover;
   width: 2rem;
   padding-bottom: 2rem;
@@ -159,14 +159,6 @@ const ModalBtnDiv = styled.div`
   align-items: center;
 `;
 
-const ModalBtn = styled.div`
-  width: 5rem;
-  padding: 0.5rem;
-  margin: 0 0.5rem;
-  border-radius: 5px;
-  background: var(--c-yellow);
-`;
-
 const ManageModal = {
   content: {
     top: "90%",
@@ -219,8 +211,7 @@ const MeetingDetail = () => {
   const DeleteIcon = deleteIcon();
   const EditIcon = editIcon();
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
-  const [meetDetailData, setMeetDetailData] =
-    useState<MeetDetail>(initialMeetDetail); //모임 데이터
+  const [meetDetailData, setMeetDetailData] = useState<MeetDetail>(initialMeetDetail); //모임 데이터
   const [memberList, setMemberList] = useState<User[]>([]); //참여자 리스트
   const [applicantList, setApplicantList] = useState<User[]>([]); //참여자 리스트
   const [userId, setUserId] = useState(0); //현재 유저의 userId
@@ -273,17 +264,17 @@ const MeetingDetail = () => {
       const ws = new SockJS("/ws");
       return ws;
     });
+    client.current.connect({}, () => {});
   };
 
   //api호출
   const fetchMeetData = () => {
     const promise = callApi("get", `api/meet/${meetId}`);
     promise
-      .then((res) => {
+      .then(res => {
         setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
       })
-      .catch((e) => {
-        console.log(e);
+      .catch(e => {
         GotoMainHandler();
       });
   };
@@ -301,13 +292,9 @@ const MeetingDetail = () => {
   useEffect(() => {
     if (userId === 0) return;
     const promise = callApi("get", `api/user/${userId}`);
-    promise
-      .then((res) => {
-        setUserData(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    promise.then(res => {
+      setUserData(res.data);
+    });
   }, [userId]);
 
   //meetId가 생기면 api로 데이터 로드
@@ -330,7 +317,7 @@ const MeetingDetail = () => {
       setApplicantList(applicants);
       //현재 유저의 상태를 관리(HOST/GUEST/APPLY/NONE)
       let index: number | undefined = meetDetailData.users.findIndex(
-        (user) => user.userId === userId
+        user => user.userId === userId
       );
       setUserStatus(index === -1 ? "NONE" : meetDetailData.statuses[index]);
     }
@@ -339,16 +326,10 @@ const MeetingDetail = () => {
   //생일을 넣으면 나이를 계산해줌
   const calcAge = (birth: string) => {
     const today = new Date();
-    const birthDate = new Date(birth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-    return age + 1;
+    const currentYear = today.getFullYear();
+    const birthYear = parseInt(birth.substring(0, 4), 10);
+    let age = currentYear - birthYear + 1;
+    return age;
   };
 
   //참여 신청하기
@@ -373,14 +354,12 @@ const MeetingDetail = () => {
       meetId: meetId,
     });
     promise
-      .then((res) => {
+      .then(res => {
         setUserStatus("APPLY");
-        setErrMsg(
-          `모임에 참여 신청하였습니다!\n신청 취소는 '승인 대기중' 버튼을 클릭해주세요.`
-        );
+        setErrMsg(`모임에 참여 신청하였습니다!\n신청 취소는 '승인 대기중' 버튼을 클릭해주세요.`);
         setSimpleModalOn(true);
       })
-      .catch((err) => {
+      .catch(err => {
         setErrMsg(err.response.data);
         setSimpleModalOn(true);
       });
@@ -392,7 +371,7 @@ const MeetingDetail = () => {
       userId: userId,
       meetId: meetId,
     });
-    promise.then((res) => {
+    promise.then(res => {
       setUserStatus("NONE");
     });
   }
@@ -404,7 +383,7 @@ const MeetingDetail = () => {
       meetId: meetId,
     });
     promise
-      .then((res) => {
+      .then(res => {
         setUserStatus("NONE");
       })
       .then(() => fetchMeetData());
@@ -416,10 +395,10 @@ const MeetingDetail = () => {
       userId: parseInt(localStorage.getItem("myId")),
     });
     promise
-      .then((res) => {
+      .then(res => {
         GoBackHandler(); //모임 삭제 후 뒤로가기
       })
-      .catch((e) => {
+      .catch(e => {
         setErrMsg(e.response.data);
         setSimpleModalOn(true);
       });
@@ -436,30 +415,30 @@ const MeetingDetail = () => {
       .then(() => {
         fetchMeetData();
       })
-      .catch((e) => {
+      .catch(e => {
         setErrMsg(e.response.data);
         setSimpleModalOn(true);
       });
   };
 
   //채팅방 참여하기
-  const gotoChat = () => {
-    connectToWebSocket();
-    client.current.send(
-      `/sub/join/${meetDetailData.meet.chatRoomId}`,
-      {},
-      JSON.stringify({ userId })
-    );
+  const gotoChat = async () => {
+    await connectToWebSocket();
+    setTimeout(() => {
+      sendMessageHandler(meetDetailData.meet.chatRoomId);
+    }, 500);
+
     GotoChatHandler();
+  };
+
+  const sendMessageHandler = roomId => {
+    client.current.send(`/sub/join/${roomId}`, {}, JSON.stringify({ userId }));
   };
 
   function hasAgeLimit() {
     if (meetDetailData === undefined) return false;
     const res =
-      (meetDetailData.meet.minAge ?? 0) > 0 ||
-      (meetDetailData.meet.maxAge ?? 0) > 0
-        ? true
-        : false;
+      (meetDetailData.meet.minAge ?? 0) > 0 || (meetDetailData.meet.maxAge ?? 0) > 0 ? true : false;
     return res;
   }
 
@@ -468,10 +447,7 @@ const MeetingDetail = () => {
       <MeetThumbnail $bgImgSrc={bgImg}>
         <DetailHeader>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <div
-              style={{ cursor: "pointer", marginRight: "1rem" }}
-              onClick={GoBackHandler}
-            >
+            <div style={{ cursor: "pointer", marginRight: "1rem" }} onClick={GoBackHandler}>
               {ArrowLeftIcon}
             </div>
             <Tag>{getTagName(meetDetailData.meet.tagId)}</Tag>
@@ -487,11 +463,7 @@ const MeetingDetail = () => {
             {memberList[0] && (
               <div style={{ display: "flex", alignItems: "center" }}>
                 <UserProfileImg
-                  src={
-                    memberList[0].profile === "no image"
-                      ? defaultImg
-                      : memberList[0].profile
-                  }
+                  src={memberList[0].profile === "no image" ? defaultImg : memberList[0].profile}
                 />
                 <div>{memberList[0].nickname}</div>
               </div>
@@ -530,28 +502,16 @@ const MeetingDetail = () => {
         >
           {(meetDetailData.meet.minLiverPoint ?? 0) > 0 && (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <img
-                src="/src/assets/liverIcon.svg"
-                width="20rem"
-                style={{ marginRight: "3px" }}
-              />
+              <img src="/src/assets/liverIcon.svg" width="20rem" style={{ marginRight: "3px" }} />
               <div>{meetDetailData.meet.minLiverPoint}</div>
               IU/L
             </div>
           )}
           {hasAgeLimit() && (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <img
-                src="/src/assets/age.svg"
-                width="20rem"
-                style={{ marginRight: "3px" }}
-              />
-              {meetDetailData.meet.minAge > 0 && (
-                <div>{meetDetailData.meet.minAge}세 이상</div>
-              )}
-              {meetDetailData.meet.maxAge > 0 && (
-                <div>~{meetDetailData.meet.maxAge}세 미만</div>
-              )}
+              <img src="/src/assets/age.svg" width="20rem" style={{ marginRight: "3px" }} />
+              {meetDetailData.meet.minAge > 0 && <div>{meetDetailData.meet.minAge}세 이상</div>}
+              {meetDetailData.meet.maxAge > 0 && <div>~{meetDetailData.meet.maxAge}세 미만</div>}
             </div>
           )}
         </div>
@@ -567,9 +527,7 @@ const MeetingDetail = () => {
           content={meetDetailData.meet.drink.description}
           outLine={false}
           isDrink={true}
-          routingFunc={() =>
-            GotoDrinkPostHandler(meetDetailData.meet.drink.drinkId)
-          }
+          routingFunc={() => GotoDrinkPostHandler(meetDetailData.meet.drink.drinkId)}
         />
         <SubTitle>모임 소개</SubTitle>
         <Description>{meetDetailData.meet.description}</Description>
@@ -592,23 +550,16 @@ const MeetingDetail = () => {
         <div style={{ margin: "0 0.5rem" }}>
           {memberList.map((member, index) => {
             return (
-              <UserInfoItem
-                key={member.userId}
-                user={member}
-                isMaster={index === 0}
-                width={15}
-              />
+              <UserInfoItem key={member.userId} user={member} isMaster={index === 0} width={15} />
             );
           })}
         </div>
         {userStatus === "HOST" && (
           //신청자 목록
           <div>
-            <SubTitle style={{ textAlign: "left", marginTop: "2rem" }}>
-              참여 신청
-            </SubTitle>
+            <SubTitle style={{ textAlign: "left", marginTop: "2rem" }}>참여 신청</SubTitle>
             <div style={{ margin: "0 1rem" }}>
-              {applicantList.map((applicant) => {
+              {applicantList.map(applicant => {
                 return (
                   <div
                     key={applicant.userId}
@@ -618,11 +569,7 @@ const MeetingDetail = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <UserInfoItem
-                      user={applicant}
-                      isMaster={false}
-                      width={11}
-                    />
+                    <UserInfoItem user={applicant} isMaster={false} width={11} />
                     <div style={{ display: "flex" }}>
                       <OKBtn
                         onClick={() => {
@@ -650,11 +597,7 @@ const MeetingDetail = () => {
           </div>
         )}
         {/* 나가기모달 */}
-        <Modal
-          isOpen={exitModalOn}
-          onRequestClose={() => setExitModalOn(false)}
-          style={WhiteModal}
-        >
+        <Modal isOpen={exitModalOn} onRequestClose={() => setExitModalOn(false)} style={WhiteModal}>
           <YesOrNoModal
             msg="정말 이 모임에서 나가시겠습니까?"
             yesFunc={() => {
@@ -690,9 +633,7 @@ const MeetingDetail = () => {
           style={WhiteModal}
         >
           <YesOrNoModal
-            msg={`유저 ${targetUser.nickname}을/를\n${
-              targetAction ? "승인" : "거절"
-            }하시겠습니까?`}
+            msg={`유저 ${targetUser.nickname}을/를\n${targetAction ? "승인" : "거절"}하시겠습니까?`}
             yesFunc={() => {
               memberHandler(targetUser);
               setAcceptModalOn(false);
@@ -757,34 +698,31 @@ const MeetingDetail = () => {
           bgColor="var(--c-lightgray)"
         />
       )}
-      {userStatus === "HOST" &&
-        meetDetailData.meet.meetStatus === "WAITING" && (
-          //user 상태에 따라 버튼 변경
-          <FooterBigBtn
-            content="모임 관리"
-            reqFunc={() => setManageModalOn(true)}
-            color="var(--c-yellow)"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
-      {userStatus === "GUEST" &&
-        meetDetailData.meet.meetStatus === "WAITING" && (
-          <FooterBigBtn
-            content="모임 나가기"
-            reqFunc={() => setExitModalOn(true)} //모임 나가기
-            color="#F28F79"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
-      {userStatus === "APPLY" &&
-        meetDetailData.meet.meetStatus === "WAITING" && (
-          <FooterBigBtn
-            content="승인 대기 중"
-            reqFunc={() => cancelApply()} //참여신청 취소하기
-            color="var(--c-gray)"
-            bgColor="var(--c-lightgray)"
-          />
-        )}
+      {userStatus === "HOST" && meetDetailData.meet.meetStatus === "WAITING" && (
+        //user 상태에 따라 버튼 변경
+        <FooterBigBtn
+          content="모임 관리"
+          reqFunc={() => setManageModalOn(true)}
+          color="var(--c-yellow)"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
+      {userStatus === "GUEST" && meetDetailData.meet.meetStatus === "WAITING" && (
+        <FooterBigBtn
+          content="모임 나가기"
+          reqFunc={() => setExitModalOn(true)} //모임 나가기
+          color="#F28F79"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
+      {userStatus === "APPLY" && meetDetailData.meet.meetStatus === "WAITING" && (
+        <FooterBigBtn
+          content="승인 대기 중"
+          reqFunc={() => cancelApply()} //참여신청 취소하기
+          color="var(--c-gray)"
+          bgColor="var(--c-lightgray)"
+        />
+      )}
       {userStatus === "NONE" && meetDetailData.meet.meetStatus !== "END" && (
         <FooterBigBtn
           content="참여 신청하기"

@@ -36,7 +36,6 @@ const NavbarWithoutSearch = () => {
   const alertButton = alertNavIcon();
   const navigate = useNavigate();
   //알림 클릭 시 알림 창으로 이동
-  //TODO: 알림 페이지 작업 이후 네비게이터 링크 수정해야
   const GotoAlertHandler = () => {
     navigate(`/myPage/alarm`);
   };

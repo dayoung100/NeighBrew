@@ -49,7 +49,6 @@ const TopMenuDetail = styled.button<{ isfocused: string }>`
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
-  const MeetingIcon = meetingicon(chooseChat === 0 ? "var(--c-black)" : "#AAAAAA");
   const navigate = useNavigate();
   const chatRoomDetail = (roomId: number) => {
     navigate(`/chatList/${roomId}`);
@@ -57,26 +56,17 @@ const ChatList = () => {
   const chatDMRoomDetail = (user1: number, user2: number) => {
     navigate(`/directchat/${user1}/${user2}`);
   };
-  const directMessageIcon = directMessage(chooseChat === 0 ? "#AAAAAA" : "var(--c-black)");
 
   const userId = localStorage.getItem("myId");
   const classListHandler = () => {
-    callApi("GET", `api/chatroom/${userId}/getChatRoom`)
-      .then(res => {
-        setChatList(res.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    callApi("GET", `api/chatroom/${userId}/getChatRoom`).then(res => {
+      setChatList(res.data);
+    });
   };
   const dmListHandler = () => {
-    callApi("GET", `api/dm/list/${userId}`)
-      .then(res => {
-        setChatList(res.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    callApi("GET", `api/dm/list/${userId}`).then(res => {
+      setChatList(res.data);
+    });
   };
   useEffect(() => {
     window.scrollTo({
@@ -104,7 +94,6 @@ const ChatList = () => {
             color: chooseChat === 0 ? "var(--c-black)" : "var(--c-borderLinegray)",
           }}
         >
-          {/*{MeetingIcon}*/}
           모임채팅
         </Button>
         <Button
@@ -116,11 +105,9 @@ const ChatList = () => {
             color: chooseChat === 1 ? "var(--c-black)" : "var(--c-gray)",
           }}
         >
-          {/*{directMessageIcon}*/}
           채팅
         </Button>
       </ChatListDiv>
-      {/*<div style={{ padding: "1rem", backgroundColor: "var(--c-lightgray)", minHeight: "760px" }}>*/}
       <div style={{ padding: "1rem", backgroundColor: "white", minHeight: "760px" }}>
         {chatList.length === 0 ? (
           <EmptyMsg

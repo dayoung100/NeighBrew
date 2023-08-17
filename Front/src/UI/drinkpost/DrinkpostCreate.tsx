@@ -7,7 +7,6 @@ import { useState, useRef } from "react";
 import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import ImageInput from "../components/ImageInput";
-import axios from "axios";
 import TextareaAutosize from "react-textarea-autosize";
 import NavbarSimple from "../navbar/NavbarSimple";
 import FooterBigBtn from "../footer/FooterBigBtn";
@@ -164,7 +163,6 @@ const DrinkpostCreate = () => {
   const getDrinkCategory = (tagId: number) => {
     setSelectedCategory(tagId);
   };
-  const [stringDegree, setStringDegree] = useState(false);
   const [fileSizeTwenty, setFileSizeTwenty] = useState(false);
   const [overHundred, setOverHundred] = useState(false);
   const [isEmptyDesc, setIsEmptyDesc] = useState(false);
@@ -174,7 +172,6 @@ const DrinkpostCreate = () => {
   const [drinkAlcohol, setDrinkAlcohol] = useState<number>();
   const [inputCheck, setInputCheck] = useState(false);
 
-  const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중 모달
   const [isClick, setIsClick] = useState(false); //throttle 역할, 폼 중복 제출 막아주기
 
   const navigate = useNavigate();
@@ -198,19 +195,6 @@ const DrinkpostCreate = () => {
   };
 
   const [imgFile, setImgFile] = useState(null);
-  // const imgRef = useRef<HTMLInputElement>(null);
-
-  //이미지 파일 업로드 시 미리보기
-  // const saveImgFile = () => {
-  //   const file = imgRef.current.files[0];
-  //   const reader = new FileReader();
-  //   reader.readAsDataURL(file);
-  //   reader.onloadend = () => {
-  //     if (typeof reader.result === "string") {
-  //       setImgFile(reader.result);
-  //     }
-  //   };
-  // };
 
   //이미지 압축에 사용하는 옵션
   const options = {
@@ -248,29 +232,9 @@ const DrinkpostCreate = () => {
     formData.append("degree", drinkAlcohol.toString());
     formData.append("tagId", selectedCategory.toString());
 
-    callApi("post", "api/drink", formData)
-      .then(res => {
-        navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
-      })
-      .catch(err => console.error(err));
-    // axios
-    //   .post("/api/drink", formData, {
-    //     headers: {
-    //       Authorization: "Bearer " + localStorage.getItem("token"),
-    //       "Content-Type": "multipart/form-data",
-    //     },
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //     navigate(`/drinkpost/${res.data.drinkId}`);
-    //   })
-    //   .catch(err => console.error(err));
-
-    // callApi("post", "api/drink", formData)
-    //   .then(res => {
-    //     console.log(res.data);
-    //   })
-    //   .catch(err => console.error(err));
+    callApi("post", "api/drink", formData).then(res => {
+      navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
+    });
   };
 
   const createApi = (f: FormData) => {
@@ -279,57 +243,9 @@ const DrinkpostCreate = () => {
         navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
       })
       .catch(err => {
-        console.error(err);
         setIsClick(false);
       });
   };
-
-  // const uploadImageToServer = async imgFile => {
-  //   const file = imgRef.current.files[0];
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("img", file);
-  //     const response = await axios.post("https://i9b310.p.ssafy.io/api/img/upload", formData, {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     });
-
-  //     return response.data;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // };
-
-  // const submitHandler = async (e: React.MouseEvent<HTMLDivElement>) => {
-  //   let imageUrl: string;
-  //   if (imgFile !== null) {
-  //     imageUrl = await uploadImageToServer(imgFile);
-  //   } else {
-  //     imageUrl = null;
-  //   }
-
-  //   try {
-  //     callApi("post", "api/drink", {
-  //       name: drinkName.trim(),
-  //       image: imageUrl,
-  //       description: drinkDescription.trim(),
-  //       degree: drinkAlcohol,
-  //       tagId: selectedCategory,
-  //     })
-  //       .then(res => {
-  //         // drinkdescription이 없을 경우
-  //         // catch로 로 이동
-  //         if (drinkDescription.trim().length === 0) {
-  //           throw Error;
-  //         }
-  //         navigate(`/drinkpost/${res.data.drinkId}`);
-  //       })
-  //       .catch(() => {
-  //         setInputCheck(true);
-  //       });
-  //   } catch (error) {}
-  // };
 
   return (
     <div>
@@ -390,38 +306,7 @@ const DrinkpostCreate = () => {
         </InputDivAlcohol>
         <QuestionDiv style={{ textAlign: "left" }}>
           <ImageInput getFunc={setImgFile} />
-          {/* <div style={{ display: "flex", alignItems: "center" }}>
-            <Title style={{ margin: "0" }}>대표 이미지</Title>
-
-            <ImgInput>
-              <label htmlFor="img_file">
-                <img
-                  src="/src/assets/imageButton.svg"
-                  style={{ margin: "0 0.5rem" }}
-                />
-              </label>
-              <input
-                type="file"
-                id="img_file"
-                accept="image/jpg, image/png, image/jpeg"
-                onChange={saveImgFile}
-                ref={imgRef}
-              />
-            </ImgInput>
-          </div>
-          {imgFile && <ImageArea src={imgFile}></ImageArea>} */}
         </QuestionDiv>
-        {/* <div style={{ marginTop: "20px", display: "flex", alignItems: "flex-end" }}>
-          <span>
-            <b>대표 이미지</b>
-          </span>
-          <span style={{ marginLeft: "12px" }}>
-            <img src={imageButton} alt="chumbuFilePicture" />
-          </span>
-          <span style={{ marginLeft: "15px" }}>
-            <img src={defaultImage} alt="uploadedPicture" />
-          </span>
-        </div> */}
       </div>
       <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={drinkSubmitHandler} />
       <Modal

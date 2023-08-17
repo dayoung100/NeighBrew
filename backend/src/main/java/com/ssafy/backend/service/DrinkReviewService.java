@@ -53,17 +53,16 @@ public class DrinkReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("음료가 존재하지 않습니다."));
     }
 
-    public Page<DrinkReviewResponseDto> getReviewsByDrinkId(Long drinkId, Pageable pageable) {
-        Drink drink = getDrink(drinkId);
-        Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findByDrink(drink, pageable);
-
+    public Page<DrinkReviewResponseDto> findDrinkReviewByDrinkDrinkId(Long drinkId, Pageable pageable) {
+        Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findByDrinkDrinkId(drinkId, pageable);
         return drinkReviewPage.map(DrinkReviewResponseDto::fromEntity);
     }
 
-    public List<DrinkReviewResponseDto> getReviewsByUserIdAndDrinkId(Long userId, Long drinkId) {
+    public List<DrinkReviewResponseDto> findReviewsByUserIdAndDrinkId(Long userId, Long drinkId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
+
         Drink drink = getDrink(drinkId);
 
         List<DrinkReview> drinkReviewList = drinkReviewRepository.findAllByUserAndDrink(user, drink);
@@ -101,7 +100,6 @@ public class DrinkReviewService {
             //모임 이미지가 기본 이미지가 아니면 S3에서 삭제
             if (isdefalutImg(drinkReview.getImg())) s3Service.deleteImg(drinkReview.getImg());
 
-            //새로운 이미지로 업로드
             request.setImgSrc(s3Service.upload(UploadType.DRINKREVIEW, multipartFile));
         } else {//업로드 이미지 없음
             //기본 이미지로 설정하는 것이 아니면 기존 이미지 유지
@@ -115,12 +113,16 @@ public class DrinkReviewService {
         return DrinkReviewResponseDto.fromEntity(drinkReview);
     }
 
+    public Page<DrinkReviewResponseDto> findDrinkReviewByOrderByLikeCountDesc(Pageable pageable) {
+        Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findAllByOrderByLikeCountDesc(pageable);
+        return drinkReviewPage.map(DrinkReviewResponseDto::fromEntity);
+    }
+
     public Page<DrinkReviewResponseDto> findAllByOrderByCreatedAtDesc(Pageable pageable) {
         Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findAllByOrderByCreatedAtDesc(pageable);
         return drinkReviewPage.map(DrinkReviewResponseDto::fromEntity);
     }
-
-    public DrinkReviewResponseDto getReviewByDrinkReviewId(Long drinkReviewId) {
+    public DrinkReviewResponseDto findReviewByDrinkReviewId(Long drinkReviewId) {
         DrinkReview drinkReview = drinkReviewRepository.findByDrinkReviewId(drinkReviewId).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
         return DrinkReviewResponseDto.fromEntity(drinkReview);
 
@@ -128,6 +130,5 @@ public class DrinkReviewService {
 
     private boolean isdefalutImg(String imgSrc) {
         return !imgSrc.equals("no image");
-
     }
 }

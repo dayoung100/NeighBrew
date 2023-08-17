@@ -37,7 +37,6 @@ const Navbar = () => {
   const alertButton = alertNavIcon();
   const navigate = useNavigate();
   //알림 클릭 시 알림 창으로 이동
-  //TODO: 알림 페이지 작업 이후 네비게이터 링크 수정해야
   const GotoAlertHandler = () => {
     navigate(`/myPage/alarm`);
   };
@@ -52,13 +51,7 @@ const Navbar = () => {
         <img src={logo} width="50%" />
       </Logo>
       <BtnDiv style={{ paddingRight: "0.5rem" }}>
-        <Button
-          onClick={() => {
-            console.log("search!");
-          }}
-        >
-          {searchButton}
-        </Button>
+        <Button>{searchButton}</Button>
         <Button onClick={GotoAlertHandler}>{alertButton}</Button>
       </BtnDiv>
     </NavCustom>

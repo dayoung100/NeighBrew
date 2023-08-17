@@ -14,12 +14,14 @@ import java.util.Optional;
 
 @Repository
 public interface DrinkReviewRepository extends JpaRepository<DrinkReview, Long> {
-    Page<DrinkReview> findByDrink(Drink drink, Pageable pageable);
+    Page<DrinkReview> findByDrinkDrinkId(Long drinkId, Pageable pageable);
 
     List<DrinkReview> findAllByUserAndDrink(User user, Drink drink);
 
     @Query("SELECT DISTINCT dr.drink FROM DrinkReview dr WHERE dr.user.userId = :userId")
     List<Drink> findDrinksByUserId(Long userId);
+
+    Page<DrinkReview> findAllByOrderByLikeCountDesc(Pageable pageable);
 
     Page<DrinkReview> findAllByOrderByCreatedAtDesc(Pageable pageable);
 

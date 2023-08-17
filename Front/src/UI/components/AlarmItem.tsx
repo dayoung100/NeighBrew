@@ -21,7 +21,6 @@ const ProfileDiv = styled.div`
 const AlarmContent = styled.div`
   // 폰트 맘에 드는거 비교해보라고 둘 다 해놨습니다.
   font-family: "NanumSquareNeo";
-  /* font-family: "JejuGothic"; */
   word-break: break-all;
   text-align: start;
 `;

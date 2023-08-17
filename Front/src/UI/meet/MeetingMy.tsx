@@ -35,10 +35,16 @@ const meetingMy = () => {
   const [hostMeet, setHostMeet] = useState([]); //userId가 만든 모임
   const [applyMeet, setApplyMeet] = useState([]); //userId가 지원한 모임
   const [guestMeet, setGuestMeet] = useState([]); //userId가 참여한 모임
-  const [endMeet, setEndMeet] = useState([]); //userId가 개설, 참여했는데 끝난 모임
+  const [endHostMeet, setEndHostMeet] = useState([]); //userId가 개설했는데 끝난 모임
+  const [endGuestMeet, setEndGuestMeet] = useState([]); //userId가 참여했는데 끝난 모임
 
   //모임 배열과 waiting, end 중 하나를 넣으면 해당하는 모임만 반환
-  const filterByStatus = (array: Meeting[], status: string) => {};
+  const filterByStatus = (array: Meeting[], status: string) => {
+    const result = array.filter(meet => {
+      return meet.meetStatus === status;
+    });
+    return result;
+  };
 
   useEffect(() => {
     //로컬 스토리지에서 userId 가져오기
@@ -52,23 +58,22 @@ const meetingMy = () => {
   //api 호출
   useEffect(() => {
     const promise = callApi("get", `api/meet/mymeet/${userId}`);
-    promise.then((res) => {
+    promise.then(res => {
       setMeetData(res.data); //받아온 데이터로 meetData 세팅
     });
   }, [userId]);
 
-  //create, apply, attend 모임 갱신
+  //create, apply, attend, end 모임 갱신
   useEffect(() => {
-    //host:host 중에서 waiting인 애들만
-    setHostMeet(meetData.HOST);
-    setApplyMeet(meetData.APPLY);
-    setGuestMeet(meetData.GUEST);
-    //host, guest 중에서 end인 애들만
-    // setEndMeet();
+    setHostMeet(filterByStatus(meetData.HOST, "WAITING")); //HOST 중에서 끝나지 않은 모임
+    setApplyMeet(filterByStatus(meetData.APPLY, "WAITING")); //APPLY 중에서 끝나지 않은 모임
+    setGuestMeet(filterByStatus(meetData.GUEST, "WAITING")); //GUEST 중에서 끝나지 않은 모임
+    //HOST, GUEST 중에서 end인 애들만
+    setEndHostMeet(filterByStatus(meetData.HOST, "END"));
+    setEndGuestMeet(filterByStatus(meetData.GUEST, "END"));
   }, [meetData]);
 
   return (
-    // <div style={{ background: "var(--c-lightgray)", padding: "1rem" }}>
     <div>
       <MeetingDiv>
         <MeetTitle>개설</MeetTitle>
@@ -92,13 +97,22 @@ const meetingMy = () => {
       </MeetingDiv>
       <MeetingDiv>
         <MeetTitle>대기</MeetTitle>
-        {applyMeet.length > 0 && (
-          <MeetingListItem data={applyMeet} isWaiting={true} />
-        )}
+        {applyMeet.length > 0 && <MeetingListItem data={applyMeet} isWaiting={true} />}
         {applyMeet.length === 0 && (
           <EmptyMsg
             title="대기 중인 모임이 없습니다"
             contents={`마음에 드는 모임을 찾아 신청해보세요!\n참여 신청한 모임은 여기에 표시됩니다.`}
+          />
+        )}
+      </MeetingDiv>
+      <MeetingDiv>
+        <MeetTitle>종료</MeetTitle>
+        {endHostMeet.length > 0 && <MeetingListItem data={endHostMeet} isWaiting={false} />}
+        {endGuestMeet.length > 0 && <MeetingListItem data={endGuestMeet} isWaiting={false} />}
+        {endHostMeet.length === 0 && endGuestMeet.length === 0 && (
+          <EmptyMsg
+            title="완료된 모임이 없습니다."
+            contents={`모임을 진행 또는 모임에 참여해보세요!\n완료된 모임은 여기에 표시됩니다.`}
           />
         )}
       </MeetingDiv>

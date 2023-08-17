@@ -9,11 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import javax.transaction.Transactional;
 import java.util.Map;
 
 @Slf4j
@@ -27,8 +25,8 @@ public class ChatController {
 
     //단체 메세지를 보낸다.
     @MessageMapping("/chat/{roomId}/sendMessage")
-    public void sendMessage(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
-        String res = chatRoomService.sendMessage(roomId, data);
+    public void sendChatRoomMessage(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
+        String res = chatRoomService.sendChatRoomMessage(roomId, data);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, res);
     }
 
@@ -42,6 +40,7 @@ public class ChatController {
     @MessageMapping("/join/{roomId}")
     public void join(@DestinationVariable Long roomId,
                      @Payload String data) throws JsonProcessingException {
+        log.info("채팅방 재 입장");
         String res = chatRoomService.joinChatRoom(roomId, data);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, res);
     }
@@ -51,8 +50,6 @@ public class ChatController {
     public void createChatOrSend(@DestinationVariable("user1Id") Long user1Id,
                                  @DestinationVariable("user2Id") Long user2Id,
                                  @Payload String payload) throws JsonProcessingException {
-
-        log.info("메세지 생성 밑 반환 접근");
         Map<String, Object> sendData = user1Id.compareTo(user2Id) < 0
                 ? chatDmService.createChatOrSend(user1Id, user2Id, payload)
                 : chatDmService.createChatOrSend(user2Id, user1Id, payload);
@@ -64,8 +61,6 @@ public class ChatController {
     public void leaveDm(@DestinationVariable("user1Id") Long user1Id,
                         @DestinationVariable("user2Id") Long user2Id,
                         @Payload String payload) throws JsonProcessingException {
-
-        //유저 아이디 값을 비교해서 작은 것을 앞으로 보낸다.
         String sendData = user1Id.compareTo(user2Id) < 0
                 ? chatDmService.leaveDm(user1Id, user2Id, payload)
                 : chatDmService.leaveDm(user2Id, user1Id, payload);

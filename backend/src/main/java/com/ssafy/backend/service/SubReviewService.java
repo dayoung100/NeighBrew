@@ -30,7 +30,7 @@ public class SubReviewService {
 
     // 리뷰의 댓글을 조회하는 API
     public List<SubReviewResponseDto> findByDrinkReviewId(Long drinkReviewId) {
-        return subReviewRepository.findByDrinkReview_DrinkReviewIdOrderByCreatedAtDesc(drinkReviewId)
+        return subReviewRepository.findByDrinkReviewDrinkReviewIdOrderByCreatedAtDesc(drinkReviewId)
                 .stream().map(SubReviewResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }

@@ -70,9 +70,7 @@ const DrinkpostReviewCreate = () => {
 
   //이미지 압축에 사용하는 옵션
   const options = {
-    // maxSizeMB: 5, // 허용하는 최대 사이즈 지정
     maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
-    // fileType: "image/webp",
   };
 
   const reviewSubmit = () => {
@@ -145,12 +143,6 @@ const DrinkpostReviewCreate = () => {
               <b>후기 작성</b>
             </label>
           </div>
-          {/* <Input
-            id="review"
-            placeholder="후기 글을 작성해주세요."
-            onChange={reviewHandler}
-            autoFocus
-          ></Input> */}
           <LongTextInput
             id="review"
             value={review}

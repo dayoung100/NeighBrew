@@ -25,24 +25,29 @@ public class DrinkReviewController {
     private final DrinkReviewService drinkReviewService;
 
     @GetMapping("/{drinkId}")
-    public ResponseEntity<Page<DrinkReviewResponseDto>> getReviewsByDrinkId(@PathVariable Long drinkId, Pageable pageable) {
-        return ResponseEntity.ok(drinkReviewService.getReviewsByDrinkId(drinkId, pageable));
+    public ResponseEntity<Page<DrinkReviewResponseDto>> findDrinkReviewByDrinkDrinkId(@PathVariable Long drinkId, Pageable pageable) {
+        return ResponseEntity.ok(drinkReviewService.findDrinkReviewByDrinkDrinkId(drinkId, pageable));
     }
 
     // 리뷰 아이디로 리뷰 가져오기
     @GetMapping("/review/{drinkReviewId}")
-    public ResponseEntity<DrinkReviewResponseDto> getReviewByDrinkReviewId(@PathVariable Long drinkReviewId) {
-        return ResponseEntity.ok(drinkReviewService.getReviewByDrinkReviewId(drinkReviewId));
+    public ResponseEntity<DrinkReviewResponseDto> findReviewByDrinkReviewId(@PathVariable Long drinkReviewId) {
+        return ResponseEntity.ok(drinkReviewService.findReviewByDrinkReviewId(drinkReviewId));
     }
 
     @GetMapping("/{drinkId}/{userId}")
-    public ResponseEntity<List<DrinkReviewResponseDto>> getReviewByUserIdAndDrinkId(@PathVariable Long drinkId, @PathVariable Long userId) {
-        return ResponseEntity.ok(drinkReviewService.getReviewsByUserIdAndDrinkId(userId, drinkId));
+    public ResponseEntity<List<DrinkReviewResponseDto>> findReviewByUserIdAndDrinkId(@PathVariable Long drinkId, @PathVariable Long userId) {
+        return ResponseEntity.ok(drinkReviewService.findReviewsByUserIdAndDrinkId(userId, drinkId));
     }
 
     // 좋아요 많은 순으로 리뷰 가져오기
     @GetMapping("/likes")
-    public ResponseEntity<Page<DrinkReviewResponseDto>> findAllByOrderByCreatedAtDesc(Pageable pageable) {
+    public ResponseEntity<Page<DrinkReviewResponseDto>> findDrinkReviewByOrderByLikCountDesc(Pageable pageable) {
+        return ResponseEntity.ok(drinkReviewService.findDrinkReviewByOrderByLikeCountDesc(pageable));
+    }
+
+    @GetMapping("/makes")
+    public ResponseEntity<Page<DrinkReviewResponseDto>> findDrinkReviewByOrderByLikeCountDesc(Pageable pageable) {
         return ResponseEntity.ok(drinkReviewService.findAllByOrderByCreatedAtDesc(pageable));
     }
 
@@ -50,7 +55,6 @@ public class DrinkReviewController {
     public ResponseEntity<DrinkReviewResponseDto> createDrinkReview(@RequestHeader("Authorization") String token,
                                                                     @ModelAttribute DrinkReviewRequestDto drinkReviewRequestDto,
                                                                     @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws IOException {
-
         Long userId = JwtUtil.parseUserIdFromToken(token);
         drinkReviewRequestDto.setUserId(userId);
 

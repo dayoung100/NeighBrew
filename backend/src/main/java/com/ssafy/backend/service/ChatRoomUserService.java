@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ChatRoomUserService {
-
     private final ChatRoomUserRepository chatRoomUserRepository;
 
     public ChatRoomUser save(ChatRoomUser chatRoomUser) {
