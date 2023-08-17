@@ -48,6 +48,58 @@ const LikeAndComment = styled.div`
   font-size: 20px;
 `;
 
+const DescriptionP = styled.p`
+  white-space: pre-wrap;
+  word-spacing: 0.2rem;
+  line-height: 150%;
+  font-family: "NanumSquareNeo";
+  /* font-family: "Noto Sans KR"; */
+  font-size: 1rem;
+  margin: 0.5rem;
+
+  text-align: start;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: 150px;
+  transition: max-height 0.3s ease-in-out;
+
+  // 늘리기
+  &.show {
+    display: block;
+    max-height: 1000px;
+    overflow: auto;
+    -webkit-line-clamp: unset;
+  }
+
+  // 줄이기
+  &.hide {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 150px; /* 여기에 max-height 추가 */
+  }
+`;
+
+const MoreButton = styled.div`
+  border: none;
+  display: inline-flex; /* flex를 유지하면서 inline 형태로 만들어 줍니다. */
+  justify-content: flex-end;
+  padding: 0px 0px;
+  color: var(--c-gray);
+  border-radius: 0.5rem;
+  margin-top: 20px;
+  margin-bottom: 0.625rem;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+
+  &.hide {
+    display: none;
+  }
+`;
+
 const Description = styled.div`
   font-family: "NanumSquareNeo";
   text-align: start;
@@ -186,6 +238,7 @@ const DrinkpostReviewDetail = () => {
   const DeleteIcon = deleteIcon();
   const CommentIcon = commentIcon();
   const { drinkId, reviewId } = useParams();
+  const [showMore, setShowMore] = useState(false);
   const [followRejection, setFollowRejection] = useState(false);
   const [deleteModalOn, setDeleteModalOn] = useState(false);
   const [threeDotOn, setThreeDotOn] = useState(false);
@@ -198,6 +251,9 @@ const DrinkpostReviewDetail = () => {
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
+  const toggleShowMore = () => {
+    setShowMore(!showMore);
+  };
   useEffect(() => {
     callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
@@ -408,8 +464,27 @@ const DrinkpostReviewDetail = () => {
             </div>
           ) : null}
         </InfoBox>
-        <Description>{review?.content}</Description>
 
+        <div>
+          <DescriptionP className={showMore ? "show" : ""}>
+            <hr />
+            {review?.content}
+          </DescriptionP>
+          {/* 늘리기 줄이기 토글 */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <MoreButton className={showMore ? "hide" : ""} onClick={toggleShowMore}>
+              더보기
+            </MoreButton>
+            <MoreButton className={showMore ? "" : "hide"} onClick={toggleShowMore}>
+              줄이기
+            </MoreButton>
+          </div>
+        </div>
         <CommentBox>
           <StyleAutoTextArea
             style={{ fontFamily: "NanumSquareNeo", resize: "none" }}
