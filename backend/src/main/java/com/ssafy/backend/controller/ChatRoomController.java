@@ -16,7 +16,6 @@ import java.util.Map;
 @RequestMapping("/api/chatroom")
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
-
     // 채팅방 생성
     @PostMapping("/room/{userId}")
     public ResponseEntity<ChatRoom> createChatRoom(@RequestBody Map<String, Object> map,
