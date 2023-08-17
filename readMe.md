@@ -84,11 +84,29 @@ _- 취향 맞는 술 모임과 다양한 주종 정보를 한 자리에서 즐�
 - MySQL DB
 - Spring Boot
 - stomp
+- OAuth API (kakao, google, naver)
+- JPA
 
 **Frontend**
-
-- React
-- Redux
+- Node(18.X.X) LTS
+- Vite : 4.4.0
+- vite-plugin-pwa : 0.16.4
+- React : 18.2.0
+- Typescript : 5.0.2
+- @formkit/auto-animate : 0.7.0,
+- @stomp/stompjs : 7.0.0,
+- axios : 1.4.0,
+- react-dom : 18.2.0,
+- react-modal : 3.16.1,
+- react-router-dom : 6.14.1,
+- react-slick : 0.29.0,
+- react-textarea-autosize : 8.5.2,
+- slick-carousel : 1.8.1,
+- sockjs-client : 1.6.1,
+- styled-components : 6.0.4,
+- react-tooltip : 5.20.0
+- browser-image-compression : 2.0.2
+- react-swipeable-list : 1.9.1
 
 **Environment**
 
@@ -140,27 +158,20 @@ _- 취향 맞는 술 모임과 다양한 주종 정보를 한 자리에서 즐�
 
 ## 👪  팀 소개
 
-|      <img src="https://avatars.githubusercontent.com/u/70623636?v=4" width="150">      |       <img src="docs/images/1.jpg" width="150">       | <img src="docs/images/1.jpg" width="150"> 
-|:---------------------------------------------------:|:-----------------------------------------------------:|:-----------------------------------------:|
-|             [이현욱](https://github.com/Devwooki)              |        [인영교](https://github.com/yeongkyo1997)         |    [최준서](https://github.com/wnstj7788)    |
-|      <img src="docs/images/1.jpg" width="150">      |       <img src="docs/images/1.jpg" width="150">       | <img src="docs/images/1.jpg" width="150"> 
+| <img src="https://avatars.githubusercontent.com/u/70623636?v=4" width="150"> |   <img src="docs/images/user/young.jpg" width="150">    |       <img src="docs/images/user/jun.jpg" width="150">       
+|:----------------------------------------------------------------------------:|:-------------------------------------------------------:|:------------------------------------------------------------:|
+|              [이현욱](https://github.com/Devwooki)</br>팀장 : BE 개발               | [인영교](https://github.com/yeongkyo1997) </br> BE 개발 및 배포 |     [최준서](https://github.com/wnstj7788)  </br> BE 개발 및 기획    |
+|             <img src="docs/images/user/dayoung.jpg" width="150">             |    <img src="docs/images/user/huck.jpg" width="150">    |       <img src="docs/images/user/bin.jpg" width="150">       
 |
-|        [이다영](https://github.com/dayoung100)         |              [강동혁](https://github.com/ztarhyuk127)               |    [여현빈](https://github.com/godzz733)     |
+|           [이다영](https://github.com/dayoung100)  </br> FE 개발  및 디자인           |          [강동혁](https://github.com/ztarhyuk127)   </br> FE 개발       |      [여현빈](https://github.com/godzz733)    </br> FE 개발       |
 
 <br/><br/>
-
-- 이현욱: 팀장, BE개발ㄴ
-- 인영교: 부팀장, BE 개발, 배포 담당
-- 최준서: BE 개발
-- 이다영: FE 개발
-- 강동혁: FE 개발
-- 여현빈: FE 개발
 
 <!-- 자유 양식 -->
 
 ## 프로젝트 상세 설명
 
-// 개발 환경, 기술 스택, 시스템 구성도, ERD, 기능 상세 설명 등
+ 개발 환경, 기술 스택, 시스템 구성도, ERD, 기능 상세 설명 등
 
 ## ✔ **Git 커밋 메시지 컨벤션**
 
@@ -177,7 +188,6 @@ _- 취향 맞는 술 모임과 다양한 주종 정보를 한 자리에서 즐�
 - 커밋 타입은 **대문자**로 시작하며, 항상 대괄호 안에 파트를 입력하여 시작
 - 관련된 지라 이슈 번호에 괄호를 붙여 뒤에 추가.
 
-ex) **[BE] Feat: 관심지역 알림 ON/OFF 기능 추가(#123)**
 
 <br>
 
@@ -202,18 +212,20 @@ ex) **[BE] Feat: 관심지역 알림 ON/OFF 기능 추가(#123)**
 
 <br>
 
-## ✔ 프로젝트 산출물 (이미지나 URL 연결 필요 )
+## ✔ 프로젝트 산출물 
 
 ---
 
-- [기능명세서 및 요구사항 명세서](https://docs.google.com/spreadsheets/d/1ORhAyYP_sGaXwou7e7pbeROBb1EwLq6k0hua8qWM9TE/edit#gid=0) 
-- [플로우차트]() 추후
-- [아키텍처]() 추후
+- [기능명세서 및 요구사항 명세서](https://docs.google.com/spreadsheets/d/1ORhAyYP_sGaXwou7e7pbeROBb1EwLq6k0hua8qWM9TE/edit#gid=0)
+- [아키텍처](docs/images/architecture.png)
 - [와이어프레임](https://www.figma.com/proto/rwMbAwmZPkt54BI3MRie6N/%EB%84%A4%EC%9D%B4%EB%B8%8C%EB%A3%A8?node-id=1212-1618&starting-point-node-id=1212%3A1618) 
-- [API]() 추후
-- [ERD](docs/images/ERD.jpg) 
-- [회의록](https://www.notion.so/wookdev/8408634b3a0044c8bfa6a6899015e6bb?v=dd2f346799f6490aaec4d346b881829d&pvs=4) 
-- [시스템기술서]() 추후
+- [API](https://documenter.getpostman.com/view/26249570/2s9Y5R1m6X)
+- [ERD](docs/images/ERD.png) 
+- [회의록](https://www.notion.so/wookdev/8408634b3a0044c8bfa6a6899015e6bb?v=dd2f346799f6490aaec4d346b881829d&pvs=4)
+
+
+## 포팅 메뉴얼 
+- [포팅메뉴얼]()
 
 ## ✔ 프로젝트 결과물
 
@@ -226,20 +238,16 @@ ex) **[BE] Feat: 관심지역 알림 ON/OFF 기능 추가(#123)**
 
  <img src="docs/images/page/loginPage.png">
 
-<img width="100%" src=""/>
 
 ### 메인화면(술장)
 
  <img src="docs/images/page/MainPage.png">
  <img src="docs/images/page/drinkSearch.png">
 
-<img width="100%" src=""/>
-
 
 ### 모임 등록
 
  <img src="docs/images/page/meetMaking.png">
-
 
 
 ### 모임 참여
@@ -249,15 +257,12 @@ ex) **[BE] Feat: 관심지역 알림 ON/OFF 기능 추가(#123)**
  <img src="docs/images/page/modifyMeeting.png">
 
 
-
 ### 마이페이지
 <img src="docs/images/page/myInfo.png">
 
 ### 유저페이지
 <img src="docs/images/page/userInfo.png">
 
-
-<img width="100%" src=""/>
 
 
 
