@@ -29,7 +29,7 @@ public class ChatDmService {
     private final UserRepository userRepository;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${neighbrew.url}")
+    @Value("${neighbrew.full.url}")
     private String neighbrewUrl;
 
     //DM 목록 조회
