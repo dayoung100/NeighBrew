@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const Footer = styled.footer<{ $bgcolor: string }>`
-  background: ${(props) => props.$bgcolor};
+  background: ${props => props.$bgcolor};
 `;
 
 const Button = styled.button<{ $btncolor: string }>`
@@ -13,7 +13,7 @@ const Button = styled.button<{ $btncolor: string }>`
   color: var(--c-black);
   font-family: "JejuGothic";
   font-size: 20px;
-  background: ${(props) => props.$btncolor};
+  background: ${props => props.$btncolor};
 `;
 
 type BigBtnProps = {
@@ -34,10 +34,7 @@ type BigBtnProps = {
  */
 const FooterBigBtn = (props: BigBtnProps) => {
   return (
-    <Footer
-      $bgcolor={props.bgColor ? props.bgColor : "white"}
-      className="footer"
-    >
+    <Footer $bgcolor={props.bgColor ? props.bgColor : "white"} className="footer">
       <Button onClick={() => props.reqFunc()} $btncolor={props.color}>
         {props.content}
       </Button>

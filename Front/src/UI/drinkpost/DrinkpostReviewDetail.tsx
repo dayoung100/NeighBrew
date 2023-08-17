@@ -152,9 +152,10 @@ const ThreeDotModal = {
     height: "16%",
     borderRadius: "24px 24px 0px 0px",
     backgroundColor: "#ffffff",
-    fontFamily: "NanumSquareNeo",
+    fontFamily: "SeoulNamsan",
     fontSize: "1.5rem",
     color: "black",
+    transition: "top 2s ease-in-out",
   },
   overlay: {
     background: "rgba(0, 0, 0, 0.5)",
@@ -208,11 +209,11 @@ const DrinkpostReviewDetail = () => {
   const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then((res) => {
+    callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
 
-    callApi("get", `api/subreview/list/${reviewId}`).then((res) => {
+    callApi("get", `api/subreview/list/${reviewId}`).then(res => {
       setSubReviewList(res.data);
     });
   }, [subReviewList]);
@@ -220,10 +221,7 @@ const DrinkpostReviewDetail = () => {
   useEffect(() => {
     async function summonReview() {
       // 술 상세 후기 조회 요청
-      const response1 = await callApi(
-        "get",
-        `api/drinkreview/review/${reviewId}`
-      );
+      const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
       setReview(response1.data);
       setLikeCount(response1.data.likeCount);
       const userId = response1.data.user.userId;
@@ -252,7 +250,7 @@ const DrinkpostReviewDetail = () => {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-    }).then((res) => {
+    }).then(res => {
       setLike(res.data);
     });
   }, [localStorage.getItem("token")]);
@@ -264,9 +262,9 @@ const DrinkpostReviewDetail = () => {
       },
     }).then(() => {
       if (!like) {
-        setLikeCount((prev) => prev + 1);
+        setLikeCount(prev => prev + 1);
       } else {
-        setLikeCount((prev) => prev - 1);
+        setLikeCount(prev => prev - 1);
       }
     });
     setLike(!like);
@@ -286,7 +284,7 @@ const DrinkpostReviewDetail = () => {
   };
 
   const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then((res) => {
+    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -317,7 +315,7 @@ const DrinkpostReviewDetail = () => {
     });
 
     setComment("");
-    setSubReviewList((prev) => [fun.data, ...prev]);
+    setSubReviewList(prev => [fun.data, ...prev]);
   };
 
   const modalHandler = () => {
@@ -345,17 +343,10 @@ const DrinkpostReviewDetail = () => {
       <NavbarSimple title={drink?.name}></NavbarSimple>
       <WholeDiv>
         <Usercard>
-          <div
-            onClick={toProfileHandler}
-            style={{ display: "flex", alignItems: "center" }}
-          >
+          <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
             <div>
               <UserImg
-                src={
-                  review?.user.profile !== "no image"
-                    ? review?.user.profile
-                    : defaultImg
-                }
+                src={review?.user.profile !== "no image" ? review?.user.profile : defaultImg}
               ></UserImg>
             </div>
             <div>
@@ -365,8 +356,7 @@ const DrinkpostReviewDetail = () => {
           {review?.user.userId.toString() !== localStorage.getItem("myId") ? (
             <FollowDiv
               style={{
-                backgroundColor:
-                  following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
               }}
               onClick={followHandler}
             >
@@ -385,31 +375,17 @@ const DrinkpostReviewDetail = () => {
             <LikeAndCommentDiv>
               <div
                 onClick={likeHandler}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  margin: "0.5rem",
-                }}
+                style={{ display: "flex", alignItems: "center", margin: "0.5rem" }}
               >
                 {like ? likeIcon2("var(--c-pink)") : likeIcon2("none")}
               </div>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                {likeCount}
-              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>{likeCount}</div>
             </LikeAndCommentDiv>
             <LikeAndCommentDiv>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  margin: "0.5rem",
-                }}
-              >
+              <div style={{ display: "flex", alignItems: "center", margin: "0.5rem" }}>
                 {CommentIcon}
               </div>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                {subReviewList.length}
-              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>{subReviewList.length}</div>
             </LikeAndCommentDiv>
           </LikeAndComment>
           {review?.user.userId.toString() === localStorage.getItem("myId") ? (
@@ -432,7 +408,7 @@ const DrinkpostReviewDetail = () => {
             style={{ fontFamily: "NanumSquareNeo", resize: "none" }}
             placeholder="댓글을 작성해주세요..."
             value={comment}
-            onChange={(e) => {
+            onChange={e => {
               setComment(e.target.value);
             }}
             minRows={1}
@@ -458,13 +434,7 @@ const DrinkpostReviewDetail = () => {
         style={ThreeDotModal}
         ariaHideApp={false}
       >
-        <div
-          style={{
-            fontSize: "1rem",
-            color: "var(--c-gray)",
-            fontFamily: "NanumSquareNeo",
-          }}
-        >
+        <div style={{ fontSize: "1rem", color: "var(--c-gray)", fontFamily: "NanumSquareNeo" }}>
           후기
         </div>
         <div
@@ -472,13 +442,7 @@ const DrinkpostReviewDetail = () => {
           style={{ display: "flex", alignItems: "center", height: "40%" }}
         >
           <ModalIcon>{EditIcon}</ModalIcon>
-          <div
-            style={{
-              color: "black",
-              fontSize: "16px",
-              fontFamily: "NanumSquareNeo",
-            }}
-          >
+          <div style={{ color: "black", fontSize: "16px", fontFamily: "NanumSquareNeo" }}>
             수정하기
           </div>
         </div>
@@ -488,13 +452,7 @@ const DrinkpostReviewDetail = () => {
           style={{ display: "flex", alignItems: "center", height: "40%" }}
         >
           <ModalIcon>{DeleteIcon}</ModalIcon>
-          <div
-            style={{
-              color: "#eb0505",
-              fontSize: "16px",
-              fontFamily: "NanumSquareNeo",
-            }}
-          >
+          <div style={{ color: "#eb0505", fontSize: "16px", fontFamily: "NanumSquareNeo" }}>
             삭제하기
           </div>
         </div>
@@ -506,47 +464,12 @@ const DrinkpostReviewDetail = () => {
         ariaHideApp={true}
       >
         <div>
-          <div style={{ padding: "1rem 0 4rem 0" }}>
-            정말 이 후기를 삭제하시겠습니까?
-          </div>
+          <div style={{ padding: "1rem 0 4rem 0" }}>정말 이 후기를 삭제하시겠습니까?</div>
           <ModalBtnDiv>
             <ModalBtn onClick={deleteHandler}>예</ModalBtn>
             <ModalBtn onClick={() => setDeleteModalOn(false)}>아니요</ModalBtn>
           </ModalBtnDiv>
         </div>
-        {/*<div*/}
-        {/*  style={{*/}
-        {/*    display: "flex",*/}
-        {/*    justifyContent: "space-around",*/}
-        {/*    height: "50%",*/}
-        {/*    fontSize: "1.4rem",*/}
-        {/*  }}*/}
-        {/*>*/}
-        {/*  <div*/}
-        {/*    onClick={deleteHandler}*/}
-        {/*    style={{*/}
-        {/*      cursor: "pointer",*/}
-        {/*      width: "40%",*/}
-        {/*      display: "flex",*/}
-        {/*      alignItems: "center",*/}
-        {/*      justifyContent: "center",*/}
-        {/*    }}*/}
-        {/*  >*/}
-        {/*    예*/}
-        {/*  </div>*/}
-        {/*  <div*/}
-        {/*    onClick={() => setDeleteModalOn(false)}*/}
-        {/*    style={{*/}
-        {/*      cursor: "pointer",*/}
-        {/*      width: "40%",*/}
-        {/*      display: "flex",*/}
-        {/*      alignItems: "center",*/}
-        {/*      justifyContent: "center",*/}
-        {/*    }}*/}
-        {/*  >*/}
-        {/*    아니오*/}
-        {/*  </div>*/}
-        {/*</div>*/}
       </Modal>
     </>
   );

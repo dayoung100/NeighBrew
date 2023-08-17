@@ -5,7 +5,7 @@ import { AlarmLog } from "../../Type/types";
 
 const ItemDiv = styled.div`
   display: flex;
-  margin: 12px 0px 12px 0px;
+  margin: 0.5rem 1rem 0.5rem 1rem;
 `;
 
 const ProfileDiv = styled.div`
@@ -29,8 +29,14 @@ const alarmItem = ({ alarm }: { alarm: AlarmLog }) => {
   return (
     <>
       <ItemDiv>
-        <div style={{ width: "36px", height: "36px", marginRight: "12px" }}>
-          <ProfileDiv style={{ backgroundImage: `url(${defaultImg})` }}></ProfileDiv>
+        <div style={{ width: "3rem", height: "3rem", marginRight: "12px" }}>
+          <ProfileDiv
+            style={{
+              backgroundImage: `url(${
+                alarm.sender.profile !== "no image" ? alarm.sender.profile : defaultImg
+              })`,
+            }}
+          ></ProfileDiv>
         </div>
         <AlarmContent>{alarm.content}</AlarmContent>
       </ItemDiv>
