@@ -274,7 +274,7 @@ const meetingFind = () => {
                   <div style={{ width: "100%", margin: "0 auto" }}>
                     <SearchBox
                       placeholder="정확한 술의 이름 또는 모임의 이름"
-                      value={inputText}
+                      // value={inputText}
                       changeFunc={(inputTxt: string) => {
                         setInputText(inputTxt);
                       }}
