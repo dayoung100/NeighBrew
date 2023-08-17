@@ -4,6 +4,7 @@ import com.ssafy.backend.dto.meet.MeetRequestDto;
 import com.ssafy.backend.dto.meet.MeetResponseDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.service.MeetService;
+import com.ssafy.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -129,7 +130,7 @@ public class MeetController {
 
     // 1시간마다
     //@Scheduled(cron = "0 0 * * * *")
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 */5 * * * *") //5분마다
     public void checkMeetStatus() {
         meetService.checkMeetStatus();
     }
