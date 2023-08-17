@@ -4,7 +4,6 @@ import { likeIcon2 } from "../../assets/AllIcon";
 import { useState, useEffect } from "react";
 import { Review } from "../../Type/types";
 import { callApi } from "../../utils/api";
-import defaultBeerImage from "../../assets/Beer.jpg";
 import { useNavigate } from "react-router-dom";
 import defaultImg from "../../assets/defaultImg.png";
 import fancyDrinkImage from "../../assets/fancydrinkImage.jpg";
@@ -159,11 +158,6 @@ const ReviewItem = ({ review }: { review: Review }) => {
     });
     setLike(!like);
   };
-  const toggleEllipsis = (str, limit) => {
-    return {
-      string: str.slice(0, limit),
-    };
-  };
 
   return (
     <>
@@ -177,9 +171,6 @@ const ReviewItem = ({ review }: { review: Review }) => {
         <div style={{ width: "100%" }}>
           <UserCard>
             <div style={{ display: "flex" }}>
-              {/* <UserImg
-                src={review.user.profile !== "no image" ? review.user.profile : defaultImg}
-              /> */}
               <div
                 style={{
                   background: `url(${
@@ -191,12 +182,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
                   borderRadius: "50%",
                 }}
               ></div>
-              <UserNickname>
-                {truncatedNickname}
-                {/* {review.user.nickname.includes("@")
-                  ? review.user.nickname.split("@")[0]
-                  : review.user.nickname} */}
-              </UserNickname>
+              <UserNickname>{truncatedNickname}</UserNickname>
             </div>
 
             <LikeDiv>
@@ -213,7 +199,6 @@ const ReviewItem = ({ review }: { review: Review }) => {
               >
                 {like ? likeIcon2("var(--c-pink)") : likeIcon2("none")}
               </div>
-              {/* <LikeButton onClick={likeHandler} /> */}
               <LikeCount>{likeCount}</LikeCount>
             </LikeDiv>
           </UserCard>

@@ -5,9 +5,9 @@ import { User } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 
 const UserProfileImg = styled.div<{ src: string }>`
-  background: url(${(props) => props.src}) no-repeat center;
+  background: url(${props => props.src}) no-repeat center;
   background-size: cover;
-  width: 4rem;
+  min-width: 4rem;
   border-radius: 100px;
   padding-bottom: 4rem;
 `;
@@ -42,11 +42,7 @@ const UserInfoItem = (props: UserInfoItemProps) => {
       }}
       onClick={() => GotoUserDetailHandler(props.user.userId)}
     >
-      <UserProfileImg
-        src={
-          props.user.profile === "no image" ? defaultImg : props.user.profile
-        }
-      />
+      <UserProfileImg src={props.user.profile === "no image" ? defaultImg : props.user.profile} />
       <div style={{ margin: "auto 0 auto 0.5rem" }}>
         <div
           style={{
@@ -54,9 +50,7 @@ const UserInfoItem = (props: UserInfoItemProps) => {
             alignItems: "center",
           }}
         >
-          <div style={{ fontFamily: "JejuGothic", fontSize: "15px" }}>
-            {props.user.nickname}
-          </div>
+          <div style={{ fontFamily: "JejuGothic", fontSize: "15px" }}>{props.user.nickname}</div>
           {props.isMaster && <img src="/src/assets/star.svg" />}
         </div>
         <div

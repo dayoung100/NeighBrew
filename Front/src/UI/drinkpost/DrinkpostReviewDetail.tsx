@@ -20,8 +20,6 @@ import CommentItem from "./../components/CommentItem";
 import Modal from "react-modal";
 import { WhiteModal } from "../../style/common";
 
-import { autoAnimate } from "@formkit/auto-animate";
-
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
   flex-basis: 90%;
@@ -145,7 +143,7 @@ const ThreeDotModal = {
     height: "16%",
     borderRadius: "24px 24px 0px 0px",
     backgroundColor: "#ffffff",
-    fontFamily: "SeoulNamsan",
+    fontFamily: "NanumSquareNeo",
     fontSize: "1.5rem",
     color: "black",
     transition: "top 2s ease-in-out",
@@ -186,7 +184,6 @@ const DrinkpostReviewDetail = () => {
   const MoreIcon = moreIcon();
   const EditIcon = editIcon();
   const DeleteIcon = deleteIcon();
-  const LikeIcon = likeIcon();
   const CommentIcon = commentIcon();
   const { drinkId, reviewId } = useParams();
   const [followRejection, setFollowRejection] = useState(false);
@@ -202,11 +199,11 @@ const DrinkpostReviewDetail = () => {
   const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then((res) => {
+    callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
 
-    callApi("get", `api/subreview/list/${reviewId}`).then((res) => {
+    callApi("get", `api/subreview/list/${reviewId}`).then(res => {
       setSubReviewList(res.data);
     });
   }, []);
@@ -214,10 +211,7 @@ const DrinkpostReviewDetail = () => {
   useEffect(() => {
     async function summonReview() {
       // 술 상세 후기 조회 요청
-      const response1 = await callApi(
-        "get",
-        `api/drinkreview/review/${reviewId}`
-      );
+      const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
       setReview(response1.data);
       setLikeCount(response1.data.likeCount);
       const userId = response1.data.user.userId;
@@ -246,7 +240,7 @@ const DrinkpostReviewDetail = () => {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-    }).then((res) => {
+    }).then(res => {
       setLike(res.data);
     });
   }, [localStorage.getItem("token")]);
@@ -258,9 +252,9 @@ const DrinkpostReviewDetail = () => {
       },
     }).then(() => {
       if (!like) {
-        setLikeCount((prev) => prev + 1);
+        setLikeCount(prev => prev + 1);
       } else {
-        setLikeCount((prev) => prev - 1);
+        setLikeCount(prev => prev - 1);
       }
     });
     setLike(!like);
@@ -280,7 +274,7 @@ const DrinkpostReviewDetail = () => {
   };
 
   const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then((res) => {
+    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -311,12 +305,11 @@ const DrinkpostReviewDetail = () => {
     });
 
     setComment("");
-    setSubReviewList((prev) => [fun.data, ...prev]);
+    setSubReviewList(prev => [fun.data, ...prev]);
   };
 
   const modalHandler = () => {
     setThreeDotOn(true);
-    // setDeleteModalOn(true);
   };
 
   const toDeleteQuestionHandler = () => {
@@ -330,7 +323,6 @@ const DrinkpostReviewDetail = () => {
 
   const deleteHandler = () => {
     callApi("delete", `api/drinkreview/${review?.drinkReviewId}`).then(() => {
-      // navigate(`/drinkpost/${drinkId}`, { replace: true });
       navigate(-1);
     });
   };
@@ -339,16 +331,11 @@ const DrinkpostReviewDetail = () => {
       <NavbarSimple title={drink?.name}></NavbarSimple>
       <WholeDiv>
         <Usercard>
-          <div
-            onClick={toProfileHandler}
-            style={{ display: "flex", alignItems: "center" }}
-          >
+          <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
             <div
               style={{
                 backgroundImage: `url(${
-                  review?.user.profile !== "no image"
-                    ? review?.user.profile
-                    : defaultImg
+                  review?.user.profile !== "no image" ? review?.user.profile : defaultImg
                 })`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
@@ -358,11 +345,7 @@ const DrinkpostReviewDetail = () => {
                 borderRadius: "100px",
                 marginRight: "0.5rem",
               }}
-            >
-              {/* <UserImg
-                src={review?.user.profile !== "no image" ? review?.user.profile : defaultImg}
-              ></UserImg> */}
-            </div>
+            ></div>
             <div>
               <b>{review?.user.nickname}</b>
             </div>
@@ -370,8 +353,7 @@ const DrinkpostReviewDetail = () => {
           {review?.user.userId.toString() !== localStorage.getItem("myId") ? (
             <FollowDiv
               style={{
-                backgroundColor:
-                  following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
+                backgroundColor: following === 0 ? "var(--c-yellow)" : "var(--c-lightgray)",
               }}
               onClick={followHandler}
             >
@@ -398,9 +380,7 @@ const DrinkpostReviewDetail = () => {
               >
                 {like ? likeIcon2("var(--c-pink)") : likeIcon2("none")}
               </div>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                {likeCount}
-              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>{likeCount}</div>
             </LikeAndCommentDiv>
             <LikeAndCommentDiv>
               <div
@@ -412,9 +392,7 @@ const DrinkpostReviewDetail = () => {
               >
                 {CommentIcon}
               </div>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                {subReviewList.length}
-              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>{subReviewList.length}</div>
             </LikeAndCommentDiv>
           </LikeAndComment>
           {review?.user.userId.toString() === localStorage.getItem("myId") ? (
@@ -437,7 +415,7 @@ const DrinkpostReviewDetail = () => {
             style={{ fontFamily: "NanumSquareNeo", resize: "none" }}
             placeholder="댓글을 작성해주세요..."
             value={comment}
-            onChange={(e) => {
+            onChange={e => {
               setComment(e.target.value);
             }}
             minRows={1}
@@ -511,9 +489,7 @@ const DrinkpostReviewDetail = () => {
         ariaHideApp={true}
       >
         <div>
-          <div style={{ padding: "1rem 0 4rem 0" }}>
-            정말 이 후기를 삭제하시겠습니까?
-          </div>
+          <div style={{ padding: "1rem 0 4rem 0" }}>정말 이 후기를 삭제하시겠습니까?</div>
           <ModalBtnDiv>
             <ModalBtn onClick={deleteHandler}>예</ModalBtn>
             <ModalBtn onClick={() => setDeleteModalOn(false)}>아니요</ModalBtn>

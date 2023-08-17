@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
 
 const WrapperDiv = styled.div`
   padding: 2rem 0;

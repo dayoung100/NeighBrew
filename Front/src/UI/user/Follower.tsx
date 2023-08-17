@@ -15,7 +15,6 @@ const Follower = () => {
     navigate(-1);
   };
   const ArrowLeftIcon = arrowLeftIcon("var(--c-black)");
-  // const [users, setUsers] = useState<User[]>([]);
   const [users, setUsers] = useState<userType[]>([]);
   const parent = useRef(null);
   const { userid } = useParams();
@@ -53,9 +52,6 @@ const Follower = () => {
           {/* 이 div는 중앙 정렬을 위한 임의의 div임 */}
         </ChatNav>
       </header>
-      {/* <div style={{ width: "90%", margin: "0 auto" }}>
-        <SearchBox placeholder="유저 닉네임 검색" />
-      </div> */}
       <div ref={parent}>
         {users.map((user, idx) => {
           return (
@@ -75,7 +71,7 @@ const Follower = () => {
                 >
                   {user.nickname}
                 </p>
-                <p style={{ fontFamily: "SeoulNamsan", fontSize: "14px" }}>{user.intro}</p>
+                <p style={{ fontFamily: "NanumSquareNeo", fontSize: "14px" }}>{user.intro}</p>
               </div>
             </User>
           );

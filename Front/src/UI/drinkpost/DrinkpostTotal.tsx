@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import Navbar from "../navbar/NavbarForDrinkpost";
 import Footer from "../footer/Footer";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
-import DrinkpostCreateButton from "./DrinkpostCreateButton";
 import { useNavigate } from "react-router-dom";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
@@ -47,28 +46,20 @@ const drinkpostTotal = () => {
   // const navigate = useNavigate();
 
   const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
-    // console.log(`감지결과 : ${isIntersecting}`);
     // isIntersecting이 true면 감지했다는 뜻임
     if (isIntersecting) {
       if (page < 10) {
         setTimeout(() => {
-          callApi("get", `api/drink?page=${page}&size=12`)
-            .then(res => {
-              setDrinkList(prev => [...prev, ...res.data.content]);
-              setPage(prev => prev + 1);
-              console.log(res.data.content);
-            })
-            .catch(err => {
-              console.error(err);
-            });
-          // console.log(page);
+          callApi("get", `api/drink?page=${page}&size=12`).then(res => {
+            setDrinkList(prev => [...prev, ...res.data.content]);
+            setPage(prev => prev + 1);
+          });
         }, 100);
       }
     }
   };
   const { setTarget } = useIntersectionObserver({ onIntersect });
   // 위의 두 변수로 검사할 요소를 observer로 설정
-  // 여기에는 axios 요청 들어갈 예정
   const toDrinkSearch = () => {
     navigate("/drinkpost/search");
   };
@@ -102,7 +93,6 @@ const drinkpostTotal = () => {
       <RoundBtn onClick={() => navigate("/drinkpost/create")}>
         <img src={plusButton} width="25rem" />
       </RoundBtn>
-      {/* <DrinkpostCreateButton></DrinkpostCreateButton> */}
       <Footer></Footer>
     </>
   );
