@@ -177,9 +177,20 @@ const ReviewItem = ({ review }: { review: Review }) => {
         <div style={{ width: "100%" }}>
           <UserCard>
             <div style={{ display: "flex" }}>
-              <UserImg
+              {/* <UserImg
                 src={review.user.profile !== "no image" ? review.user.profile : defaultImg}
-              />
+              /> */}
+              <div
+                style={{
+                  background: `url(${
+                    review.user.profile !== "no image" ? review.user.profile : defaultImg
+                  }) no-repeat center`,
+                  backgroundSize: "cover",
+                  width: "2rem",
+                  height: "2rem",
+                  borderRadius: "50%",
+                }}
+              ></div>
               <UserNickname>
                 {truncatedNickname}
                 {/* {review.user.nickname.includes("@")

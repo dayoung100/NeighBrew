@@ -1,10 +1,11 @@
 import { callApi } from "../../utils/api";
 import { backIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import AlarmItem from "../components/AlarmItem";
 import Footer from "../footer/Footer";
 import { useNavigate } from "react-router-dom";
+import autoAnimate from "@formkit/auto-animate";
 import { AlarmLog } from "../../Type/types";
 import EmptyMsg from "../components/EmptyMsg.tsx";
 import {
