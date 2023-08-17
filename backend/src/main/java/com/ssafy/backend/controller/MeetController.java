@@ -44,7 +44,7 @@ public class MeetController {
     }
 
     //모임 생성
-    @PostMapping("/")
+    @PostMapping("/create")
     public ResponseEntity<?> saveMeet(Long userId,
                                       MeetRequestDto meetRequestDto,
                                       Long drinkId,
@@ -56,7 +56,7 @@ public class MeetController {
     }
 
     //모임 수정
-    @PutMapping("/{userId}/{meetId}")
+    @PutMapping("/modify/{userId}/{meetId}")
     public ResponseEntity<?> updateMeet(@PathVariable("userId") Long userId,
                                         @PathVariable("meetId") Long meetId,
                                         MeetRequestDto meetRequestDto,
@@ -76,7 +76,7 @@ public class MeetController {
     }
 
     //모임 삭제하기
-    @DeleteMapping("/{meetId}")
+    @DeleteMapping("/delete/{meetId}")
     public ResponseEntity<?> deleteMeet(@PathVariable Long meetId,
                                         @RequestBody Map<String, Long> requestBody) {
         Long hostId = requestBody.get("userId");
