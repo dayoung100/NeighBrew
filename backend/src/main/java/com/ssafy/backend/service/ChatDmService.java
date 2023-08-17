@@ -3,6 +3,7 @@ package com.ssafy.backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.dto.user.UserResponseDto;
 import com.ssafy.backend.entity.ChatDmMessage;
 import com.ssafy.backend.entity.ChatDmRoom;
@@ -27,6 +28,7 @@ public class ChatDmService {
     private final ChatDmMessageRepository chatDmMessageRepository;
     private final ChatDmRoomRepository chatDmRoomRepository;
     private final UserRepository userRepository;
+    private final PushService pushService;
     private final ObjectMapper mapper = new ObjectMapper();
 
     //DM 목록 조회
@@ -78,8 +80,8 @@ public class ChatDmService {
                 .orElseGet(() -> chatDmRoomRepository.save(new ChatDmRoom(user1, user2)));
 
         return (senderId.equals(user1Id))
-                ? saveMessageAndPush(chatDmRoom, user1, message)
-                : saveMessageAndPush(chatDmRoom, user2, message);
+                ? saveMessageAndPush(chatDmRoom, user1, user2, message)
+                : saveMessageAndPush(chatDmRoom, user2, user1, message);
     }
 
     private User getUserOrThrow(Long userId, String errorMessage) {
@@ -121,7 +123,7 @@ public class ChatDmService {
     }
 
     @Transactional
-    public Map<String, Object> saveMessageAndPush(ChatDmRoom chatDmRoom, User sender, String message) {
+    public Map<String, Object> saveMessageAndPush(ChatDmRoom chatDmRoom, User sender, User receiver, String message) {
         LocalDateTime currentTime = LocalDateTime.now();
         //작성자 ID == DM.User1
         if (Objects.equals(sender.getUserId(), chatDmRoom.getUser1().getUserId())) {
@@ -160,15 +162,9 @@ public class ChatDmService {
         result.put("userId", sender.getUserId());
         result.put("user", UserResponseDto.fromEntity(sender));
 
-        /* 채팅에 대한 Push알림은 잠시 막겠습니다.
-        //PushService.send(User sender, User receiver, PushType pushType, String content, String url)
-        String pushContent = sender.getNickname() + "님께서 메세지를 보내셨습니다.\n" + message;
-        StringBuilder moveUrl = new StringBuilder();
-        moveUrl.append("https://").append(neighbrewUrl).append("/directchat")
-                .append("/" + sender.getUserId())
-                .append("/" + receiver.getUserId());
-        pushService.send(sender, receiver, PushType.CHAT, pushContent, moveUrl.toString());
-        */
+
+        pushService.send(sender, receiver, PushType.DM, sender.getNickname() + "님께서 메세지를 보냈습니다.", neighbrewUrl + "/directchat/" + sender.getUserId() + "/" + receiver.getUserId());
+
         return result;
     }
 }

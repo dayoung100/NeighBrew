@@ -3,6 +3,7 @@ package com.ssafy.backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.backend.Enum.PushType;
 import com.ssafy.backend.entity.*;
 import com.ssafy.backend.repository.ChatMessageMongoRepository;
 import com.ssafy.backend.repository.ChatRoomRepository;
@@ -10,6 +11,7 @@ import com.ssafy.backend.repository.ChatRoomUserRepository;
 import com.ssafy.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,11 @@ public class ChatRoomService {
     private final UserRepository userRepository;
     private final MongoTemplate mongoTemplate;
     private final ChatMessageMongoRepository chatMessageMongoRepository;
+    private final PushService pushService;
     private final ObjectMapper mapper = new ObjectMapper();
+
+    @Value("${neighbrew.full.url}")
+    private String neighbrewUrl;
 
     public List<ChatRoom> findUserChatRooms(Long userId) {
         return chatRoomUserRepository.findByUserUserId(userId)
@@ -72,6 +78,12 @@ public class ChatRoomService {
                 .createdAt(String.valueOf(LocalDateTime.now()))
                 .build();
         mongoTemplate.insert(chatMessageMongo);
+
+        //채팅방 유저한테 메세지 전송
+        for(ChatRoomUser cru : chatRoom.getUsers()){
+            pushService.send(user, cru.getUser(), PushType.CHAT, "모임(" + chatRoom.getMeet().getMeetName()  + ")의" + user.getNickname() +  "님께서 메세지를 보냈습니다.", neighbrewUrl + "/chatList" + roomId);
+        }
+
         Map<String, Object> map = mapper.convertValue(jsonNode, Map.class);
         map.put("userNickname", user.getNickname());
         return mapper.writeValueAsString(map);

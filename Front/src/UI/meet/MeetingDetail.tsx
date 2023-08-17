@@ -271,8 +271,10 @@ const MeetingDetail = () => {
   const connectToWebSocket = () => {
     client.current = Stomp.over(() => {
       const ws = new SockJS("/ws");
+      console.log(ws)
       return ws;
     });
+    client.current.connect({}, ()=>{})
   };
 
   //api호출
@@ -443,14 +445,22 @@ const MeetingDetail = () => {
   };
 
   //채팅방 참여하기
-  const gotoChat = () => {
-    connectToWebSocket();
+  const gotoChat = async() => {
+    await connectToWebSocket();
+    setTimeout(() => {
+      
+      sendMessageHandler(meetDetailData.meet.chatRoomId);
+    }, 500);
+    
+    GotoChatHandler();
+  };
+
+  const sendMessageHandler = (roomId) => {
     client.current.send(
-      `/sub/join/${meetDetailData.meet.chatRoomId}`,
+      `/sub/join/${roomId}`,
       {},
       JSON.stringify({ userId })
     );
-    GotoChatHandler();
   };
 
   function hasAgeLimit() {
