@@ -151,7 +151,6 @@ const DrinkpostDetail = () => {
     });
     callApi("get", `api/drink/${drinkId}`)
       .then(res => {
-        console.log(res.data);
         setDetail(res.data);
       })
       .catch(err => console.log(err));
@@ -162,7 +161,6 @@ const DrinkpostDetail = () => {
   useEffect(() => {
     callApi("get", `api/drinkreview/${drinkId}`)
       .then(res => {
-        console.log(res.data);
         setReviewList(prev => [...prev, ...res.data.content]);
       })
       .catch(err => console.error(err));
@@ -202,7 +200,6 @@ const DrinkpostDetail = () => {
       <DrinkThumbnail>
         <NavbarBackIcon
           onClick={() => {
-            console.log("뒤로갑시다");
             navigate(-1);
           }}
         >

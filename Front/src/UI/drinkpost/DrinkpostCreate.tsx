@@ -131,7 +131,7 @@ const ImgInput = styled.div`
 `;
 
 const ImageArea = styled.div<{ src: string }>`
-  background: url(${(props) => props.src}) no-repeat center;
+  background: url(${props => props.src}) no-repeat center;
   background-size: cover;
   border-radius: 15px;
   position: relative;
@@ -193,9 +193,7 @@ const DrinkpostCreate = () => {
     }
     setDrinkAlcohol(parseInt(e.target.value));
   };
-  const drinkDescriptionHandler = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const drinkDescriptionHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDrinkDescription(e.target.value);
   };
 
@@ -251,11 +249,10 @@ const DrinkpostCreate = () => {
     formData.append("tagId", selectedCategory.toString());
 
     callApi("post", "api/drink", formData)
-      .then((res) => {
-        console.log(res.data);
+      .then(res => {
         navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
     // axios
     //   .post("/api/drink", formData, {
     //     headers: {
@@ -278,10 +275,10 @@ const DrinkpostCreate = () => {
 
   const createApi = (f: FormData) => {
     callApi("post", "api/drink", f)
-      .then((res) => {
+      .then(res => {
         navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         setIsClick(false);
       });
@@ -349,8 +346,7 @@ const DrinkpostCreate = () => {
           {/* 등록 버튼을 누르기전에는 숨겨져있음 */}
           <ErrorMessage
             style={{
-              display:
-                drinkName.trim().length === 0 && inputCheck ? "block" : "none",
+              display: drinkName.trim().length === 0 && inputCheck ? "block" : "none",
             }}
           >
             이름을 입력해주세요.
@@ -376,10 +372,7 @@ const DrinkpostCreate = () => {
           ></TextAreaDiv>
           <ErrorMessage
             style={{
-              display:
-                drinkDescription.trim().length === 0 && inputCheck
-                  ? "block"
-                  : "none",
+              display: drinkDescription.trim().length === 0 && inputCheck ? "block" : "none",
             }}
           >
             설명을 입력해주세요.
@@ -430,11 +423,7 @@ const DrinkpostCreate = () => {
           </span>
         </div> */}
       </div>
-      <FooterBigBtn
-        content="등록하기"
-        color="var(--c-yellow)"
-        reqFunc={drinkSubmitHandler}
-      />
+      <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={drinkSubmitHandler} />
       <Modal
         isOpen={overHundred}
         onRequestClose={() => setOverHundred(false)}
@@ -461,9 +450,7 @@ const DrinkpostCreate = () => {
         style={WhiteModal}
         ariaHideApp={false}
       >
-        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
-          술의 이름을 입력해주세요.
-        </div>
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>술의 이름을 입력해주세요.</div>
       </Modal>
       <Modal
         isOpen={isEmptyDesc}
@@ -471,9 +458,7 @@ const DrinkpostCreate = () => {
         style={WhiteModal}
         ariaHideApp={false}
       >
-        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>
-          술의 설명을 입력해주세요.
-        </div>
+        <div style={{ padding: "1rem 0rem", fontSize: "1.4rem" }}>술의 설명을 입력해주세요.</div>
       </Modal>
     </div>
   );
