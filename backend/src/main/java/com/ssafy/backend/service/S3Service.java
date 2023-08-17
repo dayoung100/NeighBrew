@@ -62,6 +62,3 @@ public class S3Service {
         return UUID.randomUUID() + "." + ext;
     }
 }
-/*
- * TODO : 테이블 매핑 안되는 경우 지우는 S3 기능이 존재
- *  */

@@ -13,7 +13,6 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import javax.transaction.Transactional;
 import java.util.Map;
 
 @Slf4j
@@ -52,8 +51,6 @@ public class ChatController {
     public void createChatOrSend(@DestinationVariable("user1Id") Long user1Id,
                                  @DestinationVariable("user2Id") Long user2Id,
                                  @Payload String payload) throws JsonProcessingException {
-
-        log.info("메세지 생성 밑 반환 접근");
         Map<String, Object> sendData = user1Id.compareTo(user2Id) < 0
                 ? chatDmService.createChatOrSend(user1Id, user2Id, payload)
                 : chatDmService.createChatOrSend(user2Id, user1Id, payload);
@@ -65,8 +62,6 @@ public class ChatController {
     public void leaveDm(@DestinationVariable("user1Id") Long user1Id,
                         @DestinationVariable("user2Id") Long user2Id,
                         @Payload String payload) throws JsonProcessingException {
-
-        //유저 아이디 값을 비교해서 작은 것을 앞으로 보낸다.
         String sendData = user1Id.compareTo(user2Id) < 0
                 ? chatDmService.leaveDm(user1Id, user2Id, payload)
                 : chatDmService.leaveDm(user2Id, user1Id, payload);

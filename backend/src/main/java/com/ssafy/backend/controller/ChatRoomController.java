@@ -44,8 +44,7 @@ public class ChatRoomController {
     }
 
     @GetMapping("{chatRoomId}/detail")
-    public ResponseEntity<?> getChatRoomDetail(@PathVariable Long chatRoomId,
-                                               @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> getChatRoomDetail(@PathVariable Long chatRoomId) {
         return ResponseEntity.ok(chatRoomService.getChatRoomDetail(chatRoomId));
     }
 }

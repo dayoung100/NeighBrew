@@ -21,7 +21,6 @@ public class UserCommentLikeController {
     @PostMapping("/{reviewId}")
     public ResponseEntity<String> userLikeReview(@RequestHeader("Authorization") String token, @PathVariable Long reviewId) {
         Long userId = JwtUtil.parseUserIdFromToken(token);
-
         return userCommentLikeService.toggleUserLike(userId, reviewId) ? ResponseEntity.ok("좋아요 등록 성공") : ResponseEntity.ok("좋아요 취소 성공");
     }
 }

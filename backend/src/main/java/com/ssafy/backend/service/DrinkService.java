@@ -96,10 +96,6 @@ public class DrinkService {
         return DrinkResponseDto.fromEntity(drink);
     }
 
-    // 이름과 태그로 술조회
-    // 이름이 없다면 태그로만 조회
-    // 태그가 없다면 이름으로 조회
-    // 결과가 없다면 null을 반환
     public Page<DrinkResponseDto> searchDrinksByCriteria(String name, Long tagId, Pageable pageable) {
         Page<Drink> drinks;
         if (name == null && tagId == 0) {
@@ -117,15 +113,6 @@ public class DrinkService {
     public List<DrinkResponseDto> findReviewedDrinksByUserId(Long userId) {
         return drinkReviewRepository.findDrinksByUserId(userId)
                 .stream().map(DrinkResponseDto::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    public List<DrinkResponseDto> getRandomMDPicks() {
-        int numToPick = 3;
-        List<Drink> randomDrinks = drinkRepository.findRandomDrinks(numToPick);
-
-        return randomDrinks.stream()
-                .map(DrinkResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 }
