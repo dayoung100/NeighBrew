@@ -108,6 +108,7 @@ const ChatOtherMsg = styled.div`
 const ChatTime = styled.div`
   margin-left: 2px;
   margin-bottom: 0.8rem;
+  font-size: 0.8rem;
 `;
 
 const ChatUserName = styled.div`
