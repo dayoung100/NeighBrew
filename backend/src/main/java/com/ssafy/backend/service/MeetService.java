@@ -138,7 +138,9 @@ public class MeetService {
     }
 
     public Map<String, List<MeetResponseDto>> findUserMeetByUserId(Long userId) {
-        Map<String, List<MeetResponseDto>> userMeets = Arrays.stream(Status.values()).filter(status -> status != Status.FINISH).collect(Collectors.toMap(Enum::name, status -> new ArrayList<>(), (a, b) -> b));
+        Map<String, List<MeetResponseDto>> userMeets = Arrays.stream(Status.values())
+                .filter(status -> status != Status.FINISH)
+                .collect(Collectors.toMap(Enum::name, status -> new ArrayList<>(), (a, b) -> b));
 
         List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByMeet_CreatedAtDesc(userId);
 

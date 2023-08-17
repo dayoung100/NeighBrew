@@ -32,8 +32,7 @@ public class DrinkController {
     public ResponseEntity<Page<DrinkResponseDto>> searchDrinksByCriteria(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long tagId,
-            Pageable pageable
-    ) {
+            Pageable pageable) {
         Page<DrinkResponseDto> drinkPage = drinkService.searchDrinksByCriteria(name, tagId, pageable);
         return ResponseEntity.ok(drinkPage);
     }
@@ -72,11 +71,5 @@ public class DrinkController {
     public ResponseEntity<DrinkResponseDto> updateDrinkById(@PathVariable Long drinkId, @RequestBody DrinkUpdateRequestDto drinkUpdateRequestDto) {
         DrinkResponseDto drinkResponseDto = drinkService.updateDrinkById(drinkId, drinkUpdateRequestDto);
         return ResponseEntity.ok(drinkResponseDto);
-    }
-
-    //MD'S PICK 3개 랜덤으로 꺼내줌
-    @GetMapping("/mdPick")
-    public ResponseEntity<List<DrinkResponseDto>> getRandomMDPicks() throws IllegalArgumentException {
-        return ResponseEntity.ok(drinkService.getRandomMDPicks());
     }
 }

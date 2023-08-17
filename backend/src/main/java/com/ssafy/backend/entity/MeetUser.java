@@ -1,8 +1,10 @@
 package com.ssafy.backend.entity;
 
+import com.ssafy.backend.Enum.MeetStatus;
 import com.ssafy.backend.Enum.Status;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class MeetUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,14 +30,15 @@ public class MeetUser {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public MeetUser() {
-    }
+    @Enumerated(EnumType.STRING)
+    private MeetStatus meetStatus;
 
     @Builder
-    public MeetUser(User user, Meet meet, Status status) {
+    public MeetUser(User user, Meet meet, Status status, MeetStatus meetStatus) {
         this.user = user;
         this.meet = meet;
         this.status = status;
+        this.meetStatus = meetStatus;
     }
 }
 
