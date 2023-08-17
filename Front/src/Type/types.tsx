@@ -61,6 +61,7 @@ export interface Meeting {
   minLiverPoint?: number;
   drink?: Drink;
   imgSrc: string;
+  meetStatus?: string;
 }
 
 //미팅 상세 정보 type

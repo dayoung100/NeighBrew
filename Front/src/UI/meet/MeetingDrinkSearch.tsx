@@ -234,7 +234,6 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
             <div onFocus={() => setIsSearchFocused(true)}>
               <SearchBox
                 placeholder=""
-                value={inputText}
                 changeFunc={(inputTxt: string) => {
                   setInputText(inputTxt);
                 }}
