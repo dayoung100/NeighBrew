@@ -63,7 +63,7 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(true);
-      console.log(isLoading);
+      // console.log(isLoading);
     }, 1000);
   }, []);
   const esconnect = () => {
@@ -71,13 +71,11 @@ function App() {
       withCredentials: true,
     });
 
-    // console.log({ es });
     // console.log(es.current);
     es.current.onopen = e => {
       // console.log("[sse] open", { e });
     };
     es.current.onmessage = event => {
-      // console.log(event.data);
       try {
         const data = JSON.parse(event.data);
         noti(data.content, data.url);

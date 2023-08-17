@@ -255,7 +255,7 @@ const MyPage = () => {
   const [nickname, setNickname] = useState("");
   const [profile, setProfile] = useState("profile");
   const [intro, setIntro] = useState("");
-  const [birth, setBirth] = useState("");
+  const [birth, setBirth] = useState("2003-01-01");
   const navigate = useNavigate();
 
   // 팔로우 하기
@@ -328,7 +328,7 @@ const MyPage = () => {
     setNickname(userData.nickname);
     // setProfile(userData.profile);
     setIntro(userData.intro);
-    setBirth(userData.birth ? userData.birth : birth);
+    setBirth(userData.birth !== null ? userData.birth : birth);
   }, [userData]);
   const nicknameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -342,7 +342,7 @@ const MyPage = () => {
     e.preventDefault();
     if (parseInt(e.target.value.split("-")[0]) >= 2005) {
       alert("만 18세 이상만 이용 가능합니다");
-      setBirth(birth);
+      setBirth("2003-01-01");
       return;
     }
     setBirth(e.target.value);
