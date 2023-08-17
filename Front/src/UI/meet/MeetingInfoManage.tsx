@@ -313,7 +313,6 @@ const MeetingInfoManage = () => {
   //수정 완료 버튼 클릭 api
   const updateMeeting = () => {
     if (isClick) return; //throttle역할
-    console.log("들어왔니??");
     setBtnClicked(true);
     //api 요청 전에 확인
     //호스트가 맞는가?
@@ -355,11 +354,9 @@ const MeetingInfoManage = () => {
 
     //이미지 수정을 위한 분기
     if (file === null && newImgSrc === "no image") {
-      console.log("이미지 없앴음");
       f.append("imgSrc", "no image");
       updateApi(f);
     } else if (file !== null) {
-      console.log("이미지 새로넣었음");
       setLoadingModalOn(true);
       //압축하면 blob 타입-> file 타입으로 변환
       const uploadFile = imageCompression(file, options);
@@ -380,13 +377,11 @@ const MeetingInfoManage = () => {
           setIsClick(false);
         });
     } else {
-      console.log("이미지 안만짐");
       updateApi(f);
     }
   };
 
   const updateApi = (f: FormData) => {
-    console.log("들어왔니");
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
     promise
       .then((res) => {

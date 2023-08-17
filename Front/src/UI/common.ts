@@ -46,6 +46,7 @@ export const initialMeetDetail: MeetDetail = {
       tagId: 0,
     },
     imgSrc: "",
+    meetStatus: null,
   },
   users: [],
   statuses: [],
