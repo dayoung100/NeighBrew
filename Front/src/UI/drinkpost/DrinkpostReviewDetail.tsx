@@ -345,9 +345,21 @@ const DrinkpostReviewDetail = () => {
         <Usercard>
           <div onClick={toProfileHandler} style={{ display: "flex", alignItems: "center" }}>
             <div>
-              <UserImg
+              {/* <UserImg
                 src={review?.user.profile !== "no image" ? review?.user.profile : defaultImg}
-              ></UserImg>
+              ></UserImg> */}
+              <div
+                style={{
+                  background: `url(${
+                    review.user.profile !== "no image" ? review.user.profile : defaultImg
+                  }) no-repeat center`,
+                  backgroundSize: "cover",
+                  width: "2.4rem",
+                  height: "2.4rem",
+                  borderRadius: "50%",
+                  marginRight: "0.5rem",
+                }}
+              ></div>
             </div>
             <div>
               <b>{review?.user.nickname}</b>
