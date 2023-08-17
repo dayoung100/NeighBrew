@@ -9,7 +9,6 @@ import java.util.Map;
 
 @Service
 public class JwtService {
-
     public Map<String, String> generateTokens(String userId) {
         String newAccessToken = JwtUtil.generateToken(userId);
         String newRefreshToken = JwtUtil.generateRefreshToken(userId);

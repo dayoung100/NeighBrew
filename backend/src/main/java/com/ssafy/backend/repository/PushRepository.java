@@ -14,15 +14,12 @@ import java.util.List;
 @Repository
 public interface PushRepository extends JpaRepository<Push, Long> {
     List<Push> findByReceiver_UserIdOrderByCreatedAtDesc(Long receiverId);
-    //findAllByReceiver : 모든 알림 목록을 조회할 때 사용한다. 아마 안쓸듯
 
     @Modifying
     @Query("DELETE FROM Push p WHERE p.pushType = :pushType AND p.receiver.userId = :receiverId AND p.sender.userId = :senderId")
-    void deleteByPushTypeAndSender_UserIdAndReceiver_UserId(@Param("pushType") PushType pushType,
-                                                            @Param("senderId") Long senderId,
-                                                            @Param("receiverId") Long receiverId);
-
-    //void deleteByPushTypeAndReceiver_UserIdAndSender_UserId(PushType pushType, Long receiverId, Long senderId);
+    void deleteByPushTypeAndSenderUserIdAndReceiverUserId(@Param("pushType") PushType pushType,
+                                                          @Param("senderId") Long senderId,
+                                                          @Param("receiverId") Long receiverId);
 }
 
 

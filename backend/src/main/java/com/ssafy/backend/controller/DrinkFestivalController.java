@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-
 @RequiredArgsConstructor
 @RequestMapping("/api/drinkFestival")
 public class DrinkFestivalController {
@@ -18,5 +17,4 @@ public class DrinkFestivalController {
     public ResponseEntity<?> getReviewsByDrinkId() {
         return ResponseEntity.ok(drinkFestivalService.getAllFestival());
     }
-
 }

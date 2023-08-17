@@ -30,7 +30,7 @@ public class UserCommentLikeService {
                 () -> new IllegalArgumentException("해당 리뷰가 없습니다. id=" + reviewId)
         );
 
-        Optional<UserCommentLike> existingLike = userCommentLikeRepository.findByUser_UserIdAndDrinkReview_DrinkReviewId(userId, reviewId);
+        Optional<UserCommentLike> existingLike = userCommentLikeRepository.findByUserUserIdAndDrinkReviewDrinkReviewId(userId, reviewId);
 
         if (existingLike.isPresent()) {
             // 좋아요 취소, drinkReview의 likeCount 감소
@@ -56,7 +56,7 @@ public class UserCommentLikeService {
             return false;
         }
 
-        Optional<UserCommentLike> existingLike = userCommentLikeRepository.findByUser_UserIdAndDrinkReview_DrinkReviewId(userId, reviewId);
+        Optional<UserCommentLike> existingLike = userCommentLikeRepository.findByUserUserIdAndDrinkReviewDrinkReviewId(userId, reviewId);
 
         return existingLike.isPresent();
     }

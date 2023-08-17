@@ -12,20 +12,20 @@ import java.util.Optional;
 
 @Repository
 public interface MeetUserRepository extends JpaRepository<MeetUser, Long> {
-    List<MeetUser> findByUser_UserIdOrderByMeet_CreatedAtDesc(Long userId);
+    List<MeetUser> findByUserUserIdOrderByMeetCreatedAtDesc(Long userId);
 
-    void deleteByMeet_MeetId(Long meetId);
+    void deleteByMeetMeetId(Long meetId);
 
-    Optional<List<MeetUser>> findByMeet_MeetIdOrderByStatusDesc(Long meetId);
+    Optional<List<MeetUser>> findByMeetMeetIdOrderByStatusDesc(Long meetId);
 
-    Optional<MeetUser> findByUser_UserIdAndMeet_MeetId(Long userId, Long meetId);
+    Optional<MeetUser> findByUserUserIdAndMeetMeetId(Long userId, Long meetId);
 
-    void deleteByUser_UserIdAndMeet_MeetIdAndStatus(Long userId, Long meetId, Status status);
+    void deleteByUserUserIdAndMeetMeetIdAndStatus(Long userId, Long meetId, Status status);
 
     @Query("select mu.status from MeetUser mu where mu.user.userId = :userId and mu.meet.meetId = :meetId")
     Status findStatusByUserIdAndMeetId(@Param("userId") Long userId,
                                        @Param("meetId") Long meetId);
 
-    Optional<Long> countByMeet_MeetId(Long meetId);
+    Optional<Long> countByMeetMeetId(Long meetId);
 }
 
