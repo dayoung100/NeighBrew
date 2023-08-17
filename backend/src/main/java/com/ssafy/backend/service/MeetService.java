@@ -32,17 +32,17 @@ public class MeetService {
     private final MeetRepository meetRepository;
     private final MeetUserRepository meetUserRepository;
 
-    private final S3Service s3Service;
-    private final MeetUserService meetUserService;
-    private final PushService pushService;
-    private final FollowRepository followRepository;
-    private final TagRepository tagRepository;
     private final ChatRoomRepository chatRoomRepository;
-    private final SidoRepository sidoRepository;
-    private final GugunRepository gugunRepository;
     private final DrinkRepository drinkRepository;
-    private final UserRepository userRepository;
+    private final FollowRepository followRepository;
+    private final GugunRepository gugunRepository;
+    private final MeetUserService meetUserService;
     private final MongoTemplate mongoTemplate;
+    private final PushService pushService;
+    private final S3Service s3Service;
+    private final SidoRepository sidoRepository;
+    private final TagRepository tagRepository;
+    private final UserRepository userRepository;
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomUserService chatRoomUserService;
@@ -86,7 +86,7 @@ public class MeetService {
     }
 
     public Map<String, Object> findMeetdetailByMeetId(Long meetId) {
-        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(
+        List<MeetUser> meetUsers = meetUserRepository.findByMeetMeetIdOrderByStatusDesc(meetId).orElseThrow(
                 () -> new IllegalArgumentException("해당 모임 정보가 없습니다.")
         );
 
@@ -113,7 +113,7 @@ public class MeetService {
     }
 
     public MeetUserDto findMeetUserByMeetId(Long meetId) {
-        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(
+        List<MeetUser> meetUsers = meetUserRepository.findByMeetMeetIdOrderByStatusDesc(meetId).orElseThrow(
                 () -> new IllegalArgumentException("해당 모임 정보가 없습니다.")
         );
 
@@ -142,12 +142,10 @@ public class MeetService {
     public Map<String, List<MeetResponseDto>> findUserMeetByUserId(Long userId) {
         Map<String, List<MeetResponseDto>> userMeets = Arrays.stream(Status.values()).collect(Collectors.toMap(Enum::name, status -> new ArrayList<>(), (a, b) -> b));
 
-        List<MeetUser> meetUsers = meetUserRepository.findByUser_UserIdOrderByMeet_CreatedAtDesc(userId);
+        List<MeetUser> meetUsers = meetUserRepository.findByUserUserIdOrderByMeetCreatedAtDesc(userId);
 
         for (MeetUser meetUser : meetUsers) {
             MeetResponseDto responseDto = toMeetResponseDto(meetUser);
-            if (responseDto.getMeetStatus().equals(MeetStatus.END))
-                continue;
             userMeets.get(meetUser.getStatus().name()).add(responseDto);
         }
 
@@ -247,7 +245,7 @@ public class MeetService {
     }
 
     private List<Follow> findFollowersByUserId(Long userId) {
-        return followRepository.findByFollowing_UserId(userId).orElseThrow(
+        return followRepository.findByFollowingUserId(userId).orElseThrow(
                 () -> new IllegalArgumentException("팔로잉 정보를 찾을 수 없습니다."));
     }
 
@@ -285,7 +283,7 @@ public class MeetService {
 
         meetRepository.save(updateMeet);
 
-        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(
+        List<MeetUser> meetUsers = meetUserRepository.findByMeetMeetIdOrderByStatusDesc(meetId).orElseThrow(
                 () -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
 
         //방장에게는 알림을 전송하지 않는다.
@@ -321,7 +319,7 @@ public class MeetService {
         if (!deleteMeet.getHost().getUserId().equals(hostId))
             throw new IllegalArgumentException("방장이 아니면 방을 삭제할 수 없습니다.");
 
-        List<MeetUser> meetUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meetId).orElseThrow(
+        List<MeetUser> meetUsers = meetUserRepository.findByMeetMeetIdOrderByStatusDesc(meetId).orElseThrow(
                 () -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
 
         //MeetUser 정보를 삭제한다.
@@ -456,7 +454,7 @@ public class MeetService {
         List<Meet> updateMeetList = new ArrayList<>();
         for (Meet meet : meetByMeetDateBefore) {
             if (meet.getMeetStatus() != MeetStatus.END) {
-                List<MeetUser> findUsers = meetUserRepository.findByMeet_MeetIdOrderByStatusDesc(meet.getMeetId()).orElseThrow(
+                List<MeetUser> findUsers = meetUserRepository.findByMeetMeetIdOrderByStatusDesc(meet.getMeetId()).orElseThrow(
                         () -> new IllegalArgumentException("모임에 해당하는 유저를 찾을 수 없습니다.")
                 );
                 findUsers.forEach(users ->
