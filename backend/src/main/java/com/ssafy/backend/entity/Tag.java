@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@ToString
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

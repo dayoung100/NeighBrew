@@ -23,12 +23,3 @@ public class S3Controller {
         return ResponseEntity.ok(s3UploadService.upload(UploadType.USERPROFILE, multipartFile));
     }
 }
-
-
-/*
-참고 링크
-https://devlog-wjdrbs96.tistory.com/323
-https://jforj.tistory.com/261
-https://charlie-choi.tistory.com/236
-https://chb2005.tistory.com/200
-*/

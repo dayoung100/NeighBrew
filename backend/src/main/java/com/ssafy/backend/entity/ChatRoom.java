@@ -27,8 +27,6 @@ public class ChatRoom {
     @JsonBackReference
     private List<ChatRoomUser> users;
 
-    // 모임과 채팅 간의 양방향 일대일 연관관계
-    // 주인은 chatRoom이다. 모임 생성 시점에 연관된 채팅방을 가지게 되므로
     @OneToOne(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     @JsonIgnore
     private Meet meet;

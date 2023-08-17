@@ -16,7 +16,6 @@ import java.util.NoSuchElementException;
 import static org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
 @RestControllerAdvice
-@Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

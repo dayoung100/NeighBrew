@@ -9,8 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ChatDmMessageRepository extends JpaRepository<ChatDmMessage, Long> {
+    void deleteByChatDmRoomChatDmRoomId(Long dmRoomId);
 
-    void deleteByChatDmRoom_ChatDmRoomId(Long dmRoomId);
-
-    List<ChatDmMessage> findByChatDmRoom_ChatDmRoomIdAndCreatedAtBetween(Long chatDmRoomId, LocalDateTime start, LocalDateTime end);
+    List<ChatDmMessage> findByChatDmRoomChatDmRoomIdAndCreatedAtBetween(Long chatDmRoomId, LocalDateTime start, LocalDateTime end);
 }

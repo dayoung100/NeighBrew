@@ -23,7 +23,6 @@ public class OAuthLoginService {
     email 정보로 사용자 확인 (없으면 새로 가입처리)
     Access Token 생성 후 내려주기
      */
-    //private final MemberRepository memberRepository;
     private final UserRepository userRepository;
     private final RequestOAuthInfoService requestOAuthInfoService;
 

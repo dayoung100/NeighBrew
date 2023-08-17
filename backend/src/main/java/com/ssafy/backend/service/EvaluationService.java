@@ -3,7 +3,7 @@ package com.ssafy.backend.service;
 import com.ssafy.backend.dto.evaluation.EvaluationRequestDto;
 import com.ssafy.backend.entity.Meet;
 import com.ssafy.backend.entity.User;
-import com.ssafy.backend.repository.EvaluationRepositroy;
+import com.ssafy.backend.repository.EvaluationRepository;
 import com.ssafy.backend.repository.MeetRepository;
 import com.ssafy.backend.repository.MeetUserRepository;
 import com.ssafy.backend.repository.UserRepository;
@@ -25,7 +25,7 @@ public class EvaluationService {
     private final UserRepository userRepository;
     private final MeetUserRepository meetUserRepository;
     private final MeetRepository meetRepository;
-    private final EvaluationRepositroy evaluationRepositroy;
+    private final EvaluationRepository evaluationRepository;
 
     @Transactional
     public String calculateScoreByMeetId(EvaluationRequestDto evaluationRequestDto, Long userId) {
@@ -41,11 +41,11 @@ public class EvaluationService {
                 () -> new IllegalStateException(String.format(ERR_NOT_FOUND, "meet"))
         );
 
-        if (evaluationRepositroy.existsByRatedUserAndReviewerAndMeet(ratedUser, reviewer, meet)) {
+        if (evaluationRepository.existsByRatedUserAndReviewerAndMeet(ratedUser, reviewer, meet)) {
             throw new IllegalArgumentException(ERR_ALREADY_EVALUATED);
         }
 
-        Long totalUsers = meetUserRepository.countByMeet_MeetId(evaluationRequestDto.getMeetId()).orElseThrow(
+        Long totalUsers = meetUserRepository.countByMeetMeetId(evaluationRequestDto.getMeetId()).orElseThrow(
                 () -> new IllegalArgumentException(ERR_INVALID_MEET_ID)
         );
 
@@ -55,7 +55,7 @@ public class EvaluationService {
         updateReviewerScore(reviewer, evaluationRequestDto.getEvaluationType(), totalUsers);
 
         userRepository.save(reviewer);
-        evaluationRepositroy.save(evaluationRequestDto.toEntity(reviewer, ratedUser, meet));
+        evaluationRepository.save(evaluationRequestDto.toEntity(reviewer, ratedUser, meet));
 
         return "성공적으로 반영되었습니다.";
     }
