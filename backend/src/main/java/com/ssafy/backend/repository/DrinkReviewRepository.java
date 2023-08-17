@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface DrinkReviewRepository extends JpaRepository<DrinkReview, Long> {
-    Page<DrinkReview> findByDrink(Drink drink, Pageable pageable);
+    Page<DrinkReview> findByDrinkDrinkId(Long drinkId, Pageable pageable);
 
     List<DrinkReview> findAllByUserAndDrink(User user, Drink drink);
 
@@ -22,6 +22,8 @@ public interface DrinkReviewRepository extends JpaRepository<DrinkReview, Long> 
     List<Drink> findDrinksByUserId(Long userId);
 
     Page<DrinkReview> findAllByOrderByLikeCountDesc(Pageable pageable);
+
+    Page<DrinkReview> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     Optional<DrinkReview> findByDrinkReviewId(Long drinkReviewId);
 }

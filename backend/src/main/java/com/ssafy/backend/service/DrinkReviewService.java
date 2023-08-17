@@ -53,13 +53,12 @@ public class DrinkReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("음료가 존재하지 않습니다."));
     }
 
-    public Page<DrinkReviewResponseDto> getReviewsByDrinkId(Long drinkId, Pageable pageable) {
-        Drink drink = getDrink(drinkId);
-        Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findByDrink(drink, pageable);
+    public Page<DrinkReviewResponseDto> findDrinkReviewByDrinkDrinkId(Long drinkId, Pageable pageable) {
+        Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findByDrinkDrinkId(drinkId, pageable);
         return drinkReviewPage.map(DrinkReviewResponseDto::fromEntity);
     }
 
-    public List<DrinkReviewResponseDto> getReviewsByUserIdAndDrinkId(Long userId, Long drinkId) {
+    public List<DrinkReviewResponseDto> findReviewsByUserIdAndDrinkId(Long userId, Long drinkId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
@@ -114,12 +113,16 @@ public class DrinkReviewService {
         return DrinkReviewResponseDto.fromEntity(drinkReview);
     }
 
-    public Page<DrinkReviewResponseDto> findAllByOrderByLikeCountDesc(Pageable pageable) {
+    public Page<DrinkReviewResponseDto> findDrinkReviewByOrderByLikeCountDesc(Pageable pageable) {
         Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findAllByOrderByLikeCountDesc(pageable);
         return drinkReviewPage.map(DrinkReviewResponseDto::fromEntity);
     }
 
-    public DrinkReviewResponseDto getReviewByDrinkReviewId(Long drinkReviewId) {
+    public Page<DrinkReviewResponseDto> findAllByOrderByCreatedAtDesc(Pageable pageable) {
+        Page<DrinkReview> drinkReviewPage = drinkReviewRepository.findAllByOrderByCreatedAtDesc(pageable);
+        return drinkReviewPage.map(DrinkReviewResponseDto::fromEntity);
+    }
+    public DrinkReviewResponseDto findReviewByDrinkReviewId(Long drinkReviewId) {
         DrinkReview drinkReview = drinkReviewRepository.findByDrinkReviewId(drinkReviewId).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
         return DrinkReviewResponseDto.fromEntity(drinkReview);
 

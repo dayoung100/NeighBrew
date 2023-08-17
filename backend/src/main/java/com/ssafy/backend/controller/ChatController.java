@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -26,8 +25,8 @@ public class ChatController {
 
     //단체 메세지를 보낸다.
     @MessageMapping("/chat/{roomId}/sendMessage")
-    public void sendMessage(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
-        String res = chatRoomService.sendMessage(roomId, data);
+    public void sendChatRoomMessage(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
+        String res = chatRoomService.sendChatRoomMessage(roomId, data);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, res);
     }
 

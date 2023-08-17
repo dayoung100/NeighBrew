@@ -66,10 +66,16 @@ public class ChatRoomService {
         return room;
     }
 
-    public String sendMessage(Long roomId, String data) throws JsonProcessingException {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+    public String sendChatRoomMessage(Long roomId, String data) throws JsonProcessingException {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 채팅방입니다.")
+        );
+
         JsonNode jsonNode = mapper.readTree(data);
-        User user = userRepository.findById(jsonNode.get("userId").asLong()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        User user = userRepository.findById(jsonNode.get("userId").asLong()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
+        );
+
         if (chatRoomUserRepository.findByChatRoomChatRoomIdAndUserUserId(chatRoom.getChatRoomId(), jsonNode.get("userId").asLong()).isEmpty())
             throw new IllegalArgumentException("채팅방에 참여하지 않은 유저입니다.");
 
@@ -114,7 +120,10 @@ public class ChatRoomService {
     }
 
     public ChatMessageMongo deleteExistUser(ChatRoom chatRoom, Long userId) {
-        User findUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        User findUser = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
+        );
+
         chatRoomUserRepository.deleteByUserUserIdAndChatRoomChatRoomId(userId, chatRoom.getChatRoomId());
         return mongoTemplate.insert(ChatMessageMongo.builder()
                 .userId(userId)
@@ -134,15 +143,19 @@ public class ChatRoomService {
     public String joinChatRoom(Long roomId, String data) throws JsonProcessingException {
         JsonNode jsonNode = mapper.readTree(data);
         Long userId = jsonNode.get("userId").asLong();
-        User joinUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-        ChatRoom findChatRoom = chatRoomRepository.findById(roomId).orElseThrow( () -> new IllegalArgumentException("모임 채팅방을 찾을 수 없습니다."));
+        User joinUser = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("유저를 찾을 수 없습니다.")
+        );
 
-        for(ChatRoomUser cru :findChatRoom.getUsers()){
-            //유저 존재하면 방번호 바로 반환
-            if(cru.getUser().getUserId().equals(userId)) {
+        ChatRoom findChatRoom = chatRoomRepository.findById(roomId).orElseThrow(
+                () -> new IllegalArgumentException("모임 채팅방을 찾을 수 없습니다.")
+        );
+
+        //유저 존재하면 방번호 바로 반환
+        for(ChatRoomUser cru :findChatRoom.getUsers())
+            if (cru.getUser().getUserId().equals(userId)) {
                 return "";
             }
-        }
 
         //존재하지 않으면 유저를 추가하고 방 번호를 반환한다.
         findChatRoom.getUsers().add(ChatRoomUser.builder()
