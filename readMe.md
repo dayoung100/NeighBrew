@@ -1,6 +1,6 @@
 # 🍻 NeighBrew - 취향 맞는 술 모임과 다양한 주종 정보를 한 자리에서
 
-![타이틀이미지](docs/images/title.jpg)
+![타이틀이미지](docs/images/title.png)
 
 ## NeighBrew 링크(모바일에 최적화 되어있습니다) </br> : [NeighBrew](https://i9b310.p.ssafy.io/)
 
